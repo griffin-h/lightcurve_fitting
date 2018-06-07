@@ -264,6 +264,8 @@ class LC(Table):
             nondets = t['nondet'] == 'True'
             t.remove_column('nondet')
             t['nondet'] = nondets
+        else:
+            t['nondet'] = False
         # make filters strings (in case they are all the '0' filter)
         filts = np.array(t['filt'], dtype=str)
         t.remove_column('filt')

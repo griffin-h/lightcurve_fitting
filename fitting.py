@@ -66,8 +66,7 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
             log_prior = 0.
             for i, prior in enumerate(priors):
                 log_prior += np.log(prior(p[i]))
-            T, R, t_min, t_max = model(t, *p, **model_kwargs)
-            y_fit = blackbody_to_filters(f, T, R, pointwise=True)
+            y_fit = model(t, f, *p, **model_kwargs)
             log_likelihood = -0.5 * np.sum(np.log(2*np.pi*dy**2) + ((y - y_fit)/dy)**2)        
             return log_prior + log_likelihood
 
@@ -99,7 +98,7 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
 
     return sampler
 
-def lightcurve_corner(lc, model, sampler_flatchain,
+def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs={},
                       num_models_to_plot=100, lcaxis_posn=[0.7, 0.55, 0.2, 0.4],
                       filter_spacing=0.5, save_plot_as=''):
 	
@@ -122,9 +121,7 @@ def lightcurve_corner(lc, model, sampler_flatchain,
     ax = fig.add_axes(lcaxis_posn)
     xfit = np.arange(np.min(lc['MJD']), np.max(lc['MJD']), 0.1)
     ufilts = np.unique(lc['filter'])
-    T, R, tmin, tmax = model(xfit, *ps)
-    y_fit = blackbody_to_filters(ufilts, T.flatten(), R.flatten())
-    y_fit = np.rollaxis(y_fit.reshape(T.shape[0], T.shape[1], len(ufilts)), -1)
+    y_fit = model(xfit, ufilts, *ps, **model_kwargs)
 
     yscale = 10**np.round(np.log10(np.max(y_fit)))
     offset = -len(ufilts) // 2 * filter_spacing
@@ -149,30 +146,7 @@ def lightcurve_corner(lc, model, sampler_flatchain,
     
     return fig
 
-c1 = (const.h / const.k_B).to(u.kK / u.THz).value
-c2 = 8 * np.pi**2 * (const.h / const.c**2).to(u.W / u.Hz / (1000 * u.Rsun)**2 / u.THz**3).value
-
-def planck_fast(nu, T, R):
-    return c2 * np.squeeze(np.outer(R**2, nu**3) / (np.exp(c1 * np.outer(T**-1, nu)) - 1)) # shape = (len(T), len(nu))
-
-def blackbody_to_filters(filtobj, T, R, pointwise=False):
-    if pointwise:
-        return np.array([np.trapz(planck_fast(f.trans['freq'].data, t, r) * f.trans['T_norm_per_freq'].data,
-                                   f.trans['freq'].data) for t, r, f in zip(T, R, filtobj)]) # shape = (len(T),)
-    else:
-        return np.array([np.trapz(planck_fast(f.trans['freq'].data, T, R) * f.trans['T_norm_per_freq'].data,
-                                   f.trans['freq'].data) for f in filtobj]).T # shape = (len(T), len(filtobj))
-
-def planck(nu, T, R, dT=0., dR=0., cov=0.):
-    Lnu = planck_fast(nu, T, R)
-    if not dT and not dR and not cov:
-        return Lnu
-    dlogLdT = c1 * nu * T**-2 / (1 - np.exp(-c1 * nu / T))
-    dlogLdR = 2. / R
-    dLnu = Lnu * (dlogLdT**2 * dT**2 + dlogLdR**2 * dR**2 + 2. * dlogLdT * dlogLdR * cov)**0.5
-    return Lnu, dLnu
-
-def format_credible_interval(x, sigfigs=2, percentiles=[15.87, 50., 84.14], axis=0, varnames=None, units=None):
+def format_credible_interval(x, sigfigs=1, percentiles=[15.87, 50., 84.14], axis=0, varnames=None, units=None):
     quantiles = np.percentile(x, percentiles, axis=axis).T
     uncertainties = np.diff(quantiles)
     smaller_unc = np.amin(uncertainties, axis=-1)

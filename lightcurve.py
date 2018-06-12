@@ -157,7 +157,6 @@ class LC(Table):
         else:
             self.sn.peakdate = np.nan
         self.sn.peakcriteria = criteria
-#      print self.name, self.peakdate, self.peakcriteria
 
     def calcRDSP(self): calcPhase(self, rdsp=True)
 
@@ -277,11 +276,7 @@ def flux2mag(flux, dflux=np.nan, zp=0, nondet=None, nondetSigmas=3):
   dflux = np.array(dflux, copy=True)
   if nondet is not None:
 #    nondet = np.array(nondet, copy=True)
-#    print nondet
-#    print flux[nondet]
-#    print dflux[nondet]
     flux[nondet] = nondetSigmas * dflux[nondet]
-#    print flux[nondet]
     dflux[nondet] = np.nan
   mag = -2.5*np.log10(flux) + zp
   dmag = 2.5*dflux/(flux*np.log(10))
@@ -306,8 +301,6 @@ def binflux(time, flux, dflux, delta=0.2):
       flux_grp = flux[grp]
       dflux_grp = dflux[grp]
       if any(dflux_grp==0) or any(dflux_grp==9999) or any(np.isnan(dflux_grp)) or (np.ma.is_masked(dflux_grp) and any(dflux_grp.mask)):
-#        print 'WARNING: points with no error measurement'
-#        print time_grp, '\n', flux_grp, '\n', dflux_grp, '\n'
         x = np.mean(time_grp)
         y = np.mean(flux_grp)
         z = 0.

@@ -41,7 +41,7 @@ def shock_cooling(t_in, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW=Fa
         T_0 = 1.69
         Tph_to_Tcol = 1.0
     else:
-        print 'not a valid n'
+        print('not a valid n')
         
     if RW:
         a = 0.
@@ -72,7 +72,7 @@ def shock_cooling2(t_in, T_1, L_1, t_tr, t_exp=0., n=1.5, RW=False):
         epsilon_1 = 0.016
         epsilon_2 = 0.175
     else:
-        print 'not a valid n'
+        print('not a valid n')
 
     if RW:
         a = 0.

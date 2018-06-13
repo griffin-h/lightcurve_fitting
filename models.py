@@ -1,6 +1,7 @@
 import numpy as np
 import astropy.constants as const
 import astropy.units as u
+from astropy.table import Table
 
 k_B = const.k_B.to("eV / kK").value
 c3 = (4 * np.pi * const.sigma_sb.to("erg s-1 Rsun-2 kK-4").value)**-0.5 / 1000. # Rsun --> kiloRsun
@@ -62,6 +63,23 @@ def shock_cooling(t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW
 
     return y_fit
 
+ShockCooling = Model(shock_cooling,
+    [
+        'v_\\mathrm{s*}',
+        'M_\\mathrm{env}',
+        'f_\\rho M',
+        'R',
+        't_0'
+    ],
+    [
+        10.**8.5 * u.cm / u.s,
+        u.Msun,
+        u.Msun,
+        1e13 * u.cm,
+        u.d
+    ]
+)
+
 def shock_cooling2(t_in, f, T_1, L_1, t_tr, t_exp=0., n=1.5, RW=False):
     if n == 1.5:
         a = 1.67
@@ -93,36 +111,79 @@ def shock_cooling2(t_in, f, T_1, L_1, t_tr, t_exp=0., n=1.5, RW=False):
 
     return y_fit
 
-ShockCooling = Model(shock_cooling,
-	[
-	    'v_\\mathrm{s*}',
-	    'M_\\mathrm{env}',
-	    'f_\\rho M',
-	    'R',
-	    't_0'
-	],
-	[
-	    10.**8.5 * u.cm / u.s,
-	    u.Msun,
-	    u.Msun,
-	    1e13 * u.cm,
-	    u.d
-	]
+ShockCooling2 = Model(shock_cooling2,
+    [
+        'T_1',
+        'L_1',
+        't_\\mathrm{tr}',
+        't_0'
+    ],
+    [
+        u.kK,
+        1e42 * u.erg / u.s,
+        u.d,
+        u.d
+    ]
 )
 
-ShockCooling2 = Model(shock_cooling2,
-	[
-	    'T_1',
-	    'L_1',
-	    't_\\mathrm{tr}',
-	    't_0'
-	],
-	[
-	    u.kK,
-	    1e42 * u.erg / u.s,
-	    u.d,
-	    u.d
-	]
+sifto = Table.read('models/sifto.dat', format='ascii')
+
+def scale_sifto(sn_lc):
+    '''Run this function before using the CompanionShocking model
+       to scale the SiFTO model to match your supernova's luminosity
+       and colors. The argument is your supernova's light curve.'''
+    for filt in set(sn_lc['filter']):
+        if filt.char not in sifto.colnames:
+            raise Exception('No SiFTO tempalte for filter ' + filt.char)
+        lc_filt = sn_lc.where(filter=filt)
+        sifto[filt.char] *= np.max(lc_filt['lum']) / np.max(sifto[filt.char])
+
+def companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, rr, ri, rU, kappa=1.):
+    t_wrt_exp = t_in.reshape(-1, 1) - t_exp
+    T_kasen = np.squeeze(25. * (a13**36 * Mc_v9_7 * kappa**-35 * t_wrt_exp**-74)**(1/144.)) # kK
+    R_kasen = np.squeeze(2.7 * (kappa * Mc_v9_7 * t_wrt_exp**7)**(1/9.)) # kiloRsun
+    Lnu_kasen = blackbody_to_filters(f, T_kasen, R_kasen)
+
+    t_wrt_peak = np.squeeze(t_in.reshape(-1, 1) - t_peak)
+    if t_wrt_peak.ndim <= 1 and len(t_wrt_peak) == len(f): # pointwise
+        Lnu_sifto = np.array([np.interp(t, sifto['Epoch'] * stretch, sifto[filt.char])
+                              for t, filt in zip(t_wrt_peak, f)])
+    elif t_wrt_peak.ndim <= 1:
+        Lnu_sifto = np.array([np.interp(t_wrt_peak, sifto['Epoch'] * stretch, sifto[filt.char])
+                              for filt in f])
+    else:
+        Lnu_sifto = np.array([np.array([np.interp(t, sifto['Epoch'] * s, sifto[filt.char])
+                                        for t, s in zip(t_wrt_peak.T, stretch)]).T
+                               for filt in f])
+
+    sifto_factors = {'r': rr, 'i': ri}
+    kasen_factors = {'U': rU}
+    y_fit = np.array([L1 * kasen_factors.get(filt.char, 1.) + L2 * sifto_factors.get(filt.char, 1.)
+                      for L1, L2, filt in zip(Lnu_kasen, Lnu_sifto, f)])
+
+    return y_fit
+
+CompanionShocking = Model(companion_shocking,
+    [
+        't_0',
+        'a',
+        'M v^7',
+        't_\\mathrm{max}',
+        's',
+        'r_r',
+        'r_i',
+        'r_U'
+    ],
+    [
+        u.d,
+        10.**13. * u.cm,
+        1.4 * u.Msun * (1e9 * u.cm / u.s)**7,
+        u.d,
+        u.dimensionless_unscaled,
+        u.dimensionless_unscaled,
+        u.dimensionless_unscaled,
+        u.dimensionless_unscaled
+    ]
 )
 
 def log_flat_prior(p):
@@ -138,13 +199,18 @@ def planck_fast(nu, T, R):
     return c2 * np.squeeze(np.outer(R**2, nu**3) / (np.exp(c1 * np.outer(T**-1, nu)) - 1)) # shape = (len(T), len(nu))
 
 def blackbody_to_filters(filtobj, T, R):
-    if T.ndim <= 1:
+    if T.shape != R.shape:
+        raise Exception('T & R must have the same shape')
+    if T.ndim <= 1 and len(T) == len(filtobj): # pointwise
         y_fit = np.array([np.trapz(planck_fast(f.trans['freq'].data, t, r) * f.trans['T_norm_per_freq'].data,
                                    f.trans['freq'].data) for t, r, f in zip(T, R, filtobj)]) # shape = (len(T),)
+    elif T.ndim <= 1:
+        y_fit = np.array([np.trapz(planck_fast(f.trans['freq'].data, T, R) * f.trans['T_norm_per_freq'].data,
+                                   f.trans['freq'].data) for f in filtobj]).T # shape = (len(T), len(filtobj))
     else:
         y_fit = np.array([np.trapz(planck_fast(f.trans['freq'].data, T.flatten(), R.flatten())
                                     * f.trans['T_norm_per_freq'].data,
-                                   f.trans['freq'].data) for f in filtobj]).T # shape = (len(T), len(filtobj))
+                                   f.trans['freq'].data) for f in filtobj]).T # shape = (T.size, len(filtobj))
         y_fit = np.rollaxis(y_fit.reshape(T.shape[0], T.shape[1], len(filtobj)), -1)
     return y_fit
 

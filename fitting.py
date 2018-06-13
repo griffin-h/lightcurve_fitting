@@ -23,6 +23,9 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     t = lc['MJD'].data
     y = lc['lum'].data
     dy = lc['dlum'].data
+
+    if model == models.CompanionShocking:
+        models.scale_sifto(lc)
     
     ndim = model.nparams
     

@@ -245,8 +245,8 @@ class LC(Table):
                 y -= self.sn.peakabsmag
             if 'nondet' in g.keys() and marker:  # don't plot if no markers used
                 plt.plot(x[g['nondet']], y[g['nondet']], marker=arrow, linestyle='none', ms=25, mec=mec)
-            if 'filt' in criteria:  # and criteria['filt'] != ['R', 'r']:
-                label = self.sn.name  # + ' (' +', '.join(criteria['filt']) + ')'
+            if self.sn is None:
+                label = None
             else:
                 label = self.sn.name
             if not use_lines:
@@ -282,9 +282,9 @@ class LC(Table):
         return t
 
 
-def flux2mag(flux, dflux=np.nan, zp=0, nondet=None, nondetSigmas=3):
-    flux = np.array(flux, copy=True)
-    dflux = np.array(dflux, copy=True)
+def flux2mag(flux, dflux=np.array(np.nan), zp=0, nondet=None, nondetSigmas=3):
+    flux = flux.copy()
+    dflux = dflux.copy()
     if nondet is not None:
         flux[nondet] = nondetSigmas * dflux[nondet]
         dflux[nondet] = np.nan

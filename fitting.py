@@ -106,15 +106,21 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
 
 
 def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs={},
-                      num_models_to_plot=100, lcaxis_posn=[0.7, 0.55, 0.2, 0.4],
-                      filter_spacing=0.5, save_plot_as=''):
+                      num_models_to_plot=100, lcaxis_posn=(0.7, 0.55, 0.2, 0.4),
+                      filter_spacing=0.5, tmin=None, tmax=None, t0_offset=None, save_plot_as=''):
     if 'serif' in plt.style.available:
         plt.style.use('serif')
 
     choices = np.random.choice(sampler_flatchain.shape[0], num_models_to_plot)
     ps = sampler_flatchain[choices].T
 
-    fig = corner.corner(sampler_flatchain, labels=model.axis_labels)
+    sampler_flatchain_corner = sampler_flatchain.copy()
+    if t0_offset is not None and 't_0' in model.input_names:
+        i_t0 = model.input_names.index('t_0')
+        sampler_flatchain_corner[:, i_t0] -= t0_offset
+        model.axis_labels[i_t0] = model.axis_labels[i_t0].replace('t_0', 't_0 - {:.0f}'.format(t0_offset))
+
+    fig = corner.corner(sampler_flatchain_corner, labels=model.axis_labels)
     corner_axes = np.array(fig.get_axes()).reshape(model.nparams, model.nparams)
 
     for ax in np.diag(corner_axes):
@@ -125,7 +131,11 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs={},
         ax.yaxis.set_ticks_position('none')
 
     ax = fig.add_axes(lcaxis_posn)
-    xfit = np.arange(np.min(lc['MJD']), np.max(lc['MJD']), 0.1)
+    if tmin is None:
+        tmin = np.min(lc['MJD'])
+    if tmax is None:
+        tmax = np.max(lc['MJD'])
+    xfit = np.arange(tmin, tmax, 0.1)
     ufilts = np.unique(lc['filter'])
     y_fit = model(xfit, ufilts, *ps, **model_kwargs)
 
@@ -153,7 +163,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs={},
     return fig
 
 
-def format_credible_interval(x, sigfigs=1, percentiles=[15.87, 50., 84.14], axis=0, varnames=None, units=None):
+def format_credible_interval(x, sigfigs=1, percentiles=(15.87, 50., 84.14), axis=0, varnames=None, units=None):
     quantiles = np.percentile(x, percentiles, axis=axis).T
     uncertainties = np.diff(quantiles)
     smaller_unc = np.amin(uncertainties, axis=-1)

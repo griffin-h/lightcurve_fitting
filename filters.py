@@ -4,8 +4,10 @@ from astropy.table import Table
 import astropy.units as u
 import astropy.constants as const
 import os
-
-filters_dir = 'filters/'
+try:
+    from config import filters_dir
+except ModuleNotFoundError:
+    filters_dir = 'filters/'
 
 
 class Filter:

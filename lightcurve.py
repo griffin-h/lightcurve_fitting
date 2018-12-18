@@ -1,10 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
-from matplotlib.markers import MarkerStyle
-import itertools
 from astropy.table import Table, vstack
 import filters
+try:
+    from config import markers, othermarkers
+except ModuleNotFoundError:
+    import itertools
+    from matplotlib.markers import MarkerStyle
+    markers = {}
+    othermarkers = itertools.cycle(MarkerStyle.filled_markers)
 
 
 class Arrow(Path):
@@ -29,9 +34,6 @@ arrow = Arrow(0.2, 0.3)
 
 
 class LC(Table):
-    markers = {}
-    othermarkers = itertools.cycle(MarkerStyle.filled_markers)
-
     def __init__(self, *args, **kwargs):
         Table.__init__(self, *args, **kwargs)
         self.sn = None
@@ -169,6 +171,7 @@ class LC(Table):
 
     def plot(self, xcol='phase', ycol='absmag', offset_factor=1, color='filt', marker='source', use_lines=False,
              normalize=False, fillmark=True, **criteria):
+        global markers
         xchoices = ['phase', 'MJD']
         while xcol not in self.keys():
             xchoices.remove(xcol)
@@ -218,12 +221,12 @@ class LC(Table):
             if marker == 'name':
                 mark = self.sn.marker
             elif marker in plottable.keys():
-                if g[marker][0] not in LC.markers:
-                    for nextmarker in LC.othermarkers:
-                        if nextmarker not in LC.markers.values():
-                            LC.markers[g[marker][0]] = nextmarker
+                if g[marker][0] not in markers:
+                    for nextmarker in othermarkers:
+                        if nextmarker not in markers.values():
+                            markers[g[marker][0]] = nextmarker
                             break
-                mark = LC.markers[g[marker][0]]
+                mark = markers[g[marker][0]]
             elif not marker:
                 mark = None
             else:

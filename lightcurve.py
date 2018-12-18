@@ -210,7 +210,7 @@ class LC(Table):
             filt = filters.filtdict[g['filt'][0]]
             if color == 'filt':
                 col = filt.color
-                mec = 'k' if filt.system == 'Johnson' else col
+                mec = 'k' if filt.system == 'Johnson' else filt.linecolor
             elif color == 'name':
                 col = self.sn.plotcolor
                 mec = col if col not in ['w', '#FFFFFF'] else 'k'

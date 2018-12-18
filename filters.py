@@ -46,7 +46,7 @@ class Filter:
         self.plotstyle = {'color': self.linecolor, 'mfc': self.color, 'mec': self.mec}
         if fnu is not None:
             self.fnu = fnu  # * u.W * u.m**-2 * u.Hz**-1
-        elif self.system in ['Gunn', 'ATLAS']:  # AB magnitudes
+        elif self.system in ['Gunn', 'ATLAS', 'Gaia']:  # AB magnitudes
             self.fnu = 3.631e-23  # * u.W * u.m**-2 * u.Hz**-1
         else:
             self.fnu = None
@@ -179,7 +179,8 @@ all_filters = [
     Filter(['g', "g'", 'gp'], '#00CCFF', 1, 'Gunn', filename='sdss-gp-183.asci'),
     Filter('V', '#79FF00', 0, 'Johnson', 3.636e-23, filename='jnsn-vx-183.asci', textcolor='#46CC00'),
     Filter(['v', 'vs'], '#00FF30', -2, 'Swift', 3.664e-23, filename='Swift_UVOT.V.dat', angstrom=True),
-    Filter(['unfilt.', '0', 'Clear'], 'w', 0, 'Johnson', 3.631e-23, filename='KAF-1001E.asci', linecolor='k'),
+    Filter(['unfilt.', '0', 'Clear'], 'w', 0, 'Itagaki', 3.631e-23, filename='KAF-1001E.asci', linecolor='k'),
+    Filter('G', 'w', 0, 'Gaia', filename='GAIA_GAIA0.G.dat', angstrom=True, linecolor='k'),
     Filter('o', 'orange', -1, 'ATLAS', filename='orange.asci'),
     Filter(['r', "r'", 'rp'], '#FF7D00', -1, 'Gunn', filename='sdss-rp-183.asci'),
     Filter(['R', 'Rc'], '#FF7000', -1, 'Johnson', 3.064e-23, filename='cous-rs-183.asci'),  # '#CC5900'

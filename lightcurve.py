@@ -255,6 +255,9 @@ class LC(Table):
             else:
                 plt.plot(x, y, color=mec, mfc=mfc, mec=mec, marker=mark, label=label, linestyle=self.sn.linestyle,
                          linewidth=self.sn.linewidth)
+        ymin, ymax = plt.ylim()
+        if ymax > ymin:
+            plt.ylim(ymax, ymin)
 
     @classmethod
     def read(cls, filepath, format='ascii.fixed_width', fill_values=None, **kwargs):

@@ -64,6 +64,14 @@ def shock_cooling(t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW
     return y_fit
 
 
+def t_min(v_s, M_env, f_rho_M, R, t_exp=0., kappa=1.):
+    return 0.2 * R / v_s * np.minimum(0.5, R ** 0.4 * (f_rho_M * kappa) ** -0.2 * v_s ** -0.7) + t_exp
+
+
+def t_max(v_s, M_env, f_rho_M, R, t_exp=0., kappa=1.):
+    return 7.4 * (R / kappa) ** 0.55 + t_exp
+
+
 ShockCooling = Model(shock_cooling,
                      [
                          'v_\\mathrm{s*}',
@@ -80,6 +88,8 @@ ShockCooling = Model(shock_cooling,
                          u.d
                      ]
                      )
+ShockCooling.t_min = t_min
+ShockCooling.t_max = t_max
 
 
 def shock_cooling2(t_in, f, T_1, L_1, t_tr, t_exp=0., n=1.5, RW=False):
@@ -113,6 +123,23 @@ def shock_cooling2(t_in, f, T_1, L_1, t_tr, t_exp=0., n=1.5, RW=False):
     return y_fit
 
 
+def t_min2(*args):
+    raise NotImplementedError('t_min cannot be translated to these parameters')
+
+
+def t_max2(T_1, L_1=0., t_tr=0., t_exp=0., n=1.5):
+    if n == 1.5:
+        epsilon_1 = 0.027
+    elif n == 3.:
+        epsilon_1 = 0.016
+    else:
+        raise ValueError('n can only be 1.5 or 3')
+
+    epsilon_T = 2 * epsilon_1 - 0.5
+
+    return (8.12 / T_1) ** (epsilon_T ** -1) + t_exp
+
+
 ShockCooling2 = Model(shock_cooling2,
                       [
                           'T_1',
@@ -127,6 +154,8 @@ ShockCooling2 = Model(shock_cooling2,
                           u.d
                       ]
                       )
+ShockCooling2.t_min = t_min2
+ShockCooling2.t_max = t_max2
 
 sifto = Table.read('models/sifto.dat', format='ascii')
 

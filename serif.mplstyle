@@ -1,0 +1,6 @@
+font.family        : serif
+mathtext.fontset   : dejavuserif
+xtick.minor.visible: True
+ytick.minor.visible: True
+image.origin       : lower
+hist.bins          : auto

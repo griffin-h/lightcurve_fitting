@@ -7,14 +7,27 @@ k_B = const.k_B.to("eV / kK").value
 c3 = (4 * np.pi * const.sigma_sb.to("erg s-1 Rsun-2 kK-4").value) ** -0.5 / 1000.  # Rsun --> kiloRsun
 
 
+def format_unit(unit):
+    if isinstance(unit, u.Quantity):
+        value = np.log10(unit.value)
+        unit = unit.unit
+        if value % 1.:
+            unit_str = '$10^{{{value:.1f}}}$ {unit:latex_inline}'
+        else:
+            unit_str = '$10^{{{value:.0f}}}$ {unit:latex_inline}'
+    else:
+        value = None
+        unit_str = '{unit:latex_inline}'
+    return unit_str.format(value=value, unit=unit)
+
+
 class Model:
     def __init__(self, func, input_names, units):
         self.func = func
         self.input_names = input_names
         self.units = units
         self.nparams = len(input_names)
-        self.axis_labels = ['${}$ ({:latex_inline})'.format(var, u.Unit(unit)).replace('1 \\times ', '')
-                            for var, unit in zip(input_names, units)]
+        self.axis_labels = ['${}$ ({})'.format(var, format_unit(unit)) for var, unit in zip(input_names, units)]
 
     def __call__(self, *args, **kwargs):
         return self.func(*args, **kwargs)

@@ -120,7 +120,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs={},
             t0_offset = np.floor(sampler_flatchain_corner[:, i_t0].min())
         if t0_offset != 0.:
             sampler_flatchain_corner[:, i_t0] -= t0_offset
-            model.axis_labels[i_t0] = model.axis_labels[i_t0].replace('t_0', 't_0 - {:.0f}'.format(t0_offset))
+            model.axis_labels[i_t0] = '$t_0 - {:.0f}$ (d)'.format(t0_offset)
 
     fig = corner.corner(sampler_flatchain_corner, labels=model.axis_labels)
     corner_axes = np.array(fig.get_axes()).reshape(model.nparams, model.nparams)
@@ -141,18 +141,19 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs={},
     ufilts = np.unique(lc['filter'])
     y_fit = model(xfit, ufilts, *ps, **model_kwargs)
 
+    mjd_offset = np.floor(tmin)
     yscale = 10 ** np.round(np.log10(np.max(y_fit)))
     offset = -len(ufilts) // 2 * filter_spacing
     for filt, yfit in zip(ufilts, y_fit):
         offset += filter_spacing
         lc_filt = lc.where(filter=filt)
-        ax.errorbar(lc_filt['MJD'], lc_filt['lum'] / yscale + offset, lc_filt['dlum'] / yscale,
+        ax.errorbar(lc_filt['MJD'] - mjd_offset, lc_filt['lum'] / yscale + offset, lc_filt['dlum'] / yscale,
                     ls='none', marker='o', **filt.plotstyle)
-        ax.plot(xfit, yfit / yscale + offset, color=filt.linecolor, alpha=0.05)
+        ax.plot(xfit - mjd_offset, yfit / yscale + offset, color=filt.linecolor, alpha=0.05)
         txt = '${}{:+.1f}$'.format(filt.name, offset) if offset else filt.name
         ax.text(1.03, yfit[-1, 0] / yscale + offset, txt, color=filt.textcolor,
                 ha='left', va='center', transform=ax.get_yaxis_transform())
-    ax.set_xlabel('MJD')
+    ax.set_xlabel('MJD - {:.0f}'.format(mjd_offset))
     ax.set_ylabel('Luminosity $L_\\nu$ (10$^{{{:.0f}}}$ erg s$^{{-1}}$ Hz$^{{-1}}$) + Offset'
                   .format(np.log10(yscale) + 7))  # W --> erg / s
 

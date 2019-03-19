@@ -256,7 +256,7 @@ def planck_fast(nu, T, R):
 def blackbody_to_filters(filtobj, T, R):
     if T.shape != R.shape:
         raise Exception('T & R must have the same shape')
-    if T.ndim <= 1 and len(T) == len(filtobj):  # pointwise
+    if T.ndim == 1 and len(T) == len(filtobj):  # pointwise
         y_fit = np.array([np.trapz(planck_fast(f.trans['freq'].data, t, r) * f.trans['T_norm_per_freq'].data,
                                    f.trans['freq'].data) for t, r, f in zip(T, R, filtobj)])  # shape = (len(T),)
     elif T.ndim <= 1:

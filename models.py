@@ -2,6 +2,7 @@ import numpy as np
 import astropy.constants as const
 import astropy.units as u
 from astropy.table import Table
+import os
 
 k_B = const.k_B.to("eV / kK").value
 c3 = (4 * np.pi * const.sigma_sb.to("erg s-1 Rsun-2 kK-4").value) ** -0.5 / 1000.  # Rsun --> kiloRsun
@@ -170,7 +171,8 @@ ShockCooling2 = Model(shock_cooling2,
 ShockCooling2.t_min = t_min2
 ShockCooling2.t_max = t_max2
 
-sifto = Table.read('models/sifto.dat', format='ascii')
+sifto_filename = os.path.join(os.path.dirname(__file__), 'models', 'sifto.dat')
+sifto = Table.read(sifto_filename, format='ascii')
 
 
 def scale_sifto(sn_lc):

@@ -166,7 +166,11 @@ class LC(Table):
         elif self.sn.explosion is not None:
             self.sn.refmjd = self.sn.explosion
         else:
-            self.sn.refmjd = np.min(self.where(nondet=False)['MJD'].data)
+            if 'nondet' in self.colnames:
+                detections = self.where(nondet=False)
+            else:
+                detections = self
+            self.sn.refmjd = np.min(detections['MJD'].data)
         phase = (self['MJD'].data - self.sn.refmjd) / (1 + self.sn.z)
         self['phase'] = phase
 
@@ -245,23 +249,27 @@ class LC(Table):
                 y -= self.sn.peakmag
             elif normalize and ycol == 'absmag':
                 y -= self.sn.peakabsmag
-            if 'nondet' in g.keys() and marker:  # don't plot if no markers used
+            if 'mag' in ycol and 'nondet' in g.keys() and marker:  # don't plot if no markers used
                 plt.plot(x[g['nondet']], y[g['nondet']], marker=arrow, linestyle='none', ms=25, mec=mec)
             if self.sn is None:
                 label = None
+                linestyle = None
+                linewidth = None
             else:
                 label = self.sn.name
+                linestyle = self.sn.linestyle
+                linewidth = self.sn.linewidth
             if not use_lines:
                 plt.errorbar(x, y, yerr, color=mec, mfc=mfc, mec=mec, marker=mark, linestyle='none', label=label)
-            elif 'nondet' in g.colnames:
-                plt.plot(x[~g['nondet']], y[~g['nondet']], color=mec, mfc=mfc, mec=mec, marker=mark, label=label,
-                         linestyle=self.sn.linestyle, linewidth=self.sn.linewidth)
+            elif 'mag' in ycol and 'nondet' in g.colnames:
+                plt.plot(x[~g['nondet']], y[~g['nondet']], color=col, mfc=mfc, mec=mec, marker=mark, label=label,
+                         linestyle=linestyle, linewidth=linewidth)
                 plt.plot(x[g['nondet']], y[g['nondet']], color=mec, mfc=mfc, mec=mec, marker=mark, linestyle='none')
             else:
-                plt.plot(x, y, color=mec, mfc=mfc, mec=mec, marker=mark, label=label, linestyle=self.sn.linestyle,
-                         linewidth=self.sn.linewidth)
+                plt.plot(x, y, color=mec, mfc=mfc, mec=mec, marker=mark, label=label, linestyle=linestyle,
+                         linewidth=linewidth)
         ymin, ymax = plt.ylim()
-        if ymax > ymin:
+        if 'mag' in ycol and ymax > ymin:
             plt.ylim(ymax, ymin)
 
     @classmethod

@@ -179,7 +179,7 @@ all_filters = [
     Filter(['g', "g'", 'gp'], '#00CCFF', 1, 'Gunn', filename='sdss-gp-183.asci'),
     Filter('V', '#79FF00', 0, 'Johnson', 3.636e-23, filename='jnsn-vx-183.asci', textcolor='#46CC00'),
     Filter(['v', 'vs'], '#00FF30', -2, 'Swift', 3.664e-23, filename='Swift_UVOT.V.dat', angstrom=True),
-    Filter(['unfilt.', '0', 'Clear'], 'w', 0, 'Itagaki', 3.631e-23, filename='KAF-1001E.asci', linecolor='k'),
+    Filter(['unfilt.', '0', 'Clear', 'C'], 'w', 0, 'Itagaki', 3.631e-23, filename='KAF-1001E.asci', linecolor='k'),
     Filter('G', 'w', 0, 'Gaia', filename='GAIA_GAIA0.G.dat', angstrom=True, linecolor='k'),
     Filter('o', 'orange', -1, 'ATLAS', filename='orange.asci'),
     Filter(['r', "r'", 'rp'], '#FF7D00', -1, 'Gunn', filename='sdss-rp-183.asci'),

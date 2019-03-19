@@ -34,7 +34,7 @@ class Model:
         return self.func(*args, **kwargs)
 
 
-def shock_cooling(t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW=False):
+def shock_cooling(t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW=False, z=0.):
     """time in days, velocity in 10**8.5 cm/s, masses in M_sun,
        progenitor radius in 10**13 cm, opacity in 0.34 cm**2/g,
        color temperature in kK, blackbody radius in 1000 R_sun"""
@@ -73,7 +73,7 @@ def shock_cooling(t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW
     T_K = np.squeeze(T_col) / k_B
     R_bb = c3 * np.squeeze(L) ** 0.5 * T_K ** -2
 
-    y_fit = blackbody_to_filters(f, T_K, R_bb)
+    y_fit = blackbody_to_filters(f, T_K, R_bb, z)
 
     return y_fit
 
@@ -106,7 +106,7 @@ ShockCooling.t_min = t_min
 ShockCooling.t_max = t_max
 
 
-def shock_cooling2(t_in, f, T_1, L_1, t_tr, t_exp=0., n=1.5, RW=False):
+def shock_cooling2(t_in, f, T_1, L_1, t_tr, t_exp=0., n=1.5, RW=False, z=0.):
     if n == 1.5:
         a = 1.67
         alpha = 0.8
@@ -132,7 +132,7 @@ def shock_cooling2(t_in, f, T_1, L_1, t_tr, t_exp=0., n=1.5, RW=False):
     L = np.squeeze(L_1 * np.exp(-(a * t / t_tr) ** alpha) * t ** epsilon_L) * 1e42
     R_bb = c3 * L ** 0.5 * T_K ** -2
 
-    y_fit = blackbody_to_filters(f, T_K, R_bb)
+    y_fit = blackbody_to_filters(f, T_K, R_bb, z)
 
     return y_fit
 
@@ -181,16 +181,16 @@ def scale_sifto(sn_lc):
        and colors. The argument is your supernova's light curve."""
     for filt in set(sn_lc['filter']):
         if filt.char not in sifto.colnames:
-            raise Exception('No SiFTO tempalte for filter ' + filt.char)
+            raise Exception('No SiFTO template for filter ' + filt.char)
         lc_filt = sn_lc.where(filter=filt)
         sifto[filt.char] *= np.max(lc_filt['lum']) / np.max(sifto[filt.char])
 
 
-def companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, rr, ri, rU, kappa=1.):
+def companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, rr, ri, rU, kappa=1., z=0.):
     t_wrt_exp = t_in.reshape(-1, 1) - t_exp
     T_kasen = np.squeeze(25. * (a13 ** 36 * Mc_v9_7 * kappa ** -35 * t_wrt_exp ** -74) ** (1 / 144.))  # kK
     R_kasen = np.squeeze(2.7 * (kappa * Mc_v9_7 * t_wrt_exp ** 7) ** (1 / 9.))  # kiloRsun
-    Lnu_kasen = blackbody_to_filters(f, T_kasen, R_kasen)
+    Lnu_kasen = blackbody_to_filters(f, T_kasen, R_kasen, z)
 
     t_wrt_peak = np.squeeze(t_in.reshape(-1, 1) - t_peak)
     if t_wrt_peak.ndim <= 1 and len(t_wrt_peak) == len(f):  # pointwise
@@ -253,17 +253,17 @@ def planck_fast(nu, T, R):
         np.outer(R ** 2, nu ** 3) / (np.exp(c1 * np.outer(T ** -1, nu)) - 1))  # shape = (len(T), len(nu))
 
 
-def blackbody_to_filters(filtobj, T, R):
+def blackbody_to_filters(filtobj, T, R, z=0.):
     if T.shape != R.shape:
         raise Exception('T & R must have the same shape')
     if T.ndim == 1 and len(T) == len(filtobj):  # pointwise
-        y_fit = np.array([np.trapz(planck_fast(f.trans['freq'].data, t, r) * f.trans['T_norm_per_freq'].data,
+        y_fit = np.array([np.trapz(planck_fast(f.trans['freq'].data * (1. + z), t, r) * f.trans['T_norm_per_freq'].data,
                                    f.trans['freq'].data) for t, r, f in zip(T, R, filtobj)])  # shape = (len(T),)
     elif T.ndim <= 1:
-        y_fit = np.array([np.trapz(planck_fast(f.trans['freq'].data, T, R) * f.trans['T_norm_per_freq'].data,
+        y_fit = np.array([np.trapz(planck_fast(f.trans['freq'].data * (1. + z), T, R) * f.trans['T_norm_per_freq'].data,
                                    f.trans['freq'].data) for f in filtobj]).T  # shape = (len(T), len(filtobj))
     else:
-        y_fit = np.array([np.trapz(planck_fast(f.trans['freq'].data, T.flatten(), R.flatten())
+        y_fit = np.array([np.trapz(planck_fast(f.trans['freq'].data * (1. + z), T.flatten(), R.flatten())
                                    * f.trans['T_norm_per_freq'].data,
                                    f.trans['freq'].data) for f in filtobj]).T  # shape = (T.size, len(filtobj))
         y_fit = np.rollaxis(y_fit.reshape(T.shape[0], T.shape[1], len(filtobj)), -1)

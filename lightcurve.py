@@ -3,13 +3,12 @@ import matplotlib.pyplot as plt
 from matplotlib.path import Path
 from astropy.table import Table, vstack
 import filters
+import itertools
+from matplotlib.markers import MarkerStyle
 try:
-    from config import markers, othermarkers
+    from config import markers
 except ModuleNotFoundError:
-    import itertools
-    from matplotlib.markers import MarkerStyle
     markers = {}
-    othermarkers = itertools.cycle(MarkerStyle.filled_markers)
 
 
 class Arrow(Path):
@@ -31,6 +30,8 @@ class Arrow(Path):
 
 
 arrow = Arrow(0.2, 0.3)
+othermarkers = itertools.cycle(MarkerStyle.filled_markers)
+usedmarkers = []
 
 
 class LC(Table):
@@ -223,7 +224,7 @@ class LC(Table):
             elif marker in plottable.keys():
                 if g[marker][0] not in markers:
                     for nextmarker in othermarkers:
-                        if nextmarker not in markers.values():
+                        if nextmarker not in usedmarkers:
                             markers[g[marker][0]] = nextmarker
                             break
                 mark = markers[g[marker][0]]
@@ -231,6 +232,7 @@ class LC(Table):
                 mark = None
             else:
                 mark = marker
+            usedmarkers.append(mark)
             if use_lines:
                 g.sort(xcol)
             elif 'mag' in ycol:

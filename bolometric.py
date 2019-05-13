@@ -156,7 +156,7 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
         epoch1.sort('freq')
         mjdavg = np.mean(epoch1['MJD'])
 
-        filts = set(epoch1['filter'].data)
+        filts = set(epoch1.where(nondet=False)['filter'].data)
         filtstr = ''.join([f.char for f in sorted(filts)])
         nfilt = len(filts)
         if nfilt > 2:

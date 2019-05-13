@@ -175,7 +175,7 @@ class LC(Table):
         self['phase'] = phase
 
     def plot(self, xcol='phase', ycol='absmag', offset_factor=1, color='filt', marker='source', use_lines=False,
-             normalize=False, fillmark=True, **criteria):
+             normalize=False, fillmark=True, **kwargs):
         global markers
         xchoices = ['phase', 'MJD']
         while xcol not in self.keys():
@@ -192,6 +192,8 @@ class LC(Table):
             else:
                 raise Exception('no columns found for y-axis')
         plotthese = np.tile(True, len(self))
+        criteria = {key: val for key, val in kwargs.items() if key in self.colnames}
+        plot_kwargs = {key: val for key, val in kwargs.items() if key not in self.colnames}
         for key, value in criteria.items():
             if isinstance(value, list):
                 subplotthese = np.tile(False, len(self))
@@ -250,7 +252,7 @@ class LC(Table):
             elif normalize and ycol == 'absmag':
                 y -= self.sn.peakabsmag
             if 'mag' in ycol and 'nondet' in g.keys() and marker:  # don't plot if no markers used
-                plt.plot(x[g['nondet']], y[g['nondet']], marker=arrow, linestyle='none', ms=25, mec=mec)
+                plt.plot(x[g['nondet']], y[g['nondet']], marker=arrow, linestyle='none', ms=25, mec=mec, **plot_kwargs)
             if self.sn is None:
                 label = None
                 linestyle = None
@@ -260,14 +262,16 @@ class LC(Table):
                 linestyle = self.sn.linestyle
                 linewidth = self.sn.linewidth
             if not use_lines:
-                plt.errorbar(x, y, yerr, color=mec, mfc=mfc, mec=mec, marker=mark, linestyle='none', label=label)
+                plt.errorbar(x, y, yerr, color=mec, mfc=mfc, mec=mec, marker=mark, linestyle='none', label=label,
+                             **plot_kwargs)
             elif 'mag' in ycol and 'nondet' in g.colnames:
                 plt.plot(x[~g['nondet']], y[~g['nondet']], color=col, mfc=mfc, mec=mec, marker=mark, label=label,
-                         linestyle=linestyle, linewidth=linewidth)
-                plt.plot(x[g['nondet']], y[g['nondet']], color=mec, mfc=mfc, mec=mec, marker=mark, linestyle='none')
+                         linestyle=linestyle, linewidth=linewidth, **plot_kwargs)
+                plt.plot(x[g['nondet']], y[g['nondet']], color=mec, mfc=mfc, mec=mec, marker=mark, linestyle='none',
+                         **plot_kwargs)
             else:
                 plt.plot(x, y, color=mec, mfc=mfc, mec=mec, marker=mark, label=label, linestyle=linestyle,
-                         linewidth=linewidth)
+                         linewidth=linewidth, **plot_kwargs)
         ymin, ymax = plt.ylim()
         if 'mag' in ycol and ymax > ymin:
             plt.ylim(ymax, ymin)

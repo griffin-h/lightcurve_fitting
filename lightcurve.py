@@ -86,17 +86,17 @@ class LC(Table):
 
     def bin(self, delta=0.3, groupby=None):
         if groupby is None:
-            groupby = ['filt', 'source']
+            groupby = {'filt', 'source'}
         subtabs = []
         self.groupby = list(set(groupby) & set(self.colnames))
         if self.groupby:
-            grouped = self.group_by(groupby)
+            grouped = self.group_by(self.groupby)
         else:
             grouped = self
         for g, k in zip(grouped.groups, grouped.groups.keys):
             mjd, flux, dflux = binflux(g['MJD'], g['flux'], g['dflux'], delta)
             binned = LC([mjd, flux, dflux], names=['MJD', 'flux', 'dflux'])
-            for key in groupby:
+            for key in self.groupby:
                 binned[key] = k[key]
             subtabs.append(binned)
         lc = vstack(subtabs)

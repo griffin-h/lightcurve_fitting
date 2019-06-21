@@ -80,9 +80,11 @@ class LC(Table):
         self.filters_to_objects()
         return np.array([f.m0 for f in self['filter']])
 
-    def calcFlux(self, nondetSigmas=3):
+    def calcFlux(self, nondetSigmas=3, zp=None):
         self.nondetSigmas = nondetSigmas
-        self['flux'], self['dflux'] = mag2flux(self['mag'], self['dmag'], self.zp(), self['nondet'], self.nondetSigmas)
+        if zp is None:
+            zp = self.zp()
+        self['flux'], self['dflux'] = mag2flux(self['mag'], self['dmag'], zp, self['nondet'], self.nondetSigmas)
 
     def bin(self, delta=0.3, groupby=None):
         if groupby is None:
@@ -107,9 +109,11 @@ class LC(Table):
         self.nondetSigmas = nondetSigmas
         self['nondet'] = self['flux'] < self.nondetSigmas * self['dflux']
 
-    def calcMag(self, nondetSigmas=3):
-        self.nondetSigmas = nondetSigmas
-        self['mag'], self['dmag'] = flux2mag(self['flux'], self['dflux'], self.zp(), self['nondet'], self.nondetSigmas)
+    def calcMag(self, nondetSigmas=3, zp=None):
+        self.findNondet(nondetSigmas)
+        if zp is None:
+            zp = self.zp()
+        self['mag'], self['dmag'] = flux2mag(self['flux'], self['dflux'], zp, self['nondet'], self.nondetSigmas)
 
     def calcAbsMag(self, dm=None, extinction=None, hostext=None):
         if self.sn is None:

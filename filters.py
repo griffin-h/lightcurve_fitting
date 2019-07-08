@@ -168,6 +168,8 @@ def resample_filter_curve(filename, outfile):
 
 
 all_filters = [
+    Filter('FUV', 'b', 8, 'GALEX', filename='GALEX_GALEX.FUV.dat', angstrom=True),
+    Filter('NUV', 'r', 8, 'GALEX', filename='GALEX_GALEX.NUV.dat', angstrom=True),
     Filter(['UVW2', 'uvw2', 'W2', '2', 'uw2'], '#FF007F', 8, 'Swift', 7.379e-24, 'Swift_UVOT.UVW2.dat', angstrom=True),
     Filter(['UVM2', 'uvm2', 'M2', 'M', 'um2'], 'm', 8, 'Swift', 7.656e-24, 'Swift_UVOT.UVM2.dat', angstrom=True),
     Filter(['UVW1', 'uvw1', 'W1', '1', 'uw1'], '#7F00FF', 4, 'Swift', 9.036e-24, 'Swift_UVOT.UVW1.dat', angstrom=True),
@@ -176,17 +178,18 @@ all_filters = [
     Filter('U', '#3C0072', 3, 'Johnson', 1.79e-23, filename='jnsn-uv-183.asci'),
     Filter('B', '#0057FF', 2, 'Johnson', 4.063e-23, filename='jnsn-bu-183.asci'),
     Filter(['b', 'bs'], '#4B00FF', 0, 'Swift', 4.093e-23, filename='Swift_UVOT.B.dat', angstrom=True),
-    Filter(['g', "g'", 'gp'], '#00CCFF', 1, 'Gunn', filename='sdss-gp-183.asci'),
+    Filter(['g', "g'", 'gp', 'F475W'], '#00CCFF', 1, 'Gunn', filename='sdss-gp-183.asci'),
+    Filter('c', 'c', 0, 'ATLAS', filename='ATLAS_cyan.txt'),
     Filter('V', '#79FF00', 0, 'Johnson', 3.636e-23, filename='jnsn-vx-183.asci', textcolor='#46CC00'),
     Filter(['v', 'vs'], '#00FF30', -2, 'Swift', 3.664e-23, filename='Swift_UVOT.V.dat', angstrom=True),
     Filter(['unfilt.', '0', 'Clear', 'C'], 'w', 0, 'Itagaki', 3.631e-23, filename='KAF-1001E.asci', linecolor='k'),
     Filter('G', 'w', 0, 'Gaia', filename='GAIA_GAIA0.G.dat', angstrom=True, linecolor='k'),
-    Filter('o', 'orange', -1, 'ATLAS', filename='orange.asci'),
-    Filter(['r', "r'", 'rp'], '#FF7D00', -1, 'Gunn', filename='sdss-rp-183.asci'),
-    Filter(['R', 'Rc'], '#FF7000', -1, 'Johnson', 3.064e-23, filename='cous-rs-183.asci'),  # '#CC5900'
-    Filter(['i', "i'", 'ip'], '#90002C', -2, 'Gunn', filename='sdss-ip-183.asci'),
+    Filter('o', 'orange', -1, 'ATLAS', filename='ATLAS_orange.txt'),
+    Filter(['r', "r'", 'rp', 'F625W'], '#FF7D00', -1, 'Gunn', filename='sdss-rp-183.asci'),
+    Filter(['R', 'Rc', 'R_s'], '#FF7000', -1, 'Johnson', 3.064e-23, filename='cous-rs-183.asci'),  # '#CC5900'
+    Filter(['i', "i'", 'ip', 'F775W'], '#90002C', -2, 'Gunn', filename='sdss-ip-183.asci'),
     Filter(['I', 'Ic'], '#66000B', -2, 'Johnson', 2.416e-23, filename='cous-ic-183.asci'),  # brightened from '#1C0003'
-    Filter(['z', "z'", 'Z', 'zs'], '#000000', -1, 'Gunn', filename='pstr-zs-183.asci'),
+    Filter(['z', "z'", 'Z', 'zs'], '#000000', -3, 'Gunn', filename='pstr-zs-183.asci'),
     Filter('w', '#FFFFFF', -1, 'Johnson', filename='pstr-wx-183.asci'),
     Filter('y', 'y', -2, 'Gunn', filename='pstr-yx-183.asci'),
     Filter('J', '#444444', -2, 'UKIRT', 1.589e-23, filename='Gemini_Flamingos2.J.dat', angstrom=True),

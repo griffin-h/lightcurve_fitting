@@ -182,37 +182,23 @@ def readspec(f, verbose=False):
     return np.array(x), np.array(y), date, telescope, instrument
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Calibrate spectra of a supernova to photometry.')
-    parser.add_argument('spectra', nargs='+', help='filenames of spectra')
-    parser.add_argument('--lc', help='filename of photometry table (must have columns "MJD", "filt", and "mag"/"flux")')
-    parser.add_argument('--lc-format', default='ascii',
-                        help='format of photometry table (passed to `astropy.table.Table.read`)')
-    parser.add_argument('-f', '--filters', nargs='+', help='filters to use for calibration',
-                        choices=list(filtdict.keys()))
-    parser.add_argument('-o', '--order', type=int, default=0, help='polynomial order of correction function')
-    parser.add_argument('-z', '--redshift', type=float, default=0., help='supernova redshift to correct spectra')
-    parser.add_argument('--subtract-percentile', type=float, help='subtract continuum from spectrum before correcting')
-    parser.add_argument('--show', action='store_true')
-    args = parser.parse_args()
-
-    lc = LC.read(args.lc, format=args.format)
+def calibrate_spectra(spectra, lc, filters=None, order=0, redshift=0., subtract_percentile=None, show=False):
     lc.calcFlux()
     lc.sort('MJD')
 
-    if args.filters is None:
+    if filters is None:
         filts = {filtdict[filt] for filt in lc['filt']}
     else:
-        filts = {filtdict[filt] for filt in args.filters}
+        filts = {filtdict[filt] for filt in filters}
 
     for filt in filts:
         filt.read_curve()
         filt.trans.sort('freq')
 
-    for spec in args.spectra:
+    for spec in spectra:
         wl, flux, time, _, _ = readspec(spec)
         mjd = time.mjd
-        if args.show:
+        if show:
             fig = plt.figure(figsize=(8., 6.))
             ax1 = plt.subplot(211)
             lc.plot(xcol='MJD', ycol='flux', offset_factor=0)
@@ -221,13 +207,13 @@ if __name__ == '__main__':
             ax1.set_ylabel('$F_\\nu$ (W Hz$^{-1}$)')
             ax2 = plt.subplot(212)
         good = ~np.isnan(flux)
-        wl = wl[good] * u.angstrom * (1. + args.redshift)  # do this in the observed frame
+        wl = wl[good] * u.angstrom * (1. + redshift)  # do this in the observed frame
         Flam = flux[good] * u.erg / u.s / u.angstrom / u.cm**2
         nu = const.c / wl
         Fnu = (Flam * wl / nu).to(u.W / u.Hz / u.m**2).value[::-1]
         nu = nu.to(u.THz).value[::-1]
-        if args.subtract_percentile is not None:
-            Fnu -= np.nanpercentile(Fnu, args.subtract_percentile)
+        if subtract_percentile is not None:
+            Fnu -= np.nanpercentile(Fnu, subtract_percentile)
         freqs = []
         ratios = []
         for filt in filts:
@@ -244,7 +230,7 @@ if __name__ == '__main__':
             trans_interp = np.interp(nu, filt.trans['freq'], filt.trans['T_norm_per_freq'])
             flux_spec = np.trapz(Fnu * trans_interp, nu) / np.trapz(trans_interp, nu)
             ratio = flux_lc / flux_spec
-            if args.show:
+            if show:
                 ax2.axvspan(freq0, freq1, color=filt.color, alpha=0.2)
                 ax2.plot(filt.freq_eff, flux_lc, marker='o', color=filt.color, zorder=5)
             ratios.append(ratio)
@@ -254,24 +240,43 @@ if __name__ == '__main__':
             plt.close(fig)
             continue
         scale = np.mean(ratios)
-        if args.order:
-            p = np.polyfit(freqs, np.array(ratios) / scale, args.order)
+        if order:
+            p = np.polyfit(freqs, np.array(ratios) / scale, order)
             corr = np.polyval(p, nu) * scale
             print(spec, scale, p[:-1])
         else:
             corr = scale
             print(spec, scale)
-        if args.show:
+        if show:
             ax2.plot(nu, Fnu * scale, label='rescaled')
             ax2.set_xlabel('Frequency (THz)')
             ax2.set_ylabel('$F_\\nu$ (W Hz$^{-1}$)')
-            if args.order:
+            if order:
                 ax2.plot(nu, Fnu * corr, color='C2', label='rescaled & warped')
                 plt.legend(loc='best')
             plt.show()
             ans = input('accept this scale? [Y/n] ')
-        if not args.show or ans.lower() != 'n':
-            data_out = np.array([wl[good] * (1. + args.redshift), flux[good] * corr]).T
-            filename_out = 'photcal_' + spec.replace('.fits', '.txt')
+        if not show or ans.lower() != 'n':
+            data_out = np.array([wl[good] * (1. + redshift), flux[good] * corr]).T
+            path_in, filename_in = os.path.split(spec)
+            filename_out = os.path.join(path_in, 'photcal_' + filename_in).replace('.fits', '.txt')
             np.savetxt(filename_out, data_out, fmt='%.1f %.2e')
             print(filename_out)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Calibrate spectra of a supernova to photometry.')
+    parser.add_argument('spectra', nargs='+', help='filenames of spectra')
+    parser.add_argument('--lc', help='filename of photometry table (must have columns "MJD", "filt", and "mag"/"flux")')
+    parser.add_argument('--lc-format', default='ascii',
+                        help='format of photometry table (passed to `astropy.table.Table.read`)')
+    parser.add_argument('-f', '--filters', nargs='+', help='filters to use for calibration',
+                        choices=list(filtdict.keys()))
+    parser.add_argument('-o', '--order', type=int, default=0, help='polynomial order of correction function')
+    parser.add_argument('-z', '--redshift', type=float, default=0., help='supernova redshift to correct spectra')
+    parser.add_argument('--subtract-percentile', type=float, help='subtract continuum from spectrum before correcting')
+    parser.add_argument('--show', action='store_true')
+    args = parser.parse_args()
+
+    lc = LC.read(args.lc, format=args.format)
+    calibrate_spectra(args.spectra, lc, args.filters, args.order, args.redshift, args.subtract_percentile, args.show)

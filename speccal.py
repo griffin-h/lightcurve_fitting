@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import numpy as np
-from filters import filtdict
 from lightcurve import LC
 from astropy import constants as const, units as u
 from astropy.io import fits
@@ -183,13 +182,12 @@ def readspec(f, verbose=False):
 
 
 def calibrate_spectra(spectra, lc, filters=None, order=0, redshift=0., subtract_percentile=None, show=False):
+    if filters is not None:
+        lc = lc.where(filt=filters)
     lc.calcFlux()
     lc.sort('MJD')
-
-    if filters is None:
-        filts = {filtdict[filt] for filt in lc['filt']}
-    else:
-        filts = {filtdict[filt] for filt in filters}
+    lc.filters_to_objects()
+    filts = set(lc['filter'])
 
     for filt in filts:
         filt.read_curve()
@@ -222,7 +220,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, redshift=0., subtract_
             if freq1 < np.min(nu) or freq0 > np.max(nu):
                 print(filt, "and spectrum don't overlap")
                 continue  # filter and spectrum don't overlap
-            lc_filt = lc.where(filt=filt.names, nondet=False)
+            lc_filt = lc.where(filter=filt, nondet=False)
             if len(lc_filt) == 0 or mjd - np.max(lc_filt['MJD']) > 1. or mjd < np.min(lc_filt['MJD']):
                 print(filt, "not observed before and after spectrum")
                 continue
@@ -270,8 +268,7 @@ if __name__ == '__main__':
     parser.add_argument('--lc', help='filename of photometry table (must have columns "MJD", "filt", and "mag"/"flux")')
     parser.add_argument('--lc-format', default='ascii',
                         help='format of photometry table (passed to `astropy.table.Table.read`)')
-    parser.add_argument('-f', '--filters', nargs='+', help='filters to use for calibration',
-                        choices=list(filtdict.keys()))
+    parser.add_argument('-f', '--filters', nargs='+', help='filters to use for calibration')
     parser.add_argument('-o', '--order', type=int, default=0, help='polynomial order of correction function')
     parser.add_argument('-z', '--redshift', type=float, default=0., help='supernova redshift to correct spectra')
     parser.add_argument('--subtract-percentile', type=float, help='subtract continuum from spectrum before correcting')

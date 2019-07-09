@@ -205,7 +205,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, redshift=0., subtract_
             ax1.set_ylabel('$F_\\nu$ (W Hz$^{-1}$)')
             ax2 = plt.subplot(212)
         good = ~np.isnan(flux)
-        wl = wl[good] * u.angstrom * (1. + redshift)  # do this in the observed frame
+        wl = wl[good] * u.angstrom / (1. + redshift)  # do this in the observed frame
         Flam = flux[good] * u.erg / u.s / u.angstrom / u.cm**2
         nu = const.c / wl
         Fnu = (Flam * wl / nu).to(u.W / u.Hz / u.m**2).value[::-1]

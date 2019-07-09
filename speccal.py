@@ -265,7 +265,8 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, redshift=0., subtract_
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Calibrate spectra of a supernova to photometry.')
     parser.add_argument('spectra', nargs='+', help='filenames of spectra')
-    parser.add_argument('--lc', help='filename of photometry table (must have columns "MJD", "filt", and "mag"/"flux")')
+    parser.add_argument('--lc', help='filename of photometry table (must have columns "MJD", "filt", "mag"/"flux", and'
+                                     '"dmag"/"dflux")')
     parser.add_argument('--lc-format', default='ascii',
                         help='format of photometry table (passed to `astropy.table.Table.read`)')
     parser.add_argument('-f', '--filters', nargs='+', help='filters to use for calibration')

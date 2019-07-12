@@ -30,7 +30,8 @@ class Arrow(Path):
 
 
 arrow = Arrow(0.2, 0.3)
-othermarkers = itertools.cycle(MarkerStyle.filled_markers)
+othermarkers = ('o', *MarkerStyle.filled_markers[2:])
+itermarkers = itertools.cycle(othermarkers)
 usedmarkers = []
 
 
@@ -235,6 +236,10 @@ class LC(Table):
                 if g[marker][0] not in markers:
                     for nextmarker in othermarkers:
                         if nextmarker not in usedmarkers:
+                            markers[g[marker][0]] = nextmarker
+                            break
+                    else:
+                        for nextmarker in itermarkers:
                             markers[g[marker][0]] = nextmarker
                             break
                 mark = markers[g[marker][0]]

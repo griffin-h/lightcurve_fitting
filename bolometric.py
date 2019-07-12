@@ -127,7 +127,7 @@ def plot_bolometric_results(t0, save_plot_as=None):
 
 
 def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=200, steps=100,
-                         T_range=(1., 100.), R_range=(0.01, 1000.), save_table_as=None):
+                         T_range=(1., 100.), R_range=(0.01, 1000.), save_table_as=None, min_nfilt=3):
 
     t0 = LC(names=('MJD', 'dMJD0', 'dMJD1',
                    'temp', 'radius', 'dtemp', 'dradius',  # best fit from scipy.curve_fit
@@ -159,7 +159,7 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
         filts = set(epoch1.where(nondet=False)['filter'].data)
         filtstr = ''.join([f.char for f in sorted(filts)])
         nfilt = len(filts)
-        if nfilt > 2:
+        if nfilt >= min_nfilt:
             # blackbody
             try:
                 p0, cov = curve_fit(models.planck_fast, epoch1['freq'] * (1. + z), epoch1['lum'], p0=[10., 10.],

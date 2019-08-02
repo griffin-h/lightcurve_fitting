@@ -68,7 +68,7 @@ class Filter:
             i = Filter.order.index(self.name) / float(len(Filter.order))
             self.trans = Table.read(self.filename, format='ascii', names=('wl', 'T'))
             if self.angstrom:
-                self.trans['wl'] /= 10.
+                self.trans['wl'] = self.trans['wl'] / 10.
             self.trans['wl'].unit = u.nm
             self.trans.sort('wl')
             self.trans['T'] /= np.max(self.trans['T'])
@@ -184,6 +184,7 @@ all_filters = [
     Filter(['v', 'vs'], '#00FF30', -2, 'Swift', 3.664e-23, filename='Swift_UVOT.V.dat', angstrom=True),
     Filter(['unfilt.', '0', 'Clear', 'C'], 'w', 0, 'Itagaki', 3.631e-23, filename='KAF-1001E.asci', linecolor='k'),
     Filter('G', 'w', 0, 'Gaia', filename='GAIA_GAIA0.G.dat', angstrom=True, linecolor='k'),
+    Filter('TESS', 'r', 0, 'TESS', filename='TESS_TESS.Red.dat', angstrom=True),
     Filter('o', 'orange', -1, 'ATLAS', filename='ATLAS_orange.txt'),
     Filter(['r', "r'", 'rp', 'F625W'], '#FF7D00', -1, 'Gunn', filename='sdss-rp-183.asci'),
     Filter(['R', 'Rc', 'R_s'], '#FF7000', -1, 'Johnson', 3.064e-23, filename='cous-rs-183.asci'),  # '#CC5900'

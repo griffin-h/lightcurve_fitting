@@ -46,7 +46,7 @@ class Filter:
         self.plotstyle = {'color': self.linecolor, 'mfc': self.color, 'mec': self.mec}
         if fnu is not None:
             self.fnu = fnu  # * u.W * u.m**-2 * u.Hz**-1
-        elif self.system in ['Gunn', 'ATLAS', 'Gaia']:  # AB magnitudes
+        elif self.system in ['Gunn', 'ATLAS', 'Gaia', 'MOSFiT']:  # AB magnitudes
             self.fnu = 3.631e-23  # * u.W * u.m**-2 * u.Hz**-1
         else:
             self.fnu = None
@@ -76,10 +76,10 @@ class Filter:
 
             dwl = np.trapz(self.trans['T'].quantity, self.trans['wl'].quantity)
             wl_eff = np.trapz(self.trans['T'].quantity * self.trans['wl'].quantity, self.trans['wl'].quantity) / dwl
-            left = self.trans[(self.trans['wl'] < wl_eff.value) & (self.trans['T'] > 0.1) * (self.trans['T'] < 0.9)]
+            left = self.trans[(self.trans['wl'] < wl_eff.value) & (self.trans['T'] >= 0.1) * (self.trans['T'] <= 0.9)]
             left.sort('T')
             wl0 = np.interp(0.5, left['T'], left['wl'])
-            right = self.trans[(self.trans['wl'] > wl_eff.value) & (self.trans['T'] > 0.1) * (self.trans['T'] < 0.9)]
+            right = self.trans[(self.trans['wl'] > wl_eff.value) & (self.trans['T'] >= 0.1) * (self.trans['T'] <= 0.9)]
             right.sort('T')
             wl1 = np.interp(0.5, right['T'], right['wl'])
             if show:
@@ -186,6 +186,8 @@ all_filters = [
     Filter('V', '#79FF00', 1, 'Johnson', 3.636e-23, filename='jnsn-vx-183.asci', textcolor='#46CC00'),
     Filter(['V_S', 'v', 'vs'], '#00FF30', 1, 'Swift', 3.664e-23, filename='Swift_UVOT.V.dat', angstrom=True),
     Filter(['unfilt.', '0', 'Clear', 'C'], 'w', 0, 'Itagaki', 3.631e-23, filename='KAF-1001E.asci', linecolor='k'),
+    Filter('white', 'w', 0, 'MOSFiT', filename='white.txt', linecolor='k'),
+    Filter('pseudobolometric', 'w', 0, 'MOSFiT', filename='pseudobolometric.txt', linecolor='k'),
     Filter('G', 'w', 0, 'Gaia', filename='GAIA_GAIA0.G.dat', angstrom=True, linecolor='k'),
     Filter('TESS', 'r', 0, 'TESS', filename='TESS_TESS.Red.dat', angstrom=True),
     Filter('w', 'w', 0, 'Gunn', filename='pstr-wx-183.asci', linecolor='k'),

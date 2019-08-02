@@ -73,6 +73,16 @@ class LC(Table):
 
     def filters_to_objects(self, read_curve=True):
         self['filter'] = [filters.filtdict[f] for f in self['filt']]
+        is_swift = np.zeros(len(self), bool)
+        if 'telescope' in self.colnames:
+            is_swift |= self['telescope'] == 'Swift'
+            is_swift |= self['telescope'] == 'UVOT'
+            is_swift |= self['telescope'] == 'Swift/UVOT'
+        if 'source' in self.colnames:
+            is_swift |= self['source'] == 'SOUSA'
+        if is_swift.any():
+            for filt, swiftfilt in zip('UBV', 'sbv'):
+                self['filter'][is_swift & (self['filt'] == filt)] = filters.filtdict[swiftfilt]
         if read_curve:
             for filt in np.unique(self['filter']):
                 filt.read_curve()
@@ -89,7 +99,7 @@ class LC(Table):
 
     def bin(self, delta=0.3, groupby=None):
         if groupby is None:
-            groupby = {'filt', 'source'}
+            groupby = {'filt', 'filter', 'source'}
         subtabs = []
         self.groupby = list(set(groupby) & set(self.colnames))
         if self.groupby:
@@ -179,7 +189,7 @@ class LC(Table):
         phase = (self['MJD'].data - self.sn.refmjd) / (1 + self.sn.z)
         self['phase'] = phase
 
-    def plot(self, xcol='phase', ycol='absmag', offset_factor=1, color='filt', marker='source', use_lines=False,
+    def plot(self, xcol='phase', ycol='absmag', offset_factor=1, color='filter', marker='source', use_lines=False,
              normalize=False, fillmark=True, **kwargs):
         global markers
         xchoices = ['phase', 'MJD']
@@ -219,8 +229,8 @@ class LC(Table):
         if groupby:
             plottable = plottable.group_by(groupby)
         for g in plottable.groups:
-            filt = filters.filtdict[g['filt'][0]]
-            if color == 'filt':
+            filt = g['filter'][0]
+            if color == 'filter':
                 col = filt.color
                 mec = 'k' if filt.system == 'Johnson' else filt.linecolor
             elif color == 'name':

@@ -105,10 +105,12 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     return sampler
 
 
-def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs={},
+def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
                       num_models_to_plot=100, lcaxis_posn=(0.7, 0.55, 0.2, 0.4),
                       filter_spacing=0.5, tmin=None, tmax=None, t0_offset=None, save_plot_as=''):
-    plt.style.use('serif.mplstyle')
+    if model_kwargs is None:
+        model_kwargs = {}
+    plt.style.use('serif')
 
     choices = np.random.choice(sampler_flatchain.shape[0], num_models_to_plot)
     ps = sampler_flatchain[choices].T

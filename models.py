@@ -248,25 +248,22 @@ c1 = (const.h / const.k_B).to(u.kK / u.THz).value
 c2 = 8 * np.pi ** 2 * (const.h / const.c ** 2).to(u.W / u.Hz / (1000 * u.Rsun) ** 2 / u.THz ** 3).value
 
 
-def planck_fast(nu, T, R):
-    return c2 * np.squeeze(
-        np.outer(R ** 2, nu ** 3) / (np.exp(c1 * np.outer(T ** -1, nu)) - 1))  # shape = (len(T), len(nu))
+def planck_fast(nu, T, R, cutoff_freq=np.inf):
+    # cutoff frequency as defined in https://doi.org/10.3847/1538-4357/aa9334
+    return c2 * np.squeeze(np.outer(R ** 2, nu ** 3 * np.minimum(1., cutoff_freq / nu))
+                           / (np.exp(c1 * np.outer(T ** -1, nu)) - 1))
 
 
-def blackbody_to_filters(filtobj, T, R, z=0.):
+def blackbody_to_filters(filters, T, R, z=0., cutoff_freq=np.inf):
+    T = np.array(T)
+    R = np.array(R)
     if T.shape != R.shape:
         raise Exception('T & R must have the same shape')
-    if T.ndim == 1 and len(T) == len(filtobj):  # pointwise
-        y_fit = np.array([np.trapz(planck_fast(f.trans['freq'].data * (1. + z), t, r) * f.trans['T_norm_per_freq'].data,
-                                   f.trans['freq'].data) for t, r, f in zip(T, R, filtobj)])  # shape = (len(T),)
-    elif T.ndim <= 1:
-        y_fit = np.array([np.trapz(planck_fast(f.trans['freq'].data * (1. + z), T, R) * f.trans['T_norm_per_freq'].data,
-                                   f.trans['freq'].data) for f in filtobj]).T  # shape = (len(T), len(filtobj))
+    if T.ndim == 1 and len(T) == len(filters):  # pointwise
+        y_fit = np.array([f.blackbody(t, r, z, cutoff_freq) for f, t, r in zip(filters, T, R)])
     else:
-        y_fit = np.array([np.trapz(planck_fast(f.trans['freq'].data * (1. + z), T.flatten(), R.flatten())
-                                   * f.trans['T_norm_per_freq'].data,
-                                   f.trans['freq'].data) for f in filtobj]).T  # shape = (T.size, len(filtobj))
-        y_fit = np.rollaxis(y_fit.reshape(T.shape[0], T.shape[1], len(filtobj)), -1)
+        y_fit = np.array([f.blackbody(T.flatten(), R.flatten(), z, cutoff_freq) for f in filters])
+        y_fit = y_fit.reshape(len(filters), *T.shape)
     return y_fit
 
 

@@ -4,6 +4,7 @@ from astropy.table import Table
 import astropy.units as u
 import astropy.constants as const
 import os
+import models
 try:
     from config import filters_dir
 except ModuleNotFoundError:
@@ -112,6 +113,30 @@ class Filter:
             self.freq_eff = freq_eff
             self.dfreq = -dfreq
             self.freq_range = [[freq_eff.value - freq0], [freq1 - freq_eff.value]]
+
+    def blackbody(self, T, R, z=0., cutoff_freq=np.inf):
+        """
+        Returns the average Lnu of a blackbody in this filter
+
+        Parameters
+        ----------
+        T : float or array-like
+            Temperature of the blackbody in kilokelvins
+        R : float or array-like
+            Radius of the blackbody in thousands of solar radii
+        z : float, optional
+            Redshift between the blackbody source and the filter
+        cutoff_freq : float, optional
+            Cutoff frequency of the blackbody in terahertz as defined in https://doi.org/10.3847/1538-4357/aa9334.
+            Default: unmodified blackbody.
+
+        Returns
+        -------
+        Lnu : float or array-like
+            Average spectral luminosity in the filter in watts per hertz
+        """
+        return np.trapz(models.planck_fast(self.trans['freq'].data * (1. + z), T, R, cutoff_freq)
+                        * self.trans['T_norm_per_freq'].data, self.trans['freq'].data)
 
     def __str__(self):
         return self.name

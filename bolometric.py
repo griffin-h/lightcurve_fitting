@@ -19,17 +19,17 @@ for filt in filters.all_filters:
 plt.style.use('serif')
 
 
-def pseudo(temp, radius, z, filter0=filters.filtdict['I'], filter1=filters.filtdict['U']):
+def pseudo(temp, radius, z, filter0=filters.filtdict['I'], filter1=filters.filtdict['U'], cutoff_freq=np.inf):
     freq0 = (filter0.freq_eff - filter0.dfreq / 2.).value
     freq1 = (filter1.freq_eff + filter1.dfreq / 2.).value
     x_optical = np.arange(freq0, freq1)
-    y_optical = models.planck_fast(x_optical * (1. + z), temp, radius)
+    y_optical = models.planck_fast(x_optical * (1. + z), temp, radius, cutoff_freq)
     L_opt = np.trapz(y_optical) * 1e12  # dx = 1 THz
     return L_opt
 
 
 def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, burnin_steps=200, steps=100,
-                   T_range=(1., 100.), R_range=(0.01, 1000.)):
+                   T_range=(1., 100.), R_range=(0.01, 1000.), cutoff_freq=np.inf):
     y = epoch1['lum'].data
     dy = epoch1['dlum'].data
     filtobj = epoch1['filter'].data
@@ -46,7 +46,7 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
             return -np.sum(np.log(p))
 
     def log_likelihood(p, filtobj, y, dy):
-        y_fit = models.blackbody_to_filters(filtobj, p[0], p[1], z)
+        y_fit = models.blackbody_to_filters(filtobj, p[0], p[1], z, cutoff_freq)
         return -0.5 * np.sum(np.log(2 * np.pi * dy ** 2) + ((y - y_fit) / dy) ** 2, -1)
 
     def log_posterior(p, filtobj, y, dy):
@@ -74,24 +74,29 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
     f4 = corner.corner(sampler.flatchain, labels=['T (kK)', 'R (1000 R$_\\odot$)'])
     ax = f4.get_axes()[1]
     ps = sampler.flatchain[np.random.choice(sampler.flatchain.shape[0], 100)].T
-    xfit = np.arange(100, 1000)
-    yfit = models.planck_fast(xfit * (1. + z), ps[0], ps[1])
+    xfit = np.arange(100., max(1000., min(filtobj).freq_eff.value))
+    yfit = models.planck_fast(xfit * (1. + z), ps[0], ps[1], cutoff_freq)
     plt.sca(ax)
     epoch1.plot(xcol='freq', ycol='lum', offset_factor=0.)
     ax.plot(xfit, yfit.T, color='k', alpha=0.05)
     ax.set_frame_on(True)
     ax.xaxis.set_major_locator(AutoLocator())
     ax.xaxis.tick_top()
-    ax.xaxis.set_label('Frequency (THz)')
+    ax.set_xlabel('Frequency (THz)')
+    ax.xaxis.set_label_position('top')
     ax.yaxis.set_major_locator(AutoLocator())
     ax.yaxis.tick_right()
-    ax.yaxis.set_label('$L_\\nu$ (W Hz$^{-1}$)')
+    ax.set_ylabel('$L_\\nu$ (W Hz$^{-1}$)')
+    ax.yaxis.set_label_position('right')
+    f4.tight_layout()
 
     os.makedirs(outpath, exist_ok=True)
     filename = os.path.join(outpath, f'{mjdavg:.1f}.png')
     print(filename)
     f4.savefig(filename)
-    if not show:
+    if show:
+        plt.show()
+    else:
         plt.close(f4)
 
     return sampler
@@ -127,7 +132,8 @@ def plot_bolometric_results(t0, save_plot_as=None):
 
 
 def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=200, steps=100,
-                         T_range=(1., 100.), R_range=(0.01, 1000.), save_table_as=None, min_nfilt=3):
+                         T_range=(1., 100.), R_range=(0.01, 1000.), save_table_as=None, min_nfilt=3,
+                         cutoff_freq=np.inf, show=False):
 
     t0 = LC(names=('MJD', 'dMJD0', 'dMJD1',
                    'temp', 'radius', 'dtemp', 'dradius',  # best fit from scipy.curve_fit
@@ -152,6 +158,9 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
     lc['bin'] = np.round(x - frac + np.round(frac)) * res
     epochs = lc.group_by(['bin', 'source'])
 
+    def planck_cutoff(nu, T, R):
+        return models.planck_fast(nu, T, R, cutoff_freq)
+
     for src, epoch1 in zip(epochs.groups.keys['source'], epochs.groups):
         epoch1.sort('freq')
         mjdavg = np.mean(epoch1['MJD'])
@@ -162,7 +171,7 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
         if nfilt >= min_nfilt:
             # blackbody
             try:
-                p0, cov = curve_fit(models.planck_fast, epoch1['freq'] * (1. + z), epoch1['lum'], p0=[10., 10.],
+                p0, cov = curve_fit(planck_cutoff, epoch1['freq'] * (1. + z), epoch1['lum'], p0=[10., 10.],
                                     bounds=([T_range[0], R_range[0]], [T_range[1], R_range[1]]))
                 temp, radius = p0
                 dtemp, drad = np.sqrt(np.diag(cov))
@@ -182,16 +191,16 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
             dmjd1 = np.max(epoch1['MJD']) - mjdavg
 
             # blackbody (optical)
-            L_opt = pseudo(temp, radius, z)
+            L_opt = pseudo(temp, radius, z, cutoff_freq)
 
             # MCMC
             sampler = blackbody_mcmc(epoch1, z, p0, outpath=outpath, nwalkers=nwalkers, burnin_steps=burnin_steps,
-                                     steps=steps, T_range=T_range, R_range=R_range)
+                                     steps=steps, T_range=T_range, R_range=R_range, cutoff_freq=cutoff_freq, show=show)
             percentiles = np.percentile(sampler.flatchain, [16., 50., 84.], 0)
             T_mcmc, R_mcmc = percentiles[1]
             (dT0_mcmc, dR0_mcmc), (dT1_mcmc, dR1_mcmc) = np.diff(percentiles, axis=0)
 
-            L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z)
+            L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq)
             percentiles = np.percentile(L_mcmc_opt, [16., 50., 84.])
             L_mcmc = percentiles[1]
             dL_mcmc0, dL_mcmc1 = np.diff(percentiles)

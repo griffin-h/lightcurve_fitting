@@ -158,7 +158,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         txt = '${}{:+.1f}$'.format(filt.name, offset) if offset else filt.name
         ax.text(1.03, yfit[-1, 0] / yscale + offset, txt, color=filt.textcolor,
                 ha='left', va='center', transform=ax.get_yaxis_transform())
-    ax.set_xlabel('MJD - {:.0f}'.format(mjd_offset))
+    ax.set_xlabel('MJD $-$ {:.0f}'.format(mjd_offset))
     ax.set_ylabel('Luminosity $L_\\nu$ (10$^{{{:.0f}}}$ erg s$^{{-1}}$ Hz$^{{-1}}$) + Offset'
                   .format(np.log10(yscale) + 7))  # W --> erg / s
 

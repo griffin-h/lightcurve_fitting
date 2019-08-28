@@ -156,7 +156,9 @@ class LC(Table):
                                              self.nondetSigmas)
 
     def findPeak(self, **criteria):
-        useforpeak = ~self['nondet']
+        useforpeak = np.ones_like(self, bool)
+        if 'nondet' in self.colnames:
+            useforpeak &= ~self['nondet']
         for key, value in criteria.items():
             if isinstance(value, list):
                 subuseforpeak = np.tile(False, len(self))

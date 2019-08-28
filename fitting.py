@@ -144,7 +144,10 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
     y_fit = model(xfit, ufilts, *ps, **model_kwargs)
 
     mjd_offset = np.floor(tmin)
-    yscale = 10 ** np.round(np.log10(np.max(y_fit)))
+    if y_fit.max() > 0.:
+        yscale = 10. ** np.round(np.log10(y_fit.max()))
+    else:
+        yscale = 1.
     offset = -len(ufilts) // 2 * filter_spacing
     for filt, yfit in zip(ufilts, y_fit):
         offset += filter_spacing

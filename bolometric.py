@@ -175,31 +175,96 @@ def blackbody_lstsq(epoch1, z, p0=None, T_range=(1., 100.), R_range=(0.01, 1000.
 
 
 def integrate_sed(epoch1):
-    epoch1_to_agg = epoch1[['filter', 'freq', 'dfreq', 'lum']]  # remove other columns to avoid warnings
-    epoch1_to_agg = epoch1_to_agg.group_by('filter').groups.aggregate(np.mean)
-    epoch1_to_agg.sort('freq')
-    freqs = np.insert(epoch1_to_agg['freq'], 0, epoch1_to_agg['freq'][0] - epoch1_to_agg['dfreq'][0])
-    lums = np.insert(epoch1_to_agg['lum'], 0, 0)
-    freqs = np.append(freqs, epoch1_to_agg['freq'][-1] + epoch1_to_agg['dfreq'][-1])
+    epoch1.sort('freq')
+    freqs = np.insert(epoch1['freq'], 0, epoch1['freq'][0] - epoch1['dfreq'][0])
+    lums = np.insert(epoch1['lum'], 0, 0)
+    freqs = np.append(freqs, epoch1['freq'][-1] + epoch1['dfreq'][-1])
     lums = np.append(lums, 0)
-    L_int = np.trapz(lums * epoch1_to_agg['lum'].unit, freqs * epoch1_to_agg['freq'].unit).to(u.W)
+    L_int = np.trapz(lums * epoch1['lum'].unit, freqs * epoch1['freq'].unit).to(u.W).value
     return L_int
+
+
+def calc_colors(epoch1, colors):
+    mags = []
+    dmags = []
+    lolims = []
+    uplims = []
+    for color in colors:
+        f0, f1 = [filters.filtdict[f] for f in color.split('-')]
+        if f0 in epoch1['filter'] and f1 in epoch1['filter']:
+            m0, dm0, n0 = epoch1.where(filter=f0)[['absmag', 'dmag', 'nondet']][0]
+            m1, dm1, n1 = epoch1.where(filter=f1)[['absmag', 'dmag', 'nondet']][0]
+            if n0 and n1:
+                m0_m1 = np.nan
+            else:
+                m0_m1 = m0 - m1
+            dm0_m1 = (dm0 ** 2. + dm1 ** 2.) ** 0.5
+            mags.append(m0_m1)
+            dmags.append(dm0_m1)
+            lolims.append(n0)
+            uplims.append(n1)
+        else:
+            mags.append(np.nan)
+            dmags.append(np.nan)
+            lolims.append(True)
+            uplims.append(True)
+    return mags, dmags, lolims, uplims
+
+
+def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1):
+    """
+    Plot the color curves calculated by `calculate_bolometric`.
+
+    Parameters
+    ----------
+    t : astropy.table.Table
+        Output table from `calculate_bolometric`
+    colors : list, optional
+        List of colors to plot, e.g., `['g-r', 'r-i']`. By default, plot all recognizable colors.
+    fmt : str, optional
+        Format string, passed to `matplotlib.pyplot.errorbar`
+    limit_length : float, optional
+        Length (in data units) of the upper and lower limit markers
+    """
+    if colors is None:
+        colors = []
+        for col in t.colnames:
+            if col.split('-')[0] in filters.filtdict:
+                colors.append(col)
+    fig = plt.figure()
+    for c in colors:
+        plt.errorbar(t['MJD'], t[c], t[f'd({c})'].filled(limit_length), (t['dMJD0'], t['dMJD1']), fmt=fmt,
+                     lolims=t[f'lolims({c})'], uplims=t[f'uplims({c})'], label=f'${c}$')
+    plt.xlabel('MJD')
+    plt.ylabel('Color (mag)')
+    plt.legend()
+    return fig
 
 
 def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=200, steps=100,
                          T_range=(1., 100.), R_range=(0.01, 1000.), save_table_as=None, min_nfilt=3,
-                         cutoff_freq=np.inf, show=False):
+                         cutoff_freq=np.inf, show=False, colors=None):
 
-    t0 = LC(names=('MJD', 'dMJD0', 'dMJD1',
+    t0 = LC(names=['MJD', 'dMJD0', 'dMJD1',
                    'temp', 'radius', 'dtemp', 'dradius',  # best fit from scipy.curve_fit
                    'lum', 'dlum',  # total bolometric luminosity from scipy.curve_fit
                    'L_opt',  # pseudobolometric luminosity from scipy.curve_fit
                    'temp_mcmc', 'radius_mcmc', 'dtemp0', 'dtemp1', 'dradius0', 'dradius1',  # best fit from MCMC
                    'L_mcmc', 'dL_mcmc0', 'dL_mcmc1',  # pseudobolometric luminosity from MCMC
                    'L_int',  # pseudobolometric luminosity from direct integration of the SED
-                   'npoints', 'filts', 'source'),
-            dtype=(float, float, float, float, float, float, float, float, float, float, float, float, float,
-                   float, float, float, float, float, float, float, int, 'S6', lc['source'].dtype), masked=True)
+                   'npoints']
+            + colors + ['d({})'.format(c) for c in colors] + ['lolims({})'.format(c) for c in colors]
+            + ['uplims({})'.format(c) for c in colors] + ['filts', 'source'],
+            dtype=[float, float, float, float, float, float, float, float, float, float, float, float, float, float,
+                   float, float, float, float, float, float, int]
+            + [float] * 2 * len(colors) + [bool] * 2 * len(colors) + ['S6', lc['source'].dtype],
+            masked=True)
+
+    lc.calcFlux()
+    lc = lc.bin(delta=res)
+    lc.calcMag()
+    lc.calcAbsMag()
+    lc.calcLum()
 
     lc['freq'] = u.Quantity([f.freq_eff for f in lc['filter']])
     lc['dfreq'] = u.Quantity([f.dfreq for f in lc['filter']])
@@ -234,14 +299,19 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
         # direct integration
         L_int = integrate_sed(epoch1)
 
-        t0.add_row([mjdavg, dmjd0, dmjd1,
-                    temp, radius, dtemp, drad,
-                    lum, dlum,
-                    L_opt,
-                    T_mcmc, R_mcmc, dT0_mcmc, dT1_mcmc, dR0_mcmc, dR1_mcmc,
-                    L_mcmc, dL_mcmc0, dL_mcmc1,
-                    L_int,
-                    nfilt, filtstr, epoch1['source'][0]])
+        # color calculation
+        if colors is None:
+            colors = []
+        color_mags, color_dmags, color_lolims, color_uplims = calc_colors(epoch1, colors)
+
+        row = [mjdavg, dmjd0, dmjd1,
+               temp, radius, dtemp, drad, lum, dlum, L_opt,
+               T_mcmc, R_mcmc, dT0_mcmc, dT1_mcmc, dR0_mcmc, dR1_mcmc, L_mcmc, dL_mcmc0, dL_mcmc1,
+               L_int, nfilt] + color_mags + color_dmags
+        row_bool = color_lolims + color_uplims
+        row_string = [filtstr, epoch1['source'][0]]
+        mask = np.concatenate([np.isnan(row), np.zeros_like(row_bool), ~np.array(row_string, dtype=bool)])
+        t0.add_row(row + row_bool + row_string, mask=mask)
 
     if save_table_as is not None:
         t0.write(save_table_as, format='ascii.fixed_width', overwrite=True)

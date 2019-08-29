@@ -69,6 +69,7 @@ class LC(Table):
             use &= use1
         selected = self[use]
         selected.sn = self.sn
+        selected.meta = self.meta
         return selected
 
     def filters_to_objects(self, read_curve=True):
@@ -114,6 +115,7 @@ class LC(Table):
             subtabs.append(binned)
         lc = vstack(subtabs)
         lc.sn = self.sn
+        lc.meta = self.meta
         return lc
 
     def findNondet(self, nondetSigmas=3):
@@ -127,26 +129,32 @@ class LC(Table):
         self['mag'], self['dmag'] = flux2mag(self['flux'], self['dflux'], zp, self['nondet'], self.nondetSigmas)
 
     def calcAbsMag(self, dm=None, extinction=None, hostext=None):
-        if self.sn is None:
-            if dm is None:
-                dm = 0.
-            if extinction is None:
-                extinction = {}
-            if hostext is None:
-                hostext = {}
-        else:
-            if dm is None:
-                dm = self.sn.dm
-            if extinction is None:
-                extinction = self.sn.extinction
-            if hostext is None:
-                hostext = self.sn.hostext
+        if dm is not None:
+            self.meta['dm'] = dm
+        elif self.sn is not None:
+            self.meta['dm'] = self.sn.dm
+        elif 'dm' not in self.meta:
+            self.meta['dm'] = 0.
 
-        self['absmag'] = self['mag'].data - dm
-        for filt, A in extinction.items():
+        if extinction is not None:
+            self.meta['extinction'] = extinction
+        elif self.sn is not None:
+            self.meta['extinction'] = self.sn.extinction
+        elif 'extinction' not in self.meta:
+            self.meta['extinction'] = {}
+
+        if hostext is not None:
+            self.meta['hostext'] = hostext
+        elif self.sn is not None:
+            self.meta['hostext'] = self.sn.hostext
+        elif 'hostext' not in self.meta:
+            self.meta['hostext'] = {}
+
+        self['absmag'] = self['mag'].data - self.meta['dm']
+        for filt, A in self.meta['extinction'].items():
             for filtname in filters.filtdict[filt].names:
                 self['absmag'][self['filt'] == filtname] -= A
-        for filt, A in hostext.items():
+        for filt, A in self.meta['hostext'].items():
             for filtname in filters.filtdict[filt].names:
                 self['absmag'][self['filt'] == filtname] -= A
 

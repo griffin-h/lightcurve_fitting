@@ -131,6 +131,61 @@ def plot_bolometric_results(t0, save_plot_as=None):
     return fig
 
 
+def group_by_epoch(lc, res=1.):
+    x = lc['MJD'].data / res
+    frac = np.median(x - np.trunc(x))
+    lc['bin'] = np.round(x - frac + np.round(frac)) * res
+    epochs = lc.group_by(['bin', 'source'])
+    return epochs.groups
+
+
+sigma_sb = const.sigma_sb.to(u.W / (1000. * u.Rsun) ** 2 / u.kK ** 4).value
+
+
+def stefan_boltzmann(temp, radius, dtemp, drad, covTR):
+    lum = 4 * np.pi * radius ** 2 * sigma_sb * temp ** 4
+    dlum = 8 * np.pi * sigma_sb * (radius ** 2 * temp ** 8 * drad ** 2
+                                   + 4 * radius ** 4 * temp ** 6 * dtemp ** 2
+                                   + 4 * radius ** 3 * temp ** 7 * covTR) ** 0.5
+    return lum, dlum
+
+
+def median_and_unc(x, perc_contained=68.):
+    q = 50. + np.array([-perc_contained / 2., 0., perc_contained / 2.])
+    percentiles = np.percentile(x, q, axis=0)
+    median = percentiles[1]
+    lower, upper = np.diff(percentiles, axis=0)
+    return median, lower, upper
+
+
+def blackbody_lstsq(epoch1, z, p0=None, T_range=(1., 100.), R_range=(0.01, 1000.), cutoff_freq=np.inf):
+    if p0 is None:
+        p0 = [10., 10.]
+
+    def planck_cutoff(nu, T, R):
+        return models.planck_fast(nu, T, R, cutoff_freq)
+
+    p0, cov = curve_fit(planck_cutoff, epoch1['freq'] * (1. + z), epoch1['lum'], p0=p0,
+                        bounds=([T_range[0], R_range[0]], [T_range[1], R_range[1]]))
+    temp, radius = p0
+    dtemp, drad = np.sqrt(np.diag(cov))
+    lum, dlum = stefan_boltzmann(temp, radius, dtemp, drad, cov[0, 1])
+    L_opt = pseudo(temp, radius, z, cutoff_freq=cutoff_freq)
+    return temp, radius, dtemp, drad, lum, dlum, L_opt
+
+
+def integrate_sed(epoch1):
+    epoch1_to_agg = epoch1[['filter', 'freq', 'dfreq', 'lum']]  # remove other columns to avoid warnings
+    epoch1_to_agg = epoch1_to_agg.group_by('filter').groups.aggregate(np.mean)
+    epoch1_to_agg.sort('freq')
+    freqs = np.insert(epoch1_to_agg['freq'], 0, epoch1_to_agg['freq'][0] - epoch1_to_agg['dfreq'][0])
+    lums = np.insert(epoch1_to_agg['lum'], 0, 0)
+    freqs = np.append(freqs, epoch1_to_agg['freq'][-1] + epoch1_to_agg['dfreq'][-1])
+    lums = np.append(lums, 0)
+    L_int = np.trapz(lums * epoch1_to_agg['lum'].unit, freqs * epoch1_to_agg['freq'].unit).to(u.W)
+    return L_int
+
+
 def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=200, steps=100,
                          T_range=(1., 100.), R_range=(0.01, 1000.), save_table_as=None, min_nfilt=3,
                          cutoff_freq=np.inf, show=False):
@@ -151,78 +206,42 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
 
     lc['lum'].unit = u.W / u.Hz
     lc['dlum'].unit = u.W / u.Hz
-    sigma_sb = const.sigma_sb.to(u.W / (1000. * u.Rsun)**2 / u.kK**4).value
 
-    x = lc['MJD'].data / res
-    frac = np.median(x - np.trunc(x))
-    lc['bin'] = np.round(x - frac + np.round(frac)) * res
-    epochs = lc.group_by(['bin', 'source'])
-
-    def planck_cutoff(nu, T, R):
-        return models.planck_fast(nu, T, R, cutoff_freq)
-
-    for src, epoch1 in zip(epochs.groups.keys['source'], epochs.groups):
-        epoch1.sort('freq')
-        mjdavg = np.mean(epoch1['MJD'])
-
+    for epoch1 in group_by_epoch(lc, res):
         filts = set(epoch1.where(nondet=False)['filter'].data)
-        filtstr = ''.join([f.char for f in sorted(filts)])
         nfilt = len(filts)
-        if nfilt >= min_nfilt:
-            # blackbody
-            try:
-                p0, cov = curve_fit(planck_cutoff, epoch1['freq'] * (1. + z), epoch1['lum'], p0=[10., 10.],
-                                    bounds=([T_range[0], R_range[0]], [T_range[1], R_range[1]]))
-                temp, radius = p0
-                dtemp, drad = np.sqrt(np.diag(cov))
-                covTR = cov[0, 1]
-            except RuntimeError:  # optimization failed
-                p0 = [10., 10.]
-                temp = np.nan
-                radius = np.nan
-                dtemp = np.nan
-                drad = np.nan
-                covTR = np.nan
-            lum = 4 * np.pi * radius ** 2 * sigma_sb * temp ** 4
-            dlum = 8 * np.pi * sigma_sb * (radius ** 2 * temp ** 8 * drad ** 2
-                                           + 4 * radius ** 4 * temp ** 6 * dtemp ** 2
-                                           + 4 * radius ** 3 * temp ** 7 * covTR) ** 0.5
-            dmjd0 = mjdavg - np.min(epoch1['MJD'])
-            dmjd1 = np.max(epoch1['MJD']) - mjdavg
+        if nfilt < min_nfilt:
+            continue
 
-            # blackbody (optical)
-            L_opt = pseudo(temp, radius, z, cutoff_freq)
+        mjdavg, dmjd0, dmjd1 = median_and_unc(epoch1['MJD'], 100.)
+        filtstr = ''.join([f.char for f in sorted(filts)])
 
-            # MCMC
-            sampler = blackbody_mcmc(epoch1, z, p0, outpath=outpath, nwalkers=nwalkers, burnin_steps=burnin_steps,
-                                     steps=steps, T_range=T_range, R_range=R_range, cutoff_freq=cutoff_freq, show=show)
-            percentiles = np.percentile(sampler.flatchain, [16., 50., 84.], 0)
-            T_mcmc, R_mcmc = percentiles[1]
-            (dT0_mcmc, dR0_mcmc), (dT1_mcmc, dR1_mcmc) = np.diff(percentiles, axis=0)
+        # blackbody - least squares
+        p0 = [10., 10.]
+        try:
+            temp, radius, dtemp, drad, lum, dlum, L_opt = blackbody_lstsq(epoch1, z, p0, T_range, R_range, cutoff_freq)
+            p0 = [temp, radius]
+        except RuntimeError:  # optimization failed
+            temp = radius = dtemp = drad = lum = dlum = L_opt = np.nan
 
-            L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq)
-            percentiles = np.percentile(L_mcmc_opt, [16., 50., 84.])
-            L_mcmc = percentiles[1]
-            dL_mcmc0, dL_mcmc1 = np.diff(percentiles)
+        # blackbody - MCMC
+        sampler = blackbody_mcmc(epoch1, z, p0, outpath=outpath, nwalkers=nwalkers, burnin_steps=burnin_steps,
+                                 steps=steps, T_range=T_range, R_range=R_range, cutoff_freq=cutoff_freq, show=show)
+        L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq=cutoff_freq)
+        (T_mcmc, R_mcmc), (dT0_mcmc, dR0_mcmc), (dT1_mcmc, dR1_mcmc) = median_and_unc(sampler.flatchain)
+        L_mcmc, dL_mcmc0, dL_mcmc1 = median_and_unc(L_mcmc_opt)
 
-            # integral
-            epoch1_to_agg = epoch1[['filter', 'freq', 'dfreq', 'lum']]  # remove other columns to avoid warnings
-            epoch1_to_agg = epoch1_to_agg.group_by('filter').groups.aggregate(np.mean)
-            epoch1_to_agg.sort('freq')
-            freqs = np.insert(epoch1_to_agg['freq'], 0, epoch1_to_agg['freq'][0] - epoch1_to_agg['dfreq'][0])
-            lums = np.insert(epoch1_to_agg['lum'], 0, 0)
-            freqs = np.append(freqs, epoch1_to_agg['freq'][-1] + epoch1_to_agg['dfreq'][-1])
-            lums = np.append(lums, 0)
-            L_int = np.trapz(lums * epoch1_to_agg['lum'].unit, freqs * epoch1_to_agg['freq'].unit).to(u.W)
+        # direct integration
+        L_int = integrate_sed(epoch1)
 
-            t0.add_row([mjdavg, dmjd0, dmjd1,
-                        temp, radius, dtemp, drad,
-                        lum, dlum,
-                        L_opt,
-                        T_mcmc, R_mcmc, dT0_mcmc, dT1_mcmc, dR0_mcmc, dR1_mcmc,
-                        L_mcmc, dL_mcmc0, dL_mcmc1,
-                        L_int,
-                        nfilt, filtstr, src])
+        t0.add_row([mjdavg, dmjd0, dmjd1,
+                    temp, radius, dtemp, drad,
+                    lum, dlum,
+                    L_opt,
+                    T_mcmc, R_mcmc, dT0_mcmc, dT1_mcmc, dR0_mcmc, dR1_mcmc,
+                    L_mcmc, dL_mcmc0, dL_mcmc1,
+                    L_int,
+                    nfilt, filtstr, epoch1['source'][0]])
 
     if save_table_as is not None:
         t0.write(save_table_as, format='ascii.fixed_width', overwrite=True)

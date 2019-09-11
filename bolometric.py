@@ -229,7 +229,7 @@ def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1):
     if colors is None:
         colors = []
         for col in t.colnames:
-            if col.split('-')[0] in filters.filtdict:
+            if col.split('-')[0] in filters.filtdict and not t[col].mask.all():
                 colors.append(col)
     fig = plt.figure()
     for c in colors:

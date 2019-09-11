@@ -243,7 +243,7 @@ def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1):
 
 def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=200, steps=100,
                          T_range=(1., 100.), R_range=(0.01, 1000.), save_table_as=None, min_nfilt=3,
-                         cutoff_freq=np.inf, show=False, colors=None):
+                         cutoff_freq=np.inf, show=False, colors=None, do_mcmc=True):
 
     t0 = LC(names=['MJD', 'dMJD0', 'dMJD1',
                    'temp', 'radius', 'dtemp', 'dradius',  # best fit from scipy.curve_fit
@@ -290,11 +290,16 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
             temp = radius = dtemp = drad = lum = dlum = L_opt = np.nan
 
         # blackbody - MCMC
-        sampler = blackbody_mcmc(epoch1, z, p0, outpath=outpath, nwalkers=nwalkers, burnin_steps=burnin_steps,
-                                 steps=steps, T_range=T_range, R_range=R_range, cutoff_freq=cutoff_freq, show=show)
-        L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq=cutoff_freq)
-        (T_mcmc, R_mcmc), (dT0_mcmc, dR0_mcmc), (dT1_mcmc, dR1_mcmc) = median_and_unc(sampler.flatchain)
-        L_mcmc, dL_mcmc0, dL_mcmc1 = median_and_unc(L_mcmc_opt)
+        try:
+            if not do_mcmc:
+                raise ValueError
+            sampler = blackbody_mcmc(epoch1, z, p0, outpath=outpath, nwalkers=nwalkers, burnin_steps=burnin_steps,
+                                     steps=steps, T_range=T_range, R_range=R_range, cutoff_freq=cutoff_freq, show=show)
+            L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq=cutoff_freq)
+            (T_mcmc, R_mcmc), (dT0_mcmc, dR0_mcmc), (dT1_mcmc, dR1_mcmc) = median_and_unc(sampler.flatchain)
+            L_mcmc, dL_mcmc0, dL_mcmc1 = median_and_unc(L_mcmc_opt)
+        except ValueError:
+            T_mcmc = R_mcmc = dT0_mcmc = dR0_mcmc = dT1_mcmc = dR1_mcmc = L_mcmc = dL_mcmc0 = dL_mcmc1 = np.nan
 
         # direct integration
         L_int = integrate_sed(epoch1)

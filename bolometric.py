@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoLocator
 from scipy.optimize import curve_fit
+from scipy.stats import gaussian_kde
 import emcee
 import corner
 import os
@@ -29,7 +30,7 @@ def pseudo(temp, radius, z, filter0=filters.filtdict['I'], filter1=filters.filtd
 
 
 def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, burnin_steps=200, steps=100,
-                   T_range=(1., 100.), R_range=(0.01, 1000.), cutoff_freq=np.inf):
+                   T_range=(1., 100.), R_range=(0.01, 1000.), cutoff_freq=np.inf, prev_temp=None):
     y = epoch1['lum'].data
     dy = epoch1['dlum'].data
     filtobj = epoch1['filter'].data
@@ -42,6 +43,8 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
         if (np.any(p[0] < T_range[0]) or np.any(p[0] > T_range[1])
                 or np.any(p[1] < R_range[0]) or np.any(p[1] > R_range[1])):
             return -np.inf
+        elif prev_temp is not None:
+            return prev_temp.logpdf(p[0]) - np.log(p[1])
         else:
             return -np.sum(np.log(p))
 
@@ -272,17 +275,26 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
     lc['lum'].unit = u.W / u.Hz
     lc['dlum'].unit = u.W / u.Hz
 
+    sampler = None
     for epoch1 in group_by_epoch(lc, res):
         filts = set(epoch1.where(nondet=False)['filter'].data)
         nfilt = len(filts)
         if nfilt < min_nfilt:
             continue
 
+        if nfilt > 1:
+            prev_temp = None
+            p0 = [10., 10.]
+        elif sampler is not None:
+            prev_temp = gaussian_kde(sampler.flatchain[:, 0])
+            p0 = np.median(sampler.flatchain, axis=0)
+        else:
+            continue
+
         mjdavg, dmjd0, dmjd1 = median_and_unc(epoch1['MJD'], 100.)
         filtstr = ''.join([f.char for f in sorted(filts)])
 
         # blackbody - least squares
-        p0 = [10., 10.]
         try:
             temp, radius, dtemp, drad, lum, dlum, L_opt = blackbody_lstsq(epoch1, z, p0, T_range, R_range, cutoff_freq)
             p0 = [temp, radius]
@@ -294,7 +306,8 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
             if not do_mcmc:
                 raise ValueError
             sampler = blackbody_mcmc(epoch1, z, p0, outpath=outpath, nwalkers=nwalkers, burnin_steps=burnin_steps,
-                                     steps=steps, T_range=T_range, R_range=R_range, cutoff_freq=cutoff_freq, show=show)
+                                     steps=steps, T_range=T_range, R_range=R_range, cutoff_freq=cutoff_freq, show=show,
+                                     prev_temp=prev_temp)
             L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq=cutoff_freq)
             (T_mcmc, R_mcmc), (dT0_mcmc, dR0_mcmc), (dT1_mcmc, dR1_mcmc) = median_and_unc(sampler.flatchain)
             L_mcmc, dL_mcmc0, dL_mcmc1 = median_and_unc(L_mcmc_opt)

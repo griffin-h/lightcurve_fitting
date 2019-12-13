@@ -90,6 +90,10 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
 
     sampler.reset()
     sampler.run_mcmc(pos, nsteps)
+    if save_sampler_as:
+        np.save(save_sampler_as, sampler.flatchain)
+        print('saving sampler.flatchain as ' + save_sampler_as)
+
     if show:
         f2, ax2 = plt.subplots(ndim, figsize=(6, 2 * ndim))
         for i in range(ndim):
@@ -97,10 +101,7 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
             ax2[i].set_ylabel(model.axis_labels[i])
         ax2[0].set_title('After Burn In')
         ax2[-1].set_xlabel('Step Number')
-
-    if save_sampler_as:
-        np.save(save_sampler_as, sampler.flatchain)
-        print('saving sampler.flatchain as ' + save_sampler_as)
+        plt.show()
 
     return sampler
 

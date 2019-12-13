@@ -214,6 +214,7 @@ def companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, rr, ri, rU
     return y_fit
 
 
+M_chandra = u.def_unit('M_chandra', 1.4 * u.Msun, format={'latex': 'M_\\mathrm{Ch}'})
 CompanionShocking = Model(companion_shocking,
                           [
                               't_0',
@@ -228,7 +229,7 @@ CompanionShocking = Model(companion_shocking,
                           [
                               u.d,
                               10. ** 13. * u.cm,
-                              u.def_unit('M_chandra', 1.4 * u.Msun) * (1e9 * u.cm / u.s) ** 7,
+                              M_chandra * (1e9 * u.cm / u.s) ** 7,
                               u.d,
                               u.dimensionless_unscaled,
                               u.dimensionless_unscaled,

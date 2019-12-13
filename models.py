@@ -28,7 +28,9 @@ class Model:
         self.input_names = input_names
         self.units = units
         self.nparams = len(input_names)
-        self.axis_labels = ['${}$ ({})'.format(var, format_unit(unit)) for var, unit in zip(input_names, units)]
+        self.axis_labels = ['${}$ ({})'.format(var, format_unit(unit))
+                            if unit is not u.dimensionless_unscaled else '${}$'.format(var)
+                            for var, unit in zip(input_names, units)]
 
     def __call__(self, *args, **kwargs):
         return self.func(*args, **kwargs)

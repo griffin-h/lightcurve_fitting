@@ -228,7 +228,7 @@ CompanionShocking = Model(companion_shocking,
                           [
                               u.d,
                               10. ** 13. * u.cm,
-                              1.4 * u.Msun * (1e9 * u.cm / u.s) ** 7,
+                              u.def_unit('M_chandra', 1.4 * u.Msun) * (1e9 * u.cm / u.s) ** 7,
                               u.d,
                               u.dimensionless_unscaled,
                               u.dimensionless_unscaled,

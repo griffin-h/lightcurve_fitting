@@ -55,6 +55,7 @@ setup(
             'example/SN2016bkv.table',
             'filters/*',
             'models/sifto.dat',
+            'serif.mplstyle',
         ]
     },
     install_requires=requirements,

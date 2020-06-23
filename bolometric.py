@@ -138,7 +138,7 @@ def group_by_epoch(lc, res=1.):
     x = lc['MJD'].data / res
     frac = np.median(x - np.trunc(x))
     lc['bin'] = np.round(x - frac + np.round(frac)) * res
-    epochs = lc.group_by(['bin', 'source'])
+    epochs = lc.group_by('bin')
     return epochs.groups
 
 
@@ -263,20 +263,20 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
             + [float] * 2 * len(colors) + [bool] * 2 * len(colors) + ['S6', lc['source'].dtype],
             masked=True)
 
-    lc.calcFlux()
-    lc = lc.bin(delta=res)
-    lc.calcMag()
-    lc.calcAbsMag()
-    lc.calcLum()
-
-    lc['freq'] = u.Quantity([f.freq_eff for f in lc['filter']])
-    lc['dfreq'] = u.Quantity([f.dfreq for f in lc['filter']])
-
-    lc['lum'].unit = u.W / u.Hz
-    lc['dlum'].unit = u.W / u.Hz
-
     sampler = None
     for epoch1 in group_by_epoch(lc, res):
+        epoch1.calcFlux()
+        epoch1 = epoch1.bin(delta=np.inf)
+        epoch1.calcMag()
+        epoch1.calcAbsMag()
+        epoch1.calcLum()
+
+        epoch1['freq'] = u.Quantity([f.freq_eff for f in epoch1['filter']])
+        epoch1['dfreq'] = u.Quantity([f.dfreq for f in epoch1['filter']])
+
+        epoch1['lum'].unit = u.W / u.Hz
+        epoch1['dlum'].unit = u.W / u.Hz
+
         filts = set(epoch1.where(nondet=False)['filter'].data)
         nfilt = len(filts)
         if nfilt < min_nfilt:

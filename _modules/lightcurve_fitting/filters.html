@@ -1,0 +1,438 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>lightcurve_fitting.filters &mdash; lightcurve_fitting 0.0.0.post39+g403a58a documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> lightcurve_fitting
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.0.post39+g403a58a
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">lightcurve_fitting package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release-history.html">Release History</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">lightcurve_fitting</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>lightcurve_fitting.filters</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for lightcurve_fitting.filters</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="kn">import</span> <span class="nn">astropy.constants</span> <span class="k">as</span> <span class="nn">const</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">planck_fast</span>
+<span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_filename</span>
+
+
+<div class="viewcode-block" id="Filter"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.filters.Filter">[docs]</a><span class="k">class</span> <span class="nc">Filter</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">system</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fnu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">linecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">textcolor</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">names</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">names</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">names</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">shortest</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shortest</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">char</span> <span class="o">=</span> <span class="n">shortest</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">char</span> <span class="o">=</span> <span class="s1">&#39;x&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span>
+        <span class="k">if</span> <span class="n">linecolor</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">linecolor</span> <span class="o">=</span> <span class="n">linecolor</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">linecolor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span>
+        <span class="k">if</span> <span class="n">textcolor</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">textcolor</span> <span class="o">=</span> <span class="n">textcolor</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">textcolor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linecolor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">=</span> <span class="n">system</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">==</span> <span class="s1">&#39;Johnson&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mec</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linecolor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">=</span> <span class="n">system</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotstyle</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">linecolor</span><span class="p">,</span> <span class="s1">&#39;mfc&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="s1">&#39;mec&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mec</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">fnu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fnu</span> <span class="o">=</span> <span class="n">fnu</span>  <span class="c1"># * u.W * u.m**-2 * u.Hz**-1</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Gunn&#39;</span><span class="p">,</span> <span class="s1">&#39;ATLAS&#39;</span><span class="p">,</span> <span class="s1">&#39;Gaia&#39;</span><span class="p">,</span> <span class="s1">&#39;MOSFiT&#39;</span><span class="p">]:</span>  <span class="c1"># AB magnitudes</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fnu</span> <span class="o">=</span> <span class="mf">3.631e-23</span>  <span class="c1"># * u.W * u.m**-2 * u.Hz**-1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fnu</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fnu</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">m0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">M0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">m0</span> <span class="o">=</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fnu</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">M0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m0</span> <span class="o">+</span> <span class="mf">90.19</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;lightcurve_fitting&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;filters&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angstrom</span> <span class="o">=</span> <span class="n">angstrom</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trans</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Filter.read_curve"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.filters.Filter.read_curve">[docs]</a>    <span class="k">def</span> <span class="nf">read_curve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">force</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">Filter</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Filter</span><span class="o">.</span><span class="n">order</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trans</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">angstrom</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">10.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">nm</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;wl&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">c</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">THz</span><span class="p">)</span>
+
+            <span class="n">dwl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">)</span>
+            <span class="n">wl_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">)</span> <span class="o">/</span> <span class="n">dwl</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">wl_eff</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">0.1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">0.9</span><span class="p">)]</span>
+            <span class="n">left</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+            <span class="n">wl0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">left</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="n">left</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">])</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">wl_eff</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">0.1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">0.9</span><span class="p">)]</span>
+            <span class="n">right</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+            <span class="n">wl1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">right</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="n">right</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+                <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">!=</span> <span class="s1">&#39;w&#39;</span> <span class="k">else</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span>
+                         <span class="n">label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">ax1</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">wl_eff</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">xerr</span><span class="o">=</span><span class="p">[[</span><span class="n">wl_eff</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="n">wl0</span><span class="p">],</span> <span class="p">[</span><span class="n">wl1</span> <span class="o">-</span> <span class="n">wl_eff</span><span class="o">.</span><span class="n">value</span><span class="p">]],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span>
+                             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">plotstyle</span><span class="p">)</span>
+                <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Wavelength (nm)&#39;</span><span class="p">)</span>
+                <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Transmission&#39;</span><span class="p">)</span>
+
+            <span class="n">dfreq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">)</span>
+            <span class="n">freq_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">)</span> <span class="o">/</span> <span class="n">dfreq</span>
+            <span class="n">freq0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">right</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="n">right</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">])</span>
+            <span class="n">freq1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">left</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="n">left</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">])</span>
+            <span class="n">T_per_freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T_norm_per_freq&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">T_per_freq</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">T_per_freq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+                <span class="n">ax2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+                <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">!=</span> <span class="s1">&#39;w&#39;</span> <span class="k">else</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span>
+                         <span class="n">label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">ax2</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">freq_eff</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">xerr</span><span class="o">=</span><span class="p">[[</span><span class="n">freq_eff</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="n">freq0</span><span class="p">],</span> <span class="p">[</span><span class="n">freq1</span> <span class="o">-</span> <span class="n">freq_eff</span><span class="o">.</span><span class="n">value</span><span class="p">]],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span>
+                             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">plotstyle</span><span class="p">)</span>
+                <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (THz)&#39;</span><span class="p">)</span>
+                <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Transmission&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">freq_eff</span> <span class="o">=</span> <span class="n">freq_eff</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dfreq</span> <span class="o">=</span> <span class="o">-</span><span class="n">dfreq</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">freq_range</span> <span class="o">=</span> <span class="p">[[</span><span class="n">freq_eff</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="n">freq0</span><span class="p">],</span> <span class="p">[</span><span class="n">freq1</span> <span class="o">-</span> <span class="n">freq_eff</span><span class="o">.</span><span class="n">value</span><span class="p">]]</span></div>
+
+<div class="viewcode-block" id="Filter.blackbody"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.filters.Filter.blackbody">[docs]</a>    <span class="k">def</span> <span class="nf">blackbody</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the average Lnu of a blackbody in this filter</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T : float or array-like</span>
+<span class="sd">            Temperature of the blackbody in kilokelvins</span>
+<span class="sd">        R : float or array-like</span>
+<span class="sd">            Radius of the blackbody in thousands of solar radii</span>
+<span class="sd">        z : float, optional</span>
+<span class="sd">            Redshift between the blackbody source and the filter</span>
+<span class="sd">        cutoff_freq : float, optional</span>
+<span class="sd">            Cutoff frequency of the blackbody in terahertz as defined in https://doi.org/10.3847/1538-4357/aa9334.</span>
+<span class="sd">            Default: unmodified blackbody.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Lnu : float or array-like</span>
+<span class="sd">            Average spectral luminosity in the filter in watts per hertz</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">planck_fast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">z</span><span class="p">),</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="p">)</span>
+                        <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T_norm_per_freq&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;filter &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Filter</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="n">Filter</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__nq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Filter</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">!=</span> <span class="n">Filter</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Filter</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">Filter</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Filter</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">Filter</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Filter</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">Filter</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Filter</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">Filter</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="resample_filter_curve"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.filters.resample_filter_curve">[docs]</a><span class="k">def</span> <span class="nf">resample_filter_curve</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">outfile</span><span class="p">):</span>
+    <span class="n">orig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">wl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">1225.</span><span class="p">,</span> <span class="mf">274.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">)</span>
+    <span class="n">resampled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span> <span class="n">orig</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">orig</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">wl</span><span class="p">,</span> <span class="n">resampled</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">%.0f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%.16f</span><span class="s1">&#39;</span><span class="p">])</span></div>
+
+
+<span class="c1"># Vega zero points are from</span>
+<span class="c1">#  * Table A2 of Bessell et al. 1998, A&amp;A, 333, 231 for UBVRIJHK</span>
+<span class="c1">#  * Table 1 of https://heasarc.gsfc.nasa.gov/docs/heasarc/caldb/swift/docs/uvot/uvot_caldb_AB_10wa.pdf for Swift</span>
+<span class="n">all_filters</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;FUV&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;GALEX&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;GALEX_GALEX.FUV.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;NUV&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;GALEX&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;GALEX_GALEX.NUV.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;UVW2&#39;</span><span class="p">,</span> <span class="s1">&#39;uvw2&#39;</span><span class="p">,</span> <span class="s1">&#39;W2&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;uw2&#39;</span><span class="p">],</span> <span class="s1">&#39;#FF007F&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;Swift&#39;</span><span class="p">,</span> <span class="mf">7.379e-24</span><span class="p">,</span> <span class="s1">&#39;Swift_UVOT.UVW2.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;UVM2&#39;</span><span class="p">,</span> <span class="s1">&#39;uvm2&#39;</span><span class="p">,</span> <span class="s1">&#39;M2&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;um2&#39;</span><span class="p">],</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;Swift&#39;</span><span class="p">,</span> <span class="mf">7.656e-24</span><span class="p">,</span> <span class="s1">&#39;Swift_UVOT.UVM2.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;UVW1&#39;</span><span class="p">,</span> <span class="s1">&#39;uvw1&#39;</span><span class="p">,</span> <span class="s1">&#39;W1&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;uw1&#39;</span><span class="p">],</span> <span class="s1">&#39;#7F00FF&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;Swift&#39;</span><span class="p">,</span> <span class="mf">9.036e-24</span><span class="p">,</span> <span class="s1">&#39;Swift_UVOT.UVW1.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="s2">&quot;u&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;up&#39;</span><span class="p">],</span> <span class="s1">&#39;#4700CC&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;Gunn&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;sdss-up-183.asci&#39;</span><span class="p">),</span>  <span class="c1"># brightened from &#39;#080017&#39;</span>
+    <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;U_S&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;us&#39;</span><span class="p">],</span> <span class="s1">&#39;#230047&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;Swift&#39;</span><span class="p">,</span> <span class="mf">1.419e-23</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;Swift_UVOT.U.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;U&#39;</span><span class="p">,</span> <span class="s1">&#39;#3C0072&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;Johnson&#39;</span><span class="p">,</span> <span class="mf">1.790e-23</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;jnsn-uv-183.asci&#39;</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;#0057FF&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Johnson&#39;</span><span class="p">,</span> <span class="mf">4.063e-23</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;jnsn-bu-183.asci&#39;</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;B_S&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;bs&#39;</span><span class="p">],</span> <span class="s1">&#39;#4B00FF&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Swift&#39;</span><span class="p">,</span> <span class="mf">4.093e-23</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;Swift_UVOT.B.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s2">&quot;g&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;gp&#39;</span><span class="p">,</span> <span class="s1">&#39;F475W&#39;</span><span class="p">],</span> <span class="s1">&#39;#00CCFF&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Gunn&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;sdss-gp-183.asci&#39;</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;ATLAS&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;ATLAS_cyan.txt&#39;</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;V&#39;</span><span class="p">,</span> <span class="s1">&#39;#79FF00&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Johnson&#39;</span><span class="p">,</span> <span class="mf">3.636e-23</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;jnsn-vx-183.asci&#39;</span><span class="p">,</span> <span class="n">textcolor</span><span class="o">=</span><span class="s1">&#39;#46CC00&#39;</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;V_S&#39;</span><span class="p">,</span> <span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;vs&#39;</span><span class="p">],</span> <span class="s1">&#39;#00FF30&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Swift&#39;</span><span class="p">,</span> <span class="mf">3.664e-23</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;Swift_UVOT.V.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;unfilt.&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;Clear&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">],</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Itagaki&#39;</span><span class="p">,</span> <span class="mf">3.631e-23</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;KAF-1001E.asci&#39;</span><span class="p">,</span> <span class="n">linecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;MOSFiT&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;white.txt&#39;</span><span class="p">,</span> <span class="n">linecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;pseudobolometric&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;MOSFiT&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;pseudobolometric.txt&#39;</span><span class="p">,</span> <span class="n">linecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Gaia&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;GAIA_GAIA0.G.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">linecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;TESS&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;TESS&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;TESS_TESS.Red.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Gunn&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;pstr-wx-183.asci&#39;</span><span class="p">,</span> <span class="n">linecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;ATLAS&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;ATLAS_orange.txt&#39;</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s2">&quot;r&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;rp&#39;</span><span class="p">,</span> <span class="s1">&#39;F625W&#39;</span><span class="p">],</span> <span class="s1">&#39;#FF7D00&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Gunn&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;sdss-rp-183.asci&#39;</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;Rc&#39;</span><span class="p">,</span> <span class="s1">&#39;R_s&#39;</span><span class="p">],</span> <span class="s1">&#39;#FF7000&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Johnson&#39;</span><span class="p">,</span> <span class="mf">3.064e-23</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;cous-rs-183.asci&#39;</span><span class="p">),</span>  <span class="c1"># &#39;#CC5900&#39;</span>
+    <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="s2">&quot;i&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;ip&#39;</span><span class="p">,</span> <span class="s1">&#39;F775W&#39;</span><span class="p">],</span> <span class="s1">&#39;#90002C&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Gunn&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;sdss-ip-183.asci&#39;</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;Ic&#39;</span><span class="p">],</span> <span class="s1">&#39;#66000B&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Johnson&#39;</span><span class="p">,</span> <span class="mf">2.416e-23</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;cous-ic-183.asci&#39;</span><span class="p">),</span>  <span class="c1"># brightened from &#39;#1C0003&#39;</span>
+    <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="s2">&quot;z&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;zs&#39;</span><span class="p">],</span> <span class="s1">&#39;#000000&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Gunn&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;pstr-zs-183.asci&#39;</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;Gunn&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;pstr-yx-183.asci&#39;</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;J&#39;</span><span class="p">,</span> <span class="s1">&#39;#444444&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;UKIRT&#39;</span><span class="p">,</span> <span class="mf">1.589e-23</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;Gemini_Flamingos2.J.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;#888888&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;UKIRT&#39;</span><span class="p">,</span> <span class="mf">1.021e-23</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;Gemini_Flamingos2.H.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="s1">&#39;Ks&#39;</span><span class="p">],</span> <span class="s1">&#39;#CCCCCC&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;UKIRT&#39;</span><span class="p">,</span> <span class="mf">0.640e-23</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;Gemini_Flamingos2.Ks.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;UKIRT&#39;</span><span class="p">,</span> <span class="mf">0.285e-23</span><span class="p">)]</span>
+<span class="n">Filter</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">all_filters</span><span class="p">]</span>
+<span class="n">filtdict</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">filt</span> <span class="ow">in</span> <span class="n">all_filters</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">filt</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+        <span class="n">filtdict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">filt</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Griffin Hosseinzadeh
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

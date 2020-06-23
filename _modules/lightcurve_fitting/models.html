@@ -1,0 +1,487 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>lightcurve_fitting.models &mdash; lightcurve_fitting 0.0.0.post39+g403a58a documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> lightcurve_fitting
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.0.post39+g403a58a
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">lightcurve_fitting package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release-history.html">Release History</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">lightcurve_fitting</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>lightcurve_fitting.models</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for lightcurve_fitting.models</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">astropy.constants</span> <span class="k">as</span> <span class="nn">const</span>
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_filename</span>
+
+<span class="n">k_B</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">k_B</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;eV / kK&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+<span class="n">c3</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">sigma_sb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;erg s-1 Rsun-2 kK-4&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">/</span> <span class="mf">1000.</span>  <span class="c1"># Rsun --&gt; kiloRsun</span>
+
+
+<div class="viewcode-block" id="format_unit"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.format_unit">[docs]</a><span class="k">def</span> <span class="nf">format_unit</span><span class="p">(</span><span class="n">unit</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">unit</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">unit</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">%</span> <span class="mf">1.</span><span class="p">:</span>
+            <span class="n">unit_str</span> <span class="o">=</span> <span class="s1">&#39;$10^{{</span><span class="si">{value:.1f}</span><span class="s1">}}$ {unit:latex_inline}&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">unit_str</span> <span class="o">=</span> <span class="s1">&#39;$10^{{</span><span class="si">{value:.0f}</span><span class="s1">}}$ {unit:latex_inline}&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">unit_str</span> <span class="o">=</span> <span class="s1">&#39;{unit:latex_inline}&#39;</span>
+    <span class="k">return</span> <span class="n">unit_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">input_names</span><span class="p">,</span> <span class="n">units</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_names</span> <span class="o">=</span> <span class="n">input_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">units</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nparams</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axis_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;$</span><span class="si">{}</span><span class="s1">$ (</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">format_unit</span><span class="p">(</span><span class="n">unit</span><span class="p">))</span>
+                            <span class="k">if</span> <span class="n">unit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span> <span class="k">else</span> <span class="s1">&#39;$</span><span class="si">{}</span><span class="s1">$&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">input_names</span><span class="p">,</span> <span class="n">units</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="shock_cooling"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.shock_cooling">[docs]</a><span class="k">def</span> <span class="nf">shock_cooling</span><span class="p">(</span><span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">RW</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;time in days, velocity in 10**8.5 cm/s, masses in M_sun,</span>
+<span class="sd">       progenitor radius in 10**13 cm, opacity in 0.34 cm**2/g,</span>
+<span class="sd">       color temperature in kK, blackbody radius in 1000 R_sun&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mf">1.5</span><span class="p">:</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="mf">0.94</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">1.67</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.8</span>
+        <span class="n">epsilon_1</span> <span class="o">=</span> <span class="mf">0.027</span>
+        <span class="n">epsilon_2</span> <span class="o">=</span> <span class="mf">0.086</span>
+        <span class="n">L_0</span> <span class="o">=</span> <span class="mf">2.0e42</span>
+        <span class="n">T_0</span> <span class="o">=</span> <span class="mf">1.61</span>
+        <span class="n">Tph_to_Tcol</span> <span class="o">=</span> <span class="mf">1.1</span>
+    <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="mf">3.</span><span class="p">:</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="mf">0.79</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">4.57</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.73</span>
+        <span class="n">epsilon_1</span> <span class="o">=</span> <span class="mf">0.016</span>
+        <span class="n">epsilon_2</span> <span class="o">=</span> <span class="mf">0.175</span>
+        <span class="n">L_0</span> <span class="o">=</span> <span class="mf">2.1e42</span>
+        <span class="n">T_0</span> <span class="o">=</span> <span class="mf">1.69</span>
+        <span class="n">Tph_to_Tcol</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;n can only be 1.5 or 3&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">RW</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">Tph_to_Tcol</span> <span class="o">=</span> <span class="mf">1.2</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="n">t_in</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">t_exp</span>
+    <span class="n">L_RW</span> <span class="o">=</span> <span class="n">L_0</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">v_s</span> <span class="o">/</span> <span class="p">(</span><span class="n">f_rho_M</span> <span class="o">*</span> <span class="n">kappa</span><span class="p">))</span> <span class="o">**</span> <span class="o">-</span><span class="n">epsilon_2</span> <span class="o">*</span> <span class="n">v_s</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">R</span> <span class="o">/</span> <span class="n">kappa</span>
+    <span class="n">t_tr</span> <span class="o">=</span> <span class="mf">19.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">kappa</span> <span class="o">*</span> <span class="n">M_env</span> <span class="o">/</span> <span class="n">v_s</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">L_RW</span> <span class="o">*</span> <span class="n">A</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">t</span> <span class="o">/</span> <span class="n">t_tr</span><span class="p">)</span> <span class="o">**</span> <span class="n">alpha</span><span class="p">)</span>
+    <span class="n">T_ph</span> <span class="o">=</span> <span class="n">T_0</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">v_s</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">f_rho_M</span> <span class="o">*</span> <span class="n">kappa</span><span class="p">))</span> <span class="o">**</span> <span class="n">epsilon_1</span> <span class="o">*</span> <span class="n">kappa</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.25</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">R</span> <span class="o">**</span> <span class="mf">0.25</span>
+    <span class="n">T_col</span> <span class="o">=</span> <span class="n">T_ph</span> <span class="o">*</span> <span class="n">Tph_to_Tcol</span>
+    <span class="n">T_K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">T_col</span><span class="p">)</span> <span class="o">/</span> <span class="n">k_B</span>
+    <span class="n">R_bb</span> <span class="o">=</span> <span class="n">c3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">L</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">T_K</span> <span class="o">**</span> <span class="o">-</span><span class="mi">2</span>
+
+    <span class="n">y_fit</span> <span class="o">=</span> <span class="n">blackbody_to_filters</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">T_K</span><span class="p">,</span> <span class="n">R_bb</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">y_fit</span></div>
+
+
+<div class="viewcode-block" id="t_min"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.t_min">[docs]</a><span class="k">def</span> <span class="nf">t_min</span><span class="p">(</span><span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">R</span> <span class="o">/</span> <span class="n">v_s</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">R</span> <span class="o">**</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="p">(</span><span class="n">f_rho_M</span> <span class="o">*</span> <span class="n">kappa</span><span class="p">)</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.2</span> <span class="o">*</span> <span class="n">v_s</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.7</span><span class="p">)</span> <span class="o">+</span> <span class="n">t_exp</span></div>
+
+
+<div class="viewcode-block" id="t_max"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.t_max">[docs]</a><span class="k">def</span> <span class="nf">t_max</span><span class="p">(</span><span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">7.4</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">/</span> <span class="n">kappa</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.55</span> <span class="o">+</span> <span class="n">t_exp</span></div>
+
+
+<span class="n">ShockCooling</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">shock_cooling</span><span class="p">,</span>
+                     <span class="p">[</span>
+                         <span class="s1">&#39;v_</span><span class="se">\\</span><span class="s1">mathrm{s*}&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;M_</span><span class="se">\\</span><span class="s1">mathrm</span><span class="si">{env}</span><span class="s1">&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;f_</span><span class="se">\\</span><span class="s1">rho M&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;R&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;t_0&#39;</span>
+                     <span class="p">],</span>
+                     <span class="p">[</span>
+                         <span class="mf">10.</span> <span class="o">**</span> <span class="mf">8.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+                         <span class="n">u</span><span class="o">.</span><span class="n">Msun</span><span class="p">,</span>
+                         <span class="n">u</span><span class="o">.</span><span class="n">Msun</span><span class="p">,</span>
+                         <span class="mf">1e13</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+                         <span class="n">u</span><span class="o">.</span><span class="n">d</span>
+                     <span class="p">]</span>
+                     <span class="p">)</span>
+<span class="n">ShockCooling</span><span class="o">.</span><span class="n">t_min</span> <span class="o">=</span> <span class="n">t_min</span>
+<span class="n">ShockCooling</span><span class="o">.</span><span class="n">t_max</span> <span class="o">=</span> <span class="n">t_max</span>
+
+
+<div class="viewcode-block" id="shock_cooling2"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.shock_cooling2">[docs]</a><span class="k">def</span> <span class="nf">shock_cooling2</span><span class="p">(</span><span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">T_1</span><span class="p">,</span> <span class="n">L_1</span><span class="p">,</span> <span class="n">t_tr</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">RW</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mf">1.5</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">1.67</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.8</span>
+        <span class="n">epsilon_1</span> <span class="o">=</span> <span class="mf">0.027</span>
+        <span class="n">epsilon_2</span> <span class="o">=</span> <span class="mf">0.086</span>
+    <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="mf">3.</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">4.57</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.73</span>
+        <span class="n">epsilon_1</span> <span class="o">=</span> <span class="mf">0.016</span>
+        <span class="n">epsilon_2</span> <span class="o">=</span> <span class="mf">0.175</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;n can only be 1.5 or 3&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">RW</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">0.</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="n">t_in</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">t_exp</span>
+
+    <span class="n">epsilon_T</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">epsilon_1</span> <span class="o">-</span> <span class="mf">0.5</span>
+    <span class="n">epsilon_L</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">epsilon_2</span>
+
+    <span class="n">T_K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">T_1</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="n">epsilon_T</span><span class="p">)</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">L_1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">t</span> <span class="o">/</span> <span class="n">t_tr</span><span class="p">)</span> <span class="o">**</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="n">epsilon_L</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e42</span>
+    <span class="n">R_bb</span> <span class="o">=</span> <span class="n">c3</span> <span class="o">*</span> <span class="n">L</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">T_K</span> <span class="o">**</span> <span class="o">-</span><span class="mi">2</span>
+
+    <span class="n">y_fit</span> <span class="o">=</span> <span class="n">blackbody_to_filters</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">T_K</span><span class="p">,</span> <span class="n">R_bb</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">y_fit</span></div>
+
+
+<div class="viewcode-block" id="t_min2"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.t_min2">[docs]</a><span class="k">def</span> <span class="nf">t_min2</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;t_min cannot be translated to these parameters&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="t_max2"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.t_max2">[docs]</a><span class="k">def</span> <span class="nf">t_max2</span><span class="p">(</span><span class="n">T_1</span><span class="p">,</span> <span class="n">L_1</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">t_tr</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mf">1.5</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mf">1.5</span><span class="p">:</span>
+        <span class="n">epsilon_1</span> <span class="o">=</span> <span class="mf">0.027</span>
+    <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="mf">3.</span><span class="p">:</span>
+        <span class="n">epsilon_1</span> <span class="o">=</span> <span class="mf">0.016</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;n can only be 1.5 or 3&#39;</span><span class="p">)</span>
+
+    <span class="n">epsilon_T</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">epsilon_1</span> <span class="o">-</span> <span class="mf">0.5</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="mf">8.12</span> <span class="o">/</span> <span class="n">T_1</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">epsilon_T</span> <span class="o">**</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">t_exp</span></div>
+
+
+<span class="n">ShockCooling2</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">shock_cooling2</span><span class="p">,</span>
+                      <span class="p">[</span>
+                          <span class="s1">&#39;T_1&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;L_1&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;t_</span><span class="se">\\</span><span class="s1">mathrm</span><span class="si">{tr}</span><span class="s1">&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;t_0&#39;</span>
+                      <span class="p">],</span>
+                      <span class="p">[</span>
+                          <span class="n">u</span><span class="o">.</span><span class="n">kK</span><span class="p">,</span>
+                          <span class="mf">1e42</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+                          <span class="n">u</span><span class="o">.</span><span class="n">d</span><span class="p">,</span>
+                          <span class="n">u</span><span class="o">.</span><span class="n">d</span>
+                      <span class="p">]</span>
+                      <span class="p">)</span>
+<span class="n">ShockCooling2</span><span class="o">.</span><span class="n">t_min</span> <span class="o">=</span> <span class="n">t_min2</span>
+<span class="n">ShockCooling2</span><span class="o">.</span><span class="n">t_max</span> <span class="o">=</span> <span class="n">t_max2</span>
+
+<span class="n">sifto_filename</span> <span class="o">=</span> <span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;lightcurve_fitting&#39;</span><span class="p">,</span> <span class="s1">&#39;models/sifto.dat&#39;</span><span class="p">)</span>
+<span class="n">sifto</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">sifto_filename</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="scale_sifto"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.scale_sifto">[docs]</a><span class="k">def</span> <span class="nf">scale_sifto</span><span class="p">(</span><span class="n">sn_lc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run this function before using the CompanionShocking model</span>
+<span class="sd">       to scale the SiFTO model to match your supernova&#39;s luminosity</span>
+<span class="sd">       and colors. The argument is your supernova&#39;s light curve.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">filt</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">sn_lc</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="n">filt</span><span class="o">.</span><span class="n">char</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sifto</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No SiFTO template for filter &#39;</span> <span class="o">+</span> <span class="n">filt</span><span class="o">.</span><span class="n">char</span><span class="p">)</span>
+        <span class="n">lc_filt</span> <span class="o">=</span> <span class="n">sn_lc</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="n">filt</span><span class="p">)</span>
+        <span class="n">sifto</span><span class="p">[</span><span class="n">filt</span><span class="o">.</span><span class="n">char</span><span class="p">]</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">lc_filt</span><span class="p">[</span><span class="s1">&#39;lum&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">sifto</span><span class="p">[</span><span class="n">filt</span><span class="o">.</span><span class="n">char</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="companion_shocking"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.companion_shocking">[docs]</a><span class="k">def</span> <span class="nf">companion_shocking</span><span class="p">(</span><span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">t_exp</span><span class="p">,</span> <span class="n">a13</span><span class="p">,</span> <span class="n">Mc_v9_7</span><span class="p">,</span> <span class="n">t_peak</span><span class="p">,</span> <span class="n">stretch</span><span class="p">,</span> <span class="n">rr</span><span class="p">,</span> <span class="n">ri</span><span class="p">,</span> <span class="n">rU</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+    <span class="n">t_wrt_exp</span> <span class="o">=</span> <span class="n">t_in</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">t_exp</span>
+    <span class="n">T_kasen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mf">25.</span> <span class="o">*</span> <span class="p">(</span><span class="n">a13</span> <span class="o">**</span> <span class="mi">36</span> <span class="o">*</span> <span class="n">Mc_v9_7</span> <span class="o">*</span> <span class="n">kappa</span> <span class="o">**</span> <span class="o">-</span><span class="mi">35</span> <span class="o">*</span> <span class="n">t_wrt_exp</span> <span class="o">**</span> <span class="o">-</span><span class="mi">74</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">144.</span><span class="p">))</span>  <span class="c1"># kK</span>
+    <span class="n">R_kasen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mf">2.7</span> <span class="o">*</span> <span class="p">(</span><span class="n">kappa</span> <span class="o">*</span> <span class="n">Mc_v9_7</span> <span class="o">*</span> <span class="n">t_wrt_exp</span> <span class="o">**</span> <span class="mi">7</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">9.</span><span class="p">))</span>  <span class="c1"># kiloRsun</span>
+    <span class="n">Lnu_kasen</span> <span class="o">=</span> <span class="n">blackbody_to_filters</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">T_kasen</span><span class="p">,</span> <span class="n">R_kasen</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+
+    <span class="n">t_wrt_peak</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">t_in</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">t_peak</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">t_wrt_peak</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">t_wrt_peak</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>  <span class="c1"># pointwise</span>
+        <span class="n">Lnu_sifto</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">sifto</span><span class="p">[</span><span class="s1">&#39;Epoch&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">stretch</span><span class="p">,</span> <span class="n">sifto</span><span class="p">[</span><span class="n">filt</span><span class="o">.</span><span class="n">char</span><span class="p">])</span>
+                              <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">filt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">t_wrt_peak</span><span class="p">,</span> <span class="n">f</span><span class="p">)])</span>
+    <span class="k">elif</span> <span class="n">t_wrt_peak</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">Lnu_sifto</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">t_wrt_peak</span><span class="p">,</span> <span class="n">sifto</span><span class="p">[</span><span class="s1">&#39;Epoch&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">stretch</span><span class="p">,</span> <span class="n">sifto</span><span class="p">[</span><span class="n">filt</span><span class="o">.</span><span class="n">char</span><span class="p">])</span>
+                              <span class="k">for</span> <span class="n">filt</span> <span class="ow">in</span> <span class="n">f</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Lnu_sifto</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">sifto</span><span class="p">[</span><span class="s1">&#39;Epoch&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">s</span><span class="p">,</span> <span class="n">sifto</span><span class="p">[</span><span class="n">filt</span><span class="o">.</span><span class="n">char</span><span class="p">])</span>
+                                        <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">t_wrt_peak</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">stretch</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
+                              <span class="k">for</span> <span class="n">filt</span> <span class="ow">in</span> <span class="n">f</span><span class="p">])</span>
+
+    <span class="n">sifto_factors</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;r&#39;</span><span class="p">:</span> <span class="n">rr</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="n">ri</span><span class="p">}</span>
+    <span class="n">kasen_factors</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;U&#39;</span><span class="p">:</span> <span class="n">rU</span><span class="p">}</span>
+    <span class="n">y_fit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">L1</span> <span class="o">*</span> <span class="n">kasen_factors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">filt</span><span class="o">.</span><span class="n">char</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">+</span> <span class="n">L2</span> <span class="o">*</span> <span class="n">sifto_factors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">filt</span><span class="o">.</span><span class="n">char</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
+                      <span class="k">for</span> <span class="n">L1</span><span class="p">,</span> <span class="n">L2</span><span class="p">,</span> <span class="n">filt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Lnu_kasen</span><span class="p">,</span> <span class="n">Lnu_sifto</span><span class="p">,</span> <span class="n">f</span><span class="p">)])</span>
+
+    <span class="k">return</span> <span class="n">y_fit</span></div>
+
+
+<span class="n">M_chandra</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">def_unit</span><span class="p">(</span><span class="s1">&#39;M_chandra&#39;</span><span class="p">,</span> <span class="mf">1.4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;latex&#39;</span><span class="p">:</span> <span class="s1">&#39;M_</span><span class="se">\\</span><span class="s1">mathrm</span><span class="si">{Ch}</span><span class="s1">&#39;</span><span class="p">})</span>
+<span class="n">CompanionShocking</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">companion_shocking</span><span class="p">,</span>
+                          <span class="p">[</span>
+                              <span class="s1">&#39;t_0&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;a&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;M v^7&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;t_</span><span class="se">\\</span><span class="s1">mathrm</span><span class="si">{max}</span><span class="s1">&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;s&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;r_r&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;r_i&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;r_U&#39;</span>
+                          <span class="p">],</span>
+                          <span class="p">[</span>
+                              <span class="n">u</span><span class="o">.</span><span class="n">d</span><span class="p">,</span>
+                              <span class="mf">10.</span> <span class="o">**</span> <span class="mf">13.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+                              <span class="n">M_chandra</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1e9</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="o">**</span> <span class="mi">7</span><span class="p">,</span>
+                              <span class="n">u</span><span class="o">.</span><span class="n">d</span><span class="p">,</span>
+                              <span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span><span class="p">,</span>
+                              <span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span><span class="p">,</span>
+                              <span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span><span class="p">,</span>
+                              <span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span>
+                          <span class="p">]</span>
+                          <span class="p">)</span>
+
+
+<div class="viewcode-block" id="log_flat_prior"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.log_flat_prior">[docs]</a><span class="k">def</span> <span class="nf">log_flat_prior</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">p</span> <span class="o">**</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="flat_prior"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.flat_prior">[docs]</a><span class="k">def</span> <span class="nf">flat_prior</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">p</span><span class="p">)</span></div>
+
+
+<span class="n">c1</span> <span class="o">=</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">h</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">k_B</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">kK</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">THz</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+<span class="n">c2</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">h</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">W</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1000</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Rsun</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">THz</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+
+<div class="viewcode-block" id="planck_fast"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.planck_fast">[docs]</a><span class="k">def</span> <span class="nf">planck_fast</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
+    <span class="c1"># cutoff frequency as defined in https://doi.org/10.3847/1538-4357/aa9334</span>
+    <span class="k">return</span> <span class="n">c2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">R</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">nu</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">cutoff_freq</span> <span class="o">/</span> <span class="n">nu</span><span class="p">))</span>
+                           <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">c1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">T</span> <span class="o">**</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nu</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="blackbody_to_filters"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.blackbody_to_filters">[docs]</a><span class="k">def</span> <span class="nf">blackbody_to_filters</span><span class="p">(</span><span class="n">filters</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">T</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">R</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;T &amp; R must have the same shape&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">T</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">filters</span><span class="p">):</span>  <span class="c1"># pointwise</span>
+        <span class="n">y_fit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">f</span><span class="o">.</span><span class="n">blackbody</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">filters</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">)])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">y_fit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">f</span><span class="o">.</span><span class="n">blackbody</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">R</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">z</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">])</span>
+        <span class="n">y_fit</span> <span class="o">=</span> <span class="n">y_fit</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">filters</span><span class="p">),</span> <span class="o">*</span><span class="n">T</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y_fit</span></div>
+
+
+<div class="viewcode-block" id="planck"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.planck">[docs]</a><span class="k">def</span> <span class="nf">planck</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">dT</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">dR</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+    <span class="n">Lnu</span> <span class="o">=</span> <span class="n">planck_fast</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dT</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">dR</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">cov</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Lnu</span>
+    <span class="n">dlogLdT</span> <span class="o">=</span> <span class="n">c1</span> <span class="o">*</span> <span class="n">nu</span> <span class="o">*</span> <span class="n">T</span> <span class="o">**</span> <span class="o">-</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">c1</span> <span class="o">*</span> <span class="n">nu</span> <span class="o">/</span> <span class="n">T</span><span class="p">))</span>
+    <span class="n">dlogLdR</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">/</span> <span class="n">R</span>
+    <span class="n">dLnu</span> <span class="o">=</span> <span class="n">Lnu</span> <span class="o">*</span> <span class="p">(</span><span class="n">dlogLdT</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">dT</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">dlogLdR</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">dR</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">dlogLdT</span> <span class="o">*</span> <span class="n">dlogLdR</span> <span class="o">*</span> <span class="n">cov</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+    <span class="k">return</span> <span class="n">Lnu</span><span class="p">,</span> <span class="n">dLnu</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Griffin Hosseinzadeh
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+language: python
+python:
+  - 3.6
+cache:
+  directories:
+    - $HOME/.cache/pip
+    - $HOME/.ccache  # https://github.com/travis-ci/travis-ci/issues/5853
+
+env:
+      global:
+        # Doctr deploy key for griffin-h/lightcurve_fitting
+        - secure: "MrSfWZzQxH1cmYg+zLGPnRAT5IXvWgAJYCmjWqBrZlC24fZ+FraMYbntxR7aIVj6xzksZYO4uMkejxp+svWU2mpu8vpN3q7VYcVWRmHbVSEnFxmMNKi/SoCZ0iZvceAL7PadlVxsqE0/Ila8OHLQ8gj4oKqjxKO3dDcSBHwPkBfkvLNwmNZoy47KeLbqeFP9HQfg0WNaGGQOE1CABatydy68qCgXztFw6xsfit1ulwBE999J70DWk03pCASG0OPwwU3APJ+FJj/05Z0bwHeGHJDYicm/xaSVbi170vyE6chXgHKPOojDYtd8qCahDCaniL9brSqArsobdk4cXhgutnCxUUw5AHgGn5kluVZTIMMkIuzThSLZbk7EjphBnsOtwpg+qmNiIbxY85kNOe1j+QDGNJ9Jat+vglXWgi1wJWlQjbUDtbuQzK2MVAPg0dBR+m5FzI9VS/YBZagZGl63zXgHztLZliL/IYXNCpflkxBQnDFBWnP0xEzyKmgWABsx77jbK7m3H2KrsadYYcy3Y8D0oM0eYxUrdTbeFhJvj8FmVK/o+ZjawYM0ixmcclbGePGICOKUmsr01+ce9olg9cM1WQuqM0TD7Ev/pqFF3UcytTJifWXx1QkCPaBejN2XJMd/tVqZJ0cN71UOu/wF54K+iFWlIvowlLlCzZQcag8="
+
+install:
+  # Install this package and the packages listed in requirements.txt.
+  - pip install .
+  # Install extra requirements for running tests and building docs.
+  - pip install -r requirements-dev.txt
+
+script:
+  - set -e  # If any of the following steps fail, just stop at that point.
+  - make -C docs html  # Build the documentation.
+  - pip install doctr
+  - doctr deploy --built-docs docs/build/html .  # Publish the documentation.

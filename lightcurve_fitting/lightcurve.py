@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
 from astropy.table import Table, vstack
-import filters
+from .filters import filtdict
 import itertools
 from matplotlib.markers import MarkerStyle
 try:
@@ -69,10 +69,11 @@ class LC(Table):
             use &= use1
         selected = self[use]
         selected.sn = self.sn
+        selected.meta = self.meta
         return selected
 
     def filters_to_objects(self, read_curve=True):
-        self['filter'] = [filters.filtdict[f] for f in self['filt']]
+        self['filter'] = [filtdict[f] for f in self['filt']]
         is_swift = np.zeros(len(self), bool)
         if 'telescope' in self.colnames:
             is_swift |= self['telescope'] == 'Swift'
@@ -82,7 +83,7 @@ class LC(Table):
             is_swift |= self['source'] == 'SOUSA'
         if is_swift.any():
             for filt, swiftfilt in zip('UBV', 'sbv'):
-                self['filter'][is_swift & (self['filt'] == filt)] = filters.filtdict[swiftfilt]
+                self['filter'][is_swift & (self['filt'] == filt)] = filtdict[swiftfilt]
         if read_curve:
             for filt in np.unique(self['filter']):
                 filt.read_curve()
@@ -114,6 +115,7 @@ class LC(Table):
             subtabs.append(binned)
         lc = vstack(subtabs)
         lc.sn = self.sn
+        lc.meta = self.meta
         return lc
 
     def findNondet(self, nondetSigmas=3):
@@ -127,27 +129,33 @@ class LC(Table):
         self['mag'], self['dmag'] = flux2mag(self['flux'], self['dflux'], zp, self['nondet'], self.nondetSigmas)
 
     def calcAbsMag(self, dm=None, extinction=None, hostext=None):
-        if self.sn is None:
-            if dm is None:
-                dm = 0.
-            if extinction is None:
-                extinction = {}
-            if hostext is None:
-                hostext = {}
-        else:
-            if dm is None:
-                dm = self.sn.dm
-            if extinction is None:
-                extinction = self.sn.extinction
-            if hostext is None:
-                hostext = self.sn.hostext
+        if dm is not None:
+            self.meta['dm'] = dm
+        elif self.sn is not None:
+            self.meta['dm'] = self.sn.dm
+        elif 'dm' not in self.meta:
+            self.meta['dm'] = 0.
 
-        self['absmag'] = self['mag'].data - dm
-        for filt, A in extinction.items():
-            for filtname in filters.filtdict[filt].names:
+        if extinction is not None:
+            self.meta['extinction'] = extinction
+        elif self.sn is not None:
+            self.meta['extinction'] = self.sn.extinction
+        elif 'extinction' not in self.meta:
+            self.meta['extinction'] = {}
+
+        if hostext is not None:
+            self.meta['hostext'] = hostext
+        elif self.sn is not None:
+            self.meta['hostext'] = self.sn.hostext
+        elif 'hostext' not in self.meta:
+            self.meta['hostext'] = {}
+
+        self['absmag'] = self['mag'].data - self.meta['dm']
+        for filt, A in self.meta['extinction'].items():
+            for filtname in filtdict[filt].names:
                 self['absmag'][self['filt'] == filtname] -= A
-        for filt, A in hostext.items():
-            for filtname in filters.filtdict[filt].names:
+        for filt, A in self.meta['hostext'].items():
+            for filtname in filtdict[filt].names:
                 self['absmag'][self['filt'] == filtname] -= A
 
     def calcLum(self, nondetSigmas=3):

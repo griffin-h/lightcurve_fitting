@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import numpy as np
-from lightcurve import LC
+from .lightcurve import LC
 from astropy import constants as const, units as u
 from astropy.io import fits
 from astropy.wcs import WCS

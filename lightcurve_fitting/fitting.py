@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import astropy.units as u
 import emcee
 import corner
-import models
+from .models import CompanionShocking, scale_sifto, flat_prior
+from pkg_resources import resource_filename
 
 
 def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p_up=None,
@@ -27,13 +28,13 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     y = lc['lum'].data
     dy = lc['dlum'].data
 
-    if model == models.CompanionShocking:
-        models.scale_sifto(lc)
+    if model == CompanionShocking:
+        scale_sifto(lc)
 
     ndim = model.nparams
 
     if priors is None:
-        priors = [models.flat_prior] * ndim
+        priors = [flat_prior] * ndim
     elif len(priors) != ndim:
         raise Exception('priors must have length {:d}'.format(ndim))
 
@@ -110,7 +111,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
                       filter_spacing=0.5, tmin=None, tmax=None, t0_offset=None, save_plot_as=''):
     if model_kwargs is None:
         model_kwargs = {}
-    plt.style.use('serif')
+    plt.style.use(resource_filename('lightcurve_fitting', 'serif.mplstyle'))
 
     choices = np.random.choice(sampler_flatchain.shape[0], num_models_to_plot)
     ps = sampler_flatchain[choices].T

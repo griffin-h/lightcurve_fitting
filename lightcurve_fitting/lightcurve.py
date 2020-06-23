@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
 from astropy.table import Table, vstack
-import filters
+from .filters import filtdict
 import itertools
 from matplotlib.markers import MarkerStyle
 try:
@@ -73,7 +73,7 @@ class LC(Table):
         return selected
 
     def filters_to_objects(self, read_curve=True):
-        self['filter'] = [filters.filtdict[f] for f in self['filt']]
+        self['filter'] = [filtdict[f] for f in self['filt']]
         is_swift = np.zeros(len(self), bool)
         if 'telescope' in self.colnames:
             is_swift |= self['telescope'] == 'Swift'
@@ -83,7 +83,7 @@ class LC(Table):
             is_swift |= self['source'] == 'SOUSA'
         if is_swift.any():
             for filt, swiftfilt in zip('UBV', 'sbv'):
-                self['filter'][is_swift & (self['filt'] == filt)] = filters.filtdict[swiftfilt]
+                self['filter'][is_swift & (self['filt'] == filt)] = filtdict[swiftfilt]
         if read_curve:
             for filt in np.unique(self['filter']):
                 filt.read_curve()
@@ -152,10 +152,10 @@ class LC(Table):
 
         self['absmag'] = self['mag'].data - self.meta['dm']
         for filt, A in self.meta['extinction'].items():
-            for filtname in filters.filtdict[filt].names:
+            for filtname in filtdict[filt].names:
                 self['absmag'][self['filt'] == filtname] -= A
         for filt, A in self.meta['hostext'].items():
-            for filtname in filters.filtdict[filt].names:
+            for filtname in filtdict[filt].names:
                 self['absmag'][self['filt'] == filtname] -= A
 
     def calcLum(self, nondetSigmas=3):

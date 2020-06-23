@@ -4,11 +4,8 @@ from astropy.table import Table
 import astropy.units as u
 import astropy.constants as const
 import os
-import models
-try:
-    from config import filters_dir
-except ModuleNotFoundError:
-    filters_dir = 'filters/'
+from .models import planck_fast
+from pkg_resources import resource_filename
 
 
 class Filter:
@@ -58,7 +55,7 @@ class Filter:
             self.m0 = 2.5 * np.log10(self.fnu)
             self.M0 = self.m0 + 90.19
         if filename:
-            self.filename = os.path.join(filters_dir, filename)
+            self.filename = resource_filename('lightcurve_fitting', os.path.join('filters', filename))
         else:
             self.filename = ''
         self.angstrom = angstrom
@@ -135,7 +132,7 @@ class Filter:
         Lnu : float or array-like
             Average spectral luminosity in the filter in watts per hertz
         """
-        return np.trapz(models.planck_fast(self.trans['freq'].data * (1. + z), T, R, cutoff_freq)
+        return np.trapz(planck_fast(self.trans['freq'].data * (1. + z), T, R, cutoff_freq)
                         * self.trans['T_norm_per_freq'].data, self.trans['freq'].data)
 
     def __str__(self):

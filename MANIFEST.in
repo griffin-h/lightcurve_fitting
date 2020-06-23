@@ -1,0 +1,15 @@
+include LICENSE
+include README.md
+include requirements.txt
+
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+
+recursive-include docs *.rst conf.py Makefile make.bat
+
+include versioneer.py
+include lightcurve_fitting/_version.py
+
+include filters/*
+include example/SN2016bkv.table
+include models/sifto.dat

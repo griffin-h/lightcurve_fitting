@@ -1,6 +1,6 @@
-import filters
-import models
-from lightcurve import LC
+from .filters import all_filters, filtdict
+from .models import blackbody_to_filters, planck_fast
+from .lightcurve import LC
 
 from astropy import constants as const
 from astropy import units as u
@@ -13,18 +13,19 @@ from scipy.stats import gaussian_kde
 import emcee
 import corner
 import os
+from pkg_resources import resource_filename
 
-for filt in filters.all_filters:
+for filt in all_filters:
     filt.read_curve()
 
-plt.style.use('serif')
+plt.style.use(resource_filename('lightcurve_fitting', 'serif.mplstyle'))
 
 
-def pseudo(temp, radius, z, filter0=filters.filtdict['I'], filter1=filters.filtdict['U'], cutoff_freq=np.inf):
+def pseudo(temp, radius, z, filter0=filtdict['I'], filter1=filtdict['U'], cutoff_freq=np.inf):
     freq0 = (filter0.freq_eff - filter0.dfreq / 2.).value
     freq1 = (filter1.freq_eff + filter1.dfreq / 2.).value
     x_optical = np.arange(freq0, freq1)
-    y_optical = models.planck_fast(x_optical * (1. + z), temp, radius, cutoff_freq)
+    y_optical = planck_fast(x_optical * (1. + z), temp, radius, cutoff_freq)
     L_opt = np.trapz(y_optical) * 1e12  # dx = 1 THz
     return L_opt
 
@@ -49,7 +50,7 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
             return -np.sum(np.log(p))
 
     def log_likelihood(p, filtobj, y, dy):
-        y_fit = models.blackbody_to_filters(filtobj, p[0], p[1], z, cutoff_freq)
+        y_fit = blackbody_to_filters(filtobj, p[0], p[1], z, cutoff_freq)
         return -0.5 * np.sum(np.log(2 * np.pi * dy ** 2) + ((y - y_fit) / dy) ** 2, -1)
 
     def log_posterior(p, filtobj, y, dy):
@@ -78,7 +79,7 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
     ax = f4.get_axes()[1]
     ps = sampler.flatchain[np.random.choice(sampler.flatchain.shape[0], 100)].T
     xfit = np.arange(100., max(1000., min(filtobj).freq_eff.value))
-    yfit = models.planck_fast(xfit * (1. + z), ps[0], ps[1], cutoff_freq)
+    yfit = planck_fast(xfit * (1. + z), ps[0], ps[1], cutoff_freq)
     plt.sca(ax)
     epoch1.plot(xcol='freq', ycol='lum', offset_factor=0.)
     ax.plot(xfit, yfit.T, color='k', alpha=0.05)
@@ -166,7 +167,7 @@ def blackbody_lstsq(epoch1, z, p0=None, T_range=(1., 100.), R_range=(0.01, 1000.
         p0 = [10., 10.]
 
     def planck_cutoff(nu, T, R):
-        return models.planck_fast(nu, T, R, cutoff_freq)
+        return planck_fast(nu, T, R, cutoff_freq)
 
     p0, cov = curve_fit(planck_cutoff, epoch1['freq'] * (1. + z), epoch1['lum'], p0=p0,
                         bounds=([T_range[0], R_range[0]], [T_range[1], R_range[1]]))
@@ -193,7 +194,7 @@ def calc_colors(epoch1, colors):
     lolims = []
     uplims = []
     for color in colors:
-        f0, f1 = [filters.filtdict[f] for f in color.split('-')]
+        f0, f1 = [filtdict[f] for f in color.split('-')]
         if f0 in epoch1['filter'] and f1 in epoch1['filter']:
             m0, dm0, n0 = epoch1.where(filter=f0)[['absmag', 'dmag', 'nondet']][0]
             m1, dm1, n1 = epoch1.where(filter=f1)[['absmag', 'dmag', 'nondet']][0]
@@ -232,7 +233,7 @@ def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1):
     if colors is None:
         colors = []
         for col in t.colnames:
-            if col.split('-')[0] in filters.filtdict and not t[col].mask.all():
+            if col.split('-')[0] in filtdict and not t[col].mask.all():
                 colors.append(col)
     fig = plt.figure()
     for c in colors:

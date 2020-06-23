@@ -181,7 +181,7 @@ def readspec(f, verbose=False):
     return np.array(x), np.array(y), date, telescope, instrument
 
 
-def calibrate_spectra(spectra, lc, filters=None, order=0, redshift=0., subtract_percentile=None, show=False):
+def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=None, show=False):
     if filters is not None:
         lc = lc.where(filt=filters)
     lc.calcFlux()
@@ -205,7 +205,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, redshift=0., subtract_
             ax1.set_ylabel('$F_\\nu$ (W Hz$^{-1}$)')
             ax2 = plt.subplot(212)
         good = ~np.isnan(flux)
-        wl = wl[good] * u.angstrom / (1. + redshift)  # do this in the observed frame
+        wl = wl[good] * u.angstrom
         Flam = flux[good] * u.erg / u.s / u.angstrom / u.cm**2
         nu = const.c / wl
         Fnu = (Flam * wl / nu).to(u.W / u.Hz / u.m**2).value[::-1]
@@ -255,7 +255,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, redshift=0., subtract_
             plt.show()
             ans = input('accept this scale? [Y/n] ')
         if not show or ans.lower() != 'n':
-            data_out = np.array([wl[good] * (1. + redshift), flux[good] * corr]).T
+            data_out = np.array([wl[good], flux[good] * corr]).T
             path_in, filename_in = os.path.split(spec)
             filename_out = os.path.join(path_in, 'photcal_' + filename_in).replace('.fits', '.txt')
             np.savetxt(filename_out, data_out, fmt='%.1f %.2e')
@@ -271,10 +271,9 @@ if __name__ == '__main__':
                         help='format of photometry table (passed to `astropy.table.Table.read`)')
     parser.add_argument('-f', '--filters', nargs='+', help='filters to use for calibration')
     parser.add_argument('-o', '--order', type=int, default=0, help='polynomial order of correction function')
-    parser.add_argument('-z', '--redshift', type=float, default=0., help='supernova redshift to correct spectra')
     parser.add_argument('--subtract-percentile', type=float, help='subtract continuum from spectrum before correcting')
     parser.add_argument('--show', action='store_true')
     args = parser.parse_args()
 
     lc = LC.read(args.lc, format=args.format)
-    calibrate_spectra(args.spectra, lc, args.filters, args.order, args.redshift, args.subtract_percentile, args.show)
+    calibrate_spectra(args.spectra, lc, args.filters, args.order, args.subtract_percentile, args.show)

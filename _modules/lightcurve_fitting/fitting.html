@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>lightcurve_fitting.fitting &mdash; lightcurve_fitting 0.0.0.post41+g8dd4728 documentation</title>
+  <title>lightcurve_fitting.fitting &mdash; lightcurve_fitting 0.0.0.post42+g1327a61 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.0.0.post41+g8dd4728
+                0.0.0.post42+g1327a61
               </div>
             
           
@@ -211,6 +211,9 @@
 
     <span class="k">if</span> <span class="n">model_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">model_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">lc</span><span class="o">.</span><span class="n">calcAbsMag</span><span class="p">()</span>
+    <span class="n">lc</span><span class="o">.</span><span class="n">calcLum</span><span class="p">()</span>
 
     <span class="n">f</span> <span class="o">=</span> <span class="n">lc</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
     <span class="n">t</span> <span class="o">=</span> <span class="n">lc</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>

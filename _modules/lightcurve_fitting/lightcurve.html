@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>lightcurve_fitting.lightcurve &mdash; lightcurve_fitting 0.0.0.post41+g8dd4728 documentation</title>
+  <title>lightcurve_fitting.lightcurve &mdash; lightcurve_fitting 0.0.0.post42+g1327a61 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.0.0.post41+g8dd4728
+                0.0.0.post42+g1327a61
               </div>
             
           
@@ -265,7 +265,7 @@
 <span class="sd">        read_curve : bool, optional</span>
 <span class="sd">            Read in the transmission function for each filter encountered (default)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">filtdict</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filt&#39;</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">filtdict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filt&#39;</span><span class="p">]]</span>
         <span class="n">is_swift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">bool</span><span class="p">)</span>
         <span class="k">if</span> <span class="s1">&#39;telescope&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="n">is_swift</span> <span class="o">|=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;telescope&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Swift&#39;</span>
@@ -285,7 +285,6 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns an array of zero points for each filter in the ``&#39;filter&#39;`` column</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">filters_to_objects</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">f</span><span class="o">.</span><span class="n">m0</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]])</span>
 
 <div class="viewcode-block" id="LC.calcFlux"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcFlux">[docs]</a>    <span class="k">def</span> <span class="nf">calcFlux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -410,11 +409,9 @@
 
         <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;dm&#39;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">filt</span><span class="p">,</span> <span class="n">A</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;extinction&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">for</span> <span class="n">filtname</span> <span class="ow">in</span> <span class="n">filtdict</span><span class="p">[</span><span class="n">filt</span><span class="p">]</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-                <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">][</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filt&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">filtname</span><span class="p">]</span> <span class="o">-=</span> <span class="n">A</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">][</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">filtdict</span><span class="p">[</span><span class="n">filt</span><span class="p">]]</span> <span class="o">-=</span> <span class="n">A</span>
         <span class="k">for</span> <span class="n">filt</span><span class="p">,</span> <span class="n">A</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;hostext&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">for</span> <span class="n">filtname</span> <span class="ow">in</span> <span class="n">filtdict</span><span class="p">[</span><span class="n">filt</span><span class="p">]</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-                <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">][</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filt&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">filtname</span><span class="p">]</span> <span class="o">-=</span> <span class="n">A</span></div>
+            <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">][</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">filtdict</span><span class="p">[</span><span class="n">filt</span><span class="p">]]</span> <span class="o">-=</span> <span class="n">A</span></div>
 
 <div class="viewcode-block" id="LC.calcLum"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcLum">[docs]</a>    <span class="k">def</span> <span class="nf">calcLum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -626,11 +623,8 @@
             <span class="n">t</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nondets</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">t</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="c1"># make filters strings (in case they are all the &#39;0&#39; filter)</span>
         <span class="k">if</span> <span class="s1">&#39;filt&#39;</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
-            <span class="n">filts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;filt&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
-            <span class="n">t</span><span class="o">.</span><span class="n">remove_column</span><span class="p">(</span><span class="s1">&#39;filt&#39;</span><span class="p">)</span>
-            <span class="n">t</span><span class="p">[</span><span class="s1">&#39;filt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filts</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">filters_to_objects</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">t</span></div></div>
 
 

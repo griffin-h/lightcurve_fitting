@@ -53,6 +53,9 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     if model_kwargs is None:
         model_kwargs = {}
 
+    lc.calcAbsMag()
+    lc.calcLum()
+
     f = lc['filter'].data
     t = lc['MJD'].data
     y = lc['lum'].data

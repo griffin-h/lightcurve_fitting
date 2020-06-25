@@ -281,7 +281,6 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
         lc = lc.where(filt=filters)
     lc.calcFlux()
     lc.sort('MJD')
-    lc.filters_to_objects()
     filts = set(lc['filter'])
 
     for filt in filts:

@@ -106,7 +106,7 @@ class LC(Table):
         read_curve : bool, optional
             Read in the transmission function for each filter encountered (default)
         """
-        self['filter'] = [filtdict[f] for f in self['filt']]
+        self['filter'] = [filtdict[str(f)] for f in self['filt']]
         is_swift = np.zeros(len(self), bool)
         if 'telescope' in self.colnames:
             is_swift |= self['telescope'] == 'Swift'
@@ -126,7 +126,6 @@ class LC(Table):
         """
         Returns an array of zero points for each filter in the ``'filter'`` column
         """
-        self.filters_to_objects()
         return np.array([f.m0 for f in self['filter']])
 
     def calcFlux(self, nondetSigmas=None, zp=None):
@@ -251,11 +250,9 @@ class LC(Table):
 
         self['absmag'] = self['mag'].data - self.meta['dm']
         for filt, A in self.meta['extinction'].items():
-            for filtname in filtdict[filt].names:
-                self['absmag'][self['filt'] == filtname] -= A
+            self['absmag'][self['filter'] == filtdict[filt]] -= A
         for filt, A in self.meta['hostext'].items():
-            for filtname in filtdict[filt].names:
-                self['absmag'][self['filt'] == filtname] -= A
+            self['absmag'][self['filter'] == filtdict[filt]] -= A
 
     def calcLum(self, nondetSigmas=None):
         """
@@ -467,11 +464,8 @@ class LC(Table):
             t['nondet'] = nondets
         else:
             t['nondet'] = False
-        # make filters strings (in case they are all the '0' filter)
         if 'filt' in t.colnames:
-            filts = np.array(t['filt'], dtype=str)
-            t.remove_column('filt')
-            t['filt'] = filts
+            t.filters_to_objects()
         return t
 
 

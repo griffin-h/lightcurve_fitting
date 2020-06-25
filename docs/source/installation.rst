@@ -4,4 +4,4 @@ Installation
 
 At the command line::
 
-    $ pip install lightcurve_fitting
+    $ pip install lightcurve-fitting

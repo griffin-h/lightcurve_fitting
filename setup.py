@@ -34,7 +34,7 @@ with open(path.join(here, 'requirements.txt')) as requirements_file:
 
 
 setup(
-    name='lightcurve_fitting',
+    name='lightcurve-fitting',
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     description="Tools to fit analytical models to multiband light curves of astronomical transients",

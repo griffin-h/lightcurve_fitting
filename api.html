@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Documentation &mdash; lightcurve_fitting 0.0.0.post40+g7f04a8d documentation</title>
+  <title>API Documentation &mdash; lightcurve_fitting 0.0.0.post41+g8dd4728 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.0.0.post40+g7f04a8d
+                0.0.0.post41+g8dd4728
               </div>
             
           
@@ -1446,7 +1446,11 @@ values. If <code class="docutils literal notranslate"><span class="pre">value</s
 <dl class="py function">
 <dt id="lightcurve_fitting.models.companion_shocking">
 <code class="sig-prename descclassname">lightcurve_fitting.models.</code><code class="sig-name descname">companion_shocking</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t_in</span></em>, <em class="sig-param"><span class="n">f</span></em>, <em class="sig-param"><span class="n">t_exp</span></em>, <em class="sig-param"><span class="n">a13</span></em>, <em class="sig-param"><span class="n">Mc_v9_7</span></em>, <em class="sig-param"><span class="n">t_peak</span></em>, <em class="sig-param"><span class="n">stretch</span></em>, <em class="sig-param"><span class="n">rr</span></em>, <em class="sig-param"><span class="n">ri</span></em>, <em class="sig-param"><span class="n">rU</span></em>, <em class="sig-param"><span class="n">kappa</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">z</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#companion_shocking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.models.companion_shocking" title="Permalink to this definition">¶</a></dt>
-<dd><p>The companion shocking model of Kasen (<a class="reference external" href="https://doi.org/10.1088/0004-637X/708/2/1025">https://doi.org/10.1088/0004-637X/708/2/1025</a>) plus the SiFTO SN Ia model.</p>
+<dd><p>The companion shocking model of Kasen (<a class="reference external" href="https://doi.org/10.1088/0004-637X/708/2/1025">https://doi.org/10.1088/0004-637X/708/2/1025</a>) plus the SiFTO SN Ia model</p>
+<p>As written by Hosseinzadeh et al. (<a class="reference external" href="https://doi.org/10.3847/2041-8213/aa8402">https://doi.org/10.3847/2041-8213/aa8402</a>), the shock component is defined by:</p>
+<p><span class="math notranslate nohighlight">\(R_\mathrm{phot}(t) = (2700\,R_\odot) (M_c v_9^7)^{1/9} κ^{1/9} t^{7/9}\)</span> (Eq. 1)</p>
+<p><span class="math notranslate nohighlight">\(T_\mathrm{eff}(t) = (25\,\mathrm{kK}) a_{13}^{1/4} (M_c v_9^7)^{1/144} κ^{-35/144} t^{37/72}\)</span> (Eq. 2)</p>
+<p>The SiFTO model (<a class="reference external" href="https://doi.org/10.1086/588518">https://doi.org/10.1086/588518</a>) is currently only available in the UBVgri filters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -1554,6 +1558,7 @@ the ejecta velocity in units of <span class="math notranslate nohighlight">\(10^
 <dt id="lightcurve_fitting.models.planck_fast">
 <code class="sig-prename descclassname">lightcurve_fitting.models.</code><code class="sig-name descname">planck_fast</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nu</span></em>, <em class="sig-param"><span class="n">T</span></em>, <em class="sig-param"><span class="n">R</span></em>, <em class="sig-param"><span class="n">cutoff_freq</span><span class="o">=</span><span class="default_value">inf</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#planck_fast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.models.planck_fast" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Planck spectrum for a blackbody source</p>
+<p><span class="math notranslate nohighlight">\(L_ν = 4 π R^2 \frac{2 π h ν^3 c^{-2}}{\exp(h ν / k_B T) - 1}\)</span></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -1594,7 +1599,12 @@ the ejecta velocity in units of <span class="math notranslate nohighlight">\(10^
 <dt id="lightcurve_fitting.models.shock_cooling">
 <code class="sig-prename descclassname">lightcurve_fitting.models.</code><code class="sig-name descname">shock_cooling</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t_in</span></em>, <em class="sig-param"><span class="n">f</span></em>, <em class="sig-param"><span class="n">v_s</span></em>, <em class="sig-param"><span class="n">M_env</span></em>, <em class="sig-param"><span class="n">f_rho_M</span></em>, <em class="sig-param"><span class="n">R</span></em>, <em class="sig-param"><span class="n">t_exp</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">kappa</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">1.5</span></em>, <em class="sig-param"><span class="n">RW</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">z</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#shock_cooling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.models.shock_cooling" title="Permalink to this definition">¶</a></dt>
 <dd><p>The shock cooling model of Sapir &amp; Waxman (<a class="reference external" href="https://doi.org/10.3847/1538-4357/aa64df">https://doi.org/10.3847/1538-4357/aa64df</a>).</p>
-<p>This version of the model is written in terms of physical parameters <span class="math notranslate nohighlight">\(v_s, M_\mathrm{env}, f_ρ M, R\)</span>.</p>
+<p>This version of the model is written in terms of physical parameters <span class="math notranslate nohighlight">\(v_s, M_\mathrm{env}, f_ρ M, R\)</span>:</p>
+<p><span class="math notranslate nohighlight">\(T(t) = \frac{T_\mathrm{col}}{T_\mathrm{ph}} T_0 \left(\frac{v_s^2 t^2}{f_ρ M κ}\right)^{ε_1}
+\frac{R^{1/4}}{κ^{1/4}} t^{-1/2}\)</span> (Eq. 23)</p>
+<p><span class="math notranslate nohighlight">\(L(t) = A \exp\left[-\left(\frac{a t}{t_\mathrm{tr}}\right)^α\right]
+L_0 \left(\frac{v_s t^2}{f_ρ M κ}\right)^{-ε_2} \frac{v_s^2 R}{κ}\)</span> (Eq. 18-19)</p>
+<p><span class="math notranslate nohighlight">\(t_\mathrm{tr} = (19.5\,\mathrm{d}) \left(\frac{κ * M_\mathrm{env}}{v_s} \right)^{1/2}\)</span> (Eq. 20)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -1636,7 +1646,9 @@ envelope structure” and <span class="math notranslate nohighlight">\(M\)</span
 <dt id="lightcurve_fitting.models.shock_cooling2">
 <code class="sig-prename descclassname">lightcurve_fitting.models.</code><code class="sig-name descname">shock_cooling2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t_in</span></em>, <em class="sig-param"><span class="n">f</span></em>, <em class="sig-param"><span class="n">T_1</span></em>, <em class="sig-param"><span class="n">L_1</span></em>, <em class="sig-param"><span class="n">t_tr</span></em>, <em class="sig-param"><span class="n">t_exp</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">1.5</span></em>, <em class="sig-param"><span class="n">RW</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">z</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#shock_cooling2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.models.shock_cooling2" title="Permalink to this definition">¶</a></dt>
 <dd><p>The shock cooling model of Sapir &amp; Waxman (<a class="reference external" href="https://doi.org/10.3847/1538-4357/aa64df">https://doi.org/10.3847/1538-4357/aa64df</a>).</p>
-<p>This version of the model is written in terms of scaling parameters <span class="math notranslate nohighlight">\(T_1, L_1, t_\mathrm{tr}\)</span>.</p>
+<p>This version of the model is written in terms of scaling parameters <span class="math notranslate nohighlight">\(T_1, L_1, t_\mathrm{tr}\)</span>:</p>
+<p><span class="math notranslate nohighlight">\(T(t) = T_1 t^{2 ε_1 - 0.5}\)</span> and
+<span class="math notranslate nohighlight">\(L(t) = L_1 \exp\left[-\left(\frac{a t}{t_\mathrm{tr}}\right)^α\right] t^{-2 ε_2}\)</span></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -1673,24 +1685,35 @@ envelope structure” and <span class="math notranslate nohighlight">\(M\)</span
 <dt id="lightcurve_fitting.models.t_max">
 <code class="sig-prename descclassname">lightcurve_fitting.models.</code><code class="sig-name descname">t_max</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v_s</span></em>, <em class="sig-param"><span class="n">M_env</span></em>, <em class="sig-param"><span class="n">f_rho_M</span></em>, <em class="sig-param"><span class="n">R</span></em>, <em class="sig-param"><span class="n">t_exp</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">kappa</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#t_max"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.models.t_max" title="Permalink to this definition">¶</a></dt>
 <dd><p>The maximum validity time for the <a class="reference internal" href="#lightcurve_fitting.models.shock_cooling" title="lightcurve_fitting.models.shock_cooling"><code class="xref py py-func docutils literal notranslate"><span class="pre">shock_cooling()</span></code></a> model</p>
+<p><span class="math notranslate nohighlight">\(t_\mathrm{max} = (7.4\,\mathrm{d}) \left(\frac{R}{κ}\right)^{0.55} + t_\mathrm{exp}\)</span> (Eq. 24)</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="lightcurve_fitting.models.t_max2">
 <code class="sig-prename descclassname">lightcurve_fitting.models.</code><code class="sig-name descname">t_max2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">T_1</span></em>, <em class="sig-param"><span class="n">L_1</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">t_tr</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">t_exp</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">1.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#t_max2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.models.t_max2" title="Permalink to this definition">¶</a></dt>
 <dd><p>The maximum validity time for the <a class="reference internal" href="#lightcurve_fitting.models.shock_cooling2" title="lightcurve_fitting.models.shock_cooling2"><code class="xref py py-func docutils literal notranslate"><span class="pre">shock_cooling2()</span></code></a> model</p>
+<p><span class="math notranslate nohighlight">\(t_\mathrm{max} = \left(\frac{8.12\,\mathrm{kK}}{T_1}\right)^{1/(2 ε_1 - 0.5)} + t_\mathrm{exp}\)</span></p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="lightcurve_fitting.models.t_min">
 <code class="sig-prename descclassname">lightcurve_fitting.models.</code><code class="sig-name descname">t_min</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v_s</span></em>, <em class="sig-param"><span class="n">M_env</span></em>, <em class="sig-param"><span class="n">f_rho_M</span></em>, <em class="sig-param"><span class="n">R</span></em>, <em class="sig-param"><span class="n">t_exp</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">kappa</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#t_min"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.models.t_min" title="Permalink to this definition">¶</a></dt>
 <dd><p>The minimum validity time for the <a class="reference internal" href="#lightcurve_fitting.models.shock_cooling" title="lightcurve_fitting.models.shock_cooling"><code class="xref py py-func docutils literal notranslate"><span class="pre">shock_cooling()</span></code></a> model</p>
+<p><span class="math notranslate nohighlight">\(t_\mathrm{min} = (0.2\,\mathrm{d}) \frac{R}{v_s}
+\max\left[0.5, \frac{R^{0.4}}{(f_ρ M κ)^{0.2} v_s^{-0.7}}\right] + t_\mathrm{exp}\)</span> (Eq. 17)</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="lightcurve_fitting.models.t_min2">
 <code class="sig-prename descclassname">lightcurve_fitting.models.</code><code class="sig-name descname">t_min2</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#t_min2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.models.t_min2" title="Permalink to this definition">¶</a></dt>
 <dd><p>The maximum validity time for the <a class="reference internal" href="#lightcurve_fitting.models.shock_cooling2" title="lightcurve_fitting.models.shock_cooling2"><code class="xref py py-func docutils literal notranslate"><span class="pre">shock_cooling2()</span></code></a> model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>NotImplementedError</dt><dd></dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>lightcurve_fitting.models &mdash; lightcurve_fitting 0.0.0.post40+g7f04a8d documentation</title>
+  <title>lightcurve_fitting.models &mdash; lightcurve_fitting 0.0.0.post41+g8dd4728 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.0.0.post40+g7f04a8d
+                0.0.0.post41+g8dd4728
               </div>
             
           
@@ -237,7 +237,15 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The shock cooling model of Sapir &amp; Waxman (https://doi.org/10.3847/1538-4357/aa64df).</span>
 
-<span class="sd">    This version of the model is written in terms of physical parameters :math:`v_s, M_\\mathrm{env}, f_ρ M, R`.</span>
+<span class="sd">    This version of the model is written in terms of physical parameters :math:`v_s, M_\\mathrm{env}, f_ρ M, R`:</span>
+
+<span class="sd">    :math:`T(t) = \\frac{T_\\mathrm{col}}{T_\\mathrm{ph}} T_0 \\left(\\frac{v_s^2 t^2}{f_ρ M κ}\\right)^{ε_1}</span>
+<span class="sd">    \\frac{R^{1/4}}{κ^{1/4}} t^{-1/2}` (Eq. 23)</span>
+
+<span class="sd">    :math:`L(t) = A \\exp\\left[-\\left(\\frac{a t}{t_\\mathrm{tr}}\\right)^α\\right]</span>
+<span class="sd">    L_0 \\left(\\frac{v_s t^2}{f_ρ M κ}\\right)^{-ε_2} \\frac{v_s^2 R}{κ}` (Eq. 18-19)</span>
+
+<span class="sd">    :math:`t_\\mathrm{tr} = (19.5\\,\\mathrm{d}) \\left(\\frac{κ * M_\\mathrm{env}}{v_s} \\right)^{1/2}` (Eq. 20)</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -312,13 +320,18 @@
 <div class="viewcode-block" id="t_min"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.t_min">[docs]</a><span class="k">def</span> <span class="nf">t_min</span><span class="p">(</span><span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The minimum validity time for the :func:`shock_cooling` model</span>
+
+<span class="sd">    :math:`t_\\mathrm{min} = (0.2\\,\\mathrm{d}) \\frac{R}{v_s}</span>
+<span class="sd">    \\max\\left[0.5, \\frac{R^{0.4}}{(f_ρ M κ)^{0.2} v_s^{-0.7}}\\right] + t_\\mathrm{exp}` (Eq. 17)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">R</span> <span class="o">/</span> <span class="n">v_s</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">R</span> <span class="o">**</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="p">(</span><span class="n">f_rho_M</span> <span class="o">*</span> <span class="n">kappa</span><span class="p">)</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.2</span> <span class="o">*</span> <span class="n">v_s</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.7</span><span class="p">)</span> <span class="o">+</span> <span class="n">t_exp</span></div>
+    <span class="k">return</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">R</span> <span class="o">/</span> <span class="n">v_s</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">R</span> <span class="o">**</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="p">(</span><span class="n">f_rho_M</span> <span class="o">*</span> <span class="n">kappa</span><span class="p">)</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.2</span> <span class="o">*</span> <span class="n">v_s</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.7</span><span class="p">)</span> <span class="o">+</span> <span class="n">t_exp</span></div>
 
 
 <div class="viewcode-block" id="t_max"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.t_max">[docs]</a><span class="k">def</span> <span class="nf">t_max</span><span class="p">(</span><span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The maximum validity time for the :func:`shock_cooling` model</span>
+
+<span class="sd">    :math:`t_\\mathrm{max} = (7.4\,\\mathrm{d}) \\left(\\frac{R}{κ}\\right)^{0.55} + t_\\mathrm{exp}` (Eq. 24)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="mf">7.4</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">/</span> <span class="n">kappa</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.55</span> <span class="o">+</span> <span class="n">t_exp</span></div>
 
@@ -347,7 +360,10 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The shock cooling model of Sapir &amp; Waxman (https://doi.org/10.3847/1538-4357/aa64df).</span>
 
-<span class="sd">    This version of the model is written in terms of scaling parameters :math:`T_1, L_1, t_\\mathrm{tr}`.</span>
+<span class="sd">    This version of the model is written in terms of scaling parameters :math:`T_1, L_1, t_\\mathrm{tr}`:</span>
+
+<span class="sd">    :math:`T(t) = T_1 t^{2 ε_1 - 0.5}` and</span>
+<span class="sd">    :math:`L(t) = L_1 \\exp\\left[-\\left(\\frac{a t}{t_\\mathrm{tr}}\\right)^α\\right] t^{-2 ε_2}`</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -408,6 +424,10 @@
 <div class="viewcode-block" id="t_min2"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.t_min2">[docs]</a><span class="k">def</span> <span class="nf">t_min2</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The maximum validity time for the :func:`shock_cooling2` model</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    NotImplementedError</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;t_min cannot be translated to these parameters&#39;</span><span class="p">)</span></div>
 
@@ -415,6 +435,8 @@
 <div class="viewcode-block" id="t_max2"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.t_max2">[docs]</a><span class="k">def</span> <span class="nf">t_max2</span><span class="p">(</span><span class="n">T_1</span><span class="p">,</span> <span class="n">L_1</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">t_tr</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mf">1.5</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The maximum validity time for the :func:`shock_cooling2` model</span>
+
+<span class="sd">    :math:`t_\\mathrm{max} = \\left(\\frac{8.12\\,\\mathrm{kK}}{T_1}\\right)^{1/(2 ε_1 - 0.5)} + t_\\mathrm{exp}`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mf">1.5</span><span class="p">:</span>
         <span class="n">epsilon_1</span> <span class="o">=</span> <span class="mf">0.027</span>
@@ -467,7 +489,15 @@
 
 <div class="viewcode-block" id="companion_shocking"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.companion_shocking">[docs]</a><span class="k">def</span> <span class="nf">companion_shocking</span><span class="p">(</span><span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">t_exp</span><span class="p">,</span> <span class="n">a13</span><span class="p">,</span> <span class="n">Mc_v9_7</span><span class="p">,</span> <span class="n">t_peak</span><span class="p">,</span> <span class="n">stretch</span><span class="p">,</span> <span class="n">rr</span><span class="p">,</span> <span class="n">ri</span><span class="p">,</span> <span class="n">rU</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model.</span>
+<span class="sd">    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model</span>
+
+<span class="sd">    As written by Hosseinzadeh et al. (https://doi.org/10.3847/2041-8213/aa8402), the shock component is defined by:</span>
+
+<span class="sd">    :math:`R_\\mathrm{phot}(t) = (2700\\,R_\\odot) (M_c v_9^7)^{1/9} κ^{1/9} t^{7/9}` (Eq. 1)</span>
+
+<span class="sd">    :math:`T_\\mathrm{eff}(t) = (25\\,\\mathrm{kK}) a_{13}^{1/4} (M_c v_9^7)^{1/144} κ^{-35/144} t^{37/72}` (Eq. 2)</span>
+
+<span class="sd">    The SiFTO model (https://doi.org/10.1086/588518) is currently only available in the UBVgri filters.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -574,6 +604,8 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The Planck spectrum for a blackbody source</span>
 
+<span class="sd">    :math:`L_ν = 4 π R^2 \\frac{2 π h ν^3 c^{-2}}{\\exp(h ν / k_B T) - 1}`</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    nu : float, array-like</span>
@@ -590,7 +622,6 @@
 <span class="sd">    float, array-like</span>
 <span class="sd">        The spectral luminosity density (:math:`L_ν`) of the source in watts per hertz</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># cutoff frequency as defined in https://doi.org/10.3847/1538-4357/aa9334</span>
     <span class="k">return</span> <span class="n">c2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">R</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">nu</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">cutoff_freq</span> <span class="o">/</span> <span class="n">nu</span><span class="p">))</span>
                            <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">c1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">T</span> <span class="o">**</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nu</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span></div>
 

@@ -78,7 +78,15 @@ def shock_cooling(t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW
     """
     The shock cooling model of Sapir & Waxman (https://doi.org/10.3847/1538-4357/aa64df).
 
-    This version of the model is written in terms of physical parameters :math:`v_s, M_\\mathrm{env}, f_ρ M, R`.
+    This version of the model is written in terms of physical parameters :math:`v_s, M_\\mathrm{env}, f_ρ M, R`:
+
+    :math:`T(t) = \\frac{T_\\mathrm{col}}{T_\\mathrm{ph}} T_0 \\left(\\frac{v_s^2 t^2}{f_ρ M κ}\\right)^{ε_1}
+    \\frac{R^{1/4}}{κ^{1/4}} t^{-1/2}` (Eq. 23)
+
+    :math:`L(t) = A \\exp\\left[-\\left(\\frac{a t}{t_\\mathrm{tr}}\\right)^α\\right]
+    L_0 \\left(\\frac{v_s t^2}{f_ρ M κ}\\right)^{-ε_2} \\frac{v_s^2 R}{κ}` (Eq. 18-19)
+
+    :math:`t_\\mathrm{tr} = (19.5\\,\\mathrm{d}) \\left(\\frac{κ * M_\\mathrm{env}}{v_s} \\right)^{1/2}` (Eq. 20)
 
     Parameters
     ----------
@@ -153,13 +161,18 @@ def shock_cooling(t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW
 def t_min(v_s, M_env, f_rho_M, R, t_exp=0., kappa=1.):
     """
     The minimum validity time for the :func:`shock_cooling` model
+
+    :math:`t_\\mathrm{min} = (0.2\\,\\mathrm{d}) \\frac{R}{v_s}
+    \\max\\left[0.5, \\frac{R^{0.4}}{(f_ρ M κ)^{0.2} v_s^{-0.7}}\\right] + t_\\mathrm{exp}` (Eq. 17)
     """
-    return 0.2 * R / v_s * np.minimum(0.5, R ** 0.4 * (f_rho_M * kappa) ** -0.2 * v_s ** -0.7) + t_exp
+    return 0.2 * R / v_s * np.maximum(0.5, R ** 0.4 * (f_rho_M * kappa) ** -0.2 * v_s ** -0.7) + t_exp
 
 
 def t_max(v_s, M_env, f_rho_M, R, t_exp=0., kappa=1.):
     """
     The maximum validity time for the :func:`shock_cooling` model
+
+    :math:`t_\\mathrm{max} = (7.4\,\\mathrm{d}) \\left(\\frac{R}{κ}\\right)^{0.55} + t_\\mathrm{exp}` (Eq. 24)
     """
     return 7.4 * (R / kappa) ** 0.55 + t_exp
 
@@ -188,7 +201,10 @@ def shock_cooling2(t_in, f, T_1, L_1, t_tr, t_exp=0., n=1.5, RW=False, z=0.):
     """
     The shock cooling model of Sapir & Waxman (https://doi.org/10.3847/1538-4357/aa64df).
 
-    This version of the model is written in terms of scaling parameters :math:`T_1, L_1, t_\\mathrm{tr}`.
+    This version of the model is written in terms of scaling parameters :math:`T_1, L_1, t_\\mathrm{tr}`:
+
+    :math:`T(t) = T_1 t^{2 ε_1 - 0.5}` and
+    :math:`L(t) = L_1 \\exp\\left[-\\left(\\frac{a t}{t_\\mathrm{tr}}\\right)^α\\right] t^{-2 ε_2}`
 
     Parameters
     ----------
@@ -249,6 +265,10 @@ def shock_cooling2(t_in, f, T_1, L_1, t_tr, t_exp=0., n=1.5, RW=False, z=0.):
 def t_min2(*args):
     """
     The maximum validity time for the :func:`shock_cooling2` model
+
+    Raises
+    ------
+    NotImplementedError
     """
     raise NotImplementedError('t_min cannot be translated to these parameters')
 
@@ -256,6 +276,8 @@ def t_min2(*args):
 def t_max2(T_1, L_1=0., t_tr=0., t_exp=0., n=1.5):
     """
     The maximum validity time for the :func:`shock_cooling2` model
+
+    :math:`t_\\mathrm{max} = \\left(\\frac{8.12\\,\\mathrm{kK}}{T_1}\\right)^{1/(2 ε_1 - 0.5)} + t_\\mathrm{exp}`
     """
     if n == 1.5:
         epsilon_1 = 0.027
@@ -308,7 +330,15 @@ def scale_sifto(sn_lc):
 
 def companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, rr, ri, rU, kappa=1., z=0.):
     """
-    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model.
+    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model
+
+    As written by Hosseinzadeh et al. (https://doi.org/10.3847/2041-8213/aa8402), the shock component is defined by:
+
+    :math:`R_\\mathrm{phot}(t) = (2700\\,R_\\odot) (M_c v_9^7)^{1/9} κ^{1/9} t^{7/9}` (Eq. 1)
+
+    :math:`T_\\mathrm{eff}(t) = (25\\,\\mathrm{kK}) a_{13}^{1/4} (M_c v_9^7)^{1/144} κ^{-35/144} t^{37/72}` (Eq. 2)
+
+    The SiFTO model (https://doi.org/10.1086/588518) is currently only available in the UBVgri filters.
 
     Parameters
     ----------
@@ -415,6 +445,8 @@ def planck_fast(nu, T, R, cutoff_freq=np.inf):
     """
     The Planck spectrum for a blackbody source
 
+    :math:`L_ν = 4 π R^2 \\frac{2 π h ν^3 c^{-2}}{\\exp(h ν / k_B T) - 1}`
+
     Parameters
     ----------
     nu : float, array-like
@@ -431,7 +463,6 @@ def planck_fast(nu, T, R, cutoff_freq=np.inf):
     float, array-like
         The spectral luminosity density (:math:`L_ν`) of the source in watts per hertz
     """
-    # cutoff frequency as defined in https://doi.org/10.3847/1538-4357/aa9334
     return c2 * np.squeeze(np.outer(R ** 2, nu ** 3 * np.minimum(1., cutoff_freq / nu))
                            / (np.exp(c1 * np.outer(T ** -1, nu)) - 1))
 

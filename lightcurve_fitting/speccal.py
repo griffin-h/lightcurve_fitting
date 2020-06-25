@@ -15,6 +15,9 @@ import json
 
 
 def removebadcards(hdr):
+    """
+    Remove problematic entries from a :class:`astropy.io.fits.header.Header`
+    """
     for card in hdr.cards:
         try:
             card.verify('fix')
@@ -28,6 +31,9 @@ def removebadcards(hdr):
 
 
 def remove_duplicate_wcs(hdr, keep_number=0):
+    """
+    Remove duplicate world coordinate system header keywords from a :class:`astropy.io.fits.header.Header`
+    """
     for key in ['CTYPE1', 'CTYPE2', 'CRPIX1', 'CRPIX2', 'CRVAL1', 'CRVAL2', 'CD1_1', 'CD2_2', 'CD1_2', 'CD2_1']:
         if key in hdr and hdr.count(key) > 1:
             card = hdr.cards[(key, keep_number)]
@@ -36,6 +42,27 @@ def remove_duplicate_wcs(hdr, keep_number=0):
 
 
 def readfitsspec(filename, header=False, ext=None):
+    """
+    Read a spectrum from a FITS file
+
+    Parameters
+    ----------
+    filename : str
+        Filename from which to read the spectrum
+    header : bool, optional
+        If True, also return the FITS header
+    ext : int, str, optional
+        FITS extension number or name in which the spectrum is stored
+
+    Returns
+    -------
+    wl : array-like
+        Wavelengths, typically in ångströms
+    flux : array-like
+        Observed fluxes in erg / (s cm2 angstrom), if units are identifiable
+    hdr : astropy.io.fits.header.Header, optional
+        FITS header, returned if ``header=True``
+    """
     hdulist = fits.open(filename)
     if ext is None:
         for hdu in hdulist:  # try to find SCI extension
@@ -69,6 +96,31 @@ def readfitsspec(filename, header=False, ext=None):
 
 
 def readOSCspec(filepath):
+    """
+    Read spectra from a JSON file from the Open Supernova Catalog (https://sne.space)
+
+    Parameters
+    ----------
+    filepath : str
+        Path to the JSON file containing the spectra
+
+    Returns
+    -------
+    filenames : list
+        List of filenames corresponding to each spectrum
+    times : list
+        List of :class:`astropy.time.Time` when each spectrum was observed
+    tel : list
+        List of telescope names (if given) where each spectrum was observed
+    inst : list
+        List of instrument names (if given) with which each spectrum was observed
+    wl : list
+        List of wavelength arrays for each spectrum
+    fx : list
+        List of flux arrays for each spectrum
+    scales : list
+        List of scaling factors for each spectrum (all ones for the OSC)
+    """
     with open(filepath) as f:
         json_dict = json.load(f)
     rows = json_dict[os.path.splitext(os.path.basename(filepath))[0]]
@@ -95,6 +147,29 @@ def readOSCspec(filepath):
 
 
 def readspec(f, verbose=False):
+    """
+    Read a spectrum from a FITS or ASCII file and try to identify where and when it was observed
+
+    Parameters
+    ----------
+    f : str
+        Filename from which to read the spectrum
+    verbose : bool, optional
+        If True, print the date and filename of the spectrum
+
+    Returns
+    -------
+    x : array-like
+        Wavelengths, typically in ångströms
+    y : array-like
+        Fluxes in erg / (s cm2 angstrom), if units are identifiable
+    date : astropy.time.Time
+        Time at which the spectrum was observed, if identifiable (otherwise ``None``)
+    telescope : str
+        Name of the telescope at which the spectrum was observed, if identifiable (otherwise ``''``)
+    instrument: str
+        Name of the instrument used to observe the spectrum, if identifiable (otherwise ``''``)
+    """
     ext = os.path.splitext(f)[1]
     if ext == '.fits':
         x, y, hdr = readfitsspec(f, header=True)
@@ -182,6 +257,26 @@ def readspec(f, verbose=False):
 
 
 def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=None, show=False):
+    """
+    Calibrate a set of spectra to an observed broadband light curve.
+
+    Each calibrated spectrum is saved to a text file that corresponds to the original filename prefixed by ``photcal_``.
+
+    Parameters
+    ----------
+    spectra : list
+        List of filenames containing the spectra
+    lc : lightcurve_fitting.lightcurve.LC
+        Photometry table containing the observed light curve
+    filters : list, optional
+        Only use this subset of filters for calibration
+    order : int, optional
+        Polynomial order for the calibration function. Default: 0 (constant factor)
+    subtract_percentile : float, optional
+        Subtract flux corresponding to this percentile of the spectrum before calibration. Default: no subtraction
+    show : bool, optional
+        Plot the observed light curve and the uncalibrated and calibrated spectra, and ask whether to save the results
+    """
     if filters is not None:
         lc = lc.where(filt=filters)
     lc.calcFlux()
@@ -215,8 +310,8 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
         freqs = []
         ratios = []
         for filt in filts:
-            freq0 = filt.freq_eff.value - filt.freq_range[0][0]
-            freq1 = filt.freq_range[1][0] + filt.freq_eff.value
+            freq0 = filt.freq_eff.value - filt.freq_range[0]
+            freq1 = filt.freq_range[1] + filt.freq_eff.value
             if freq1 < np.min(nu) or freq0 > np.max(nu):
                 print(filt, "and spectrum don't overlap")
                 continue  # filter and spectrum don't overlap
@@ -268,7 +363,7 @@ if __name__ == '__main__':
     parser.add_argument('--lc', help='filename of photometry table (must have columns "MJD", "filt", "mag"/"flux", and'
                                      '"dmag"/"dflux")')
     parser.add_argument('--lc-format', default='ascii',
-                        help='format of photometry table (passed to `astropy.table.Table.read`)')
+                        help='format of photometry table (passed to :func:`astropy.table.Table.read`)')
     parser.add_argument('-f', '--filters', nargs='+', help='filters to use for calibration')
     parser.add_argument('-o', '--order', type=int, default=0, help='polynomial order of correction function')
     parser.add_argument('--subtract-percentile', type=float, help='subtract continuum from spectrum before correcting')

@@ -22,6 +22,27 @@ plt.style.use(resource_filename('lightcurve_fitting', 'serif.mplstyle'))
 
 
 def pseudo(temp, radius, z, filter0=filtdict['I'], filter1=filtdict['U'], cutoff_freq=np.inf):
+    """
+    Integrate a blackbody spectrum between two broadband filters to produce a pseudobolometric luminosity
+
+    Parameters
+    ----------
+    temp : float, array-like
+        Blackbody temperatures in kilokelvins
+    radius : float, array-like
+        Blackbody radii in units of 1000 solar radii
+    z : float
+        Redshift between the blackbody (rest frame) and the filters (observed frame)
+    filter0, filter1 : lightcurve_fitting.filters.Filter, optional
+        Filters to integrate between, where ``filter1`` is bluer than ``filter0``. Default: U to I.
+    cutoff_freq : float, optional
+        Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)
+
+    Returns
+    -------
+    L_opt : float, array-like
+        Pseudobolometric luminosity in watts
+    """
     freq0 = (filter0.freq_eff - filter0.dfreq / 2.).value
     freq1 = (filter1.freq_eff + filter1.dfreq / 2.).value
     x_optical = np.arange(freq0, freq1)
@@ -32,6 +53,41 @@ def pseudo(temp, radius, z, filter0=filtdict['I'], filter1=filtdict['U'], cutoff
 
 def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, burnin_steps=200, steps=100,
                    T_range=(1., 100.), R_range=(0.01, 1000.), cutoff_freq=np.inf, prev_temp=None):
+    """
+    Fit a blackbody spectrum to a spectral energy distribution using a Markov-chain Monte Carlo routine
+
+    Parameters
+    ----------
+    epoch1 : lightcurve_fitting.lightcurve.LC
+        A single "epoch" of photometry that defines the observed spectral energy distribution
+    z : float
+        Redshift between the blackbody (rest frame) and the filters (observed frame)
+    p0 : list, tuple, array-like, optional
+        Initial guess for [temperature (kK), radius (1000 Rsun)]. Default: ``[10., 10.]``
+    show : bool, optional
+        Plot the chain histories, and display all plots at the end of the script. Default: only save the corner plot
+    outpath : str, optional
+        Directory to which to save the corner plots. Default: current directory
+    nwalkers : int, optional
+        Number of walkers (chains) to use for fitting. Default: 10
+    burnin_steps : int, optional
+        Number of MCMC steps before convergence. This part of the history is discarded. Default: 200
+    steps : int, optional
+        Number of MCMC steps after convergence. This part of the history is used to calculate paramers. Default: 100.
+    T_range : tuple, list, array-like, optional
+        Range of allowed temperatures (in kilokelvins) in the prior. Default: ``(1., 100.)``
+    R_range : tuple, list, array-like, optional
+        Range of allowed radii (in 1000 solar radii) in the prior. Default: ``(0.01, 1000.)``
+    cutoff_freq : float, optional
+        Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)
+    prev_temp : scipy.stats.gaussian_kde, optional
+        Temperature distribution from fitting the previous epoch's SED. If given, this is used as the prior.
+
+    Returns
+    -------
+    sampler : emcee.EnsembleSampler
+        Sampler object containing the results of the MCMC fit
+    """
     y = epoch1['lum'].data
     dy = epoch1['dlum'].data
     filtobj = epoch1['filter'].data
@@ -107,6 +163,21 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
 
 
 def plot_bolometric_results(t0, save_plot_as=None):
+    """
+    Plot the parameters and bolometric light curves that result from fitting the spectral energy distribution
+
+    Parameters
+    ----------
+    t0 : lightcurve_fitting.lightcurve.LC
+        Table containing the results from fitting the spectral energy distribution
+    save_plot_as : str, optional
+        Filename to which to save the plot.
+
+    Returns
+    -------
+    fig : matplotlib.pyplot.Figure
+        Figure object containing the plot
+    """
     fig, axarr = plt.subplots(3, figsize=(6, 12), sharex=True)
 
     axarr[0].errorbar(t0['MJD'], t0['lum'], t0['dlum'], marker='.', ls='none', color='k', label='bolometric, curve_fit')
@@ -136,6 +207,21 @@ def plot_bolometric_results(t0, save_plot_as=None):
 
 
 def group_by_epoch(lc, res=1.):
+    """
+    Group a light curve into epochs that will be treated as single spectral energy distributions.
+
+    Parameters
+    ----------
+    lc : lightcurve_fitting.lightcurve.LC
+        Table containing the observed photometry. Must contain times in an "MJD" column.
+    res : float, optional
+        Approximate resolution for grouping, in days. Default: 1 day.
+
+    Returns
+    -------
+    epochs.groups : astropy.table.TableGroups
+        Iterable containing single-epoch spectral energy distributions
+    """
     x = lc['MJD'].data / res
     frac = np.median(x - np.trunc(x))
     lc['bin'] = np.round(x - frac + np.round(frac)) * res
@@ -147,6 +233,29 @@ sigma_sb = const.sigma_sb.to(u.W / (1000. * u.Rsun) ** 2 / u.kK ** 4).value
 
 
 def stefan_boltzmann(temp, radius, dtemp, drad, covTR):
+    """
+    Calculate blackbody luminosity and associated uncertainty using the Stefan-Boltzmann law
+
+    Parameters
+    ----------
+    temp : float, array-like
+        Temperature in kilokelvins
+    radius : float, array-like
+        Radius in units of 1000 solar radii
+    dtemp : float, array-like
+        Uncertainty in the temperature in kilokelvins
+    drad : float, array-like
+        Uncertainty in the radius in units of 1000 solar radii
+    covTR : float, array-like
+        Covariance between the temperature and radius
+
+    Returns
+    -------
+    lum : float, array-like
+        Luminosity in watts
+    dlum : float, array-like
+        Uncertainty in the luminosity in watts
+    """
     lum = 4 * np.pi * radius ** 2 * sigma_sb * temp ** 4
     dlum = 8 * np.pi * sigma_sb * (radius ** 2 * temp ** 8 * drad ** 2
                                    + 4 * radius ** 4 * temp ** 6 * dtemp ** 2
@@ -155,6 +264,25 @@ def stefan_boltzmann(temp, radius, dtemp, drad, covTR):
 
 
 def median_and_unc(x, perc_contained=68.):
+    """
+    Calculate the equal-tailed credible interval, centered on the median, for a sample of data
+
+    Parameters
+    ----------
+    x : array-like
+        The data sample
+    perc_contained : float, optional
+        The percentage of the probability to be contained in the interval. Default: 68% (1σ)
+
+    Returns
+    -------
+    median : float
+        The median of ``x``
+    lower : float
+        The lower boundary of the credible interval
+    upper : float
+        The upper boundary of the credible interval
+    """
     q = 50. + np.array([-perc_contained / 2., 0., perc_contained / 2.])
     percentiles = np.percentile(x, q, axis=0)
     median = percentiles[1]
@@ -163,6 +291,41 @@ def median_and_unc(x, perc_contained=68.):
 
 
 def blackbody_lstsq(epoch1, z, p0=None, T_range=(1., 100.), R_range=(0.01, 1000.), cutoff_freq=np.inf):
+    """
+    Fit a blackbody spectrum to a spectral energy distribution using :math:`χ^2` minimization
+
+    Parameters
+    ----------
+    epoch1 : lightcurve_fitting.lightcurve.LC
+        A single "epoch" of photometry that defines the observed spectral energy distribution
+    z : float
+        Redshift between the blackbody (rest frame) and the filters (observed frame)
+    p0 : list, tuple, array-like, optional
+        Initial guess for [temperature (kK), radius (1000 Rsun)]. Default: ``[10., 10.]``
+    T_range : tuple, list, array-like, optional
+        Range of allowed temperatures (in kilokelvins) in the prior. Default: ``(1., 100.)``
+    R_range : tuple, list, array-like, optional
+        Range of allowed radii (in 1000 solar radii) in the prior. Default: ``(0.01, 1000.)``
+    cutoff_freq : float, optional
+        Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)
+
+    Returns
+    -------
+    temp : float
+        Best-fit blackbody temperature in kilokelvins
+    radius : float
+        Best-fit blackbody radius in units of 1000 solar radii
+    dtemp : float
+        Uncertainty in the temperature in kilokelvins
+    drad : float
+        Uncertainty in the radius in units of 1000 solar radii
+    lum : float
+        Blackbody luminosity implied by the best-fit temperature and radius
+    dlum : float
+        Uncertainty in the blackbody luminosity
+    L_opt : float
+        Pseudobolometric luminosity from integrating the best-fit blackbody spectrum over the U-I filters
+    """
     if p0 is None:
         p0 = [10., 10.]
 
@@ -179,6 +342,19 @@ def blackbody_lstsq(epoch1, z, p0=None, T_range=(1., 100.), R_range=(0.01, 1000.
 
 
 def integrate_sed(epoch1):
+    """
+    Directly integrate a spectral energy distribution using the trapezoidal rule
+
+    Parameters
+    ----------
+    epoch1 : lightcurve_fitting.lightcurve.LC
+        A single "epoch" of photometry that defines the observed spectral energy distribution
+
+    Returns
+    -------
+    L_int : float
+        Luminosity in watts
+    """
     epoch1.sort('freq')
     freqs = np.insert(epoch1['freq'], 0, epoch1['freq'][0] - epoch1['dfreq'][0])
     lums = np.insert(epoch1['lum'], 0, 0)
@@ -189,6 +365,27 @@ def integrate_sed(epoch1):
 
 
 def calc_colors(epoch1, colors):
+    """
+    Calculate colors from a spectral energy distribution
+
+    Parameters
+    ----------
+    epoch1 : lightcurve_fitting.lightcurve.LC
+        A single "epoch" of photometry that defines the observed spectral energy distribution
+    colors : list
+        A list of colors to calculate, e.g., ``['U-B', 'B-V', 'g-r', 'r-i']``
+
+    Returns
+    -------
+    mags : list
+        A list of the calculated colors
+    dmags : list
+        A list of uncertainties on the calculated colors, from propagating errors on the photometry points
+    lolims : list
+        A list of booleans: True if the first filter is a nondetection or is absent from ``epoch1``
+    uplims : list
+        A list of booleans: True if the second filter is a nondetection or is absent from ``epoch1``
+    """
     mags = []
     dmags = []
     lolims = []
@@ -217,18 +414,23 @@ def calc_colors(epoch1, colors):
 
 def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1):
     """
-    Plot the color curves calculated by `calculate_bolometric`.
+    Plot the color curves calculated by :func:`calculate_bolometric`.
 
     Parameters
     ----------
-    t : astropy.table.Table
-        Output table from `calculate_bolometric`
+    t : lightcurve_fitting.lightcurve.LC
+        Output table from :func:`calculate_bolometric`
     colors : list, optional
-        List of colors to plot, e.g., `['g-r', 'r-i']`. By default, plot all recognizable colors.
+        List of colors to plot, e.g., ``['g-r', 'r-i']``. By default, plot all recognizable colors.
     fmt : str, optional
-        Format string, passed to `matplotlib.pyplot.errorbar`
+        Format string, passed to :func:`matplotlib.pyplot.errorbar`
     limit_length : float, optional
         Length (in data units) of the upper and lower limit markers
+
+    Returns
+    -------
+    fig : matplotlib.pyplot.Figure
+        Figure object containing the plot
     """
     if colors is None:
         colors = []
@@ -248,6 +450,48 @@ def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1):
 def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=200, steps=100,
                          T_range=(1., 100.), R_range=(0.01, 1000.), save_table_as=None, min_nfilt=3,
                          cutoff_freq=np.inf, show=False, colors=None, do_mcmc=True):
+    """
+    Calculate the full bolometric light curve from a table of broadband photometry
+
+    Parameters
+    ----------
+    lc : lightcurve_fitting.lightcurve.LC
+        Table of broadband photometry including columns "MJD", "mag", "dmag", "filt"
+    z : float
+        Redshift between the blackbody (rest frame) and the filters (observed frame)
+    outpath : str, optional
+        Directory to which to save the corner plots. Default: current directory
+    res : float, optional
+        Approximate resolution for grouping, in days. Default: 1 day.
+    nwalkers : int, optional
+        Number of walkers (chains) to use for fitting. Default: 10
+    burnin_steps : int, optional
+        Number of MCMC steps before convergence. This part of the history is discarded. Default: 200
+    steps : int, optional
+        Number of MCMC steps after convergence. This part of the history is used to calculate paramers. Default: 100.
+    T_range : tuple, list, array-like, optional
+        Range of allowed temperatures (in kilokelvins) in the prior. Default: ``(1., 100.)``
+    R_range : tuple, list, array-like, optional
+        Range of allowed radii (in 1000 solar radii) in the prior. Default: ``(0.01, 1000.)``
+    save_table_as : str, optional
+        Filename to which to save the output table of blackbody parameters and bolometric luminosities
+    min_nfilt : int, optional
+        Minimum number of distinct observed filters required to calculate a luminosity. Default: 3
+    cutoff_freq : float, optional
+        Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)
+    show : bool, optional
+        Plot the chain histories, and display all plots at the end of the script. Default: only save the corner plot
+    colors : list, optional
+        A list of colors to calculate, e.g., ``['U-B', 'B-V', 'g-r', 'r-i']``
+    do_mcmc : bool, optional
+        If True (default), also fit the spectral energy distribution with an MCMC routine. This is slower but gives
+        more realistic uncertainties.
+
+    Returns
+    -------
+    t0 : lightcurve_fitting.lightcurve.LC
+        Table containing the blackbody parameters, bolometric luminosities, and (optionally) colors
+    """
 
     t0 = LC(names=['MJD', 'dMJD0', 'dMJD1',
                    'temp', 'radius', 'dtemp', 'dradius',  # best fit from scipy.curve_fit

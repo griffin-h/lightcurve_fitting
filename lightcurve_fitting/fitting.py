@@ -11,13 +11,43 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
                     nwalkers=100, nsteps=1000, nsteps_burnin=1000, model_kwargs=None,
                     show=False, save_sampler_as=''):
     """
-    Available models: models.ShockCooling, models.ShockCooling2
+    Fit an analytical model to observed photometry using a Markov-chain Monte Carlo routine
 
-    Available priors: models.flat_prior (default), models.log_flat_prior
+    Parameters
+    ----------
+    lc : lightcurve_fitting.lightcurve.LC
+        Table of broadband photometry including columns "MJD", "mag", "dmag", "filt"
+    model : lightcurve_fitting.models.Model
+        The model to fit to the light curve. Available models: :class:`models.ShockCooling`,
+        :class:`models.ShockCooling2`, :class:`models.CompanionShocking`
+    priors : list, optional
+        Prior probability distributions for each model parameter. Available priors: :func:`models.flat_prior` (default),
+        :func:`models.log_flat_prior`
+    p_min, p_max : list, optional
+        Lower bounds on the priors for each parameter. Omit individual bounds using :mod:`-numpy.inf`.
+    p_max : list, optional
+        Upper bounds on the priors for each parameter. Omit individual bounds using :mod:`numpy.inf`.
+    p_lo : list, optional
+        Lower bounds on the starting guesses for each paramter. Default: equal to ``p_min``.
+    p_up : list, optional
+        Upper bounds on the starting guesses for each parameter. Default: equal to ``p_max``.
+    nwalkers : int, optional
+        Number of walkers (chains) for the MCMC routine. Default: 100
+    nsteps : int, optional
+        Number of steps (iterations) for the MCMC routine, excluding burn-in. Default: 1000
+    nsteps_burnin : int, optional
+        Number of steps (iterations) for the MCMC routine during burn-in. Default: 1000
+    model_kwargs : dict, optional
+        Keyword arguments to be passed to the model
+    show : bool, optional
+        If True, plot and display the chain histories
+    save_sampler_as : str, optional
+        Save the aggregated chain histories to this filename
 
-    p_min & p_max (optional) are bounds on the priors. Omit individual bounds using +/-np.inf.
-    p_lo & p_up (optional) are bounds on the starting guesses. These default to p_min & p_max.
-    You must specify either p_min & p_max or p_up & p_lo for each parameter!
+    Returns
+    -------
+    sampler : emcee.EnsembleSampler
+        EnsembleSampler object containing the results of the fit
     """
 
     if model_kwargs is None:
@@ -110,6 +140,40 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
 def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
                       num_models_to_plot=100, lcaxis_posn=(0.7, 0.55, 0.2, 0.4),
                       filter_spacing=0.5, tmin=None, tmax=None, t0_offset=None, save_plot_as=''):
+    """
+    Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model light curves.
+
+    Parameters
+    ----------
+    lc : lightcurve_fitting.lightcurve.LC
+        Table of broadband photometry including columns "MJD", "mag", "dmag", "filt"
+    model : lightcurve_fitting.models.Model
+        The model that was fit to the light curve.
+    sampler_flatchain : array-like
+        2D array containing the aggregated MCMC chain histories
+    model_kwargs : dict, optional
+        Keyword arguments to be passed to the model
+    num_models_to_plot : int, optional
+        Number of model realizations to plot in the light curve inset. Default: 100
+    lcaxis_posn : tuple, optional
+        Light curve inset position and size specification in figure units: (left, bottom, width, height)
+    filter_spacing : float, optional
+        Spacing between filters in the light curve inset, in units determined by the order of magnitude of the
+        luminosities. Default: 0.5
+    tmin, tmax : float, optional
+        Starting and ending times for which to plot the models in the light curve inset. Default: determined by the
+        time range of the observed light curve.
+    t0_offset : float, optional
+        Reference time on the horizontal axis of the light curve inset. Default: determined by the starting time of
+        the model light curve.
+    save_plot_as : str, optional
+        Filename to which to save the resulting plot
+
+    Returns
+    -------
+    fig : matplotlib.pyplot.Figure
+        Figure object containing the plot
+    """
     if model_kwargs is None:
         model_kwargs = {}
     plt.style.use(resource_filename('lightcurve_fitting', 'serif.mplstyle'))
@@ -174,6 +238,30 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
 
 
 def format_credible_interval(x, sigfigs=1, percentiles=(15.87, 50., 84.14), axis=0, varnames=None, units=None):
+    """
+    Use LaTeX to format an equal-tailed credible interval with a given number of significant figures in the uncertainty
+
+    Parameters
+    ----------
+    x : array-like
+        Data from which to calculate the credible interval
+    sigfigs : int, optional
+        Number of significant figures in the uncertainty. Default: 1
+    percentiles : tuple, optional
+        Percentiles for the (lower, center, upper) of the credible interval. Default: ``(15.87, 50., 84.14)``
+        (median +/- 1σ)
+    axis : int, optional
+        Axis of ``x`` along which to calculate the credible intervals. Default: 0
+    varnames : list, optional
+        Variable names to be equated with the credible intervals. Default: no variable names
+    units : list, optional
+        Units to be applied to the credible intervals. Default: no units
+
+    Returns
+    -------
+    paramtexts : str
+        The formatted credible intervals
+    """
     quantiles = np.percentile(x, percentiles, axis=axis).T
     uncertainties = np.diff(quantiles)
     smaller_unc = np.amin(uncertainties, axis=-1)

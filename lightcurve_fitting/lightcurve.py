@@ -12,12 +12,10 @@ except ModuleNotFoundError:
 
 
 class Arrow(Path):
+    """
+    An downward-pointing arrow-shaped ``Path``, whose head has half-width ``hx`` and height ``hy`` (in units of length)
+    """
     def __init__(self, hx, hy):
-        """Create an down-pointing arrow-shaped path.
-
-        *hx* is the half-width of the arrow head (in units of the arrow length).
-
-        *hy* is the height of the arrow head (in units of the arrow length)."""
         verts = [(0, 0),
                  (0, -1),
                  (-hx, -1 + hy),
@@ -36,11 +34,38 @@ usedmarkers = []
 
 
 class LC(Table):
+    """
+    A broadband light curve, stored as an :class:`astropy.table.Table` (see ``help(Table)`` for more details)
+
+    Attributes
+    ----------
+    sn : object
+        Astronomical transient with which this light curve is associated
+    nondetSigmas : float
+        Significance level implied by nondetections in the light curve. Default: 3σ
+    groupby : set
+        Column names to group by when binning the light curve. Default: ``{'filt', 'filter', 'source'}``
+    """
     def __init__(self, *args, **kwargs):
         Table.__init__(self, *args, **kwargs)
         self.sn = None
+        self.nondetSigmas = 3.
+        self.groupby = {'filt', 'filter', 'source'}
 
     def where(self, **kwargs):
+        """
+        Select the subset of a light curve matching some criteria, given as keyword arguments, e.g., ``colname=value``.
+
+        The keyword ``colname`` can be any of the following:
+          * a column in the table, in which case rows must match ``value`` in that column
+          * a column in the table + ``_not``, in which case rows must *not* match ``value`` in that column
+          * a column in the table + ``_min``, in which case rows must be >= ``value`` in that column
+          * a column in the table + ``_max``, in which case rows must be <= ``value`` in that column
+
+        ``value`` must match the data type of the column ``colname`` and can either be a single value or a list of
+        values. If ``value`` is a list, rows must match at least one of the values. If ``value`` is a list and
+        ``colname`` ends in ``_not``, rows must not match any of the values.
+        """
         use = np.tile(True, len(self))
         for col, val in kwargs.items():
             if isinstance(val, list):
@@ -73,6 +98,14 @@ class LC(Table):
         return selected
 
     def filters_to_objects(self, read_curve=True):
+        """
+        Parse the ``'filt'`` column into :class:`filters.Filter` objects and store in the ``'filter'`` column
+
+        Parameters
+        ----------
+        read_curve : bool, optional
+            Read in the transmission function for each filter encountered (default)
+        """
         self['filter'] = [filtdict[f] for f in self['filt']]
         is_swift = np.zeros(len(self), bool)
         if 'telescope' in self.colnames:
@@ -88,21 +121,51 @@ class LC(Table):
             for filt in np.unique(self['filter']):
                 filt.read_curve()
 
+    @property
     def zp(self):
+        """
+        Returns an array of zero points for each filter in the ``'filter'`` column
+        """
         self.filters_to_objects()
         return np.array([f.m0 for f in self['filter']])
 
-    def calcFlux(self, nondetSigmas=3, zp=None):
-        self.nondetSigmas = nondetSigmas
+    def calcFlux(self, nondetSigmas=None, zp=None):
+        """
+        Calculate the ``'flux'`` and ``'dflux'`` columns from the ``'mag'`` and ``'dmag'`` columns
+
+        Parameters
+        ----------
+        nondetSigmas : float, optional
+            Significance level implied by nondetections in the light curve. Default: 3σ
+        zp : float, array-like, optional
+            Array of zero points for each magnitude. Default: standard for each filter
+        """
+        if nondetSigmas is not None:
+            self.nondetSigmas = nondetSigmas
         if zp is None:
-            zp = self.zp()
+            zp = self.zp
         self['flux'], self['dflux'] = mag2flux(self['mag'], self['dmag'], zp, self['nondet'], self.nondetSigmas)
 
     def bin(self, delta=0.3, groupby=None):
-        if groupby is None:
-            groupby = {'filt', 'filter', 'source'}
+        """
+        Bin the light curve by averaging points within ``delta`` days of each other
+
+        Parameters
+        ----------
+        delta : float, optional
+            Bin size, in days. Default: 0.3 days
+        groupby : set, optional
+            Column names to group by before binning. Default: ``{'filt', 'filter', 'source'}``
+
+        Returns
+        -------
+        lc : lightcurve_fitting.lightcurve.LC
+            Binned light curve
+        """
+        if groupby is not None:
+            self.groupby = groupby
         subtabs = []
-        self.groupby = list(set(groupby) & set(self.colnames))
+        self.groupby = list(set(self.groupby) & set(self.colnames))
         if self.groupby:
             grouped = self.group_by(self.groupby)
         else:
@@ -118,17 +181,53 @@ class LC(Table):
         lc.meta = self.meta
         return lc
 
-    def findNondet(self, nondetSigmas=3):
-        self.nondetSigmas = nondetSigmas
+    def findNondet(self, nondetSigmas=None):
+        """
+        Add a boolean column ``'nondet'`` indicating flux measurements that are below the detection threshold
+
+        Parameters
+        ----------
+        nondetSigmas : float, optional
+            Significance level implied by nondetections in the light curve. Default: 3σ
+        """
+        if nondetSigmas is not None:
+            self.nondetSigmas = nondetSigmas
         self['nondet'] = self['flux'] < self.nondetSigmas * self['dflux']
 
-    def calcMag(self, nondetSigmas=3, zp=None):
-        self.findNondet(nondetSigmas)
+    def calcMag(self, nondetSigmas=None, zp=None):
+        """
+        Calculate the ``'mag'`` and ``'dmag'`` columns from the ``'flux'`` and ``'dflux'`` columns
+
+        Parameters
+        ----------
+        nondetSigmas : float, optional
+            Significance level implied by nondetections in the light curve. Default: 3σ
+        zp : float, array-like, optional
+            Array of zero points for each magnitude. Default: standard for each filter
+        """
+        if nondetSigmas is not None:
+            self.nondetSigmas = nondetSigmas
+        self.findNondet()
         if zp is None:
-            zp = self.zp()
+            zp = self.zp
         self['mag'], self['dmag'] = flux2mag(self['flux'], self['dflux'], zp, self['nondet'], self.nondetSigmas)
 
     def calcAbsMag(self, dm=None, extinction=None, hostext=None):
+        """
+        Calculate the ``'absmag'`` column from the ``'mag'`` column by correcting for distance and extinction
+
+        Parameters
+        ----------
+        dm : float, optional
+            Distance modulus. Default: use the distance modulus of ``self.sn``, if any. Otherwise do not correct for
+            distance.
+        extinction : dict, optional
+            Milky Way extinction coefficients :math:`A_λ` for each filter. Default: use the extinction of ``self.sn``,
+            if any. Otherwise do not correct for Milky Way extinction.
+        hostext : dict, optional
+            Host galaxy extinction coefficients :math:`A_λ` for each filter. Default: use the extinction of ``self.sn``,
+            if any. Otherwise do not correct for host galaxy extinction.
+        """
         if dm is not None:
             self.meta['dm'] = dm
         elif self.sn is not None:
@@ -158,12 +257,30 @@ class LC(Table):
             for filtname in filtdict[filt].names:
                 self['absmag'][self['filt'] == filtname] -= A
 
-    def calcLum(self, nondetSigmas=3):
-        self.nondetSigmas = nondetSigmas
-        self['lum'], self['dlum'] = mag2flux(self['absmag'], self['dmag'], self.zp() + 90.19, self['nondet'],
+    def calcLum(self, nondetSigmas=None):
+        """
+        Calculate the ``'lum'`` and ``'dlum'`` columns from the ``'absmag'`` and ``'dmag'`` columns
+
+        Parameters
+        ----------
+        nondetSigmas : float, optional
+            Significance level implied by nondetections in the light curve. Default: 3σ
+        """
+        if nondetSigmas is not None:
+            self.nondetSigmas = nondetSigmas
+        self['lum'], self['dlum'] = mag2flux(self['absmag'], self['dmag'], self.zp + 90.19, self['nondet'],
                                              self.nondetSigmas)
 
     def findPeak(self, **criteria):
+        """
+        Find the peak of the light curve and store it in ``self.sn.peakdate``
+
+        Parameters
+        ----------
+        criteria : dict, optional
+            Use only a subset of the light curve matching some criteria when calculating the peak date (stored in
+            ``self.sn.peakcriteria``
+        """
         useforpeak = np.ones_like(self, bool)
         if 'nondet' in self.colnames:
             useforpeak &= ~self['nondet']
@@ -184,6 +301,14 @@ class LC(Table):
         self.sn.peakcriteria = criteria
 
     def calcPhase(self, rdsp=False):
+        """
+        Calculate the rest-frame ``'phase'`` column from the ``'MJD'`` column and ``self.sn.refmjd`` and ``self.sn.z``
+
+        Parameters
+        ----------
+        rdsp : bool, optional
+            Define phase as rest-frame days since peak, rather than rest-frame days since explosion
+        """
         if rdsp and self.sn.peakdate is None:
             raise Exception('must run sn.findPeak() first')
         elif rdsp:
@@ -199,8 +324,33 @@ class LC(Table):
         phase = (self['MJD'].data - self.sn.refmjd) / (1 + self.sn.z)
         self['phase'] = phase
 
-    def plot(self, xcol='phase', ycol='absmag', offset_factor=1, color='filter', marker='source', use_lines=False,
+    def plot(self, xcol='phase', ycol='absmag', offset_factor=1., color='filter', marker='source', use_lines=False,
              normalize=False, fillmark=True, **kwargs):
+        """
+        Plot the light curve, with nondetections marked with a downward-pointing arrow
+
+        Parameters
+        ----------
+        xcol : str, optional
+            Column to plot on the horizontal axis. Default: ``'phase'``
+        ycol : str, optional
+            Column to plot on the vertical axis. Default: ``'absmag'``
+        offset_factor : float, optional
+            Increase or decrease the filter offsets by a constant factor. Default: 1.
+        color : str, optional
+            Column that controls the color of the lines and points. Default: ``'filter'``
+        marker : str, optional
+            Column that controls the marker shape. Default: ``'source'``
+        use_lines : bool, optional
+            Connect light curve points with lines. Default: False
+        normalize : bool, optional
+            Normalize all light curves to peak at 0. Default: False
+        fillmark : bool, optional
+            Fill each marker with color. Default: True
+        kwargs : dict, optional
+            Keyword arguments matching column names in the light curve are used to specify a subset of points to plot.
+            Additional keyword arguments passed to :func:`matplotlib.pyplot.plot`.
+        """
         global markers
         xchoices = ['phase', 'MJD']
         while xcol not in self.keys():
@@ -325,7 +475,30 @@ class LC(Table):
         return t
 
 
-def flux2mag(flux, dflux=np.array(np.nan), zp=0, nondet=None, nondetSigmas=3):
+def flux2mag(flux, dflux=np.array(np.nan), zp=0., nondet=None, nondetSigmas=3.):
+    """
+    Convert flux (and uncertainty) to magnitude (and uncertainty). Nondetections are converted to limiting magnitudes.
+
+    Parameters
+    ----------
+    flux : float, array-like
+        Flux to be converted
+    dflux : float, array-like, optional
+        Uncertainty on the flux to be converted. Default: :mod:`numpy.nan`
+    zp : float, array-like, optional
+        Zero point to be applied to the magnitudes
+    nondet : array-like
+        Boolean or index array indicating the nondetections among the fluxes. Default: no nondetections
+    nondetSigmas : float, optional
+        Significance level implied by nondetections in the light curve. Default: 3σ
+
+    Returns
+    -------
+    mag : float, array-like
+        Magnitude corresponding to the input flux
+    dmag : float, array-like
+        Uncertainty on the output magnitude
+    """
     flux = flux.copy()
     dflux = dflux.copy()
     if nondet is not None:
@@ -336,7 +509,30 @@ def flux2mag(flux, dflux=np.array(np.nan), zp=0, nondet=None, nondetSigmas=3):
     return mag, dmag
 
 
-def mag2flux(mag, dmag=np.nan, zp=0, nondet=None, nondetSigmas=3):
+def mag2flux(mag, dmag=np.nan, zp=0., nondet=None, nondetSigmas=3.):
+    """
+    Convert magnitude (and uncertainty) to flux (and uncertainty). Nondetections are assumed to imply zero flux.
+
+    Parameters
+    ----------
+    mag : float, array-like
+        Magnitude to be converted
+    dmag : float, array-like, optional
+        Uncertainty on the magnitude to be converted. Default: :mod:`numpy.nan`
+    zp : float, array-like, optional
+        Zero point to be applied to the magnitudes
+    nondet : array-like
+        Boolean or index array indicating the nondetections among the fluxes. Default: no nondetections
+    nondetSigmas : float, optional
+        Significance level implied by nondetections in the light curve. Default: 3σ
+
+    Returns
+    -------
+    flux : float, array-like
+        Flux corresponding to the input magnitude
+    dflux : float, array-like
+        Uncertainty on the output flux
+    """
     flux = 10 ** ((zp - mag) / 2.5)
     dflux = np.log(10) / 2.5 * flux * dmag
     if nondet is not None:
@@ -346,6 +542,21 @@ def mag2flux(mag, dmag=np.nan, zp=0, nondet=None, nondetSigmas=3):
 
 
 def binflux(time, flux, dflux, delta=0.2):
+    """
+    Bin a light curve by averaging points within ``delta`` of each other in time
+
+    Parameters
+    ----------
+    time, flux, dflux : array-like
+        Arrays of times, fluxes, and uncertainties comprising the observed light curve
+    delta : float, optional
+        Bin size, in the same units as ``time``. Default: 0.2
+
+    Returns
+    -------
+    time, flux, dflux : array-like
+        Binned arrays of times, fluxes, and uncertainties
+    """
     bin_time = []
     bin_flux = []
     bin_dflux = []

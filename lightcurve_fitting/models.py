@@ -9,6 +9,19 @@ c3 = (4 * np.pi * const.sigma_sb.to("erg s-1 Rsun-2 kK-4").value) ** -0.5 / 1000
 
 
 def format_unit(unit):
+    """
+    Use LaTeX to format a physical unit, which may consist of an order of magnitude times a base unit
+
+    Parameters
+    ----------
+    unit : astropy.units.Unit, astropy.units.Quantity
+        The unit to format
+
+    Returns
+    -------
+    unit_str : str
+        Formatted unit
+    """
     if isinstance(unit, u.Quantity):
         value = np.log10(unit.value)
         unit = unit.unit
@@ -23,6 +36,31 @@ def format_unit(unit):
 
 
 class Model:
+    """
+    An analytical model, defined by a function and its parameters
+
+    Parameters
+    ----------
+    func : function
+        A function that defines the analytical model
+    input_names : list
+        A list of parameter names
+    units : list
+        A list of units (:class:`astropy.unit.Unit`) for each parameter
+
+    Attributes
+    ----------
+    func : function
+        The function that defines the analytical model
+    input_names : list
+        A list of the parameter names
+    units : list
+        A list of the units for each parameter
+    nparams : int
+        The number of parameters in the model
+    axis_labels : list
+        Axis labels for each paramter (including name and unit)
+    """
     def __init__(self, func, input_names, units):
         self.func = func
         self.input_names = input_names
@@ -37,10 +75,42 @@ class Model:
 
 
 def shock_cooling(t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW=False, z=0.):
-    """time in days, velocity in 10**8.5 cm/s, masses in M_sun,
-       progenitor radius in 10**13 cm, opacity in 0.34 cm**2/g,
-       color temperature in kK, blackbody radius in 1000 R_sun"""
+    """
+    The shock cooling model of Sapir & Waxman (https://doi.org/10.3847/1538-4357/aa64df).
 
+    This version of the model is written in terms of physical parameters :math:`v_s, M_\\mathrm{env}, f_ρ M, R`.
+
+    Parameters
+    ----------
+    t_in : float, array-like
+        Time in days
+    f : lightcurve_fitting.filter.Filter, array-like
+        Filters for which to calculate the model
+    v_s : float, array-like
+        The shock speed in :math:`10^{8.5}` cm/s
+    M_env : float, array-like
+        The envelope mass in solar masses
+    f_rho_M : float, array-like
+        The product :math:`f_ρ M`, where ":math:`f_ρ` is a numerical factor of order unity that depends on the inner
+        envelope structure" and :math:`M` is the ejecta mass in solar masses
+    R : float, array-like
+        The progenitor radius in :math:`10^{13}` cm
+    t_exp : float, array-like
+        The explosion epoch
+    kappa : float, array-like
+        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
+    n : float, array-like
+        The polytropic index of the progenitor. Must be either 1.5 or 3.
+    RW : bool, optional
+        Reduce the model to the simpler form of Rabinak & Waxman (https://doi.org/10.1088/0004-637X/728/1/63)
+    z : float, optional
+        The redshift between blackbody source and the observed filters
+
+    Returns
+    -------
+    y_fit : array-like
+        The filtered model light curves
+    """
     if n == 1.5:
         A = 0.94
         a = 1.67
@@ -81,10 +151,16 @@ def shock_cooling(t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW
 
 
 def t_min(v_s, M_env, f_rho_M, R, t_exp=0., kappa=1.):
+    """
+    The minimum validity time for the :func:`shock_cooling` model
+    """
     return 0.2 * R / v_s * np.minimum(0.5, R ** 0.4 * (f_rho_M * kappa) ** -0.2 * v_s ** -0.7) + t_exp
 
 
 def t_max(v_s, M_env, f_rho_M, R, t_exp=0., kappa=1.):
+    """
+    The maximum validity time for the :func:`shock_cooling` model
+    """
     return 7.4 * (R / kappa) ** 0.55 + t_exp
 
 
@@ -109,6 +185,37 @@ ShockCooling.t_max = t_max
 
 
 def shock_cooling2(t_in, f, T_1, L_1, t_tr, t_exp=0., n=1.5, RW=False, z=0.):
+    """
+    The shock cooling model of Sapir & Waxman (https://doi.org/10.3847/1538-4357/aa64df).
+
+    This version of the model is written in terms of scaling parameters :math:`T_1, L_1, t_\\mathrm{tr}`.
+
+    Parameters
+    ----------
+    t_in : float, array-like
+        Time in days
+    f : lightcurve_fitting.filter.Filter, array-like
+        Filters for which to calculate the model
+    T_1 : float, array-like
+        The blackbody temperature 1 day after explosion in kilokelvins
+    L_1 : float, array-like
+        The approximate blackbody luminosity 1 day after explosion in :math:`10^{42}` erg/s
+    t_tr : float, array-like
+        The time at which the envelope becomes transparent in rest-frame days
+    t_exp : float, array-like
+        The explosion epoch
+    n : float, array-like
+        The polytropic index of the progenitor. Must be either 1.5 or 3.
+    RW : bool, optional
+        Reduce the model to the simpler form of Rabinak & Waxman (https://doi.org/10.1088/0004-637X/728/1/63)
+    z : float, optional
+        The redshift between blackbody source and the observed filters
+
+    Returns
+    -------
+    y_fit : array-like
+        The filtered model light curves
+    """
     if n == 1.5:
         a = 1.67
         alpha = 0.8
@@ -140,10 +247,16 @@ def shock_cooling2(t_in, f, T_1, L_1, t_tr, t_exp=0., n=1.5, RW=False, z=0.):
 
 
 def t_min2(*args):
+    """
+    The maximum validity time for the :func:`shock_cooling2` model
+    """
     raise NotImplementedError('t_min cannot be translated to these parameters')
 
 
 def t_max2(T_1, L_1=0., t_tr=0., t_exp=0., n=1.5):
+    """
+    The maximum validity time for the :func:`shock_cooling2` model
+    """
     if n == 1.5:
         epsilon_1 = 0.027
     elif n == 3.:
@@ -178,9 +291,14 @@ sifto = Table.read(sifto_filename, format='ascii')
 
 
 def scale_sifto(sn_lc):
-    """Run this function before using the CompanionShocking model
-       to scale the SiFTO model to match your supernova's luminosity
-       and colors. The argument is your supernova's light curve."""
+    """
+    Scale the SiFTO model to match your supernova's luminosity and colors
+
+    Parameters
+    ----------
+    sn_lc : lightcurve_fitting.lightcurve.LC
+        Your supernova's light curve
+    """
     for filt in set(sn_lc['filter']):
         if filt.char not in sifto.colnames:
             raise Exception('No SiFTO template for filter ' + filt.char)
@@ -189,6 +307,42 @@ def scale_sifto(sn_lc):
 
 
 def companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, rr, ri, rU, kappa=1., z=0.):
+    """
+    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model.
+
+    Parameters
+    ----------
+    t_in : float, array-like
+        Time in days
+    f : lightcurve_fitting.filter.Filter, array-like
+        Filters for which to calculate the model
+    t_exp : float, array-like
+        The explosion epoch
+    a13 : float, array-like
+        The binary separation in :math:`10^{13}` cm
+    Mc_v9_7 : float, array-like
+        The product :math:`M_c v_9^7`, where :math:`M_c` is the ejecta mass in Chandrasekhar masses and :math:`v_9` is
+        the ejecta velocity in units of :math:`10^9` cm/s
+    t_peak : float, array-like
+        The epoch of maximum light for the SiFTO model
+    stretch : float, array-like
+        The stretch for the SiFTO model
+    rr : float, array-like
+        A scale factor for the r-band SiFTO model
+    ri : float, array-like
+        A scale factor for the i-band SiFTO model
+    rU : float, aray-like
+        A scale factor for the U-band of the shock component
+    kappa : float, array-like
+        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
+    z : float, optional
+        The redshift between blackbody source and the observed filters
+
+    Returns
+    -------
+    y_fit : array-like
+        The filtered model light curves
+    """
     t_wrt_exp = t_in.reshape(-1, 1) - t_exp
     T_kasen = np.squeeze(25. * (a13 ** 36 * Mc_v9_7 * kappa ** -35 * t_wrt_exp ** -74) ** (1 / 144.))  # kK
     R_kasen = np.squeeze(2.7 * (kappa * Mc_v9_7 * t_wrt_exp ** 7) ** (1 / 9.))  # kiloRsun
@@ -240,10 +394,16 @@ CompanionShocking = Model(companion_shocking,
 
 
 def log_flat_prior(p):
+    """
+    A uniform prior in the logarithm of the parameter, i.e., :math:`\\frac{dP}{dp} \\propto \\frac{1}{p}`
+    """
     return p ** -1
 
 
 def flat_prior(p):
+    """
+    A uniform prior in the parameter, i.e., :math:`\\frac{dP}{dp} \\propto 1`
+    """
     return np.ones_like(p)
 
 
@@ -252,12 +412,52 @@ c2 = 8 * np.pi ** 2 * (const.h / const.c ** 2).to(u.W / u.Hz / (1000 * u.Rsun) *
 
 
 def planck_fast(nu, T, R, cutoff_freq=np.inf):
+    """
+    The Planck spectrum for a blackbody source
+
+    Parameters
+    ----------
+    nu : float, array-like
+        Frequency in terahertz
+    T : float, array-like
+        Temperature in kilokelvins
+    R : float, array-like
+        Radius in units of 1000 solar radii
+    cutoff_freq : float, optional
+        Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)
+
+    Returns
+    -------
+    float, array-like
+        The spectral luminosity density (:math:`L_ν`) of the source in watts per hertz
+    """
     # cutoff frequency as defined in https://doi.org/10.3847/1538-4357/aa9334
     return c2 * np.squeeze(np.outer(R ** 2, nu ** 3 * np.minimum(1., cutoff_freq / nu))
                            / (np.exp(c1 * np.outer(T ** -1, nu)) - 1))
 
 
 def blackbody_to_filters(filters, T, R, z=0., cutoff_freq=np.inf):
+    """
+    The average spectral luminosity density (:math:`L_ν`) of a blackbody as observed through one or more filters
+
+    Parameters
+    ----------
+    filters : lightcurve_fitting.filters.Filter, array-like
+        One or more broadband filters
+    T : float, array-like
+        Blackbody temperatures in kilokelvins
+    R : float, array-like
+        Blackbody radii in units of 1000 solar radii
+    z : float
+        Redshift between the blackbody source and the observed filters
+    cutoff_freq : float, optional
+        Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)
+
+    Returns
+    -------
+    y_fit : float, array-like
+        The average spectral luminosity density in each filter in watts per hertz
+    """
     T = np.array(T)
     R = np.array(R)
     if T.shape != R.shape:
@@ -271,6 +471,31 @@ def blackbody_to_filters(filters, T, R, z=0., cutoff_freq=np.inf):
 
 
 def planck(nu, T, R, dT=0., dR=0., cov=0.):
+    """
+    The Planck spectrum for a blackbody source, including propagation of uncertainties
+
+    Parameters
+    ----------
+    nu : float, array-like
+        Frequency in terahertz
+    T : float, array-like
+        Temperature in kilokelvins
+    R : float, array-like
+        Radius in units of 1000 solar radii
+    dT : float, array-like, optional
+        Uncertainty in the temperature in kilokelvins
+    dR : float, array-like, optional
+        Uncertainty in the radius in units of 1000 solar radii
+    cov : float, array-like, optional
+        The covariance between the temperature and radius
+
+    Returns
+    -------
+    Lnu : float, array-like
+        The spectral luminosity density (:math:`L_ν`) of the source in watts per hertz
+    dLnu : float, array-like
+        The uncertainty in the spectral luminosity density in watts per hertz
+    """
     Lnu = planck_fast(nu, T, R)
     if not dT and not dR and not cov:
         return Lnu

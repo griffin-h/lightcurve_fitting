@@ -1,5 +1,5 @@
-lightcurve\_fitting package
-===========================
+API Documentation
+=================
 
 lightcurve\_fitting.bolometric module
 -------------------------------------

@@ -9,6 +9,80 @@ from pkg_resources import resource_filename
 
 
 class Filter:
+    """
+    A broadband photometric filter described by its transmission function and its associated photometric system
+
+    Parameters
+    ----------
+    names : str, list
+        One or more names for the filter. The first name is used by default but other names are recognized.
+    color : str, tuple, optional
+        The color used when plotting photometry in this filter. Default: black.
+    offset : float, optional
+        When plotting, offset photometry in this filter by this amount (in magnitudes if plotting magnitudes)
+    system : str, optional
+        Photometric system. If one of ``['Gunn', 'ATLAS', 'Gaia', 'MOSFiT']``, magnitudes are assumed to be AB.
+        If ``'Johnson'``, plot markers with a black edge. Otherwise, ignored except for grouping filters in legends.
+    fnu : float, optional
+        Zero-point flux for magnitudes in this filter, in W/(m^2 Hz). If ``fnu = None`` and ``system in ['Gunn',
+        'ATLAS', 'Gaia', 'MOSFiT']``, assume the AB zero point. Otherwise if ``fnu = None``, converting to flux will raise
+        an error.
+    filename : str, optional
+        Filename containing the transmission function. If none is supplied, converting to flux will raise an error.
+    angstrom : bool, optional
+        If False (default), the transmission function wavelengths are assumed to be in nanometers. If True, they are
+        given in ångströms.
+    linecolor : str, tuple, optional
+        The line color used when plotting photometry in this filter. Default: same as ``color``.
+    textcolor : str, tuple, optional
+        The color used when printing the name of this filter. Default: same as ``linecolor``.
+
+    Attributes
+    ----------
+    name : str
+        The default name of the filter
+    names : list
+        A list of aliases for the filter
+    char : str
+        A single-character identifier for the filter
+    color : str, tuple
+        The color used when plotting photometry in this filter
+    linecolor : str, tuple
+        The line color used when plotting photometry in this filter
+    textcolor : str, tuple
+        The color used when printing the name of this filter
+    mec : str, tuple
+        The marker edge color used when plotting photometry in this filter
+    plotstyle : dict
+        Contains all keyword arguments for plotting photometry in this filter
+    offset : float
+        When plotting, offset photometry in this filter by this amount (in magnitudes if plotting magnitudes)
+    system : str
+        The photometric system for magnitudes in this filter
+    fnu : float
+        The zero-point flux for magnitudes in this filter, in watts per square meter per hertz
+    m0 : float
+        The zero point for magnitudes in this filter, i.e., :math:`m_0 = 2.5 \\log_{10}(F_ν)`
+    M0 : float
+        The zero point for absolute magnitudes in this filter, i.e., :math:`M_0 = m_0 + 90.19`
+    filename : str
+        Filename containing the transmission function
+    angstrom : bool
+        If False (default), the transmission function wavelengths are assumed to be in nanometers. If True, they are
+        given in ångströms.
+    trans : astropy.table.Table
+        The transmission function
+    freq_eff : float
+        The effective frequency of the filter (in terahertz), i.e., :math:`ν_0 = \\frac{1}{Δν} \\int ν T(ν) dν`
+    dfreq : float
+        The effective bandwidth of the filter (in terahertz), i.e., :math:`Δν = \\int T(ν) dν`
+    freq_range : tuple
+        The approximate edges of the filter transmission function (in terahertz), i.e., :math:`ν_0 \\pm Δν`
+    """
+
+    order = None
+    """The names of recognized filters listed in (approximate) decreasing order of effective frequency"""
+
     def __init__(self, names, color='k', offset=0, system=None, fnu=None, filename='', angstrom=False, linecolor=None,
                  textcolor=None):
         if type(names) == list:
@@ -60,8 +134,21 @@ class Filter:
             self.filename = ''
         self.angstrom = angstrom
         self.trans = None
+        self.freq_eff = None
+        self.dfreq = None
+        self.freq_range = None
 
     def read_curve(self, show=False, force=False):
+        """
+        Read the transmission function from ``self.filename`` and store it in ``self.trans``
+
+        Parameters
+        ----------
+        show : bool, optional
+            If True, also plot the transmission function
+        force : bool, optional
+            If True, reread the transmission function from ``self.filename`` even if is already stored in ``self.trans``
+        """
         if (self.trans is None or force) and self.filename:
             i = Filter.order.index(self.name) / float(len(Filter.order))
             self.trans = Table.read(self.filename, format='ascii', names=('wl', 'T'))
@@ -109,7 +196,7 @@ class Filter:
 
             self.freq_eff = freq_eff
             self.dfreq = -dfreq
-            self.freq_range = [[freq_eff.value - freq0], [freq1 - freq_eff.value]]
+            self.freq_range = (freq_eff.value - freq0, freq1 - freq_eff.value)
 
     def blackbody(self, T, R, z=0., cutoff_freq=np.inf):
         """
@@ -181,7 +268,7 @@ class Filter:
         return self.name.__hash__()
 
 
-def resample_filter_curve(filename, outfile):
+def _resample_filter_curve(filename, outfile):
     orig = np.loadtxt(filename)
     wl = np.arange(1225., 274., -1.)
     resampled = np.interp(wl, orig[:, 0], orig[:, 1], left=0, right=0)

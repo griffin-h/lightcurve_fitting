@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>lightcurve_fitting.bolometric &mdash; lightcurve_fitting 0.0.0.post39+g403a58a documentation</title>
+  <title>lightcurve_fitting.bolometric &mdash; lightcurve_fitting 0.0.0.post40+g7f04a8d documentation</title>
   
 
   
@@ -33,6 +33,7 @@
         <script src="../../_static/language_data.js"></script>
         <script src="../../_static/clipboard.min.js"></script>
         <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -62,7 +63,7 @@
             
             
               <div class="version">
-                0.0.0.post39+g403a58a
+                0.0.0.post40+g7f04a8d
               </div>
             
           
@@ -90,7 +91,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">lightcurve_fitting package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../release-history.html">Release History</a></li>
 </ul>
 
@@ -180,6 +181,27 @@
 
 
 <div class="viewcode-block" id="pseudo"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.pseudo">[docs]</a><span class="k">def</span> <span class="nf">pseudo</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">filter0</span><span class="o">=</span><span class="n">filtdict</span><span class="p">[</span><span class="s1">&#39;I&#39;</span><span class="p">],</span> <span class="n">filter1</span><span class="o">=</span><span class="n">filtdict</span><span class="p">[</span><span class="s1">&#39;U&#39;</span><span class="p">],</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Integrate a blackbody spectrum between two broadband filters to produce a pseudobolometric luminosity</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    temp : float, array-like</span>
+<span class="sd">        Blackbody temperatures in kilokelvins</span>
+<span class="sd">    radius : float, array-like</span>
+<span class="sd">        Blackbody radii in units of 1000 solar radii</span>
+<span class="sd">    z : float</span>
+<span class="sd">        Redshift between the blackbody (rest frame) and the filters (observed frame)</span>
+<span class="sd">    filter0, filter1 : lightcurve_fitting.filters.Filter, optional</span>
+<span class="sd">        Filters to integrate between, where ``filter1`` is bluer than ``filter0``. Default: U to I.</span>
+<span class="sd">    cutoff_freq : float, optional</span>
+<span class="sd">        Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    L_opt : float, array-like</span>
+<span class="sd">        Pseudobolometric luminosity in watts</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">freq0</span> <span class="o">=</span> <span class="p">(</span><span class="n">filter0</span><span class="o">.</span><span class="n">freq_eff</span> <span class="o">-</span> <span class="n">filter0</span><span class="o">.</span><span class="n">dfreq</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
     <span class="n">freq1</span> <span class="o">=</span> <span class="p">(</span><span class="n">filter1</span><span class="o">.</span><span class="n">freq_eff</span> <span class="o">+</span> <span class="n">filter1</span><span class="o">.</span><span class="n">dfreq</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
     <span class="n">x_optical</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">freq0</span><span class="p">,</span> <span class="n">freq1</span><span class="p">)</span>
@@ -190,6 +212,41 @@
 
 <div class="viewcode-block" id="blackbody_mcmc"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.blackbody_mcmc">[docs]</a><span class="k">def</span> <span class="nf">blackbody_mcmc</span><span class="p">(</span><span class="n">epoch1</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outpath</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">nwalkers</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">burnin_steps</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
                    <span class="n">T_range</span><span class="o">=</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">),</span> <span class="n">R_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">1000.</span><span class="p">),</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">prev_temp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fit a blackbody spectrum to a spectral energy distribution using a Markov-chain Monte Carlo routine</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    epoch1 : lightcurve_fitting.lightcurve.LC</span>
+<span class="sd">        A single &quot;epoch&quot; of photometry that defines the observed spectral energy distribution</span>
+<span class="sd">    z : float</span>
+<span class="sd">        Redshift between the blackbody (rest frame) and the filters (observed frame)</span>
+<span class="sd">    p0 : list, tuple, array-like, optional</span>
+<span class="sd">        Initial guess for [temperature (kK), radius (1000 Rsun)]. Default: ``[10., 10.]``</span>
+<span class="sd">    show : bool, optional</span>
+<span class="sd">        Plot the chain histories, and display all plots at the end of the script. Default: only save the corner plot</span>
+<span class="sd">    outpath : str, optional</span>
+<span class="sd">        Directory to which to save the corner plots. Default: current directory</span>
+<span class="sd">    nwalkers : int, optional</span>
+<span class="sd">        Number of walkers (chains) to use for fitting. Default: 10</span>
+<span class="sd">    burnin_steps : int, optional</span>
+<span class="sd">        Number of MCMC steps before convergence. This part of the history is discarded. Default: 200</span>
+<span class="sd">    steps : int, optional</span>
+<span class="sd">        Number of MCMC steps after convergence. This part of the history is used to calculate paramers. Default: 100.</span>
+<span class="sd">    T_range : tuple, list, array-like, optional</span>
+<span class="sd">        Range of allowed temperatures (in kilokelvins) in the prior. Default: ``(1., 100.)``</span>
+<span class="sd">    R_range : tuple, list, array-like, optional</span>
+<span class="sd">        Range of allowed radii (in 1000 solar radii) in the prior. Default: ``(0.01, 1000.)``</span>
+<span class="sd">    cutoff_freq : float, optional</span>
+<span class="sd">        Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)</span>
+<span class="sd">    prev_temp : scipy.stats.gaussian_kde, optional</span>
+<span class="sd">        Temperature distribution from fitting the previous epoch&#39;s SED. If given, this is used as the prior.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sampler : emcee.EnsembleSampler</span>
+<span class="sd">        Sampler object containing the results of the MCMC fit</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">epoch1</span><span class="p">[</span><span class="s1">&#39;lum&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
     <span class="n">dy</span> <span class="o">=</span> <span class="n">epoch1</span><span class="p">[</span><span class="s1">&#39;dlum&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
     <span class="n">filtobj</span> <span class="o">=</span> <span class="n">epoch1</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
@@ -265,6 +322,21 @@
 
 
 <div class="viewcode-block" id="plot_bolometric_results"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.plot_bolometric_results">[docs]</a><span class="k">def</span> <span class="nf">plot_bolometric_results</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">save_plot_as</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot the parameters and bolometric light curves that result from fitting the spectral energy distribution</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t0 : lightcurve_fitting.lightcurve.LC</span>
+<span class="sd">        Table containing the results from fitting the spectral energy distribution</span>
+<span class="sd">    save_plot_as : str, optional</span>
+<span class="sd">        Filename to which to save the plot.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib.pyplot.Figure</span>
+<span class="sd">        Figure object containing the plot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">fig</span><span class="p">,</span> <span class="n">axarr</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">axarr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">t0</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">],</span> <span class="n">t0</span><span class="p">[</span><span class="s1">&#39;lum&#39;</span><span class="p">],</span> <span class="n">t0</span><span class="p">[</span><span class="s1">&#39;dlum&#39;</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;bolometric, curve_fit&#39;</span><span class="p">)</span>
@@ -294,6 +366,21 @@
 
 
 <div class="viewcode-block" id="group_by_epoch"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.group_by_epoch">[docs]</a><span class="k">def</span> <span class="nf">group_by_epoch</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Group a light curve into epochs that will be treated as single spectral energy distributions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lc : lightcurve_fitting.lightcurve.LC</span>
+<span class="sd">        Table containing the observed photometry. Must contain times in an &quot;MJD&quot; column.</span>
+<span class="sd">    res : float, optional</span>
+<span class="sd">        Approximate resolution for grouping, in days. Default: 1 day.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    epochs.groups : astropy.table.TableGroups</span>
+<span class="sd">        Iterable containing single-epoch spectral energy distributions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">lc</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">/</span> <span class="n">res</span>
     <span class="n">frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">trunc</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
     <span class="n">lc</span><span class="p">[</span><span class="s1">&#39;bin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">frac</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">frac</span><span class="p">))</span> <span class="o">*</span> <span class="n">res</span>
@@ -305,6 +392,29 @@
 
 
 <div class="viewcode-block" id="stefan_boltzmann"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.stefan_boltzmann">[docs]</a><span class="k">def</span> <span class="nf">stefan_boltzmann</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">dtemp</span><span class="p">,</span> <span class="n">drad</span><span class="p">,</span> <span class="n">covTR</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate blackbody luminosity and associated uncertainty using the Stefan-Boltzmann law</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    temp : float, array-like</span>
+<span class="sd">        Temperature in kilokelvins</span>
+<span class="sd">    radius : float, array-like</span>
+<span class="sd">        Radius in units of 1000 solar radii</span>
+<span class="sd">    dtemp : float, array-like</span>
+<span class="sd">        Uncertainty in the temperature in kilokelvins</span>
+<span class="sd">    drad : float, array-like</span>
+<span class="sd">        Uncertainty in the radius in units of 1000 solar radii</span>
+<span class="sd">    covTR : float, array-like</span>
+<span class="sd">        Covariance between the temperature and radius</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    lum : float, array-like</span>
+<span class="sd">        Luminosity in watts</span>
+<span class="sd">    dlum : float, array-like</span>
+<span class="sd">        Uncertainty in the luminosity in watts</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">lum</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">radius</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">sigma_sb</span> <span class="o">*</span> <span class="n">temp</span> <span class="o">**</span> <span class="mi">4</span>
     <span class="n">dlum</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">sigma_sb</span> <span class="o">*</span> <span class="p">(</span><span class="n">radius</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">temp</span> <span class="o">**</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">drad</span> <span class="o">**</span> <span class="mi">2</span>
                                    <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">radius</span> <span class="o">**</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">temp</span> <span class="o">**</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">dtemp</span> <span class="o">**</span> <span class="mi">2</span>
@@ -313,6 +423,25 @@
 
 
 <div class="viewcode-block" id="median_and_unc"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.median_and_unc">[docs]</a><span class="k">def</span> <span class="nf">median_and_unc</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">perc_contained</span><span class="o">=</span><span class="mf">68.</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the equal-tailed credible interval, centered on the median, for a sample of data</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array-like</span>
+<span class="sd">        The data sample</span>
+<span class="sd">    perc_contained : float, optional</span>
+<span class="sd">        The percentage of the probability to be contained in the interval. Default: 68% (1σ)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    median : float</span>
+<span class="sd">        The median of ``x``</span>
+<span class="sd">    lower : float</span>
+<span class="sd">        The lower boundary of the credible interval</span>
+<span class="sd">    upper : float</span>
+<span class="sd">        The upper boundary of the credible interval</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">q</span> <span class="o">=</span> <span class="mf">50.</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">perc_contained</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">perc_contained</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">])</span>
     <span class="n">percentiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">median</span> <span class="o">=</span> <span class="n">percentiles</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -321,6 +450,41 @@
 
 
 <div class="viewcode-block" id="blackbody_lstsq"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.blackbody_lstsq">[docs]</a><span class="k">def</span> <span class="nf">blackbody_lstsq</span><span class="p">(</span><span class="n">epoch1</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T_range</span><span class="o">=</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">),</span> <span class="n">R_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">1000.</span><span class="p">),</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fit a blackbody spectrum to a spectral energy distribution using :math:`χ^2` minimization</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    epoch1 : lightcurve_fitting.lightcurve.LC</span>
+<span class="sd">        A single &quot;epoch&quot; of photometry that defines the observed spectral energy distribution</span>
+<span class="sd">    z : float</span>
+<span class="sd">        Redshift between the blackbody (rest frame) and the filters (observed frame)</span>
+<span class="sd">    p0 : list, tuple, array-like, optional</span>
+<span class="sd">        Initial guess for [temperature (kK), radius (1000 Rsun)]. Default: ``[10., 10.]``</span>
+<span class="sd">    T_range : tuple, list, array-like, optional</span>
+<span class="sd">        Range of allowed temperatures (in kilokelvins) in the prior. Default: ``(1., 100.)``</span>
+<span class="sd">    R_range : tuple, list, array-like, optional</span>
+<span class="sd">        Range of allowed radii (in 1000 solar radii) in the prior. Default: ``(0.01, 1000.)``</span>
+<span class="sd">    cutoff_freq : float, optional</span>
+<span class="sd">        Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    temp : float</span>
+<span class="sd">        Best-fit blackbody temperature in kilokelvins</span>
+<span class="sd">    radius : float</span>
+<span class="sd">        Best-fit blackbody radius in units of 1000 solar radii</span>
+<span class="sd">    dtemp : float</span>
+<span class="sd">        Uncertainty in the temperature in kilokelvins</span>
+<span class="sd">    drad : float</span>
+<span class="sd">        Uncertainty in the radius in units of 1000 solar radii</span>
+<span class="sd">    lum : float</span>
+<span class="sd">        Blackbody luminosity implied by the best-fit temperature and radius</span>
+<span class="sd">    dlum : float</span>
+<span class="sd">        Uncertainty in the blackbody luminosity</span>
+<span class="sd">    L_opt : float</span>
+<span class="sd">        Pseudobolometric luminosity from integrating the best-fit blackbody spectrum over the U-I filters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">p0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">p0</span> <span class="o">=</span> <span class="p">[</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">]</span>
 
@@ -337,6 +501,19 @@
 
 
 <div class="viewcode-block" id="integrate_sed"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.integrate_sed">[docs]</a><span class="k">def</span> <span class="nf">integrate_sed</span><span class="p">(</span><span class="n">epoch1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Directly integrate a spectral energy distribution using the trapezoidal rule</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    epoch1 : lightcurve_fitting.lightcurve.LC</span>
+<span class="sd">        A single &quot;epoch&quot; of photometry that defines the observed spectral energy distribution</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    L_int : float</span>
+<span class="sd">        Luminosity in watts</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">epoch1</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;freq&#39;</span><span class="p">)</span>
     <span class="n">freqs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">epoch1</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">epoch1</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">epoch1</span><span class="p">[</span><span class="s1">&#39;dfreq&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">lums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">epoch1</span><span class="p">[</span><span class="s1">&#39;lum&#39;</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -347,6 +524,27 @@
 
 
 <div class="viewcode-block" id="calc_colors"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.calc_colors">[docs]</a><span class="k">def</span> <span class="nf">calc_colors</span><span class="p">(</span><span class="n">epoch1</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate colors from a spectral energy distribution</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    epoch1 : lightcurve_fitting.lightcurve.LC</span>
+<span class="sd">        A single &quot;epoch&quot; of photometry that defines the observed spectral energy distribution</span>
+<span class="sd">    colors : list</span>
+<span class="sd">        A list of colors to calculate, e.g., ``[&#39;U-B&#39;, &#39;B-V&#39;, &#39;g-r&#39;, &#39;r-i&#39;]``</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mags : list</span>
+<span class="sd">        A list of the calculated colors</span>
+<span class="sd">    dmags : list</span>
+<span class="sd">        A list of uncertainties on the calculated colors, from propagating errors on the photometry points</span>
+<span class="sd">    lolims : list</span>
+<span class="sd">        A list of booleans: True if the first filter is a nondetection or is absent from ``epoch1``</span>
+<span class="sd">    uplims : list</span>
+<span class="sd">        A list of booleans: True if the second filter is a nondetection or is absent from ``epoch1``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mags</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">dmags</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">lolims</span> <span class="o">=</span> <span class="p">[]</span>
@@ -375,18 +573,23 @@
 
 <div class="viewcode-block" id="plot_color_curves"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.plot_color_curves">[docs]</a><span class="k">def</span> <span class="nf">plot_color_curves</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">limit_length</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Plot the color curves calculated by `calculate_bolometric`.</span>
+<span class="sd">    Plot the color curves calculated by :func:`calculate_bolometric`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    t : astropy.table.Table</span>
-<span class="sd">        Output table from `calculate_bolometric`</span>
+<span class="sd">    t : lightcurve_fitting.lightcurve.LC</span>
+<span class="sd">        Output table from :func:`calculate_bolometric`</span>
 <span class="sd">    colors : list, optional</span>
-<span class="sd">        List of colors to plot, e.g., `[&#39;g-r&#39;, &#39;r-i&#39;]`. By default, plot all recognizable colors.</span>
+<span class="sd">        List of colors to plot, e.g., ``[&#39;g-r&#39;, &#39;r-i&#39;]``. By default, plot all recognizable colors.</span>
 <span class="sd">    fmt : str, optional</span>
-<span class="sd">        Format string, passed to `matplotlib.pyplot.errorbar`</span>
+<span class="sd">        Format string, passed to :func:`matplotlib.pyplot.errorbar`</span>
 <span class="sd">    limit_length : float, optional</span>
 <span class="sd">        Length (in data units) of the upper and lower limit markers</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib.pyplot.Figure</span>
+<span class="sd">        Figure object containing the plot</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
@@ -406,6 +609,48 @@
 <div class="viewcode-block" id="calculate_bolometric"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.calculate_bolometric">[docs]</a><span class="k">def</span> <span class="nf">calculate_bolometric</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">outpath</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">nwalkers</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">burnin_steps</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
                          <span class="n">T_range</span><span class="o">=</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">),</span> <span class="n">R_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">1000.</span><span class="p">),</span> <span class="n">save_table_as</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_nfilt</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                          <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">do_mcmc</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the full bolometric light curve from a table of broadband photometry</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lc : lightcurve_fitting.lightcurve.LC</span>
+<span class="sd">        Table of broadband photometry including columns &quot;MJD&quot;, &quot;mag&quot;, &quot;dmag&quot;, &quot;filt&quot;</span>
+<span class="sd">    z : float</span>
+<span class="sd">        Redshift between the blackbody (rest frame) and the filters (observed frame)</span>
+<span class="sd">    outpath : str, optional</span>
+<span class="sd">        Directory to which to save the corner plots. Default: current directory</span>
+<span class="sd">    res : float, optional</span>
+<span class="sd">        Approximate resolution for grouping, in days. Default: 1 day.</span>
+<span class="sd">    nwalkers : int, optional</span>
+<span class="sd">        Number of walkers (chains) to use for fitting. Default: 10</span>
+<span class="sd">    burnin_steps : int, optional</span>
+<span class="sd">        Number of MCMC steps before convergence. This part of the history is discarded. Default: 200</span>
+<span class="sd">    steps : int, optional</span>
+<span class="sd">        Number of MCMC steps after convergence. This part of the history is used to calculate paramers. Default: 100.</span>
+<span class="sd">    T_range : tuple, list, array-like, optional</span>
+<span class="sd">        Range of allowed temperatures (in kilokelvins) in the prior. Default: ``(1., 100.)``</span>
+<span class="sd">    R_range : tuple, list, array-like, optional</span>
+<span class="sd">        Range of allowed radii (in 1000 solar radii) in the prior. Default: ``(0.01, 1000.)``</span>
+<span class="sd">    save_table_as : str, optional</span>
+<span class="sd">        Filename to which to save the output table of blackbody parameters and bolometric luminosities</span>
+<span class="sd">    min_nfilt : int, optional</span>
+<span class="sd">        Minimum number of distinct observed filters required to calculate a luminosity. Default: 3</span>
+<span class="sd">    cutoff_freq : float, optional</span>
+<span class="sd">        Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)</span>
+<span class="sd">    show : bool, optional</span>
+<span class="sd">        Plot the chain histories, and display all plots at the end of the script. Default: only save the corner plot</span>
+<span class="sd">    colors : list, optional</span>
+<span class="sd">        A list of colors to calculate, e.g., ``[&#39;U-B&#39;, &#39;B-V&#39;, &#39;g-r&#39;, &#39;r-i&#39;]``</span>
+<span class="sd">    do_mcmc : bool, optional</span>
+<span class="sd">        If True (default), also fit the spectral energy distribution with an MCMC routine. This is slower but gives</span>
+<span class="sd">        more realistic uncertainties.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    t0 : lightcurve_fitting.lightcurve.LC</span>
+<span class="sd">        Table containing the blackbody parameters, bolometric luminosities, and (optionally) colors</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">t0</span> <span class="o">=</span> <span class="n">LC</span><span class="p">(</span><span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">,</span> <span class="s1">&#39;dMJD0&#39;</span><span class="p">,</span> <span class="s1">&#39;dMJD1&#39;</span><span class="p">,</span>
                    <span class="s1">&#39;temp&#39;</span><span class="p">,</span> <span class="s1">&#39;radius&#39;</span><span class="p">,</span> <span class="s1">&#39;dtemp&#39;</span><span class="p">,</span> <span class="s1">&#39;dradius&#39;</span><span class="p">,</span>  <span class="c1"># best fit from scipy.curve_fit</span>

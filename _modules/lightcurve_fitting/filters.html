@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>lightcurve_fitting.filters &mdash; lightcurve_fitting 0.0.0.post39+g403a58a documentation</title>
+  <title>lightcurve_fitting.filters &mdash; lightcurve_fitting 0.0.0.post40+g7f04a8d documentation</title>
   
 
   
@@ -33,6 +33,7 @@
         <script src="../../_static/language_data.js"></script>
         <script src="../../_static/clipboard.min.js"></script>
         <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -62,7 +63,7 @@
             
             
               <div class="version">
-                0.0.0.post39+g403a58a
+                0.0.0.post40+g7f04a8d
               </div>
             
           
@@ -90,7 +91,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">lightcurve_fitting package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../release-history.html">Release History</a></li>
 </ul>
 
@@ -167,6 +168,80 @@
 
 
 <div class="viewcode-block" id="Filter"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.filters.Filter">[docs]</a><span class="k">class</span> <span class="nc">Filter</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A broadband photometric filter described by its transmission function and its associated photometric system</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    names : str, list</span>
+<span class="sd">        One or more names for the filter. The first name is used by default but other names are recognized.</span>
+<span class="sd">    color : str, tuple, optional</span>
+<span class="sd">        The color used when plotting photometry in this filter. Default: black.</span>
+<span class="sd">    offset : float, optional</span>
+<span class="sd">        When plotting, offset photometry in this filter by this amount (in magnitudes if plotting magnitudes)</span>
+<span class="sd">    system : str, optional</span>
+<span class="sd">        Photometric system. If one of ``[&#39;Gunn&#39;, &#39;ATLAS&#39;, &#39;Gaia&#39;, &#39;MOSFiT&#39;]``, magnitudes are assumed to be AB.</span>
+<span class="sd">        If ``&#39;Johnson&#39;``, plot markers with a black edge. Otherwise, ignored except for grouping filters in legends.</span>
+<span class="sd">    fnu : float, optional</span>
+<span class="sd">        Zero-point flux for magnitudes in this filter, in W/(m^2 Hz). If ``fnu = None`` and ``system in [&#39;Gunn&#39;,</span>
+<span class="sd">        &#39;ATLAS&#39;, &#39;Gaia&#39;, &#39;MOSFiT&#39;]``, assume the AB zero point. Otherwise if ``fnu = None``, converting to flux will raise</span>
+<span class="sd">        an error.</span>
+<span class="sd">    filename : str, optional</span>
+<span class="sd">        Filename containing the transmission function. If none is supplied, converting to flux will raise an error.</span>
+<span class="sd">    angstrom : bool, optional</span>
+<span class="sd">        If False (default), the transmission function wavelengths are assumed to be in nanometers. If True, they are</span>
+<span class="sd">        given in ångströms.</span>
+<span class="sd">    linecolor : str, tuple, optional</span>
+<span class="sd">        The line color used when plotting photometry in this filter. Default: same as ``color``.</span>
+<span class="sd">    textcolor : str, tuple, optional</span>
+<span class="sd">        The color used when printing the name of this filter. Default: same as ``linecolor``.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The default name of the filter</span>
+<span class="sd">    names : list</span>
+<span class="sd">        A list of aliases for the filter</span>
+<span class="sd">    char : str</span>
+<span class="sd">        A single-character identifier for the filter</span>
+<span class="sd">    color : str, tuple</span>
+<span class="sd">        The color used when plotting photometry in this filter</span>
+<span class="sd">    linecolor : str, tuple</span>
+<span class="sd">        The line color used when plotting photometry in this filter</span>
+<span class="sd">    textcolor : str, tuple</span>
+<span class="sd">        The color used when printing the name of this filter</span>
+<span class="sd">    mec : str, tuple</span>
+<span class="sd">        The marker edge color used when plotting photometry in this filter</span>
+<span class="sd">    plotstyle : dict</span>
+<span class="sd">        Contains all keyword arguments for plotting photometry in this filter</span>
+<span class="sd">    offset : float</span>
+<span class="sd">        When plotting, offset photometry in this filter by this amount (in magnitudes if plotting magnitudes)</span>
+<span class="sd">    system : str</span>
+<span class="sd">        The photometric system for magnitudes in this filter</span>
+<span class="sd">    fnu : float</span>
+<span class="sd">        The zero-point flux for magnitudes in this filter, in watts per square meter per hertz</span>
+<span class="sd">    m0 : float</span>
+<span class="sd">        The zero point for magnitudes in this filter, i.e., :math:`m_0 = 2.5 \\log_{10}(F_ν)`</span>
+<span class="sd">    M0 : float</span>
+<span class="sd">        The zero point for absolute magnitudes in this filter, i.e., :math:`M_0 = m_0 + 90.19`</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        Filename containing the transmission function</span>
+<span class="sd">    angstrom : bool</span>
+<span class="sd">        If False (default), the transmission function wavelengths are assumed to be in nanometers. If True, they are</span>
+<span class="sd">        given in ångströms.</span>
+<span class="sd">    trans : astropy.table.Table</span>
+<span class="sd">        The transmission function</span>
+<span class="sd">    freq_eff : float</span>
+<span class="sd">        The effective frequency of the filter (in terahertz), i.e., :math:`ν_0 = \\frac{1}{Δν} \\int ν T(ν) dν`</span>
+<span class="sd">    dfreq : float</span>
+<span class="sd">        The effective bandwidth of the filter (in terahertz), i.e., :math:`Δν = \\int T(ν) dν`</span>
+<span class="sd">    freq_range : tuple</span>
+<span class="sd">        The approximate edges of the filter transmission function (in terahertz), i.e., :math:`ν_0 \\pm Δν`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">order</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;The names of recognized filters listed in (approximate) decreasing order of effective frequency&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">system</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fnu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">linecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">textcolor</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
@@ -218,8 +293,21 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">angstrom</span> <span class="o">=</span> <span class="n">angstrom</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trans</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">freq_eff</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dfreq</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">freq_range</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Filter.read_curve"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.filters.Filter.read_curve">[docs]</a>    <span class="k">def</span> <span class="nf">read_curve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read the transmission function from ``self.filename`` and store it in ``self.trans``</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        show : bool, optional</span>
+<span class="sd">            If True, also plot the transmission function</span>
+<span class="sd">        force : bool, optional</span>
+<span class="sd">            If True, reread the transmission function from ``self.filename`` even if is already stored in ``self.trans``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">force</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">:</span>
             <span class="n">i</span> <span class="o">=</span> <span class="n">Filter</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Filter</span><span class="o">.</span><span class="n">order</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">trans</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">))</span>
@@ -267,7 +355,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">freq_eff</span> <span class="o">=</span> <span class="n">freq_eff</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dfreq</span> <span class="o">=</span> <span class="o">-</span><span class="n">dfreq</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">freq_range</span> <span class="o">=</span> <span class="p">[[</span><span class="n">freq_eff</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="n">freq0</span><span class="p">],</span> <span class="p">[</span><span class="n">freq1</span> <span class="o">-</span> <span class="n">freq_eff</span><span class="o">.</span><span class="n">value</span><span class="p">]]</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">freq_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">freq_eff</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="n">freq0</span><span class="p">,</span> <span class="n">freq1</span> <span class="o">-</span> <span class="n">freq_eff</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Filter.blackbody"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.filters.Filter.blackbody">[docs]</a>    <span class="k">def</span> <span class="nf">blackbody</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -339,12 +427,12 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="resample_filter_curve"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.filters.resample_filter_curve">[docs]</a><span class="k">def</span> <span class="nf">resample_filter_curve</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">outfile</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_resample_filter_curve</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">outfile</span><span class="p">):</span>
     <span class="n">orig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="n">wl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">1225.</span><span class="p">,</span> <span class="mf">274.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">)</span>
     <span class="n">resampled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span> <span class="n">orig</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">orig</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">wl</span><span class="p">,</span> <span class="n">resampled</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">%.0f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%.16f</span><span class="s1">&#39;</span><span class="p">])</span></div>
+    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">%.0f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%.16f</span><span class="s1">&#39;</span><span class="p">])</span>
 
 
 <span class="c1"># Vega zero points are from</span>

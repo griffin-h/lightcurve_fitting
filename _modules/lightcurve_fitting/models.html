@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>lightcurve_fitting.models &mdash; lightcurve_fitting 0.0.0.post39+g403a58a documentation</title>
+  <title>lightcurve_fitting.models &mdash; lightcurve_fitting 0.0.0.post40+g7f04a8d documentation</title>
   
 
   
@@ -33,6 +33,7 @@
         <script src="../../_static/language_data.js"></script>
         <script src="../../_static/clipboard.min.js"></script>
         <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -62,7 +63,7 @@
             
             
               <div class="version">
-                0.0.0.post39+g403a58a
+                0.0.0.post40+g7f04a8d
               </div>
             
           
@@ -90,7 +91,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">lightcurve_fitting package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../release-history.html">Release History</a></li>
 </ul>
 
@@ -167,6 +168,19 @@
 
 
 <div class="viewcode-block" id="format_unit"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.format_unit">[docs]</a><span class="k">def</span> <span class="nf">format_unit</span><span class="p">(</span><span class="n">unit</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Use LaTeX to format a physical unit, which may consist of an order of magnitude times a base unit</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    unit : astropy.units.Unit, astropy.units.Quantity</span>
+<span class="sd">        The unit to format</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    unit_str : str</span>
+<span class="sd">        Formatted unit</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="n">unit</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">unit</span>
@@ -181,6 +195,31 @@
 
 
 <div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An analytical model, defined by a function and its parameters</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : function</span>
+<span class="sd">        A function that defines the analytical model</span>
+<span class="sd">    input_names : list</span>
+<span class="sd">        A list of parameter names</span>
+<span class="sd">    units : list</span>
+<span class="sd">        A list of units (:class:`astropy.unit.Unit`) for each parameter</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : function</span>
+<span class="sd">        The function that defines the analytical model</span>
+<span class="sd">    input_names : list</span>
+<span class="sd">        A list of the parameter names</span>
+<span class="sd">    units : list</span>
+<span class="sd">        A list of the units for each parameter</span>
+<span class="sd">    nparams : int</span>
+<span class="sd">        The number of parameters in the model</span>
+<span class="sd">    axis_labels : list</span>
+<span class="sd">        Axis labels for each paramter (including name and unit)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">input_names</span><span class="p">,</span> <span class="n">units</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_names</span> <span class="o">=</span> <span class="n">input_names</span>
@@ -195,10 +234,42 @@
 
 
 <div class="viewcode-block" id="shock_cooling"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.shock_cooling">[docs]</a><span class="k">def</span> <span class="nf">shock_cooling</span><span class="p">(</span><span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">RW</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;time in days, velocity in 10**8.5 cm/s, masses in M_sun,</span>
-<span class="sd">       progenitor radius in 10**13 cm, opacity in 0.34 cm**2/g,</span>
-<span class="sd">       color temperature in kK, blackbody radius in 1000 R_sun&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The shock cooling model of Sapir &amp; Waxman (https://doi.org/10.3847/1538-4357/aa64df).</span>
 
+<span class="sd">    This version of the model is written in terms of physical parameters :math:`v_s, M_\\mathrm{env}, f_ρ M, R`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t_in : float, array-like</span>
+<span class="sd">        Time in days</span>
+<span class="sd">    f : lightcurve_fitting.filter.Filter, array-like</span>
+<span class="sd">        Filters for which to calculate the model</span>
+<span class="sd">    v_s : float, array-like</span>
+<span class="sd">        The shock speed in :math:`10^{8.5}` cm/s</span>
+<span class="sd">    M_env : float, array-like</span>
+<span class="sd">        The envelope mass in solar masses</span>
+<span class="sd">    f_rho_M : float, array-like</span>
+<span class="sd">        The product :math:`f_ρ M`, where &quot;:math:`f_ρ` is a numerical factor of order unity that depends on the inner</span>
+<span class="sd">        envelope structure&quot; and :math:`M` is the ejecta mass in solar masses</span>
+<span class="sd">    R : float, array-like</span>
+<span class="sd">        The progenitor radius in :math:`10^{13}` cm</span>
+<span class="sd">    t_exp : float, array-like</span>
+<span class="sd">        The explosion epoch</span>
+<span class="sd">    kappa : float, array-like</span>
+<span class="sd">        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)</span>
+<span class="sd">    n : float, array-like</span>
+<span class="sd">        The polytropic index of the progenitor. Must be either 1.5 or 3.</span>
+<span class="sd">    RW : bool, optional</span>
+<span class="sd">        Reduce the model to the simpler form of Rabinak &amp; Waxman (https://doi.org/10.1088/0004-637X/728/1/63)</span>
+<span class="sd">    z : float, optional</span>
+<span class="sd">        The redshift between blackbody source and the observed filters</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    y_fit : array-like</span>
+<span class="sd">        The filtered model light curves</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mf">1.5</span><span class="p">:</span>
         <span class="n">A</span> <span class="o">=</span> <span class="mf">0.94</span>
         <span class="n">a</span> <span class="o">=</span> <span class="mf">1.67</span>
@@ -239,10 +310,16 @@
 
 
 <div class="viewcode-block" id="t_min"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.t_min">[docs]</a><span class="k">def</span> <span class="nf">t_min</span><span class="p">(</span><span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The minimum validity time for the :func:`shock_cooling` model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">R</span> <span class="o">/</span> <span class="n">v_s</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">R</span> <span class="o">**</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="p">(</span><span class="n">f_rho_M</span> <span class="o">*</span> <span class="n">kappa</span><span class="p">)</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.2</span> <span class="o">*</span> <span class="n">v_s</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.7</span><span class="p">)</span> <span class="o">+</span> <span class="n">t_exp</span></div>
 
 
 <div class="viewcode-block" id="t_max"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.t_max">[docs]</a><span class="k">def</span> <span class="nf">t_max</span><span class="p">(</span><span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The maximum validity time for the :func:`shock_cooling` model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="mf">7.4</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">/</span> <span class="n">kappa</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.55</span> <span class="o">+</span> <span class="n">t_exp</span></div>
 
 
@@ -267,6 +344,37 @@
 
 
 <div class="viewcode-block" id="shock_cooling2"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.shock_cooling2">[docs]</a><span class="k">def</span> <span class="nf">shock_cooling2</span><span class="p">(</span><span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">T_1</span><span class="p">,</span> <span class="n">L_1</span><span class="p">,</span> <span class="n">t_tr</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">RW</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The shock cooling model of Sapir &amp; Waxman (https://doi.org/10.3847/1538-4357/aa64df).</span>
+
+<span class="sd">    This version of the model is written in terms of scaling parameters :math:`T_1, L_1, t_\\mathrm{tr}`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t_in : float, array-like</span>
+<span class="sd">        Time in days</span>
+<span class="sd">    f : lightcurve_fitting.filter.Filter, array-like</span>
+<span class="sd">        Filters for which to calculate the model</span>
+<span class="sd">    T_1 : float, array-like</span>
+<span class="sd">        The blackbody temperature 1 day after explosion in kilokelvins</span>
+<span class="sd">    L_1 : float, array-like</span>
+<span class="sd">        The approximate blackbody luminosity 1 day after explosion in :math:`10^{42}` erg/s</span>
+<span class="sd">    t_tr : float, array-like</span>
+<span class="sd">        The time at which the envelope becomes transparent in rest-frame days</span>
+<span class="sd">    t_exp : float, array-like</span>
+<span class="sd">        The explosion epoch</span>
+<span class="sd">    n : float, array-like</span>
+<span class="sd">        The polytropic index of the progenitor. Must be either 1.5 or 3.</span>
+<span class="sd">    RW : bool, optional</span>
+<span class="sd">        Reduce the model to the simpler form of Rabinak &amp; Waxman (https://doi.org/10.1088/0004-637X/728/1/63)</span>
+<span class="sd">    z : float, optional</span>
+<span class="sd">        The redshift between blackbody source and the observed filters</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    y_fit : array-like</span>
+<span class="sd">        The filtered model light curves</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mf">1.5</span><span class="p">:</span>
         <span class="n">a</span> <span class="o">=</span> <span class="mf">1.67</span>
         <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.8</span>
@@ -298,10 +406,16 @@
 
 
 <div class="viewcode-block" id="t_min2"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.t_min2">[docs]</a><span class="k">def</span> <span class="nf">t_min2</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The maximum validity time for the :func:`shock_cooling2` model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;t_min cannot be translated to these parameters&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="t_max2"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.t_max2">[docs]</a><span class="k">def</span> <span class="nf">t_max2</span><span class="p">(</span><span class="n">T_1</span><span class="p">,</span> <span class="n">L_1</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">t_tr</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mf">1.5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The maximum validity time for the :func:`shock_cooling2` model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mf">1.5</span><span class="p">:</span>
         <span class="n">epsilon_1</span> <span class="o">=</span> <span class="mf">0.027</span>
     <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="mf">3.</span><span class="p">:</span>
@@ -336,9 +450,14 @@
 
 
 <div class="viewcode-block" id="scale_sifto"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.scale_sifto">[docs]</a><span class="k">def</span> <span class="nf">scale_sifto</span><span class="p">(</span><span class="n">sn_lc</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Run this function before using the CompanionShocking model</span>
-<span class="sd">       to scale the SiFTO model to match your supernova&#39;s luminosity</span>
-<span class="sd">       and colors. The argument is your supernova&#39;s light curve.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Scale the SiFTO model to match your supernova&#39;s luminosity and colors</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sn_lc : lightcurve_fitting.lightcurve.LC</span>
+<span class="sd">        Your supernova&#39;s light curve</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">filt</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">sn_lc</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]):</span>
         <span class="k">if</span> <span class="n">filt</span><span class="o">.</span><span class="n">char</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sifto</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No SiFTO template for filter &#39;</span> <span class="o">+</span> <span class="n">filt</span><span class="o">.</span><span class="n">char</span><span class="p">)</span>
@@ -347,6 +466,42 @@
 
 
 <div class="viewcode-block" id="companion_shocking"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.companion_shocking">[docs]</a><span class="k">def</span> <span class="nf">companion_shocking</span><span class="p">(</span><span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">t_exp</span><span class="p">,</span> <span class="n">a13</span><span class="p">,</span> <span class="n">Mc_v9_7</span><span class="p">,</span> <span class="n">t_peak</span><span class="p">,</span> <span class="n">stretch</span><span class="p">,</span> <span class="n">rr</span><span class="p">,</span> <span class="n">ri</span><span class="p">,</span> <span class="n">rU</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t_in : float, array-like</span>
+<span class="sd">        Time in days</span>
+<span class="sd">    f : lightcurve_fitting.filter.Filter, array-like</span>
+<span class="sd">        Filters for which to calculate the model</span>
+<span class="sd">    t_exp : float, array-like</span>
+<span class="sd">        The explosion epoch</span>
+<span class="sd">    a13 : float, array-like</span>
+<span class="sd">        The binary separation in :math:`10^{13}` cm</span>
+<span class="sd">    Mc_v9_7 : float, array-like</span>
+<span class="sd">        The product :math:`M_c v_9^7`, where :math:`M_c` is the ejecta mass in Chandrasekhar masses and :math:`v_9` is</span>
+<span class="sd">        the ejecta velocity in units of :math:`10^9` cm/s</span>
+<span class="sd">    t_peak : float, array-like</span>
+<span class="sd">        The epoch of maximum light for the SiFTO model</span>
+<span class="sd">    stretch : float, array-like</span>
+<span class="sd">        The stretch for the SiFTO model</span>
+<span class="sd">    rr : float, array-like</span>
+<span class="sd">        A scale factor for the r-band SiFTO model</span>
+<span class="sd">    ri : float, array-like</span>
+<span class="sd">        A scale factor for the i-band SiFTO model</span>
+<span class="sd">    rU : float, aray-like</span>
+<span class="sd">        A scale factor for the U-band of the shock component</span>
+<span class="sd">    kappa : float, array-like</span>
+<span class="sd">        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)</span>
+<span class="sd">    z : float, optional</span>
+<span class="sd">        The redshift between blackbody source and the observed filters</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    y_fit : array-like</span>
+<span class="sd">        The filtered model light curves</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">t_wrt_exp</span> <span class="o">=</span> <span class="n">t_in</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">t_exp</span>
     <span class="n">T_kasen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mf">25.</span> <span class="o">*</span> <span class="p">(</span><span class="n">a13</span> <span class="o">**</span> <span class="mi">36</span> <span class="o">*</span> <span class="n">Mc_v9_7</span> <span class="o">*</span> <span class="n">kappa</span> <span class="o">**</span> <span class="o">-</span><span class="mi">35</span> <span class="o">*</span> <span class="n">t_wrt_exp</span> <span class="o">**</span> <span class="o">-</span><span class="mi">74</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">144.</span><span class="p">))</span>  <span class="c1"># kK</span>
     <span class="n">R_kasen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mf">2.7</span> <span class="o">*</span> <span class="p">(</span><span class="n">kappa</span> <span class="o">*</span> <span class="n">Mc_v9_7</span> <span class="o">*</span> <span class="n">t_wrt_exp</span> <span class="o">**</span> <span class="mi">7</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">9.</span><span class="p">))</span>  <span class="c1"># kiloRsun</span>
@@ -398,10 +553,16 @@
 
 
 <div class="viewcode-block" id="log_flat_prior"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.log_flat_prior">[docs]</a><span class="k">def</span> <span class="nf">log_flat_prior</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A uniform prior in the logarithm of the parameter, i.e., :math:`\\frac{dP}{dp} \\propto \\frac{1}{p}`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">p</span> <span class="o">**</span> <span class="o">-</span><span class="mi">1</span></div>
 
 
 <div class="viewcode-block" id="flat_prior"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.flat_prior">[docs]</a><span class="k">def</span> <span class="nf">flat_prior</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A uniform prior in the parameter, i.e., :math:`\\frac{dP}{dp} \\propto 1`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">p</span><span class="p">)</span></div>
 
 
@@ -410,12 +571,52 @@
 
 
 <div class="viewcode-block" id="planck_fast"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.planck_fast">[docs]</a><span class="k">def</span> <span class="nf">planck_fast</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Planck spectrum for a blackbody source</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu : float, array-like</span>
+<span class="sd">        Frequency in terahertz</span>
+<span class="sd">    T : float, array-like</span>
+<span class="sd">        Temperature in kilokelvins</span>
+<span class="sd">    R : float, array-like</span>
+<span class="sd">        Radius in units of 1000 solar radii</span>
+<span class="sd">    cutoff_freq : float, optional</span>
+<span class="sd">        Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float, array-like</span>
+<span class="sd">        The spectral luminosity density (:math:`L_ν`) of the source in watts per hertz</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># cutoff frequency as defined in https://doi.org/10.3847/1538-4357/aa9334</span>
     <span class="k">return</span> <span class="n">c2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">R</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">nu</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">cutoff_freq</span> <span class="o">/</span> <span class="n">nu</span><span class="p">))</span>
                            <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">c1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">T</span> <span class="o">**</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nu</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="blackbody_to_filters"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.blackbody_to_filters">[docs]</a><span class="k">def</span> <span class="nf">blackbody_to_filters</span><span class="p">(</span><span class="n">filters</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The average spectral luminosity density (:math:`L_ν`) of a blackbody as observed through one or more filters</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filters : lightcurve_fitting.filters.Filter, array-like</span>
+<span class="sd">        One or more broadband filters</span>
+<span class="sd">    T : float, array-like</span>
+<span class="sd">        Blackbody temperatures in kilokelvins</span>
+<span class="sd">    R : float, array-like</span>
+<span class="sd">        Blackbody radii in units of 1000 solar radii</span>
+<span class="sd">    z : float</span>
+<span class="sd">        Redshift between the blackbody source and the observed filters</span>
+<span class="sd">    cutoff_freq : float, optional</span>
+<span class="sd">        Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    y_fit : float, array-like</span>
+<span class="sd">        The average spectral luminosity density in each filter in watts per hertz</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
     <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">T</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">R</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
@@ -429,6 +630,31 @@
 
 
 <div class="viewcode-block" id="planck"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.planck">[docs]</a><span class="k">def</span> <span class="nf">planck</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">dT</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">dR</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Planck spectrum for a blackbody source, including propagation of uncertainties</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu : float, array-like</span>
+<span class="sd">        Frequency in terahertz</span>
+<span class="sd">    T : float, array-like</span>
+<span class="sd">        Temperature in kilokelvins</span>
+<span class="sd">    R : float, array-like</span>
+<span class="sd">        Radius in units of 1000 solar radii</span>
+<span class="sd">    dT : float, array-like, optional</span>
+<span class="sd">        Uncertainty in the temperature in kilokelvins</span>
+<span class="sd">    dR : float, array-like, optional</span>
+<span class="sd">        Uncertainty in the radius in units of 1000 solar radii</span>
+<span class="sd">    cov : float, array-like, optional</span>
+<span class="sd">        The covariance between the temperature and radius</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Lnu : float, array-like</span>
+<span class="sd">        The spectral luminosity density (:math:`L_ν`) of the source in watts per hertz</span>
+<span class="sd">    dLnu : float, array-like</span>
+<span class="sd">        The uncertainty in the spectral luminosity density in watts per hertz</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">Lnu</span> <span class="o">=</span> <span class="n">planck_fast</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">dT</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">dR</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">cov</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Lnu</span>

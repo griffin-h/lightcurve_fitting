@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>lightcurve_fitting.speccal &mdash; lightcurve_fitting 0.0.0.post39+g403a58a documentation</title>
+  <title>lightcurve_fitting.speccal &mdash; lightcurve_fitting 0.0.0.post40+g7f04a8d documentation</title>
   
 
   
@@ -33,6 +33,7 @@
         <script src="../../_static/language_data.js"></script>
         <script src="../../_static/clipboard.min.js"></script>
         <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -62,7 +63,7 @@
             
             
               <div class="version">
-                0.0.0.post39+g403a58a
+                0.0.0.post40+g7f04a8d
               </div>
             
           
@@ -90,7 +91,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">lightcurve_fitting package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../release-history.html">Release History</a></li>
 </ul>
 
@@ -173,6 +174,9 @@
 
 
 <div class="viewcode-block" id="removebadcards"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.speccal.removebadcards">[docs]</a><span class="k">def</span> <span class="nf">removebadcards</span><span class="p">(</span><span class="n">hdr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove problematic entries from a :class:`astropy.io.fits.header.Header`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">card</span> <span class="ow">in</span> <span class="n">hdr</span><span class="o">.</span><span class="n">cards</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">card</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="s1">&#39;fix&#39;</span><span class="p">)</span>
@@ -186,6 +190,9 @@
 
 
 <div class="viewcode-block" id="remove_duplicate_wcs"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.speccal.remove_duplicate_wcs">[docs]</a><span class="k">def</span> <span class="nf">remove_duplicate_wcs</span><span class="p">(</span><span class="n">hdr</span><span class="p">,</span> <span class="n">keep_number</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove duplicate world coordinate system header keywords from a :class:`astropy.io.fits.header.Header`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;CTYPE1&#39;</span><span class="p">,</span> <span class="s1">&#39;CTYPE2&#39;</span><span class="p">,</span> <span class="s1">&#39;CRPIX1&#39;</span><span class="p">,</span> <span class="s1">&#39;CRPIX2&#39;</span><span class="p">,</span> <span class="s1">&#39;CRVAL1&#39;</span><span class="p">,</span> <span class="s1">&#39;CRVAL2&#39;</span><span class="p">,</span> <span class="s1">&#39;CD1_1&#39;</span><span class="p">,</span> <span class="s1">&#39;CD2_2&#39;</span><span class="p">,</span> <span class="s1">&#39;CD1_2&#39;</span><span class="p">,</span> <span class="s1">&#39;CD2_1&#39;</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">hdr</span> <span class="ow">and</span> <span class="n">hdr</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">card</span> <span class="o">=</span> <span class="n">hdr</span><span class="o">.</span><span class="n">cards</span><span class="p">[(</span><span class="n">key</span><span class="p">,</span> <span class="n">keep_number</span><span class="p">)]</span>
@@ -194,6 +201,27 @@
 
 
 <div class="viewcode-block" id="readfitsspec"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.speccal.readfitsspec">[docs]</a><span class="k">def</span> <span class="nf">readfitsspec</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read a spectrum from a FITS file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        Filename from which to read the spectrum</span>
+<span class="sd">    header : bool, optional</span>
+<span class="sd">        If True, also return the FITS header</span>
+<span class="sd">    ext : int, str, optional</span>
+<span class="sd">        FITS extension number or name in which the spectrum is stored</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    wl : array-like</span>
+<span class="sd">        Wavelengths, typically in ångströms</span>
+<span class="sd">    flux : array-like</span>
+<span class="sd">        Observed fluxes in erg / (s cm2 angstrom), if units are identifiable</span>
+<span class="sd">    hdr : astropy.io.fits.header.Header, optional</span>
+<span class="sd">        FITS header, returned if ``header=True``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">hdulist</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">ext</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">hdu</span> <span class="ow">in</span> <span class="n">hdulist</span><span class="p">:</span>  <span class="c1"># try to find SCI extension</span>
@@ -227,6 +255,31 @@
 
 
 <div class="viewcode-block" id="readOSCspec"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.speccal.readOSCspec">[docs]</a><span class="k">def</span> <span class="nf">readOSCspec</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read spectra from a JSON file from the Open Supernova Catalog (https://sne.space)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filepath : str</span>
+<span class="sd">        Path to the JSON file containing the spectra</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    filenames : list</span>
+<span class="sd">        List of filenames corresponding to each spectrum</span>
+<span class="sd">    times : list</span>
+<span class="sd">        List of :class:`astropy.time.Time` when each spectrum was observed</span>
+<span class="sd">    tel : list</span>
+<span class="sd">        List of telescope names (if given) where each spectrum was observed</span>
+<span class="sd">    inst : list</span>
+<span class="sd">        List of instrument names (if given) with which each spectrum was observed</span>
+<span class="sd">    wl : list</span>
+<span class="sd">        List of wavelength arrays for each spectrum</span>
+<span class="sd">    fx : list</span>
+<span class="sd">        List of flux arrays for each spectrum</span>
+<span class="sd">    scales : list</span>
+<span class="sd">        List of scaling factors for each spectrum (all ones for the OSC)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">json_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="n">rows</span> <span class="o">=</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filepath</span><span class="p">))[</span><span class="mi">0</span><span class="p">]]</span>
@@ -253,6 +306,29 @@
 
 
 <div class="viewcode-block" id="readspec"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.speccal.readspec">[docs]</a><span class="k">def</span> <span class="nf">readspec</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read a spectrum from a FITS or ASCII file and try to identify where and when it was observed</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : str</span>
+<span class="sd">        Filename from which to read the spectrum</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        If True, print the date and filename of the spectrum</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x : array-like</span>
+<span class="sd">        Wavelengths, typically in ångströms</span>
+<span class="sd">    y : array-like</span>
+<span class="sd">        Fluxes in erg / (s cm2 angstrom), if units are identifiable</span>
+<span class="sd">    date : astropy.time.Time</span>
+<span class="sd">        Time at which the spectrum was observed, if identifiable (otherwise ``None``)</span>
+<span class="sd">    telescope : str</span>
+<span class="sd">        Name of the telescope at which the spectrum was observed, if identifiable (otherwise ``&#39;&#39;``)</span>
+<span class="sd">    instrument: str</span>
+<span class="sd">        Name of the instrument used to observe the spectrum, if identifiable (otherwise ``&#39;&#39;``)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;.fits&#39;</span><span class="p">:</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">hdr</span> <span class="o">=</span> <span class="n">readfitsspec</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -340,6 +416,26 @@
 
 
 <div class="viewcode-block" id="calibrate_spectra"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.speccal.calibrate_spectra">[docs]</a><span class="k">def</span> <span class="nf">calibrate_spectra</span><span class="p">(</span><span class="n">spectra</span><span class="p">,</span> <span class="n">lc</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">subtract_percentile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calibrate a set of spectra to an observed broadband light curve.</span>
+
+<span class="sd">    Each calibrated spectrum is saved to a text file that corresponds to the original filename prefixed by ``photcal_``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    spectra : list</span>
+<span class="sd">        List of filenames containing the spectra</span>
+<span class="sd">    lc : lightcurve_fitting.lightcurve.LC</span>
+<span class="sd">        Photometry table containing the observed light curve</span>
+<span class="sd">    filters : list, optional</span>
+<span class="sd">        Only use this subset of filters for calibration</span>
+<span class="sd">    order : int, optional</span>
+<span class="sd">        Polynomial order for the calibration function. Default: 0 (constant factor)</span>
+<span class="sd">    subtract_percentile : float, optional</span>
+<span class="sd">        Subtract flux corresponding to this percentile of the spectrum before calibration. Default: no subtraction</span>
+<span class="sd">    show : bool, optional</span>
+<span class="sd">        Plot the observed light curve and the uncalibrated and calibrated spectra, and ask whether to save the results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">filters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">lc</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">filt</span><span class="o">=</span><span class="n">filters</span><span class="p">)</span>
     <span class="n">lc</span><span class="o">.</span><span class="n">calcFlux</span><span class="p">()</span>
@@ -373,8 +469,8 @@
         <span class="n">freqs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">ratios</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">filt</span> <span class="ow">in</span> <span class="n">filts</span><span class="p">:</span>
-            <span class="n">freq0</span> <span class="o">=</span> <span class="n">filt</span><span class="o">.</span><span class="n">freq_eff</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="n">filt</span><span class="o">.</span><span class="n">freq_range</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">freq1</span> <span class="o">=</span> <span class="n">filt</span><span class="o">.</span><span class="n">freq_range</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">filt</span><span class="o">.</span><span class="n">freq_eff</span><span class="o">.</span><span class="n">value</span>
+            <span class="n">freq0</span> <span class="o">=</span> <span class="n">filt</span><span class="o">.</span><span class="n">freq_eff</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="n">filt</span><span class="o">.</span><span class="n">freq_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">freq1</span> <span class="o">=</span> <span class="n">filt</span><span class="o">.</span><span class="n">freq_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">filt</span><span class="o">.</span><span class="n">freq_eff</span><span class="o">.</span><span class="n">value</span>
             <span class="k">if</span> <span class="n">freq1</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">nu</span><span class="p">)</span> <span class="ow">or</span> <span class="n">freq0</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">nu</span><span class="p">):</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">filt</span><span class="p">,</span> <span class="s2">&quot;and spectrum don&#39;t overlap&quot;</span><span class="p">)</span>
                 <span class="k">continue</span>  <span class="c1"># filter and spectrum don&#39;t overlap</span>
@@ -426,7 +522,7 @@
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--lc&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;filename of photometry table (must have columns &quot;MJD&quot;, &quot;filt&quot;, &quot;mag&quot;/&quot;flux&quot;, and&#39;</span>
                                      <span class="s1">&#39;&quot;dmag&quot;/&quot;dflux&quot;)&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--lc-format&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;format of photometry table (passed to `astropy.table.Table.read`)&#39;</span><span class="p">)</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;format of photometry table (passed to :func:`astropy.table.Table.read`)&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="s1">&#39;--filters&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;filters to use for calibration&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;--order&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;polynomial order of correction function&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--subtract-percentile&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;subtract continuum from spectrum before correcting&#39;</span><span class="p">)</span>

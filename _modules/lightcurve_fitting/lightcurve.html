@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>lightcurve_fitting.lightcurve &mdash; lightcurve_fitting 0.0.0.post39+g403a58a documentation</title>
+  <title>lightcurve_fitting.lightcurve &mdash; lightcurve_fitting 0.0.0.post40+g7f04a8d documentation</title>
   
 
   
@@ -33,6 +33,7 @@
         <script src="../../_static/language_data.js"></script>
         <script src="../../_static/clipboard.min.js"></script>
         <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -62,7 +63,7 @@
             
             
               <div class="version">
-                0.0.0.post39+g403a58a
+                0.0.0.post40+g7f04a8d
               </div>
             
           
@@ -90,7 +91,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">lightcurve_fitting package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../release-history.html">Release History</a></li>
 </ul>
 
@@ -170,12 +171,10 @@
 
 
 <div class="viewcode-block" id="Arrow"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.Arrow">[docs]</a><span class="k">class</span> <span class="nc">Arrow</span><span class="p">(</span><span class="n">Path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An downward-pointing arrow-shaped ``Path``, whose head has half-width ``hx`` and height ``hy`` (in units of length)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hx</span><span class="p">,</span> <span class="n">hy</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Create an down-pointing arrow-shaped path.</span>
-
-<span class="sd">        *hx* is the half-width of the arrow head (in units of the arrow length).</span>
-
-<span class="sd">        *hy* is the height of the arrow head (in units of the arrow length).&quot;&quot;&quot;</span>
         <span class="n">verts</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
                  <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
                  <span class="p">(</span><span class="o">-</span><span class="n">hx</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="n">hy</span><span class="p">),</span>
@@ -194,11 +193,38 @@
 
 
 <div class="viewcode-block" id="LC"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC">[docs]</a><span class="k">class</span> <span class="nc">LC</span><span class="p">(</span><span class="n">Table</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A broadband light curve, stored as an :class:`astropy.table.Table` (see ``help(Table)`` for more details)</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sn : object</span>
+<span class="sd">        Astronomical transient with which this light curve is associated</span>
+<span class="sd">    nondetSigmas : float</span>
+<span class="sd">        Significance level implied by nondetections in the light curve. Default: 3σ</span>
+<span class="sd">    groupby : set</span>
+<span class="sd">        Column names to group by when binning the light curve. Default: ``{&#39;filt&#39;, &#39;filter&#39;, &#39;source&#39;}``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">Table</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sn</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">=</span> <span class="mf">3.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;filt&#39;</span><span class="p">,</span> <span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">}</span>
 
 <div class="viewcode-block" id="LC.where"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.where">[docs]</a>    <span class="k">def</span> <span class="nf">where</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Select the subset of a light curve matching some criteria, given as keyword arguments, e.g., ``colname=value``.</span>
+
+<span class="sd">        The keyword ``colname`` can be any of the following:</span>
+<span class="sd">          * a column in the table, in which case rows must match ``value`` in that column</span>
+<span class="sd">          * a column in the table + ``_not``, in which case rows must *not* match ``value`` in that column</span>
+<span class="sd">          * a column in the table + ``_min``, in which case rows must be &gt;= ``value`` in that column</span>
+<span class="sd">          * a column in the table + ``_max``, in which case rows must be &lt;= ``value`` in that column</span>
+
+<span class="sd">        ``value`` must match the data type of the column ``colname`` and can either be a single value or a list of</span>
+<span class="sd">        values. If ``value`` is a list, rows must match at least one of the values. If ``value`` is a list and</span>
+<span class="sd">        ``colname`` ends in ``_not``, rows must not match any of the values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">use</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -231,6 +257,14 @@
         <span class="k">return</span> <span class="n">selected</span></div>
 
 <div class="viewcode-block" id="LC.filters_to_objects"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.filters_to_objects">[docs]</a>    <span class="k">def</span> <span class="nf">filters_to_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_curve</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse the ``&#39;filt&#39;`` column into :class:`filters.Filter` objects and store in the ``&#39;filter&#39;`` column</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        read_curve : bool, optional</span>
+<span class="sd">            Read in the transmission function for each filter encountered (default)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">filtdict</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filt&#39;</span><span class="p">]]</span>
         <span class="n">is_swift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">bool</span><span class="p">)</span>
         <span class="k">if</span> <span class="s1">&#39;telescope&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
@@ -246,21 +280,51 @@
             <span class="k">for</span> <span class="n">filt</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]):</span>
                 <span class="n">filt</span><span class="o">.</span><span class="n">read_curve</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="LC.zp"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.zp">[docs]</a>    <span class="k">def</span> <span class="nf">zp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">zp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns an array of zero points for each filter in the ``&#39;filter&#39;`` column</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filters_to_objects</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">f</span><span class="o">.</span><span class="n">m0</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]])</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">f</span><span class="o">.</span><span class="n">m0</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]])</span>
 
-<div class="viewcode-block" id="LC.calcFlux"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcFlux">[docs]</a>    <span class="k">def</span> <span class="nf">calcFlux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">=</span> <span class="n">nondetSigmas</span>
+<div class="viewcode-block" id="LC.calcFlux"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcFlux">[docs]</a>    <span class="k">def</span> <span class="nf">calcFlux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the ``&#39;flux&#39;`` and ``&#39;dflux&#39;`` columns from the ``&#39;mag&#39;`` and ``&#39;dmag&#39;`` columns</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nondetSigmas : float, optional</span>
+<span class="sd">            Significance level implied by nondetections in the light curve. Default: 3σ</span>
+<span class="sd">        zp : float, array-like, optional</span>
+<span class="sd">            Array of zero points for each magnitude. Default: standard for each filter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">nondetSigmas</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">=</span> <span class="n">nondetSigmas</span>
         <span class="k">if</span> <span class="n">zp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">zp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zp</span><span class="p">()</span>
+            <span class="n">zp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zp</span>
         <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dflux&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mag2flux</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">],</span> <span class="n">zp</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LC.bin"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.bin">[docs]</a>    <span class="k">def</span> <span class="nf">bin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">groupby</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">groupby</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">groupby</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;filt&#39;</span><span class="p">,</span> <span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Bin the light curve by averaging points within ``delta`` days of each other</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        delta : float, optional</span>
+<span class="sd">            Bin size, in days. Default: 0.3 days</span>
+<span class="sd">        groupby : set, optional</span>
+<span class="sd">            Column names to group by before binning. Default: ``{&#39;filt&#39;, &#39;filter&#39;, &#39;source&#39;}``</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        lc : lightcurve_fitting.lightcurve.LC</span>
+<span class="sd">            Binned light curve</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">groupby</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span> <span class="o">=</span> <span class="n">groupby</span>
         <span class="n">subtabs</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">groupby</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groupby</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span><span class="p">:</span>
             <span class="n">grouped</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groupby</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -276,17 +340,53 @@
         <span class="n">lc</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span>
         <span class="k">return</span> <span class="n">lc</span></div>
 
-<div class="viewcode-block" id="LC.findNondet"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.findNondet">[docs]</a>    <span class="k">def</span> <span class="nf">findNondet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">=</span> <span class="n">nondetSigmas</span>
+<div class="viewcode-block" id="LC.findNondet"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.findNondet">[docs]</a>    <span class="k">def</span> <span class="nf">findNondet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a boolean column ``&#39;nondet&#39;`` indicating flux measurements that are below the detection threshold</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nondetSigmas : float, optional</span>
+<span class="sd">            Significance level implied by nondetections in the light curve. Default: 3σ</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">nondetSigmas</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">=</span> <span class="n">nondetSigmas</span>
         <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">*</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dflux&#39;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="LC.calcMag"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcMag">[docs]</a>    <span class="k">def</span> <span class="nf">calcMag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">findNondet</span><span class="p">(</span><span class="n">nondetSigmas</span><span class="p">)</span>
+<div class="viewcode-block" id="LC.calcMag"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcMag">[docs]</a>    <span class="k">def</span> <span class="nf">calcMag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the ``&#39;mag&#39;`` and ``&#39;dmag&#39;`` columns from the ``&#39;flux&#39;`` and ``&#39;dflux&#39;`` columns</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nondetSigmas : float, optional</span>
+<span class="sd">            Significance level implied by nondetections in the light curve. Default: 3σ</span>
+<span class="sd">        zp : float, array-like, optional</span>
+<span class="sd">            Array of zero points for each magnitude. Default: standard for each filter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">nondetSigmas</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">=</span> <span class="n">nondetSigmas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">findNondet</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">zp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">zp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zp</span><span class="p">()</span>
+            <span class="n">zp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zp</span>
         <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flux2mag</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dflux&#39;</span><span class="p">],</span> <span class="n">zp</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LC.calcAbsMag"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcAbsMag">[docs]</a>    <span class="k">def</span> <span class="nf">calcAbsMag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extinction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hostext</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the ``&#39;absmag&#39;`` column from the ``&#39;mag&#39;`` column by correcting for distance and extinction</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dm : float, optional</span>
+<span class="sd">            Distance modulus. Default: use the distance modulus of ``self.sn``, if any. Otherwise do not correct for</span>
+<span class="sd">            distance.</span>
+<span class="sd">        extinction : dict, optional</span>
+<span class="sd">            Milky Way extinction coefficients :math:`A_λ` for each filter. Default: use the extinction of ``self.sn``,</span>
+<span class="sd">            if any. Otherwise do not correct for Milky Way extinction.</span>
+<span class="sd">        hostext : dict, optional</span>
+<span class="sd">            Host galaxy extinction coefficients :math:`A_λ` for each filter. Default: use the extinction of ``self.sn``,</span>
+<span class="sd">            if any. Otherwise do not correct for host galaxy extinction.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">dm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;dm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dm</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -316,12 +416,30 @@
             <span class="k">for</span> <span class="n">filtname</span> <span class="ow">in</span> <span class="n">filtdict</span><span class="p">[</span><span class="n">filt</span><span class="p">]</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
                 <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">][</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filt&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">filtname</span><span class="p">]</span> <span class="o">-=</span> <span class="n">A</span></div>
 
-<div class="viewcode-block" id="LC.calcLum"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcLum">[docs]</a>    <span class="k">def</span> <span class="nf">calcLum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">=</span> <span class="n">nondetSigmas</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;lum&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dlum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mag2flux</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">zp</span><span class="p">()</span> <span class="o">+</span> <span class="mf">90.19</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">],</span>
+<div class="viewcode-block" id="LC.calcLum"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcLum">[docs]</a>    <span class="k">def</span> <span class="nf">calcLum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the ``&#39;lum&#39;`` and ``&#39;dlum&#39;`` columns from the ``&#39;absmag&#39;`` and ``&#39;dmag&#39;`` columns</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nondetSigmas : float, optional</span>
+<span class="sd">            Significance level implied by nondetections in the light curve. Default: 3σ</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">nondetSigmas</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">=</span> <span class="n">nondetSigmas</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;lum&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dlum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mag2flux</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">zp</span> <span class="o">+</span> <span class="mf">90.19</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">],</span>
                                              <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LC.findPeak"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.findPeak">[docs]</a>    <span class="k">def</span> <span class="nf">findPeak</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">criteria</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the peak of the light curve and store it in ``self.sn.peakdate``</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        criteria : dict, optional</span>
+<span class="sd">            Use only a subset of the light curve matching some criteria when calculating the peak date (stored in</span>
+<span class="sd">            ``self.sn.peakcriteria``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">useforpeak</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
         <span class="k">if</span> <span class="s1">&#39;nondet&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="n">useforpeak</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span>
@@ -342,6 +460,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">peakcriteria</span> <span class="o">=</span> <span class="n">criteria</span></div>
 
 <div class="viewcode-block" id="LC.calcPhase"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcPhase">[docs]</a>    <span class="k">def</span> <span class="nf">calcPhase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdsp</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the rest-frame ``&#39;phase&#39;`` column from the ``&#39;MJD&#39;`` column and ``self.sn.refmjd`` and ``self.sn.z``</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rdsp : bool, optional</span>
+<span class="sd">            Define phase as rest-frame days since peak, rather than rest-frame days since explosion</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">rdsp</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">peakdate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;must run sn.findPeak() first&#39;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">rdsp</span><span class="p">:</span>
@@ -357,8 +483,33 @@
         <span class="n">phase</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">refmjd</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
         <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">phase</span></div>
 
-<div class="viewcode-block" id="LC.plot"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="s1">&#39;absmag&#39;</span><span class="p">,</span> <span class="n">offset_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="n">use_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<div class="viewcode-block" id="LC.plot"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="s1">&#39;absmag&#39;</span><span class="p">,</span> <span class="n">offset_factor</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="n">use_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fillmark</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the light curve, with nondetections marked with a downward-pointing arrow</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        xcol : str, optional</span>
+<span class="sd">            Column to plot on the horizontal axis. Default: ``&#39;phase&#39;``</span>
+<span class="sd">        ycol : str, optional</span>
+<span class="sd">            Column to plot on the vertical axis. Default: ``&#39;absmag&#39;``</span>
+<span class="sd">        offset_factor : float, optional</span>
+<span class="sd">            Increase or decrease the filter offsets by a constant factor. Default: 1.</span>
+<span class="sd">        color : str, optional</span>
+<span class="sd">            Column that controls the color of the lines and points. Default: ``&#39;filter&#39;``</span>
+<span class="sd">        marker : str, optional</span>
+<span class="sd">            Column that controls the marker shape. Default: ``&#39;source&#39;``</span>
+<span class="sd">        use_lines : bool, optional</span>
+<span class="sd">            Connect light curve points with lines. Default: False</span>
+<span class="sd">        normalize : bool, optional</span>
+<span class="sd">            Normalize all light curves to peak at 0. Default: False</span>
+<span class="sd">        fillmark : bool, optional</span>
+<span class="sd">            Fill each marker with color. Default: True</span>
+<span class="sd">        kwargs : dict, optional</span>
+<span class="sd">            Keyword arguments matching column names in the light curve are used to specify a subset of points to plot.</span>
+<span class="sd">            Additional keyword arguments passed to :func:`matplotlib.pyplot.plot`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">global</span> <span class="n">markers</span>
         <span class="n">xchoices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="s1">&#39;MJD&#39;</span><span class="p">]</span>
         <span class="k">while</span> <span class="n">xcol</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -483,7 +634,30 @@
         <span class="k">return</span> <span class="n">t</span></div></div>
 
 
-<div class="viewcode-block" id="flux2mag"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.flux2mag">[docs]</a><span class="k">def</span> <span class="nf">flux2mag</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">dflux</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span> <span class="n">zp</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">nondet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<div class="viewcode-block" id="flux2mag"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.flux2mag">[docs]</a><span class="k">def</span> <span class="nf">flux2mag</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">dflux</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span> <span class="n">zp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">nondet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="mf">3.</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert flux (and uncertainty) to magnitude (and uncertainty). Nondetections are converted to limiting magnitudes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    flux : float, array-like</span>
+<span class="sd">        Flux to be converted</span>
+<span class="sd">    dflux : float, array-like, optional</span>
+<span class="sd">        Uncertainty on the flux to be converted. Default: :mod:`numpy.nan`</span>
+<span class="sd">    zp : float, array-like, optional</span>
+<span class="sd">        Zero point to be applied to the magnitudes</span>
+<span class="sd">    nondet : array-like</span>
+<span class="sd">        Boolean or index array indicating the nondetections among the fluxes. Default: no nondetections</span>
+<span class="sd">    nondetSigmas : float, optional</span>
+<span class="sd">        Significance level implied by nondetections in the light curve. Default: 3σ</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mag : float, array-like</span>
+<span class="sd">        Magnitude corresponding to the input flux</span>
+<span class="sd">    dmag : float, array-like</span>
+<span class="sd">        Uncertainty on the output magnitude</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">flux</span> <span class="o">=</span> <span class="n">flux</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">dflux</span> <span class="o">=</span> <span class="n">dflux</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">nondet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -494,7 +668,30 @@
     <span class="k">return</span> <span class="n">mag</span><span class="p">,</span> <span class="n">dmag</span></div>
 
 
-<div class="viewcode-block" id="mag2flux"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.mag2flux">[docs]</a><span class="k">def</span> <span class="nf">mag2flux</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span> <span class="n">dmag</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">nondet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<div class="viewcode-block" id="mag2flux"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.mag2flux">[docs]</a><span class="k">def</span> <span class="nf">mag2flux</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span> <span class="n">dmag</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">nondet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="mf">3.</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert magnitude (and uncertainty) to flux (and uncertainty). Nondetections are assumed to imply zero flux.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mag : float, array-like</span>
+<span class="sd">        Magnitude to be converted</span>
+<span class="sd">    dmag : float, array-like, optional</span>
+<span class="sd">        Uncertainty on the magnitude to be converted. Default: :mod:`numpy.nan`</span>
+<span class="sd">    zp : float, array-like, optional</span>
+<span class="sd">        Zero point to be applied to the magnitudes</span>
+<span class="sd">    nondet : array-like</span>
+<span class="sd">        Boolean or index array indicating the nondetections among the fluxes. Default: no nondetections</span>
+<span class="sd">    nondetSigmas : float, optional</span>
+<span class="sd">        Significance level implied by nondetections in the light curve. Default: 3σ</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    flux : float, array-like</span>
+<span class="sd">        Flux corresponding to the input magnitude</span>
+<span class="sd">    dflux : float, array-like</span>
+<span class="sd">        Uncertainty on the output flux</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">flux</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">((</span><span class="n">zp</span> <span class="o">-</span> <span class="n">mag</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.5</span><span class="p">)</span>
     <span class="n">dflux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="n">flux</span> <span class="o">*</span> <span class="n">dmag</span>
     <span class="k">if</span> <span class="n">nondet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -504,6 +701,21 @@
 
 
 <div class="viewcode-block" id="binflux"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.binflux">[docs]</a><span class="k">def</span> <span class="nf">binflux</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">dflux</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bin a light curve by averaging points within ``delta`` of each other in time</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    time, flux, dflux : array-like</span>
+<span class="sd">        Arrays of times, fluxes, and uncertainties comprising the observed light curve</span>
+<span class="sd">    delta : float, optional</span>
+<span class="sd">        Bin size, in the same units as ``time``. Default: 0.2</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    time, flux, dflux : array-like</span>
+<span class="sd">        Binned arrays of times, fluxes, and uncertainties</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">bin_time</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">bin_flux</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">bin_dflux</span> <span class="o">=</span> <span class="p">[]</span>

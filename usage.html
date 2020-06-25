@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage &mdash; lightcurve_fitting 0.0.0.post42+g1327a61 documentation</title>
+  <title>Usage &mdash; lightcurve_fitting 0.1.0 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.0.0.post42+g1327a61
+                0.1.0
               </div>
             
           
@@ -92,7 +92,14 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#light-curves">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filters">Filters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bolometric-light-curves">Bolometric Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-fitting">Model Fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calibating-spectra-to-photometry">Calibating Spectra to Photometry</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-history.html">Release History</a></li>
 </ul>
@@ -162,9 +169,189 @@
             
   <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<p>Start by importing lightcurve_fitting.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lightcurve_fitting</span>
+<div class="section" id="light-curves">
+<h2>Light Curves<a class="headerlink" href="#light-curves" title="Permalink to this headline">¶</a></h2>
+<p>The core of this package is the <code class="docutils literal notranslate"><span class="pre">lightcurve.LC</span></code> object. This is an extension of the Astropy <code class="docutils literal notranslate"><span class="pre">Table</span></code> object, which contains
+tabular data, in this case broadband photometric observations. You can read light curve data from a file using the
+standard <code class="docutils literal notranslate"><span class="pre">Table.read()</span></code> method. I’m going to read an example light curve of SN 2016bkv to be used from here on:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lightcurve_fitting.lightcurve</span> <span class="kn">import</span> <span class="n">LC</span>
+<span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_filename</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;lightcurve_fitting&#39;</span><span class="p">,</span> <span class="s1">&#39;example/SN2016bkv.table&#39;</span><span class="p">)</span>
+<span class="n">lc</span> <span class="o">=</span> <span class="n">LC</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span>
 </pre></div>
+</div>
+<dl class="simple">
+<dt>The following column names are recognized (although the light curve can have extra columns):</dt><dd><ul class="simple">
+<li><p>MJD (required): modified Julian date of the observation</p></li>
+<li><p>mag (required): magnitude of the observation</p></li>
+<li><p>dmag (required): uncertainty on the magnitude</p></li>
+<li><p>filt (required): name of the filter</p></li>
+<li><p>filter (automatic): the filter object (see <a class="reference internal" href="#filters"><span class="std std-ref">Filters</span></a> below)</p></li>
+<li><p>nondet: True if the magnitude is an upper limit, False otherwise</p></li>
+<li><p>flux: the spectral flux density (<span class="math notranslate nohighlight">\(F_ν\)</span>, arbitrary units) of the observation</p></li>
+<li><p>dflux: uncertainty on the flux</p></li>
+<li><p>phase: time since a reference date (e.g., peak or explosion) in rest-frame days</p></li>
+<li><p>absmag: absolute magnitude of the observation</p></li>
+<li><p>lum: the spectral luminosity density (<span class="math notranslate nohighlight">\(L_ν\)</span>, in watts/hertz) of the observation</p></li>
+<li><p>dlum: the uncertainty on the spectral luminosity density</p></li>
+<li><p>telescope: the name of the telescope/instrument where this observation was carried out</p></li>
+<li><p>source: the data source, either a telescope/instrument name or a literature reference</p></li>
+</ul>
+</dd>
+<dt>The <code class="docutils literal notranslate"><span class="pre">LC.meta</span></code> attribute contains information needed to calculate absolute magnitudes and luminosities:</dt><dd><ul class="simple">
+<li><p>dm: the distance modulus</p></li>
+<li><p>extinction: a dictionary containing Milky Way extinction corrections for each filter</p></li>
+<li><p>hostext: a dictionary containing host galaxy extinction corrections for each filter</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lc</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;dm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">30.79</span>
+<span class="n">lc</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;extinction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+ <span class="s1">&#39;U&#39;</span><span class="p">:</span> <span class="mf">0.069</span><span class="p">,</span>
+ <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="mf">0.061</span><span class="p">,</span>
+ <span class="s1">&#39;g&#39;</span><span class="p">:</span> <span class="mf">0.055</span><span class="p">,</span>
+ <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">0.045</span><span class="p">,</span>
+ <span class="s1">&#39;0&#39;</span><span class="p">:</span> <span class="mf">0.035</span><span class="p">,</span>
+ <span class="s1">&#39;r&#39;</span><span class="p">:</span> <span class="mf">0.038</span><span class="p">,</span>
+ <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">0.035</span><span class="p">,</span>
+ <span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="mf">0.028</span><span class="p">,</span>
+ <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">0.025</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">LC</span></code> object has several methods for converting between the columns above (see API Documentation)
+as well as a method for plotting the light curve in a single command:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lc</span><span class="o">.</span><span class="n">calcAbsMag</span><span class="p">()</span>
+<span class="n">lc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="s1">&#39;MJD&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="filters">
+<h2>Filters<a class="headerlink" href="#filters" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">filters</span></code> submodule defines a <code class="docutils literal notranslate"><span class="pre">Filter</span></code> object that stores information about the broadband filters: transmission
+function, photometric system, and styles for plotting. You mostly won’t have to touch this module, unless you are
+adding new filters.</p>
+</div>
+<div class="section" id="bolometric-light-curves">
+<h2>Bolometric Light Curves<a class="headerlink" href="#bolometric-light-curves" title="Permalink to this headline">¶</a></h2>
+<p>You can make a bolometric light curve and color curves from the photometry table with the <code class="docutils literal notranslate"><span class="pre">bolometric</span></code> module.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lightcurve_fitting.bolometric</span> <span class="kn">import</span> <span class="n">calculate_bolometric</span><span class="p">,</span> <span class="n">plot_bolometric_results</span><span class="p">,</span> <span class="n">plot_color_curves</span>
+
+<span class="n">redshift</span> <span class="o">=</span> <span class="mf">0.002</span>
+<span class="n">outpath</span> <span class="o">=</span> <span class="s1">&#39;/Users/griffin/Desktop/SN2016bkv_bolometric&#39;</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">calculate_bolometric</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">redshift</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;B-V&#39;</span><span class="p">,</span> <span class="s1">&#39;g-r&#39;</span><span class="p">,</span> <span class="s1">&#39;r-i&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">plot_bolometric_results</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">plot_color_curves</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>The light curve is divided into epochs (defined by the <code class="docutils literal notranslate"><span class="pre">bin</span></code> argument to <code class="docutils literal notranslate"><span class="pre">calculate_bolometric</span></code>), and processed four different ways:</dt><dd><ul class="simple">
+<li><p>Fitting the Planck function using <code class="docutils literal notranslate"><span class="pre">scipy.curve_fit</span></code>. This is very fast but may not give reliable uncertainties.
+The columns <code class="docutils literal notranslate"><span class="pre">temp</span></code>, <code class="docutils literal notranslate"><span class="pre">radius</span></code>, <code class="docutils literal notranslate"><span class="pre">dtemp</span></code>, and <code class="docutils literal notranslate"><span class="pre">dradius</span></code> come from this fit.</p></li>
+<li><p>The Stefan-Bolzmann law gives the total bolometric luminosity, <code class="docutils literal notranslate"><span class="pre">lum</span></code> and <code class="docutils literal notranslate"><span class="pre">dlum</span></code>.</p></li>
+<li><p>Integrating the Planck function between <span class="math notranslate nohighlight">\(U\)</span> and <span class="math notranslate nohighlight">\(I\)</span> band (observed) gives <code class="docutils literal notranslate"><span class="pre">L_opt</span></code>.</p></li>
+<li><p>Fitting the Planck function using an MCMC routine.
+This is slower, depending on how many walkers (<code class="docutils literal notranslate"><span class="pre">nwalkers</span></code>) and steps (<code class="docutils literal notranslate"><span class="pre">burnin_steps</span></code> and <code class="docutils literal notranslate"><span class="pre">steps</span></code>) you use,
+but gives more robust uncertainties.
+The columns <code class="docutils literal notranslate"><span class="pre">temp_mcmc</span></code>, <code class="docutils literal notranslate"><span class="pre">radius_mcmc</span></code>, <code class="docutils literal notranslate"><span class="pre">dtemp0</span></code>, <code class="docutils literal notranslate"><span class="pre">dtemp1</span></code>, <code class="docutils literal notranslate"><span class="pre">dradius0</span></code>, <code class="docutils literal notranslate"><span class="pre">dradius1</span></code> come from this fit.
+My convention for non-Gaussian uncertainties is that 0 is the lower uncertainty and 1 is the upper uncertainty.</p></li>
+<li><p>Integrating the Planck function between <span class="math notranslate nohighlight">\(U\)</span> and <span class="math notranslate nohighlight">\(I\)</span> band (observed) gives
+<code class="docutils literal notranslate"><span class="pre">L_mcmc</span></code>, <code class="docutils literal notranslate"><span class="pre">dL_mcmc0</span></code>, and <code class="docutils literal notranslate"><span class="pre">dL_mcmc1</span></code>.</p></li>
+<li><p>Directly integrating the observed SED, assuming 0 flux outside of <span class="math notranslate nohighlight">\(U\)</span> to <span class="math notranslate nohighlight">\(I\)</span>.
+Use this if you do not want to assume the SED is a blackbody. This yields the column <code class="docutils literal notranslate"><span class="pre">L_int</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The MCMC routine saves a corner plot for each fit in the folder you specify (<code class="docutils literal notranslate"><span class="pre">outpath</span></code>).
+I highly recommend looking through these to make sure the fits converged.
+If they didn’t, try adjusting the number of burn-in steps (<code class="docutils literal notranslate"><span class="pre">burnin_steps</span></code>).
+To save the table, give <code class="docutils literal notranslate"><span class="pre">save_table_as='filename.table'</span></code> as an argument to <code class="docutils literal notranslate"><span class="pre">calculate_bolometric</span></code>.
+To save the plot, give <code class="docutils literal notranslate"><span class="pre">save_plot_as='filename.pdf'</span></code> as an argument to <code class="docutils literal notranslate"><span class="pre">plot_bolometric_results</span></code>.</p>
+<dl class="simple">
+<dt>Beware of the units I’m using:</dt><dd><ul class="simple">
+<li><p>Temperatures are in kilokelvins (kK).</p></li>
+<li><p>Radii are in thousands of solar radii (<span class="math notranslate nohighlight">\(1000R_\odot\)</span>).</p></li>
+<li><p>Luminosities are in watts (W). <span class="math notranslate nohighlight">\(1\,\mathrm{W} = 10^7\,\mathrm{erg}\,\mathrm{s}^{-1}\)</span></p></li>
+</ul>
+</dd>
+<dt>Optionally, you can calculate colors at each epoch by giving the argument <code class="docutils literal notranslate"><span class="pre">colors</span></code> to <code class="docutils literal notranslate"><span class="pre">calculate_bolometric</span></code>). These get saved in the same output table in four columns per color, e.g., for <span class="math notranslate nohighlight">\(B-V\)</span>:</dt><dd><ul class="simple">
+<li><p>the color itself, <code class="docutils literal notranslate"><span class="pre">B-V</span></code>,</p></li>
+<li><p>the uncertainty on the color, <code class="docutils literal notranslate"><span class="pre">d(B-V)</span></code>,</p></li>
+<li><p>whether the color is a lower limit, <code class="docutils literal notranslate"><span class="pre">lolims(B-V)</span></code> (i.e., <span class="math notranslate nohighlight">\(B\)</span> was an upper limit), and</p></li>
+<li><p>whether the color is an upper limit, <code class="docutils literal notranslate"><span class="pre">uplims(B-V)</span></code> (i.e., <span class="math notranslate nohighlight">\(V\)</span> was an upper limit).</p></li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="model-fitting">
+<h2>Model Fitting<a class="headerlink" href="#model-fitting" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt>The <code class="docutils literal notranslate"><span class="pre">models</span></code> and <code class="docutils literal notranslate"><span class="pre">fitting</span></code> submodules allow you to fit analytical models to the observed data. Right now, the only choices are:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">CompanionShocking</span></code>, which is the SiFTO Type Ia supernova template (Conley et al. <a class="reference external" href="https://doi.org/10.1086/588518">2008</a>) plus a shock component from Kasen (<a class="reference external" href="https://doi.org/10.1088/0004-637X/708/2/1025">2010</a>).
+This was used in my paper on SN 2017cbv: <a class="reference external" href="https://doi.org/10.3847/2041-8213/aa8402">https://doi.org/10.3847/2041-8213/aa8402</a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ShockCooling</span></code>, which is the Sapir &amp; Waxman (<a class="reference external" href="https://doi.org/10.3847/1538-4357/aa64df">2017</a>) model for shock cooling in a core-collapse supernova,
+formulated in terms of <span class="math notranslate nohighlight">\(v_s, M_\mathrm{env}, f_ρ M, R\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ShockCooling2</span></code>, which is the same Sapir &amp; Waxman model but formulated in terms of scaling parameters <span class="math notranslate nohighlight">\(T_1, L_1, t_\mathrm{tr}\)</span>.
+This was used in my paper on SN 2016bkv: <a class="reference external" href="https://doi.org/10.3847/1538-4357/aac5f6">https://doi.org/10.3847/1538-4357/aac5f6</a>.</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Note on the shock cooling models:</strong>
+There are degeneracies between many of the physical parameters that make them difficult to fit independently.
+This led us to fit develop the <code class="docutils literal notranslate"><span class="pre">ShockCooling2</span></code> model just to see if the model could fit the data at all.
+Since it did not fit well, we concluded that the physical parameters we could have obtained by fitting the <code class="docutils literal notranslate"><span class="pre">ShockCooling</span></code> model were irrelevant.
+However, in order to measure, for example, the progenitor radius, one must use the <code class="docutils literal notranslate"><span class="pre">ShockCooling</span></code> model.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lightcurve_fitting.models</span> <span class="kn">import</span> <span class="n">ShockCooling2</span>
+<span class="kn">from</span> <span class="nn">lightcurve_fitting.fitting</span> <span class="kn">import</span> <span class="n">lightcurve_mcmc</span><span class="p">,</span> <span class="n">lightcurve_corner</span>
+
+<span class="c1"># Fit only the early light curve</span>
+<span class="n">lc_early</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">MJD_min</span><span class="o">=</span><span class="mf">57468.</span><span class="p">,</span> <span class="n">MJD_max</span><span class="o">=</span><span class="mf">57485.</span><span class="p">)</span>
+
+<span class="c1"># Define the priors and initial guesses</span>
+<span class="n">p_min</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">57468.</span><span class="p">]</span>
+<span class="n">p_max</span> <span class="o">=</span> <span class="p">[</span><span class="mf">100.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">,</span> <span class="mf">57468.7</span><span class="p">]</span>
+<span class="n">p_lo</span> <span class="o">=</span> <span class="p">[</span><span class="mf">20.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">,</span> <span class="mf">57468.5</span><span class="p">]</span>
+<span class="n">p_up</span> <span class="o">=</span> <span class="p">[</span><span class="mf">50.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">50.</span><span class="p">,</span> <span class="mf">57468.7</span><span class="p">]</span>
+
+<span class="n">redshift</span> <span class="o">=</span> <span class="mf">0.002</span>
+
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">fitting</span><span class="o">.</span><span class="n">lightcurve_mcmc</span><span class="p">(</span><span class="n">lc_early</span><span class="p">,</span> <span class="n">ShockCooling2</span><span class="p">,</span> <span class="n">model_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="n">redshift</span><span class="p">},</span>
+                              <span class="n">p_min</span><span class="o">=</span><span class="n">p_min</span><span class="p">,</span> <span class="n">p_max</span><span class="o">=</span><span class="n">p_max</span><span class="p">,</span> <span class="n">p_lo</span><span class="o">=</span><span class="n">p_lo</span><span class="p">,</span> <span class="n">p_up</span><span class="o">=</span><span class="n">p_up</span><span class="p">,</span>
+                              <span class="n">nwalkers</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">nsteps_burnin</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">lightcurve_corner</span><span class="p">(</span><span class="n">lc_early</span><span class="p">,</span> <span class="n">ShockCooling2</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">flatchain</span><span class="p">,</span> <span class="n">model_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="n">redshift</span><span class="p">})</span>
+</pre></div>
+</div>
+<p><strong>Another note on the shock cooling models:</strong>
+The shock cooling models are only valid for temperatures above 0.7 eV = 8120 K (Sapir &amp; Waxman 2017),
+so you should check that you have not included observations where the model goes below that.
+If you have, you should rerun the fit without those points.
+If you used the Rabinak &amp; Waxman option, the model fails even earlier, but you will have to check that manually.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">p_mean</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">flatchain</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">t_max</span> <span class="o">=</span> <span class="n">ShockCooling2</span><span class="o">.</span><span class="n">t_max</span><span class="p">(</span><span class="o">*</span><span class="n">p_mean</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t_max</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">lc_early</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">t_max</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning: your model is not valid for all your observations&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="calibating-spectra-to-photometry">
+<h2>Calibating Spectra to Photometry<a class="headerlink" href="#calibating-spectra-to-photometry" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">speccal</span></code> module (somewhat experimental right now) can be used to calibrate spectra to observed photometry.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lightcurve_fitting.speccal</span> <span class="kn">import</span> <span class="n">calibrate_spectra</span>
+
+<span class="n">spectra_filenames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;blah.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;blah.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;blah.dat&#39;</span><span class="p">]</span>
+<span class="n">calibrate_spectra</span><span class="p">(</span><span class="n">spectra_filenames</span><span class="p">,</span> <span class="n">lc</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Each spectrum is multiplied by the filter transmission function and integrated to produce a synthetic flux measurement.
+Each magnitude in the light curve is also converted to flux.
+The ratios of these two flux measurements (for each filter) are fit with a polynomial (order 0 by default).
+Multiplying by this best-fit polynomial calibrates the spectrum to the photometry.
+Each calibrated spectrum is saved to a text file with the prefix <code class="docutils literal notranslate"><span class="pre">photcal_</span></code>.
+I recommend using <code class="docutils literal notranslate"><span class="pre">show=True</span></code> to visualize the process.</p>
 </div>
 </div>
 

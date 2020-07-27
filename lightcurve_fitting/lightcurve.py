@@ -534,43 +534,53 @@ def mag2flux(mag, dmag=np.nan, zp=0., nondet=None, nondetSigmas=3.):
         flux[nondet] = 0
     return flux, dflux
 
-
-def binflux(time, flux, dflux, delta=0.2):
+def binflux(time, flux, dflux, delta=0.2, include_zero=True):
     """
     Bin a light curve by averaging points within ``delta`` of each other in time
-
     Parameters
     ----------
     time, flux, dflux : array-like
         Arrays of times, fluxes, and uncertainties comprising the observed light curve
     delta : float, optional
         Bin size, in the same units as ``time``. Default: 0.2
-
+    include_zero : bool, optional
+        Include data points with no error bar
     Returns
     -------
     time, flux, dflux : array-like
         Binned arrays of times, fluxes, and uncertainties
     """
-    bin_time = []
-    bin_flux = []
+    bin_time  = []
+    bin_flux  = []
     bin_dflux = []
     while len(flux) > 0:
         grp = np.array(abs(time - time[0]) <= delta)
-        time_grp = time[grp]
-        flux_grp = flux[grp]
+        time_grp  = time[grp]
+        flux_grp  = flux[grp]
         dflux_grp = dflux[grp]
-        if any(dflux_grp == 0) or any(dflux_grp == 9999) or any(np.isnan(dflux_grp)) or (
-                np.ma.is_masked(dflux_grp) and any(dflux_grp.mask)):
+
+        # Indices with no error bar
+        zeros = ((dflux_grp == 0) | (dflux_grp == 999) | (dflux_grp == 9999) | (dflux_grp == -1) | np.isnan(dflux_grp) | 
+                (np.ma.is_masked(dflux_grp) and any(dflux_grp.mask)))
+
+        if any(zeros) and include_zero:
             x = np.mean(time_grp)
             y = np.mean(flux_grp)
             z = 0.
         else:
+            # Remove points with no error bars
+            time_grp  = time_grp[~zeros]
+            flux_grp  = flux_grp[~zeros]
+            dflux_grp = dflux_grp[~zeros]
+
             x = np.mean(time_grp)
             y = np.sum(flux_grp * dflux_grp ** -2) / np.sum(dflux_grp ** -2)
             z = np.sum(dflux_grp ** -2) ** -0.5
-        bin_time.append(x)  # indent these lines
-        bin_flux.append(y)  # to exlude points
-        bin_dflux.append(z)  # with no error
+        # Append result 
+        bin_time.append(x)
+        bin_flux.append(y)
+        bin_dflux.append(z)
+        # Remove data points already used
         time = time[~grp]
         flux = flux[~grp]
         dflux = dflux[~grp]

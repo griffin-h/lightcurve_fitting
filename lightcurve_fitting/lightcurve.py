@@ -537,6 +537,7 @@ def mag2flux(mag, dmag=np.nan, zp=0., nondet=None, nondetSigmas=3.):
 def binflux(time, flux, dflux, delta=0.2, include_zero=True):
     """
     Bin a light curve by averaging points within ``delta`` of each other in time
+
     Parameters
     ----------
     time, flux, dflux : array-like
@@ -545,23 +546,24 @@ def binflux(time, flux, dflux, delta=0.2, include_zero=True):
         Bin size, in the same units as ``time``. Default: 0.2
     include_zero : bool, optional
         Include data points with no error bar
+
     Returns
     -------
     time, flux, dflux : array-like
         Binned arrays of times, fluxes, and uncertainties
     """
-    bin_time  = []
-    bin_flux  = []
+    bin_time = []
+    bin_flux = []
     bin_dflux = []
     while len(flux) > 0:
         grp = np.array(abs(time - time[0]) <= delta)
-        time_grp  = time[grp]
-        flux_grp  = flux[grp]
+        time_grp = time[grp]
+        flux_grp = flux[grp]
         dflux_grp = dflux[grp]
 
         # Indices with no error bar
-        zeros = ((dflux_grp == 0) | (dflux_grp == 999) | (dflux_grp == 9999) | (dflux_grp == -1) | np.isnan(dflux_grp) | 
-                (np.ma.is_masked(dflux_grp) and any(dflux_grp.mask)))
+        zeros = ((dflux_grp == 0) | (dflux_grp == 999) | (dflux_grp == 9999) | (dflux_grp == -1) | np.isnan(dflux_grp))
+        if np.ma.is_masked(dflux_grp): zeros = zeros.data | dflux_grp.mask
 
         if any(zeros) and include_zero:
             x = np.mean(time_grp)
@@ -569,8 +571,8 @@ def binflux(time, flux, dflux, delta=0.2, include_zero=True):
             z = 0.
         else:
             # Remove points with no error bars
-            time_grp  = time_grp[~zeros]
-            flux_grp  = flux_grp[~zeros]
+            time_grp = time_grp[~zeros]
+            flux_grp = flux_grp[~zeros]
             dflux_grp = dflux_grp[~zeros]
 
             x = np.mean(time_grp)

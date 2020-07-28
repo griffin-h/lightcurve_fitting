@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Documentation &mdash; lightcurve_fitting 0.0.0.post43+g9ed043e documentation</title>
+  <title>API Documentation &mdash; lightcurve_fitting 0.1.0.post5+g51d7e01 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.0.0.post43+g9ed043e
+                0.1.0.post5+g51d7e01
               </div>
             
           
@@ -434,7 +434,7 @@ more realistic uncertainties.</p>
 </dd>
 <dt><strong>colors</strong><span class="classifier">list, optional</span></dt><dd><p>List of colors to plot, e.g., <code class="docutils literal notranslate"><span class="pre">['g-r',</span> <span class="pre">'r-i']</span></code>. By default, plot all recognizable colors.</p>
 </dd>
-<dt><strong>fmt</strong><span class="classifier">str, optional</span></dt><dd><p>Format string, passed to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.errorbar.html#matplotlib.pyplot.errorbar" title="(in Matplotlib v3.2.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.errorbar()</span></code></a></p>
+<dt><strong>fmt</strong><span class="classifier">str, optional</span></dt><dd><p>Format string, passed to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.errorbar.html#matplotlib.pyplot.errorbar" title="(in Matplotlib v3.3.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.errorbar()</span></code></a></p>
 </dd>
 <dt><strong>limit_length</strong><span class="classifier">float, optional</span></dt><dd><p>Length (in data units) of the upper and lower limit markers</p>
 </dd>
@@ -588,7 +588,7 @@ given in ångströms.</p>
 </dl>
 <dl class="py method">
 <dt id="lightcurve_fitting.filters.Filter.blackbody">
-<code class="sig-name descname">blackbody</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">T</span></em>, <em class="sig-param"><span class="n">R</span></em>, <em class="sig-param"><span class="n">z</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">cutoff_freq</span><span class="o">=</span><span class="default_value">inf</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/filters.html#Filter.blackbody"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.filters.Filter.blackbody" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">blackbody</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">T</span></em>, <em class="sig-param"><span class="n">R</span></em>, <em class="sig-param"><span class="n">z</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">cutoff_freq</span><span class="o">=</span><span class="default_value">inf</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/filters.html#Filter.blackbody"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.filters.Filter.blackbody" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the average Lnu of a blackbody in this filter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -621,7 +621,7 @@ Default: unmodified blackbody.</p>
 
 <dl class="py method">
 <dt id="lightcurve_fitting.filters.Filter.read_curve">
-<code class="sig-name descname">read_curve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/filters.html#Filter.read_curve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.filters.Filter.read_curve" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">read_curve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/filters.html#Filter.read_curve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.filters.Filter.read_curve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read the transmission function from <code class="docutils literal notranslate"><span class="pre">self.filename</span></code> and store it in <code class="docutils literal notranslate"><span class="pre">self.trans</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -764,7 +764,7 @@ the model light curve.</p>
 <dl class="py class">
 <dt id="lightcurve_fitting.lightcurve.Arrow">
 <em class="property">class </em><code class="sig-prename descclassname">lightcurve_fitting.lightcurve.</code><code class="sig-name descname">Arrow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hx</span></em>, <em class="sig-param"><span class="n">hy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#Arrow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.Arrow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://matplotlib.org/api/path_api.html#matplotlib.path.Path" title="(in Matplotlib v3.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.path.Path</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://matplotlib.org/api/path_api.html#matplotlib.path.Path" title="(in Matplotlib v3.3.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.path.Path</span></code></a></p>
 <p>An downward-pointing arrow-shaped <code class="docutils literal notranslate"><span class="pre">Path</span></code>, whose head has half-width <code class="docutils literal notranslate"><span class="pre">hx</span></code> and height <code class="docutils literal notranslate"><span class="pre">hy</span></code> (in units of length)</p>
 </dd></dl>
 
@@ -787,7 +787,7 @@ the model light curve.</p>
 </dl>
 <dl class="py method">
 <dt id="lightcurve_fitting.lightcurve.LC.bin">
-<code class="sig-name descname">bin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">delta</span><span class="o">=</span><span class="default_value">0.3</span></em>, <em class="sig-param"><span class="n">groupby</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.bin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.bin" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">delta</span><span class="o">=</span><span class="default_value">0.3</span></em>, <em class="sig-param"><span class="n">groupby</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.bin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.bin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bin the light curve by averaging points within <code class="docutils literal notranslate"><span class="pre">delta</span></code> days of each other</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -809,7 +809,7 @@ the model light curve.</p>
 
 <dl class="py method">
 <dt id="lightcurve_fitting.lightcurve.LC.calcAbsMag">
-<code class="sig-name descname">calcAbsMag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">dm</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">extinction</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hostext</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.calcAbsMag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.calcAbsMag" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">calcAbsMag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dm</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">extinction</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hostext</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.calcAbsMag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.calcAbsMag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the <code class="docutils literal notranslate"><span class="pre">'absmag'</span></code> column from the <code class="docutils literal notranslate"><span class="pre">'mag'</span></code> column by correcting for distance and extinction</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -830,7 +830,7 @@ if any. Otherwise do not correct for host galaxy extinction.</p>
 
 <dl class="py method">
 <dt id="lightcurve_fitting.lightcurve.LC.calcFlux">
-<code class="sig-name descname">calcFlux</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">nondetSigmas</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">zp</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.calcFlux"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.calcFlux" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">calcFlux</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nondetSigmas</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">zp</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.calcFlux"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.calcFlux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the <code class="docutils literal notranslate"><span class="pre">'flux'</span></code> and <code class="docutils literal notranslate"><span class="pre">'dflux'</span></code> columns from the <code class="docutils literal notranslate"><span class="pre">'mag'</span></code> and <code class="docutils literal notranslate"><span class="pre">'dmag'</span></code> columns</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -846,7 +846,7 @@ if any. Otherwise do not correct for host galaxy extinction.</p>
 
 <dl class="py method">
 <dt id="lightcurve_fitting.lightcurve.LC.calcLum">
-<code class="sig-name descname">calcLum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">nondetSigmas</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.calcLum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.calcLum" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">calcLum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nondetSigmas</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.calcLum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.calcLum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the <code class="docutils literal notranslate"><span class="pre">'lum'</span></code> and <code class="docutils literal notranslate"><span class="pre">'dlum'</span></code> columns from the <code class="docutils literal notranslate"><span class="pre">'absmag'</span></code> and <code class="docutils literal notranslate"><span class="pre">'dmag'</span></code> columns</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -860,7 +860,7 @@ if any. Otherwise do not correct for host galaxy extinction.</p>
 
 <dl class="py method">
 <dt id="lightcurve_fitting.lightcurve.LC.calcMag">
-<code class="sig-name descname">calcMag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">nondetSigmas</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">zp</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.calcMag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.calcMag" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">calcMag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nondetSigmas</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">zp</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.calcMag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.calcMag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the <code class="docutils literal notranslate"><span class="pre">'mag'</span></code> and <code class="docutils literal notranslate"><span class="pre">'dmag'</span></code> columns from the <code class="docutils literal notranslate"><span class="pre">'flux'</span></code> and <code class="docutils literal notranslate"><span class="pre">'dflux'</span></code> columns</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -876,7 +876,7 @@ if any. Otherwise do not correct for host galaxy extinction.</p>
 
 <dl class="py method">
 <dt id="lightcurve_fitting.lightcurve.LC.calcPhase">
-<code class="sig-name descname">calcPhase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">rdsp</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.calcPhase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.calcPhase" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">calcPhase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rdsp</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.calcPhase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.calcPhase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the rest-frame <code class="docutils literal notranslate"><span class="pre">'phase'</span></code> column from the <code class="docutils literal notranslate"><span class="pre">'MJD'</span></code> column and <code class="docutils literal notranslate"><span class="pre">self.sn.refmjd</span></code> and <code class="docutils literal notranslate"><span class="pre">self.sn.z</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -890,7 +890,7 @@ if any. Otherwise do not correct for host galaxy extinction.</p>
 
 <dl class="py method">
 <dt id="lightcurve_fitting.lightcurve.LC.filters_to_objects">
-<code class="sig-name descname">filters_to_objects</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">read_curve</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.filters_to_objects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.filters_to_objects" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">filters_to_objects</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">read_curve</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.filters_to_objects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.filters_to_objects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse the <code class="docutils literal notranslate"><span class="pre">'filt'</span></code> column into <code class="xref py py-class docutils literal notranslate"><span class="pre">filters.Filter</span></code> objects and store in the <code class="docutils literal notranslate"><span class="pre">'filter'</span></code> column</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -904,7 +904,7 @@ if any. Otherwise do not correct for host galaxy extinction.</p>
 
 <dl class="py method">
 <dt id="lightcurve_fitting.lightcurve.LC.findNondet">
-<code class="sig-name descname">findNondet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">nondetSigmas</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.findNondet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.findNondet" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">findNondet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nondetSigmas</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.findNondet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.findNondet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a boolean column <code class="docutils literal notranslate"><span class="pre">'nondet'</span></code> indicating flux measurements that are below the detection threshold</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -918,7 +918,7 @@ if any. Otherwise do not correct for host galaxy extinction.</p>
 
 <dl class="py method">
 <dt id="lightcurve_fitting.lightcurve.LC.findPeak">
-<code class="sig-name descname">findPeak</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">criteria</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.findPeak"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.findPeak" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">findPeak</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">criteria</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.findPeak"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.findPeak" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the peak of the light curve and store it in <code class="docutils literal notranslate"><span class="pre">self.sn.peakdate</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -933,7 +933,7 @@ if any. Otherwise do not correct for host galaxy extinction.</p>
 
 <dl class="py method">
 <dt id="lightcurve_fitting.lightcurve.LC.plot">
-<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">xcol</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">ycol</span><span class="o">=</span><span class="default_value">'absmag'</span></em>, <em class="sig-param"><span class="n">offset_factor</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">color</span><span class="o">=</span><span class="default_value">'filter'</span></em>, <em class="sig-param"><span class="n">marker</span><span class="o">=</span><span class="default_value">'source'</span></em>, <em class="sig-param"><span class="n">use_lines</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">fillmark</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xcol</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">ycol</span><span class="o">=</span><span class="default_value">'absmag'</span></em>, <em class="sig-param"><span class="n">offset_factor</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">color</span><span class="o">=</span><span class="default_value">'filter'</span></em>, <em class="sig-param"><span class="n">marker</span><span class="o">=</span><span class="default_value">'source'</span></em>, <em class="sig-param"><span class="n">use_lines</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">fillmark</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the light curve, with nondetections marked with a downward-pointing arrow</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -955,7 +955,7 @@ if any. Otherwise do not correct for host galaxy extinction.</p>
 <dt><strong>fillmark</strong><span class="classifier">bool, optional</span></dt><dd><p>Fill each marker with color. Default: True</p>
 </dd>
 <dt><strong>kwargs</strong><span class="classifier">dict, optional</span></dt><dd><p>Keyword arguments matching column names in the light curve are used to specify a subset of points to plot.
-Additional keyword arguments passed to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.plot.html#matplotlib.pyplot.plot" title="(in Matplotlib v3.2.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code></a>.</p>
+Additional keyword arguments passed to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.plot.html#matplotlib.pyplot.plot" title="(in Matplotlib v3.3.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
@@ -1273,7 +1273,7 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">ascii.aa
 
 <dl class="py method">
 <dt id="lightcurve_fitting.lightcurve.LC.where">
-<code class="sig-name descname">where</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.where"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.where" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">where</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.where"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.where" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select the subset of a light curve matching some criteria, given as keyword arguments, e.g., <code class="docutils literal notranslate"><span class="pre">colname=value</span></code>.</p>
 <dl class="simple">
 <dt>The keyword <code class="docutils literal notranslate"><span class="pre">colname</span></code> can be any of the following:</dt><dd><ul class="simple">
@@ -1299,7 +1299,7 @@ values. If <code class="docutils literal notranslate"><span class="pre">value</s
 
 <dl class="py function">
 <dt id="lightcurve_fitting.lightcurve.binflux">
-<code class="sig-prename descclassname">lightcurve_fitting.lightcurve.</code><code class="sig-name descname">binflux</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">flux</span></em>, <em class="sig-param"><span class="n">dflux</span></em>, <em class="sig-param"><span class="n">delta</span><span class="o">=</span><span class="default_value">0.2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#binflux"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.binflux" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">lightcurve_fitting.lightcurve.</code><code class="sig-name descname">binflux</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">flux</span></em>, <em class="sig-param"><span class="n">dflux</span></em>, <em class="sig-param"><span class="n">delta</span><span class="o">=</span><span class="default_value">0.2</span></em>, <em class="sig-param"><span class="n">include_zero</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#binflux"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.binflux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bin a light curve by averaging points within <code class="docutils literal notranslate"><span class="pre">delta</span></code> of each other in time</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1307,6 +1307,8 @@ values. If <code class="docutils literal notranslate"><span class="pre">value</s
 <dt><strong>time, flux, dflux</strong><span class="classifier">array-like</span></dt><dd><p>Arrays of times, fluxes, and uncertainties comprising the observed light curve</p>
 </dd>
 <dt><strong>delta</strong><span class="classifier">float, optional</span></dt><dd><p>Bin size, in the same units as <code class="docutils literal notranslate"><span class="pre">time</span></code>. Default: 0.2</p>
+</dd>
+<dt><strong>include_zero</strong><span class="classifier">bool, optional</span></dt><dd><p>Include data points with no error bar</p>
 </dd>
 </dl>
 </dd>

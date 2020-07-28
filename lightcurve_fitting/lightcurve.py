@@ -534,6 +534,7 @@ def mag2flux(mag, dmag=np.nan, zp=0., nondet=None, nondetSigmas=3.):
         flux[nondet] = 0
     return flux, dflux
 
+
 def binflux(time, flux, dflux, delta=0.2, include_zero=True):
     """
     Bin a light curve by averaging points within ``delta`` of each other in time

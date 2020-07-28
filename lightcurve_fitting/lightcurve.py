@@ -563,8 +563,9 @@ def binflux(time, flux, dflux, delta=0.2, include_zero=True):
         dflux_grp = dflux[grp]
 
         # Indices with no error bar
-        zeros = ((dflux_grp == 0) | (dflux_grp == 999) | (dflux_grp == 9999) | (dflux_grp == -1) | np.isnan(dflux_grp))
-        if np.ma.is_masked(dflux_grp): zeros = zeros.data | dflux_grp.mask
+        zeros = (dflux_grp == 0) | (dflux_grp == 999) | (dflux_grp == 9999) | (dflux_grp == -1) | np.isnan(dflux_grp)
+        if np.ma.is_masked(dflux_grp):
+            zeros = zeros.data | dflux_grp.mask
 
         if any(zeros) and include_zero:
             x = np.mean(time_grp)

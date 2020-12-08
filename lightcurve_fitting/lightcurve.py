@@ -32,6 +32,7 @@ othermarkers = ('o', *MarkerStyle.filled_markers[2:])
 itermarkers = itertools.cycle(othermarkers)
 usedmarkers = []
 
+# if you edit this list, also add the new names to usage.rst
 column_names = {
     'filt': ['filter', 'Filter', 'band', 'FLT'],
     'telescope': ['Telescope', 'Tel', 'tel+inst'],

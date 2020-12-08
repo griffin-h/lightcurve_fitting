@@ -17,21 +17,23 @@ standard ``Table.read()`` method. I'm going to read an example light curve of SN
     lc = LC.read(filename)
     print(lc)
 
-The following column names are recognized (although the light curve can have extra columns):
- * MJD (required): modified Julian date of the observation
- * mag (required): magnitude of the observation
- * dmag (required): uncertainty on the magnitude
- * filt (required): name of the filter
+The following column names are used by the package, although the light curve can have extra columns
+[alternative column names are given in square brackets]:
+ * MJD (required): modified Julian date of the observation [mjd, JD, jd (JD/jd are converted)]
+ * mag (required): magnitude of the observation [Magnitude, Mag, ab_mag, PSFmag, MAG, omag, magnitude]
+ * dmag (required): uncertainty on the magnitude [Magnitude_Error, magerr, MagErr, mag_err, e_mag, Error, err, PSFerr,
+   MAGERR, e_omag, e_magnitude]
+ * filt (required): name of the filter [filter, Filter, band, FLT]
  * filter (automatic): the filter object (see :ref:`Filters` below)
- * nondet: True if the magnitude is an upper limit, False otherwise
- * flux: the spectral flux density (:math:`F_ν`, arbitrary units) of the observation
- * dflux: uncertainty on the flux
- * phase: time since a reference date (e.g., peak or explosion) in rest-frame days
+ * nondet: True if the magnitude is an upper limit, False otherwise [Is_Limit, UL, l_omag, upper_limit, upperlimit]
+ * flux: the spectral flux density (:math:`F_ν`, arbitrary units) of the observation [FLUXCAL]
+ * dflux: uncertainty on the flux [FLUXCALERR]
+ * phase: time since a reference date (e.g., peak or explosion) in rest-frame days [Phase, PHASE]
  * absmag: absolute magnitude of the observation
  * lum: the spectral luminosity density (:math:`L_ν`, in watts/hertz) of the observation
  * dlum: the uncertainty on the spectral luminosity density
- * telescope: the name of the telescope/instrument where this observation was carried out
- * source: the data source, either a telescope/instrument name or a literature reference
+ * telescope: the name of the telescope/instrument where this observation was carried out [Telescope, Tel, tel+inst]
+ * source: the data source, either a telescope/instrument name or a literature reference [Source]
 
 The ``LC.meta`` attribute contains information needed to calculate absolute magnitudes and luminosities:
  * dm: the distance modulus

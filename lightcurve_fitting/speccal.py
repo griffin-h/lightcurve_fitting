@@ -79,8 +79,10 @@ def readfitsspec(filename, header=False, ext=None):
     data = hdu.data
     hdr = hdu.header
     flux = data.flatten()[:max(data.shape)]
-    default_unit = 'erg / (s cm2 angstrom)'
-    bunit = hdr.get('BUNIT', default_unit).replace('Ang', 'angstrom').replace('A', 'angstrom')
+    default_unit = 'erg / (Angstrom cm2 s)'
+    bunit = hdr.get('BUNIT', default_unit)
+    if 'Angstrom' not in bunit:
+        bunit = bunit.replace('Ang', 'Angstrom').replace('A', 'Angstrom')
     if hdr.get('CUNIT1') == 'angstroms':
         del hdr['CUNIT1']  # needed for Binospec pipeline
     remove_duplicate_wcs(hdr)  # some problem with Gemini pipeline

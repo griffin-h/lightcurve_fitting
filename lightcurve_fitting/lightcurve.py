@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
-from astropy.table import Table, vstack
+from astropy.table import Table, vstack, MaskedColumn
 from .filters import filtdict
 import itertools
 from matplotlib.markers import MarkerStyle
@@ -31,6 +31,21 @@ arrow = Arrow(0.2, 0.3)
 othermarkers = ('o', *MarkerStyle.filled_markers[2:])
 itermarkers = itertools.cycle(othermarkers)
 usedmarkers = []
+
+column_names = {
+    'filt': ['filter', 'Filter', 'band', 'FLT'],
+    'telescope': ['Telescope', 'Tel', 'tel+inst'],
+    'source': ['Source'],
+    'mag': ['Magnitude', 'Mag', 'ab_mag', 'PSFmag', 'MAG', 'omag', 'magnitude'],
+    'dmag': ['Magnitude_Error', 'magerr', 'MagErr', 'mag_err', 'e_mag', 'Error', 'err', 'PSFerr', 'MAGERR', 'e_omag',
+             'e_magnitude'],
+    'MJD': ['mjd'],
+    'JD': ['jd'],
+    'phase': ['Phase', 'PHASE'],
+    'flux': ['FLUXCAL'],
+    'dflux': ['FLUXCALERR'],
+    'nondet': ['Is_Limit', 'UL', 'l_omag', 'upper_limit', 'upperlimit'],
+}
 
 
 class LC(Table):
@@ -96,6 +111,26 @@ class LC(Table):
         selected.sn = self.sn
         selected.meta = self.meta
         return selected
+
+    def normalize_column_names(self):
+        """
+        Rename any recognizable columns to their standard names for this package (see `lightcurve.column_names`).
+        """
+        for good_key, bad_keys in column_names.items():
+            if good_key not in self.colnames:
+                for bad_key in bad_keys:
+                    if bad_key in self.colnames:
+                        self.rename_column(bad_key, good_key)
+                        break
+        if 'MJD' not in self.colnames and 'JD' in self.colnames:
+            self['MJD'] = self['JD'] - 2400000.5
+            self.remove_column('JD')
+        if 'nondet' in self.colnames and self['nondet'].dtype != bool:
+            if isinstance(self['nondet'], MaskedColumn):
+                self['nondet'] = self['nondet'].filled()
+            nondet = (self['nondet'] == 'True') | (self['nondet'] == 'T') | (self['nondet'] == '>')
+            self.remove_column('nondet')
+            self['nondet'] = nondet
 
     def filters_to_objects(self, read_curve=True):
         """
@@ -459,13 +494,7 @@ class LC(Table):
         if fill_values is None:
             fill_values = [('--', '0'), ('', '0')]
         t = super(LC, cls).read(filepath, format=format, fill_values=fill_values, **kwargs)
-        # make nondetections booleans
-        if 'nondet' in t.keys():
-            nondets = t['nondet'] == 'True'
-            t.remove_column('nondet')
-            t['nondet'] = nondets
-        else:
-            t['nondet'] = False
+        t.normalize_column_names()
         if 'filt' in t.colnames:
             t.filters_to_objects()
         return t

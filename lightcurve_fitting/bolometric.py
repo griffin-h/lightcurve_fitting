@@ -493,6 +493,9 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
         Table containing the blackbody parameters, bolometric luminosities, and (optionally) colors
     """
 
+    if colors is None:
+        colors = []
+
     t0 = LC(names=['MJD', 'dMJD0', 'dMJD1',
                    'temp', 'radius', 'dtemp', 'dradius',  # best fit from scipy.curve_fit
                    'lum', 'dlum',  # total bolometric luminosity from scipy.curve_fit

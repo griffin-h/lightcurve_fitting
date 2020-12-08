@@ -112,6 +112,7 @@ class LC(Table):
             is_swift |= self['telescope'] == 'Swift'
             is_swift |= self['telescope'] == 'UVOT'
             is_swift |= self['telescope'] == 'Swift/UVOT'
+            is_swift |= self['telescope'] == 'Swift+UVOT'
         if 'source' in self.colnames:
             is_swift |= self['source'] == 'SOUSA'
         if is_swift.any():

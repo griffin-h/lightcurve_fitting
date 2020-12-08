@@ -291,7 +291,7 @@ all_filters = [
     Filter('B', '#0057FF', 2, 'Johnson', 4.063e-23, filename='jnsn-bu-183.asci'),
     Filter(['B_S', 'b', 'bs'], '#4B00FF', 2, 'Swift', 4.093e-23, filename='Swift_UVOT.B.dat', angstrom=True),
     Filter(['g', "g'", 'gp', 'F475W'], '#00CCFF', 1, 'Gunn', filename='sdss-gp-183.asci'),
-    Filter('c', 'c', 1, 'ATLAS', filename='ATLAS_cyan.txt'),
+    Filter(['c', 'cyan'], 'c', 1, 'ATLAS', filename='ATLAS_cyan.txt'),
     Filter('V', '#79FF00', 1, 'Johnson', 3.636e-23, filename='jnsn-vx-183.asci', textcolor='#46CC00'),
     Filter(['V_S', 'v', 'vs'], '#00FF30', 1, 'Swift', 3.664e-23, filename='Swift_UVOT.V.dat', angstrom=True),
     Filter(['unfilt.', '0', 'Clear', 'C'], 'w', 0, 'Itagaki', 3.631e-23, filename='KAF-1001E.asci', linecolor='k'),
@@ -300,7 +300,7 @@ all_filters = [
     Filter('G', 'w', 0, 'Gaia', filename='GAIA_GAIA0.G.dat', angstrom=True, linecolor='k'),
     Filter('TESS', 'r', 0, 'TESS', filename='TESS_TESS.Red.dat', angstrom=True),
     Filter('w', 'w', 0, 'Gunn', filename='pstr-wx-183.asci', linecolor='k'),
-    Filter('o', 'orange', 0, 'ATLAS', filename='ATLAS_orange.txt'),
+    Filter(['o', 'orange'], 'orange', 0, 'ATLAS', filename='ATLAS_orange.txt'),
     Filter(['r', "r'", 'rp', 'F625W'], '#FF7D00', 0, 'Gunn', filename='sdss-rp-183.asci'),
     Filter(['R', 'Rc', 'R_s'], '#FF7000', 0, 'Johnson', 3.064e-23, filename='cous-rs-183.asci'),  # '#CC5900'
     Filter(['i', "i'", 'ip', 'F775W'], '#90002C', -1, 'Gunn', filename='sdss-ip-183.asci'),

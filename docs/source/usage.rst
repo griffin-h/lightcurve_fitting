@@ -19,6 +19,7 @@ standard ``Table.read()`` method. I'm going to read an example light curve of SN
 
 The following column names are used by the package, although the light curve can have extra columns
 [alternative column names are given in square brackets]:
+
  * MJD (required): modified Julian date of the observation [mjd, JD, jd (JD/jd are converted)]
  * mag (required): magnitude of the observation [Magnitude, Mag, ab_mag, PSFmag, MAG, omag, magnitude]
  * dmag (required): uncertainty on the magnitude [Magnitude_Error, magerr, MagErr, mag_err, e_mag, Error, err, PSFerr,
@@ -36,6 +37,7 @@ The following column names are used by the package, although the light curve can
  * source: the data source, either a telescope/instrument name or a literature reference [Source]
 
 The ``LC.meta`` attribute contains information needed to calculate absolute magnitudes and luminosities:
+
  * dm: the distance modulus
  * extinction: a dictionary containing Milky Way extinction corrections for each filter
  * hostext: a dictionary containing host galaxy extinction corrections for each filter
@@ -85,6 +87,7 @@ You can make a bolometric light curve and color curves from the photometry table
     plot_color_curves(t)
 
 The light curve is divided into epochs (defined by the ``bin`` argument to ``calculate_bolometric``), and processed four different ways:
+
  * Fitting the Planck function using ``scipy.curve_fit``. This is very fast but may not give reliable uncertainties.
    The columns ``temp``, ``radius``, ``dtemp``, and ``dradius`` come from this fit.
  * The Stefan-Bolzmann law gives the total bolometric luminosity, ``lum`` and ``dlum``.
@@ -106,11 +109,13 @@ To save the table, give ``save_table_as='filename.table'`` as an argument to ``c
 To save the plot, give ``save_plot_as='filename.pdf'`` as an argument to ``plot_bolometric_results``.
 
 Beware of the units I'm using:
+
  * Temperatures are in kilokelvins (kK).
  * Radii are in thousands of solar radii (:math:`1000R_\odot`).
  * Luminosities are in watts (W). :math:`1\,\mathrm{W} = 10^7\,\mathrm{erg}\,\mathrm{s}^{-1}`
 
 Optionally, you can calculate colors at each epoch by giving the argument ``colors`` to ``calculate_bolometric``). These get saved in the same output table in four columns per color, e.g., for :math:`B-V`:
+
  * the color itself, ``B-V``,
  * the uncertainty on the color, ``d(B-V)``,
  * whether the color is a lower limit, ``lolims(B-V)`` (i.e., :math:`B` was an upper limit), and
@@ -119,6 +124,7 @@ Optionally, you can calculate colors at each epoch by giving the argument ``colo
 Model Fitting
 -------------
 The ``models`` and ``fitting`` submodules allow you to fit analytical models to the observed data. Right now, the only choices are:
+
  * ``CompanionShocking``, which is the SiFTO Type Ia supernova template (Conley et al. `2008 <https://doi.org/10.1086/588518>`_) plus a shock component from Kasen (`2010 <https://doi.org/10.1088/0004-637X/708/2/1025>`_).
    This was used in my paper on SN 2017cbv: https://doi.org/10.3847/2041-8213/aa8402.
  * ``ShockCooling``, which is the Sapir & Waxman (`2017 <https://doi.org/10.3847/1538-4357/aa64df>`_) model for shock cooling in a core-collapse supernova,

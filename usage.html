@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage &mdash; lightcurve_fitting 0.1.0.post5+g51d7e01 documentation</title>
+  <title>Usage &mdash; lightcurve_fitting 0.2.0.post1+g732a255 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.1.0.post5+g51d7e01
+                0.2.0.post1+g732a255
               </div>
             
           
@@ -182,31 +182,35 @@ standard <code class="docutils literal notranslate"><span class="pre">Table.read
 <span class="nb">print</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="simple">
-<dt>The following column names are recognized (although the light curve can have extra columns):</dt><dd><ul class="simple">
-<li><p>MJD (required): modified Julian date of the observation</p></li>
-<li><p>mag (required): magnitude of the observation</p></li>
-<li><p>dmag (required): uncertainty on the magnitude</p></li>
-<li><p>filt (required): name of the filter</p></li>
+<p>The following column names are used by the package, although the light curve can have extra columns
+[alternative column names are given in square brackets]:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>MJD (required): modified Julian date of the observation [mjd, JD, jd (JD/jd are converted)]</p></li>
+<li><p>mag (required): magnitude of the observation [Magnitude, Mag, ab_mag, PSFmag, MAG, omag, magnitude]</p></li>
+<li><p>dmag (required): uncertainty on the magnitude [Magnitude_Error, magerr, MagErr, mag_err, e_mag, Error, err, PSFerr,
+MAGERR, e_omag, e_magnitude]</p></li>
+<li><p>filt (required): name of the filter [filter, Filter, band, FLT]</p></li>
 <li><p>filter (automatic): the filter object (see <a class="reference internal" href="#filters"><span class="std std-ref">Filters</span></a> below)</p></li>
-<li><p>nondet: True if the magnitude is an upper limit, False otherwise</p></li>
-<li><p>flux: the spectral flux density (<span class="math notranslate nohighlight">\(F_ν\)</span>, arbitrary units) of the observation</p></li>
-<li><p>dflux: uncertainty on the flux</p></li>
-<li><p>phase: time since a reference date (e.g., peak or explosion) in rest-frame days</p></li>
+<li><p>nondet: True if the magnitude is an upper limit, False otherwise [Is_Limit, UL, l_omag, upper_limit, upperlimit]</p></li>
+<li><p>flux: the spectral flux density (<span class="math notranslate nohighlight">\(F_ν\)</span>, arbitrary units) of the observation [FLUXCAL]</p></li>
+<li><p>dflux: uncertainty on the flux [FLUXCALERR]</p></li>
+<li><p>phase: time since a reference date (e.g., peak or explosion) in rest-frame days [Phase, PHASE]</p></li>
 <li><p>absmag: absolute magnitude of the observation</p></li>
 <li><p>lum: the spectral luminosity density (<span class="math notranslate nohighlight">\(L_ν\)</span>, in watts/hertz) of the observation</p></li>
 <li><p>dlum: the uncertainty on the spectral luminosity density</p></li>
-<li><p>telescope: the name of the telescope/instrument where this observation was carried out</p></li>
-<li><p>source: the data source, either a telescope/instrument name or a literature reference</p></li>
+<li><p>telescope: the name of the telescope/instrument where this observation was carried out [Telescope, Tel, tel+inst]</p></li>
+<li><p>source: the data source, either a telescope/instrument name or a literature reference [Source]</p></li>
 </ul>
-</dd>
-<dt>The <code class="docutils literal notranslate"><span class="pre">LC.meta</span></code> attribute contains information needed to calculate absolute magnitudes and luminosities:</dt><dd><ul class="simple">
+</div></blockquote>
+<p>The <code class="docutils literal notranslate"><span class="pre">LC.meta</span></code> attribute contains information needed to calculate absolute magnitudes and luminosities:</p>
+<blockquote>
+<div><ul class="simple">
 <li><p>dm: the distance modulus</p></li>
 <li><p>extinction: a dictionary containing Milky Way extinction corrections for each filter</p></li>
 <li><p>hostext: a dictionary containing host galaxy extinction corrections for each filter</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lc</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;dm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">30.79</span>
 <span class="n">lc</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;extinction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
  <span class="s1">&#39;U&#39;</span><span class="p">:</span> <span class="mf">0.069</span><span class="p">,</span>
@@ -247,8 +251,9 @@ adding new filters.</p>
 <span class="n">plot_color_curves</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="simple">
-<dt>The light curve is divided into epochs (defined by the <code class="docutils literal notranslate"><span class="pre">bin</span></code> argument to <code class="docutils literal notranslate"><span class="pre">calculate_bolometric</span></code>), and processed four different ways:</dt><dd><ul class="simple">
+<p>The light curve is divided into epochs (defined by the <code class="docutils literal notranslate"><span class="pre">bin</span></code> argument to <code class="docutils literal notranslate"><span class="pre">calculate_bolometric</span></code>), and processed four different ways:</p>
+<blockquote>
+<div><ul class="simple">
 <li><p>Fitting the Planck function using <code class="docutils literal notranslate"><span class="pre">scipy.curve_fit</span></code>. This is very fast but may not give reliable uncertainties.
 The columns <code class="docutils literal notranslate"><span class="pre">temp</span></code>, <code class="docutils literal notranslate"><span class="pre">radius</span></code>, <code class="docutils literal notranslate"><span class="pre">dtemp</span></code>, and <code class="docutils literal notranslate"><span class="pre">dradius</span></code> come from this fit.</p></li>
 <li><p>The Stefan-Bolzmann law gives the total bolometric luminosity, <code class="docutils literal notranslate"><span class="pre">lum</span></code> and <code class="docutils literal notranslate"><span class="pre">dlum</span></code>.</p></li>
@@ -263,33 +268,35 @@ My convention for non-Gaussian uncertainties is that 0 is the lower uncertainty 
 <li><p>Directly integrating the observed SED, assuming 0 flux outside of <span class="math notranslate nohighlight">\(U\)</span> to <span class="math notranslate nohighlight">\(I\)</span>.
 Use this if you do not want to assume the SED is a blackbody. This yields the column <code class="docutils literal notranslate"><span class="pre">L_int</span></code>.</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 <p>The MCMC routine saves a corner plot for each fit in the folder you specify (<code class="docutils literal notranslate"><span class="pre">outpath</span></code>).
 I highly recommend looking through these to make sure the fits converged.
 If they didn’t, try adjusting the number of burn-in steps (<code class="docutils literal notranslate"><span class="pre">burnin_steps</span></code>).
 To save the table, give <code class="docutils literal notranslate"><span class="pre">save_table_as='filename.table'</span></code> as an argument to <code class="docutils literal notranslate"><span class="pre">calculate_bolometric</span></code>.
 To save the plot, give <code class="docutils literal notranslate"><span class="pre">save_plot_as='filename.pdf'</span></code> as an argument to <code class="docutils literal notranslate"><span class="pre">plot_bolometric_results</span></code>.</p>
-<dl class="simple">
-<dt>Beware of the units I’m using:</dt><dd><ul class="simple">
+<p>Beware of the units I’m using:</p>
+<blockquote>
+<div><ul class="simple">
 <li><p>Temperatures are in kilokelvins (kK).</p></li>
 <li><p>Radii are in thousands of solar radii (<span class="math notranslate nohighlight">\(1000R_\odot\)</span>).</p></li>
 <li><p>Luminosities are in watts (W). <span class="math notranslate nohighlight">\(1\,\mathrm{W} = 10^7\,\mathrm{erg}\,\mathrm{s}^{-1}\)</span></p></li>
 </ul>
-</dd>
-<dt>Optionally, you can calculate colors at each epoch by giving the argument <code class="docutils literal notranslate"><span class="pre">colors</span></code> to <code class="docutils literal notranslate"><span class="pre">calculate_bolometric</span></code>). These get saved in the same output table in four columns per color, e.g., for <span class="math notranslate nohighlight">\(B-V\)</span>:</dt><dd><ul class="simple">
+</div></blockquote>
+<p>Optionally, you can calculate colors at each epoch by giving the argument <code class="docutils literal notranslate"><span class="pre">colors</span></code> to <code class="docutils literal notranslate"><span class="pre">calculate_bolometric</span></code>). These get saved in the same output table in four columns per color, e.g., for <span class="math notranslate nohighlight">\(B-V\)</span>:</p>
+<blockquote>
+<div><ul class="simple">
 <li><p>the color itself, <code class="docutils literal notranslate"><span class="pre">B-V</span></code>,</p></li>
 <li><p>the uncertainty on the color, <code class="docutils literal notranslate"><span class="pre">d(B-V)</span></code>,</p></li>
 <li><p>whether the color is a lower limit, <code class="docutils literal notranslate"><span class="pre">lolims(B-V)</span></code> (i.e., <span class="math notranslate nohighlight">\(B\)</span> was an upper limit), and</p></li>
 <li><p>whether the color is an upper limit, <code class="docutils literal notranslate"><span class="pre">uplims(B-V)</span></code> (i.e., <span class="math notranslate nohighlight">\(V\)</span> was an upper limit).</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 </div>
 <div class="section" id="model-fitting">
 <h2>Model Fitting<a class="headerlink" href="#model-fitting" title="Permalink to this headline">¶</a></h2>
-<dl class="simple">
-<dt>The <code class="docutils literal notranslate"><span class="pre">models</span></code> and <code class="docutils literal notranslate"><span class="pre">fitting</span></code> submodules allow you to fit analytical models to the observed data. Right now, the only choices are:</dt><dd><ul class="simple">
+<p>The <code class="docutils literal notranslate"><span class="pre">models</span></code> and <code class="docutils literal notranslate"><span class="pre">fitting</span></code> submodules allow you to fit analytical models to the observed data. Right now, the only choices are:</p>
+<blockquote>
+<div><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">CompanionShocking</span></code>, which is the SiFTO Type Ia supernova template (Conley et al. <a class="reference external" href="https://doi.org/10.1086/588518">2008</a>) plus a shock component from Kasen (<a class="reference external" href="https://doi.org/10.1088/0004-637X/708/2/1025">2010</a>).
 This was used in my paper on SN 2017cbv: <a class="reference external" href="https://doi.org/10.3847/2041-8213/aa8402">https://doi.org/10.3847/2041-8213/aa8402</a>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ShockCooling</span></code>, which is the Sapir &amp; Waxman (<a class="reference external" href="https://doi.org/10.3847/1538-4357/aa64df">2017</a>) model for shock cooling in a core-collapse supernova,
@@ -297,8 +304,7 @@ formulated in terms of <span class="math notranslate nohighlight">\(v_s, M_\math
 <li><p><code class="docutils literal notranslate"><span class="pre">ShockCooling2</span></code>, which is the same Sapir &amp; Waxman model but formulated in terms of scaling parameters <span class="math notranslate nohighlight">\(T_1, L_1, t_\mathrm{tr}\)</span>.
 This was used in my paper on SN 2016bkv: <a class="reference external" href="https://doi.org/10.3847/1538-4357/aac5f6">https://doi.org/10.3847/1538-4357/aac5f6</a>.</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 <p><strong>Note on the shock cooling models:</strong>
 There are degeneracies between many of the physical parameters that make them difficult to fit independently.
 This led us to fit develop the <code class="docutils literal notranslate"><span class="pre">ShockCooling2</span></code> model just to see if the model could fit the data at all.

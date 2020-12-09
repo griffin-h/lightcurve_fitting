@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>lightcurve_fitting.speccal &mdash; lightcurve_fitting 0.1.0.post5+g51d7e01 documentation</title>
+  <title>lightcurve_fitting.speccal &mdash; lightcurve_fitting 0.2.0.post1+g732a255 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.1.0.post5+g51d7e01
+                0.2.0.post1+g732a255
               </div>
             
           
@@ -238,8 +238,10 @@
     <span class="n">data</span> <span class="o">=</span> <span class="n">hdu</span><span class="o">.</span><span class="n">data</span>
     <span class="n">hdr</span> <span class="o">=</span> <span class="n">hdu</span><span class="o">.</span><span class="n">header</span>
     <span class="n">flux</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[:</span><span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)]</span>
-    <span class="n">default_unit</span> <span class="o">=</span> <span class="s1">&#39;erg / (s cm2 angstrom)&#39;</span>
-    <span class="n">bunit</span> <span class="o">=</span> <span class="n">hdr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;BUNIT&#39;</span><span class="p">,</span> <span class="n">default_unit</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Ang&#39;</span><span class="p">,</span> <span class="s1">&#39;angstrom&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;angstrom&#39;</span><span class="p">)</span>
+    <span class="n">default_unit</span> <span class="o">=</span> <span class="s1">&#39;erg / (Angstrom cm2 s)&#39;</span>
+    <span class="n">bunit</span> <span class="o">=</span> <span class="n">hdr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;BUNIT&#39;</span><span class="p">,</span> <span class="n">default_unit</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;Angstrom&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bunit</span><span class="p">:</span>
+        <span class="n">bunit</span> <span class="o">=</span> <span class="n">bunit</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Ang&#39;</span><span class="p">,</span> <span class="s1">&#39;Angstrom&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;Angstrom&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">hdr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;CUNIT1&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;angstroms&#39;</span><span class="p">:</span>
         <span class="k">del</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;CUNIT1&#39;</span><span class="p">]</span>  <span class="c1"># needed for Binospec pipeline</span>
     <span class="n">remove_duplicate_wcs</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>  <span class="c1"># some problem with Gemini pipeline</span>

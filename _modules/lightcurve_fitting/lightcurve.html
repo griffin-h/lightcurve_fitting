@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>lightcurve_fitting.lightcurve &mdash; lightcurve_fitting 0.1.0.post5+g51d7e01 documentation</title>
+  <title>lightcurve_fitting.lightcurve &mdash; lightcurve_fitting 0.2.0.post1+g732a255 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.1.0.post5+g51d7e01
+                0.2.0.post1+g732a255
               </div>
             
           
@@ -160,7 +160,7 @@
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib.path</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">vstack</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">vstack</span><span class="p">,</span> <span class="n">MaskedColumn</span>
 <span class="kn">from</span> <span class="nn">.filters</span> <span class="kn">import</span> <span class="n">filtdict</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">from</span> <span class="nn">matplotlib.markers</span> <span class="kn">import</span> <span class="n">MarkerStyle</span>
@@ -190,6 +190,22 @@
 <span class="n">othermarkers</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">MarkerStyle</span><span class="o">.</span><span class="n">filled_markers</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
 <span class="n">itermarkers</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">cycle</span><span class="p">(</span><span class="n">othermarkers</span><span class="p">)</span>
 <span class="n">usedmarkers</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># if you edit this list, also add the new names to usage.rst</span>
+<span class="n">column_names</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;filt&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="s1">&#39;Filter&#39;</span><span class="p">,</span> <span class="s1">&#39;band&#39;</span><span class="p">,</span> <span class="s1">&#39;FLT&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;telescope&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Telescope&#39;</span><span class="p">,</span> <span class="s1">&#39;Tel&#39;</span><span class="p">,</span> <span class="s1">&#39;tel+inst&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Source&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;mag&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Magnitude&#39;</span><span class="p">,</span> <span class="s1">&#39;Mag&#39;</span><span class="p">,</span> <span class="s1">&#39;ab_mag&#39;</span><span class="p">,</span> <span class="s1">&#39;PSFmag&#39;</span><span class="p">,</span> <span class="s1">&#39;MAG&#39;</span><span class="p">,</span> <span class="s1">&#39;omag&#39;</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;dmag&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Magnitude_Error&#39;</span><span class="p">,</span> <span class="s1">&#39;magerr&#39;</span><span class="p">,</span> <span class="s1">&#39;MagErr&#39;</span><span class="p">,</span> <span class="s1">&#39;mag_err&#39;</span><span class="p">,</span> <span class="s1">&#39;e_mag&#39;</span><span class="p">,</span> <span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="s1">&#39;err&#39;</span><span class="p">,</span> <span class="s1">&#39;PSFerr&#39;</span><span class="p">,</span> <span class="s1">&#39;MAGERR&#39;</span><span class="p">,</span> <span class="s1">&#39;e_omag&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;e_magnitude&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;MJD&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;mjd&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;JD&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;jd&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;phase&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Phase&#39;</span><span class="p">,</span> <span class="s1">&#39;PHASE&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;flux&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;FLUXCAL&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;dflux&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;FLUXCALERR&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;nondet&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Is_Limit&#39;</span><span class="p">,</span> <span class="s1">&#39;UL&#39;</span><span class="p">,</span> <span class="s1">&#39;l_omag&#39;</span><span class="p">,</span> <span class="s1">&#39;upper_limit&#39;</span><span class="p">,</span> <span class="s1">&#39;upperlimit&#39;</span><span class="p">],</span>
+<span class="p">}</span>
 
 
 <div class="viewcode-block" id="LC"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC">[docs]</a><span class="k">class</span> <span class="nc">LC</span><span class="p">(</span><span class="n">Table</span><span class="p">):</span>
@@ -256,6 +272,26 @@
         <span class="n">selected</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span>
         <span class="k">return</span> <span class="n">selected</span></div>
 
+<div class="viewcode-block" id="LC.normalize_column_names"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.normalize_column_names">[docs]</a>    <span class="k">def</span> <span class="nf">normalize_column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rename any recognizable columns to their standard names for this package (see `lightcurve.column_names`).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">good_key</span><span class="p">,</span> <span class="n">bad_keys</span> <span class="ow">in</span> <span class="n">column_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">good_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">bad_key</span> <span class="ow">in</span> <span class="n">bad_keys</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">bad_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="n">bad_key</span><span class="p">,</span> <span class="n">good_key</span><span class="p">)</span>
+                        <span class="k">break</span>
+        <span class="k">if</span> <span class="s1">&#39;MJD&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span> <span class="ow">and</span> <span class="s1">&#39;JD&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;JD&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">2400000.5</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remove_column</span><span class="p">(</span><span class="s1">&#39;JD&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;nondet&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span> <span class="ow">and</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">],</span> <span class="n">MaskedColumn</span><span class="p">):</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">filled</span><span class="p">()</span>
+            <span class="n">nondet</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;T&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remove_column</span><span class="p">(</span><span class="s1">&#39;nondet&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nondet</span></div>
+
 <div class="viewcode-block" id="LC.filters_to_objects"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.filters_to_objects">[docs]</a>    <span class="k">def</span> <span class="nf">filters_to_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_curve</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parse the ``&#39;filt&#39;`` column into :class:`filters.Filter` objects and store in the ``&#39;filter&#39;`` column</span>
@@ -265,12 +301,13 @@
 <span class="sd">        read_curve : bool, optional</span>
 <span class="sd">            Read in the transmission function for each filter encountered (default)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">filtdict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filt&#39;</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">is_masked</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">else</span> <span class="n">filtdict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filt&#39;</span><span class="p">]]</span>
         <span class="n">is_swift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">bool</span><span class="p">)</span>
         <span class="k">if</span> <span class="s1">&#39;telescope&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="n">is_swift</span> <span class="o">|=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;telescope&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Swift&#39;</span>
             <span class="n">is_swift</span> <span class="o">|=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;telescope&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;UVOT&#39;</span>
             <span class="n">is_swift</span> <span class="o">|=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;telescope&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Swift/UVOT&#39;</span>
+            <span class="n">is_swift</span> <span class="o">|=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;telescope&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Swift+UVOT&#39;</span>
         <span class="k">if</span> <span class="s1">&#39;source&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="n">is_swift</span> <span class="o">|=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;SOUSA&#39;</span>
         <span class="k">if</span> <span class="n">is_swift</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
@@ -278,7 +315,8 @@
                 <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">][</span><span class="n">is_swift</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filt&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">filt</span><span class="p">)]</span> <span class="o">=</span> <span class="n">filtdict</span><span class="p">[</span><span class="n">swiftfilt</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">read_curve</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">filt</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]):</span>
-                <span class="n">filt</span><span class="o">.</span><span class="n">read_curve</span><span class="p">()</span></div>
+                <span class="k">if</span> <span class="n">filt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">filt</span><span class="o">.</span><span class="n">read_curve</span><span class="p">()</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">zp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -616,13 +654,7 @@
         <span class="k">if</span> <span class="n">fill_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">fill_values</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)]</span>
         <span class="n">t</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">LC</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="nb">format</span><span class="p">,</span> <span class="n">fill_values</span><span class="o">=</span><span class="n">fill_values</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="c1"># make nondetections booleans</span>
-        <span class="k">if</span> <span class="s1">&#39;nondet&#39;</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">nondets</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span>
-            <span class="n">t</span><span class="o">.</span><span class="n">remove_column</span><span class="p">(</span><span class="s1">&#39;nondet&#39;</span><span class="p">)</span>
-            <span class="n">t</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nondets</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">t</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">normalize_column_names</span><span class="p">()</span>
         <span class="k">if</span> <span class="s1">&#39;filt&#39;</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="n">t</span><span class="o">.</span><span class="n">filters_to_objects</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">t</span></div></div>

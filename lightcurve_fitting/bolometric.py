@@ -435,11 +435,16 @@ def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1):
     if colors is None:
         colors = []
         for col in t.colnames:
-            if col.split('-')[0] in filtdict and not t[col].mask.all():
+            if col.split('-')[0] in filtdict and not (t.has_masked_values and t.mask[col].all()):
                 colors.append(col)
     fig = plt.figure()
     for c in colors:
-        plt.errorbar(t['MJD'], t[c], t[f'd({c})'].filled(limit_length), (t['dMJD0'], t['dMJD1']), fmt=fmt,
+        dcolor_colname = f'd({c})'
+        if t.has_masked_values and t.mask[dcolor_colname].any():
+            dcolor = t[dcolor_colname].filled(limit_length)
+        else:
+            dcolor = t[dcolor_colname]
+        plt.errorbar(t['MJD'], t[c], dcolor, (t['dMJD0'], t['dMJD1']), fmt=fmt,
                      lolims=t[f'lolims({c})'], uplims=t[f'uplims({c})'], label=f'${c}$')
     plt.xlabel('MJD')
     plt.ylabel('Color (mag)')

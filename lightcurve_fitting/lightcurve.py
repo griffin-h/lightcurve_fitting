@@ -142,7 +142,7 @@ class LC(Table):
         read_curve : bool, optional
             Read in the transmission function for each filter encountered (default)
         """
-        self['filter'] = [None if np.ma.is_masked(f) else filtdict[str(f)] for f in self['filt']]
+        self['filter'] = [None if np.ma.is_masked(f) else filtdict.get(str(f)) for f in self['filt']]
         is_swift = np.zeros(len(self), bool)
         if 'telescope' in self.colnames:
             is_swift |= self['telescope'] == 'Swift'

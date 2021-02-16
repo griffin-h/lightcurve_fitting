@@ -83,8 +83,8 @@ class Filter:
     order = None
     """The names of recognized filters listed in (approximate) decreasing order of effective frequency"""
 
-    def __init__(self, names, color='k', offset=0, system=None, fnu=None, filename='', angstrom=False, linecolor=None,
-                 textcolor=None):
+    def __init__(self, names, color='k', offset=0, system=None, fnu=3.631e-23, filename='', angstrom=False,
+                 linecolor=None, textcolor=None):
         if type(names) == list:
             self.name = names[0]
             self.names = names
@@ -116,12 +116,7 @@ class Filter:
         self.offset = offset
         self.system = system
         self.plotstyle = {'color': self.linecolor, 'mfc': self.color, 'mec': self.mec}
-        if fnu is not None:
-            self.fnu = fnu  # * u.W * u.m**-2 * u.Hz**-1
-        elif self.system in ['Gunn', 'ATLAS', 'Gaia', 'MOSFiT']:  # AB magnitudes
-            self.fnu = 3.631e-23  # * u.W * u.m**-2 * u.Hz**-1
-        else:
-            self.fnu = None
+        self.fnu = fnu  # * u.W * u.m**-2 * u.Hz**-1
         if self.fnu is None:
             self.m0 = np.nan
             self.M0 = np.nan
@@ -294,10 +289,11 @@ all_filters = [
     Filter(['c', 'cyan'], 'c', 1, 'ATLAS', filename='ATLAS_cyan.txt'),
     Filter('V', '#79FF00', 1, 'Johnson', 3.636e-23, filename='jnsn-vx-183.asci', textcolor='#46CC00'),
     Filter(['V_S', 'v', 'vs'], '#00FF30', 1, 'Swift', 3.664e-23, filename='Swift_UVOT.V.dat', angstrom=True),
-    Filter(['unfilt.', '0', 'Clear', 'C'], 'w', 0, 'Itagaki', 3.631e-23, filename='KAF-1001E.asci', linecolor='k'),
+    Filter(['unfilt.', '0', 'Clear', 'C', 'clear'], 'w', 0, 'Itagaki', filename='KAF-1001E.asci', linecolor='k'),
     Filter('white', 'w', 0, 'MOSFiT', filename='white.txt', linecolor='k'),
-    Filter('pseudobolometric', 'w', 0, 'MOSFiT', filename='pseudobolometric.txt', linecolor='k'),
+    Filter(['pseudobolometric', 'griz'], 'w', 0, 'MOSFiT', filename='pseudobolometric.txt', linecolor='k'),
     Filter('G', 'w', 0, 'Gaia', filename='GAIA_GAIA0.G.dat', angstrom=True, linecolor='k'),
+    Filter('Kepler', 'r', 0, 'Kepler', filename='Kepler_Kepler.K.dat', angstrom=True),
     Filter('TESS', 'r', 0, 'TESS', filename='TESS_TESS.Red.dat', angstrom=True),
     Filter('w', 'w', 0, 'Gunn', filename='pstr-wx-183.asci', linecolor='k'),
     Filter(['o', 'orange'], 'orange', 0, 'ATLAS', filename='ATLAS_orange.txt'),

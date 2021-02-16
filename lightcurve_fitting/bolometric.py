@@ -580,6 +580,6 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
         t0.add_row(row + row_bool + row_string, mask=mask)
 
     if save_table_as is not None:
-        t0.write(save_table_as, format='ascii.fixed_width', overwrite=True)
+        t0.write(save_table_as, format='ascii.fixed_width_two_line', overwrite=True)
 
     return t0

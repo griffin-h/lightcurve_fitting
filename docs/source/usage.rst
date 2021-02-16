@@ -13,7 +13,7 @@ standard ``Table.read()`` method. I'm going to read an example light curve of SN
     from lightcurve_fitting.lightcurve import LC
     from pkg_resources import resource_filename
 
-    filename = resource_filename('lightcurve_fitting', 'example/SN2016bkv.table')
+    filename = resource_filename('lightcurve_fitting', 'example/SN2016bkv.txt')
     lc = LC.read(filename)
     print(lc)
 

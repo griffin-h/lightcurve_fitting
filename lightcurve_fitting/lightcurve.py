@@ -491,7 +491,7 @@ class LC(Table):
             plt.ylim(ymax, ymin)
 
     @classmethod
-    def read(cls, filepath, format='ascii.fixed_width', fill_values=None, **kwargs):
+    def read(cls, filepath, format='ascii', fill_values=None, **kwargs):
         if fill_values is None:
             fill_values = [('--', '0'), ('', '0')]
         t = super(LC, cls).read(filepath, format=format, fill_values=fill_values, **kwargs)

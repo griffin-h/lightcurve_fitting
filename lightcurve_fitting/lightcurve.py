@@ -34,12 +34,12 @@ usedmarkers = []
 
 # if you edit this list, also add the new names to usage.rst
 column_names = {
-    'filt': ['filter', 'Filter', 'band', 'FLT'],
+    'filt': ['filter', 'Filter', 'band', 'FLT', 'Band'],
     'telescope': ['Telescope', 'Tel', 'tel+inst'],
     'source': ['Source'],
-    'mag': ['Magnitude', 'Mag', 'ab_mag', 'PSFmag', 'MAG', 'omag', 'magnitude'],
+    'mag': ['Magnitude', 'Mag', 'ab_mag', 'PSFmag', 'MAG', 'omag', 'magnitude', 'apparent_mag'],
     'dmag': ['Magnitude_Error', 'magerr', 'MagErr', 'mag_err', 'e_mag', 'Error', 'err', 'PSFerr', 'MAGERR', 'e_omag',
-             'e_magnitude'],
+             'e_magnitude', 'apparent_mag_err'],
     'MJD': ['mjd'],
     'JD': ['jd'],
     'phase': ['Phase', 'PHASE'],

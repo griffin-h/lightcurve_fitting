@@ -242,14 +242,10 @@ def readspec(f, verbose=False):
 
     if 'TELESCOP' in hdr:
         telescope = hdr['TELESCOP'].strip()
-        if '2m0' in telescope:
-            telescope = 'LCO 2 m'
     else:
         telescope = ''
     if 'INSTRUME' in hdr:
         instrument = hdr['INSTRUME'].strip()
-        if 'en0' in instrument:
-            instrument = 'FLOYDS'
     else:
         instrument = ''
 

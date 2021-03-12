@@ -307,7 +307,7 @@ all_filters = [
     Filter('H', '#888888', -3, 'UKIRT', 1.021e-23, filename='Gemini_Flamingos2.H.dat', angstrom=True),
     Filter(['K', 'Ks'], '#CCCCCC', -4, 'UKIRT', 0.640e-23, filename='Gemini_Flamingos2.Ks.dat', angstrom=True),
     Filter('L', 'r', -4, 'UKIRT', 0.285e-23),
-    Filter(['unknown', '?'], 'w', 0, 'unknown')]
+    Filter(['unknown', '?'], 'w', 0, 'unknown', linecolor='k')]
 Filter.order = [f.name for f in all_filters]
 filtdict = {}
 for filt in all_filters:

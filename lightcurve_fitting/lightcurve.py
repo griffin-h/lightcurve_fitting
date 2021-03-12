@@ -469,12 +469,16 @@ class LC(Table):
                 y -= self.sn.peakabsmag
             if 'mag' in ycol and 'nondet' in g.keys() and marker:  # don't plot if no markers used
                 plt.plot(x[g['nondet']], y[g['nondet']], marker=arrow, linestyle='none', ms=25, mec=mec, **plot_kwargs)
+            if 'unfilt.' in filt.names:
+                label = 'unfilt.'
+            elif offset_factor:
+                label = '${}{:+.0f}$'.format(filt.name, -filt.offset * offset_factor)
+            else:
+                label = '${}$'.format(filt.name)
             if self.sn is None:
-                label = None
                 linestyle = None
                 linewidth = None
             else:
-                label = self.sn.name
                 linestyle = self.sn.linestyle
                 linewidth = self.sn.linewidth
             if not use_lines:

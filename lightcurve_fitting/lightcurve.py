@@ -344,20 +344,22 @@ class LC(Table):
         rdsp : bool, optional
             Define phase as rest-frame days since peak, rather than rest-frame days since explosion
         """
-        if rdsp and self.sn.peakdate is None:
-            raise Exception('must run sn.findPeak() first')
-        elif rdsp:
-            self.sn.refmjd = self.sn.peakdate
-        elif self.sn.explosion is not None:
-            self.sn.refmjd = self.sn.explosion
-        else:
-            if 'nondet' in self.colnames:
-                detections = self.where(nondet=False)
+        if 'refmjd' not in self.meta and self.sn is not None:
+            if rdsp and self.sn.peakdate is None:
+                raise Exception('must run sn.findPeak() first')
+            elif rdsp:
+                self.sn.refmjd = self.sn.peakdate
+            elif self.sn.explosion is not None:
+                self.sn.refmjd = self.sn.explosion
             else:
-                detections = self
-            self.sn.refmjd = np.min(detections['MJD'].data)
-        phase = (self['MJD'].data - self.sn.refmjd) / (1 + self.sn.z)
-        self['phase'] = phase
+                if 'nondet' in self.colnames:
+                    detections = self.where(nondet=False)
+                else:
+                    detections = self
+                self.sn.refmjd = np.min(detections['MJD'].data)
+            self.meta['refmjd'] = self.sn.refmjd
+            self.meta['redshift'] = self.sn.z
+        self['phase'] = (self['MJD'].data - self.meta['refmjd']) / (1 + self.meta['redshift'])
 
     def plot(self, xcol='phase', ycol='absmag', offset_factor=1., color='filter', marker='source', use_lines=False,
              normalize=False, fillmark=True, **kwargs):

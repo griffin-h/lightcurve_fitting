@@ -34,18 +34,21 @@ usedmarkers = []
 
 # if you edit this list, also add the new names to usage.rst
 column_names = {
-    'filt': ['filter', 'Filter', 'band', 'FLT', 'Band'],
-    'telescope': ['Telescope', 'Tel', 'tel+inst'],
-    'source': ['Source'],
-    'mag': ['Magnitude', 'Mag', 'ab_mag', 'PSFmag', 'MAG', 'omag', 'magnitude', 'apparent_mag'],
-    'dmag': ['Magnitude_Error', 'magerr', 'MagErr', 'mag_err', 'e_mag', 'Error', 'err', 'PSFerr', 'MAGERR', 'e_omag',
-             'e_magnitude', 'apparent_mag_err'],
-    'MJD': ['mjd'],
-    'JD': ['jd'],
-    'phase': ['Phase', 'PHASE'],
-    'flux': ['FLUXCAL'],
-    'dflux': ['FLUXCALERR'],
-    'nondet': ['Is_Limit', 'UL', 'l_omag', 'upper_limit', 'upperlimit'],
+    'Filter': ['filt', 'filter', 'Filter', 'band', 'FLT', 'Band'],
+    'Telescope': ['telescope', 'Telescope', 'Tel', 'tel+inst'],
+    'Source': ['source', 'Source'],
+    'Apparent Magnitude': ['mag', 'Magnitude', 'Mag', 'ab_mag', 'PSFmag', 'MAG', 'omag', 'magnitude', 'apparent_mag'],
+    'Apparent Magnitude Uncertainty': ['dmag', 'Magnitude_Error', 'magerr', 'MagErr', 'mag_err', 'e_mag', 'Error',
+                                       'err', 'PSFerr', 'MAGERR', 'e_omag', 'e_magnitude', 'apparent_mag_err'],
+    'MJD': ['MJD', 'mjd'],
+    'JD': ['JD', 'jd'],
+    'Phase (rest days)': ['phase', 'Phase', 'PHASE'],
+    'Flux $F_ν$ (W m$^{-2}$ Hz$^{-1}$)': ['flux', 'FLUXCAL'],
+    'Flux Uncertainty': ['dflux', 'FLUXCALERR'],
+    'Nondetection': ['nondet', 'Is_Limit', 'UL', 'l_omag', 'upper_limit', 'upperlimit'],
+    'Absolute Magnitude': ['absmag'],
+    'Luminosity $L_ν$ (W Hz$^{-1}$)': ['lum'],
+    'Luminosity Uncertainty': ['dlum'],
 }
 
 
@@ -117,12 +120,11 @@ class LC(Table):
         """
         Rename any recognizable columns to their standard names for this package (see `lightcurve.column_names`).
         """
-        for good_key, bad_keys in column_names.items():
-            if good_key not in self.colnames:
-                for bad_key in bad_keys:
-                    if bad_key in self.colnames:
-                        self.rename_column(bad_key, good_key)
-                        break
+        for keys in column_names.values():
+            for bad_key in keys[1:]:
+                if bad_key in self.colnames:
+                    self.rename_column(bad_key, keys[0])
+                    break
         if 'MJD' not in self.colnames and 'JD' in self.colnames:
             self['MJD'] = self['JD'] - 2400000.5
             self.remove_column('JD')
@@ -495,6 +497,11 @@ class LC(Table):
         ymin, ymax = plt.ylim()
         if 'mag' in ycol and ymax > ymin:
             plt.ylim(ymax, ymin)
+        for axlabel, keys in column_names.items():
+            if xcol in keys:
+                plt.xlabel(axlabel)
+            elif ycol in keys:
+                plt.ylabel(axlabel)
 
     @classmethod
     def read(cls, filepath, format='ascii', fill_values=None, **kwargs):

@@ -9,7 +9,7 @@ from pkg_resources import resource_filename
 
 def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p_up=None,
                     nwalkers=100, nsteps=1000, nsteps_burnin=1000, model_kwargs=None,
-                    show=False, save_sampler_as=''):
+                    show=False, save_sampler_as='', use_sigma=False):
     """
     Fit an analytical model to observed photometry using a Markov-chain Monte Carlo routine
 
@@ -43,6 +43,8 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
         If True, plot and display the chain histories
     save_sampler_as : str, optional
         Save the aggregated chain histories to this filename
+    use_sigma : bool, optional
+        If True, treat the last parameter as an intrinsic scatter parameter that does not get passed to the model
 
     Returns
     -------
@@ -64,7 +66,10 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     if model == CompanionShocking:
         scale_sifto(lc)
 
-    ndim = model.nparams
+    if use_sigma:
+        model.axis_labels.append('$\\sigma$')
+
+    ndim = model.nparams + use_sigma
 
     if priors is None:
         priors = [flat_prior] * ndim
@@ -107,7 +112,8 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
             for prior, p_i in zip(priors, p):
                 log_prior += np.log(prior(p_i))
             y_fit = model(t, f, *p, **model_kwargs)
-            log_likelihood = -0.5 * np.sum(np.log(2 * np.pi * dy ** 2) + ((y - y_fit) / dy) ** 2)
+            sigma = dy * np.sqrt(1. + p[-1] ** 2.) if use_sigma else dy
+            log_likelihood = -0.5 * np.sum(np.log(2 * np.pi * sigma ** 2.) + ((y - y_fit) / sigma) ** 2.)
             return log_prior + log_likelihood
 
     sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior)
@@ -194,7 +200,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
             model.axis_labels[i_t0] = '$t_0 - {:.0f}$ (d)'.format(t0_offset)
 
     fig = corner.corner(sampler_flatchain_corner, labels=model.axis_labels)
-    corner_axes = np.array(fig.get_axes()).reshape(model.nparams, model.nparams)
+    corner_axes = np.array(fig.get_axes()).reshape(sampler_flatchain.shape[-1], sampler_flatchain.shape[-1])
 
     for ax in np.diag(corner_axes):
         ax.spines['top'].set_visible(False)

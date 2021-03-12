@@ -71,7 +71,7 @@ class Model:
                             for var, unit in zip(input_names, units)]
 
     def __call__(self, *args, **kwargs):
-        return self.func(*args, **kwargs)
+        return self.func(*args[:self.nparams+2], **kwargs)  # +2 for times and filters
 
 
 def shock_cooling(t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW=False, z=0.):

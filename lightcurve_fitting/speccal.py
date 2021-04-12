@@ -79,22 +79,25 @@ def readfitsspec(filename, header=False, ext=None):
     data = hdu.data
     hdr = hdu.header
     flux = data.flatten()[:max(data.shape)]
-    default_unit = 'erg / (Angstrom cm2 s)'
-    bunit = hdr.get('BUNIT', default_unit)
+    default_bunit = 'erg / (Angstrom cm2 s)'
+    default_cunit = 'Angstrom'
+    bunit = hdr.get('BUNIT', default_bunit)
     if 'Angstrom' not in bunit:
         bunit = bunit.replace('Ang', 'Angstrom').replace('A', 'Angstrom')
-    if hdr.get('CUNIT1') == 'angstroms':
-        del hdr['CUNIT1']  # needed for Binospec pipeline
+    cunit = hdr.get('CUNIT1', default_cunit)
+    if cunit == 'angstroms' or cunit == 'deg':
+        cunit = default_cunit
+        del hdr['CUNIT1']  # needed for Binospec & FLOYDS pipelines
     remove_duplicate_wcs(hdr)  # some problem with Gemini pipeline
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
-        flux = u.Quantity(flux, bunit).to(default_unit).value
         wcs = WCS(removebadcards(hdr), naxis=1, relax=False, fix=False)
-    wl = wcs.wcs_pix2world(np.arange(len(flux)), 0)[0]
+        wl = u.Quantity(wcs.wcs_pix2world(np.arange(len(flux)), 0)[0], cunit).to(default_cunit)
+        flux = u.Quantity(flux, bunit).to(default_bunit, u.equivalencies.spectral_density(wl))
     if header:
-        return wl, flux, hdr
+        return wl.value, flux.value, hdr
     else:
-        return wl, flux
+        return wl.value, flux.value
 
 
 def readOSCspec(filepath):

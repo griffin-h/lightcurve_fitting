@@ -412,7 +412,7 @@ def calc_colors(epoch1, colors):
     return mags, dmags, lolims, uplims
 
 
-def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1):
+def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1, xcol='MJD'):
     """
     Plot the color curves calculated by :func:`calculate_bolometric`.
 
@@ -444,9 +444,9 @@ def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1):
             dcolor = t[dcolor_colname].filled(limit_length)
         else:
             dcolor = t[dcolor_colname]
-        plt.errorbar(t['MJD'], t[c], dcolor, (t['dMJD0'], t['dMJD1']), fmt=fmt,
+        plt.errorbar(t[xcol], t[c], dcolor, (t[f'd{xcol}0'], t[f'd{xcol}1']), fmt=fmt,
                      lolims=t[f'lolims({c})'], uplims=t[f'uplims({c})'], label=f'${c}$')
-    plt.xlabel('MJD')
+    plt.xlabel(xcol)
     plt.ylabel('Color (mag)')
     plt.legend()
     return fig

@@ -365,6 +365,10 @@ class LC(Table):
             self.meta['refmjd'] = self.sn.refmjd
             self.meta['redshift'] = self.sn.z
         self['phase'] = (self['MJD'].data - self.meta['refmjd']) / (1 + self.meta['redshift'])
+        if 'dMJD0' in self.colnames:
+            self['dphase0'] = self['dMJD0'] / (1. + self.meta['redshift'])
+        if 'dMJD1' in self.colnames:
+            self['dphase1'] = self['dMJD1'] / (1. + self.meta['redshift'])
 
     def plot(self, xcol='phase', ycol='absmag', offset_factor=1., color='filter', marker='source', use_lines=False,
              normalize=False, fillmark=True, **kwargs):

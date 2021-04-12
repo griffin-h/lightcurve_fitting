@@ -584,7 +584,7 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
         mask = np.concatenate([np.isnan(row), np.zeros_like(row_bool), ~np.array(row_string, dtype=bool)])
         t0.add_row(row + row_bool + row_string, mask=mask)
 
-    if save_table_as is not None:
+    if save_table_as is not None and t0:
         t0.write(save_table_as, format='ascii.fixed_width_two_line', overwrite=True)
 
     return t0

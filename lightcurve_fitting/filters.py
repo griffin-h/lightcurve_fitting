@@ -6,8 +6,10 @@ import astropy.constants as const
 import os
 from .models import planck_fast
 from pkg_resources import resource_filename
+from functools import total_ordering
 
 
+@total_ordering
 class Filter:
     """
     A broadband photometric filter described by its transmission function and its associated photometric system
@@ -224,40 +226,10 @@ class Filter:
         return '<filter ' + self.name + '>'
 
     def __eq__(self, other):
-        if other is None:
-            return False
-        else:
-            return Filter.order.index(self.name) == Filter.order.index(other.name)
-
-    def __nq__(self, other):
-        if other is None:
-            return False
-        else:
-            return Filter.order.index(self.name) != Filter.order.index(other.name)
+        return isinstance(other, Filter) and self.name == other.name
 
     def __lt__(self, other):
-        if other is None:
-            return False
-        else:
-            return Filter.order.index(self.name) < Filter.order.index(other.name)
-
-    def __le__(self, other):
-        if other is None:
-            return False
-        else:
-            return Filter.order.index(self.name) <= Filter.order.index(other.name)
-
-    def __gt__(self, other):
-        if other is None:
-            return False
-        else:
-            return Filter.order.index(self.name) > Filter.order.index(other.name)
-
-    def __ge__(self, other):
-        if other is None:
-            return False
-        else:
-            return Filter.order.index(self.name) >= Filter.order.index(other.name)
+        return isinstance(other, Filter) and Filter.order.index(self.name) < Filter.order.index(other.name)
 
     def __hash__(self):
         return self.name.__hash__()

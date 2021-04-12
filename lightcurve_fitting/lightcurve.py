@@ -38,8 +38,10 @@ column_names = {
     'Telescope': ['telescope', 'Telescope', 'Tel', 'tel+inst'],
     'Source': ['source', 'Source'],
     'Apparent Magnitude': ['mag', 'Magnitude', 'Mag', 'ab_mag', 'PSFmag', 'MAG', 'omag', 'magnitude', 'apparent_mag'],
-    'Apparent Magnitude Uncertainty': ['dmag', 'Magnitude_Error', 'magerr', 'MagErr', 'mag_err', 'e_mag', 'Error',
-                                       'err', 'PSFerr', 'MAGERR', 'e_omag', 'e_magnitude', 'apparent_mag_err'],
+    'Apparent Magnitude Uncertainty': [
+        'dmag', 'Magnitude_Error', 'magerr', 'MagErr', 'mag_err', 'e_mag', 'Error', 'err', 'PSFerr', 'MAGERR', 'e_omag',
+        'e_magnitude', 'apparent_mag_err', 'Mag_Err',
+    ],
     'MJD': ['MJD', 'mjd'],
     'JD': ['JD', 'jd'],
     'Phase (rest days)': ['phase', 'Phase', 'PHASE'],
@@ -120,11 +122,12 @@ class LC(Table):
         """
         Rename any recognizable columns to their standard names for this package (see `lightcurve.column_names`).
         """
-        for keys in column_names.values():
-            for bad_key in keys[1:]:
-                if bad_key in self.colnames:
-                    self.rename_column(bad_key, keys[0])
-                    break
+        for good_key, *bad_keys in column_names.values():
+            if good_key not in self.colnames:
+                for bad_key in bad_keys:
+                    if bad_key in self.colnames:
+                        self.rename_column(bad_key, good_key)
+                        break
         if 'MJD' not in self.colnames and 'JD' in self.colnames:
             self['MJD'] = self['JD'] - 2400000.5
             self.remove_column('JD')

@@ -118,6 +118,9 @@ class LC(Table):
         selected.meta = self.meta
         return selected
 
+    def get(self, key, default=None):
+        return self[key] if key in self.colnames else default
+
     def normalize_column_names(self):
         """
         Rename any recognizable columns to their standard names for this package (see `lightcurve.column_names`).
@@ -186,7 +189,7 @@ class LC(Table):
             self.nondetSigmas = nondetSigmas
         if zp is None:
             zp = self.zp
-        self['flux'], self['dflux'] = mag2flux(self['mag'], self['dmag'], zp, self['nondet'], self.nondetSigmas)
+        self['flux'], self['dflux'] = mag2flux(self['mag'], self['dmag'], zp, self.get('nondet'), self.nondetSigmas)
 
     def bin(self, delta=0.3, groupby=None):
         """
@@ -252,7 +255,7 @@ class LC(Table):
         self.findNondet()
         if zp is None:
             zp = self.zp
-        self['mag'], self['dmag'] = flux2mag(self['flux'], self['dflux'], zp, self['nondet'], self.nondetSigmas)
+        self['mag'], self['dmag'] = flux2mag(self['flux'], self['dflux'], zp, self.get('nondet'), self.nondetSigmas)
 
     def calcAbsMag(self, dm=None, extinction=None, hostext=None):
         """
@@ -308,7 +311,7 @@ class LC(Table):
         """
         if nondetSigmas is not None:
             self.nondetSigmas = nondetSigmas
-        self['lum'], self['dlum'] = mag2flux(self['absmag'], self['dmag'], self.zp + 90.19, self['nondet'],
+        self['lum'], self['dlum'] = mag2flux(self['absmag'], self['dmag'], self.zp + 90.19, self.get('nondet'),
                                              self.nondetSigmas)
 
     def findPeak(self, **criteria):
@@ -370,7 +373,7 @@ class LC(Table):
         if 'dMJD1' in self.colnames:
             self['dphase1'] = self['dMJD1'] / (1. + self.meta['redshift'])
 
-    def plot(self, xcol='phase', ycol='absmag', offset_factor=1., color='filter', marker='source', use_lines=False,
+    def plot(self, xcol='phase', ycol='absmag', offset_factor=1., color='filter', marker=None, use_lines=False,
              normalize=False, fillmark=True, **kwargs):
         """
         Plot the light curve, with nondetections marked with a downward-pointing arrow
@@ -386,7 +389,7 @@ class LC(Table):
         color : str, optional
             Column that controls the color of the lines and points. Default: ``'filter'``
         marker : str, optional
-            Column that controls the marker shape. Default: ``'source'``
+            Column that controls the marker shape. Default: ``'source'`` or ``'telescope'``
         use_lines : bool, optional
             Connect light curve points with lines. Default: False
         normalize : bool, optional
@@ -459,10 +462,10 @@ class LC(Table):
                             markers[g[marker][0]] = nextmarker
                             break
                 mark = markers[g[marker][0]]
-            elif not marker:
-                mark = None
-            else:
+            elif marker in MarkerStyle.markers:
                 mark = marker
+            else:
+                mark = MarkerStyle.markers[0]
             usedmarkers.append(mark)
             if use_lines:
                 g.sort(xcol)

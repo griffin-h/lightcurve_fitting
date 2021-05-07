@@ -79,25 +79,50 @@ def readfitsspec(filename, header=False, ext=None):
     data = hdu.data
     hdr = hdu.header
     flux = data.flatten()[:max(data.shape)]
-    default_bunit = 'erg / (Angstrom cm2 s)'
-    default_cunit = 'Angstrom'
-    bunit = hdr.get('BUNIT', default_bunit)
-    if 'Angstrom' not in bunit:
-        bunit = bunit.replace('Ang', 'Angstrom').replace('A', 'Angstrom')
-    cunit = hdr.get('CUNIT1', default_cunit)
-    if cunit == 'angstroms' or cunit == 'deg':
-        cunit = default_cunit
-        del hdr['CUNIT1']  # needed for Binospec & FLOYDS pipelines
     remove_duplicate_wcs(hdr)  # some problem with Gemini pipeline
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
         wcs = WCS(removebadcards(hdr), naxis=1, relax=False, fix=False)
-        wl = u.Quantity(wcs.wcs_pix2world(np.arange(len(flux)), 0)[0], cunit).to(default_cunit)
-        flux = u.Quantity(flux, bunit).to(default_bunit, u.equivalencies.spectral_density(wl))
+    wl = wcs.wcs_pix2world(np.arange(len(flux)), 0)[0]
     if header:
-        return wl.value, flux.value, hdr
+        return wl, flux, hdr
     else:
-        return wl.value, flux.value
+        return wl, flux
+
+
+def convert_spectrum_units(wl, flux, hdr, default_bunit='erg / (Angstrom cm2 s)', default_cunit='Angstrom'):
+    """
+    Convert a spectrum to standard units, if information is available in the header to establish units (BUNIT & CUNIT1)
+
+    Parameters
+    ----------
+    wl: array-like
+        Input wavelengths
+    flux: array-like
+        Input fluxes
+    hdr: dict-like
+        Metadata from which to determine the units of wl and flux
+    default_bunit: str, optional
+        Units of the output flux. Default: 'erg / (Angstrom cm2 s)'
+    default_cunit: str, optional
+        Units of the output wavelengths. Default: 'Angstrom'
+
+    Returns
+    -------
+    wl: numpy.ndarray
+        Input wavelengths converted to `default_cunit`
+    flux: numpy.ndarray
+        Input fluxes converted to `default_bunit`
+    """
+    bunit = hdr.get('BUNIT', default_bunit)
+    if 'Angstrom' not in bunit:
+        bunit = bunit.replace('Ang', 'Angstrom').replace('A', 'Angstrom')
+    cunit = hdr.get('CUNIT1', default_cunit)
+    if cunit == 'angstroms':
+        cunit = cunit.replace('angstroms', 'Angstrom')
+    wl = u.Quantity(wl, cunit).to(default_cunit)
+    flux = u.Quantity(flux, bunit).to(default_bunit, u.equivalencies.spectral_density(wl))
+    return wl.value, flux.value
 
 
 def readOSCspec(filepath):
@@ -252,9 +277,11 @@ def readspec(f, verbose=False):
     else:
         instrument = ''
 
+    x, y = convert_spectrum_units(x, y, hdr)
+
     if verbose:
         print(date.isot, f)
-    return np.array(x), np.array(y), date, telescope, instrument
+    return x, y, date, telescope, instrument
 
 
 def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=None, show=False):

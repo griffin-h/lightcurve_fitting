@@ -72,6 +72,7 @@ class LC(Table):
         self.sn = None
         self.nondetSigmas = 3.
         self.groupby = {'filt', 'filter', 'source'}
+        self.markers = markers.copy()
 
     def where(self, **kwargs):
         """
@@ -116,6 +117,7 @@ class LC(Table):
         selected = self[use]
         selected.sn = self.sn
         selected.meta = self.meta
+        selected.markers = self.markers
         return selected
 
     def get(self, key, default=None):
@@ -400,7 +402,6 @@ class LC(Table):
             Keyword arguments matching column names in the light curve are used to specify a subset of points to plot.
             Additional keyword arguments passed to :func:`matplotlib.pyplot.plot`.
         """
-        global markers
         xchoices = ['phase', 'MJD']
         while xcol not in self.keys():
             xchoices.remove(xcol)
@@ -415,6 +416,13 @@ class LC(Table):
                 ycol = ychoices[0]
             else:
                 raise Exception('no columns found for y-axis')
+        if marker is None:
+            if 'source' in self.colnames:
+                marker = 'source'
+            elif 'telescope' in self.colnames:
+                marker = 'telescope'
+            else:
+                marker = 'o'
         plotthese = np.tile(True, len(self))
         criteria = {key: val for key, val in kwargs.items() if key in self.colnames}
         plot_kwargs = {key: val for key, val in kwargs.items() if key not in self.colnames}
@@ -452,16 +460,16 @@ class LC(Table):
             if marker == 'name':
                 mark = self.sn.marker
             elif marker in plottable.keys():
-                if g[marker][0] not in markers:
+                if g[marker][0] not in self.markers:
                     for nextmarker in othermarkers:
                         if nextmarker not in usedmarkers:
-                            markers[g[marker][0]] = nextmarker
+                            self.markers[g[marker][0]] = nextmarker
                             break
                     else:
                         for nextmarker in itermarkers:
-                            markers[g[marker][0]] = nextmarker
+                            self.markers[g[marker][0]] = nextmarker
                             break
-                mark = markers[g[marker][0]]
+                mark = self.markers[g[marker][0]]
             elif marker in MarkerStyle.markers:
                 mark = marker
             else:

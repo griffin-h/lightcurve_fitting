@@ -8,12 +8,13 @@ from astropy import units as u
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoLocator
-from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit, OptimizeWarning
 from scipy.stats import gaussian_kde
 import emcee
 import corner
 import os
 from pkg_resources import resource_filename
+import warnings
 
 for filt in all_filters:
     filt.read_curve()
@@ -332,8 +333,11 @@ def blackbody_lstsq(epoch1, z, p0=None, T_range=(1., 100.), R_range=(0.01, 1000.
     def planck_cutoff(nu, T, R):
         return planck_fast(nu, T, R, cutoff_freq)
 
-    p0, cov = curve_fit(planck_cutoff, epoch1['freq'] * (1. + z), epoch1['lum'], p0=p0,
-                        bounds=([T_range[0], R_range[0]], [T_range[1], R_range[1]]))
+    with warnings.catch_warnings():
+        if len(epoch1) <= 2:
+            warnings.simplefilter('ignore', OptimizeWarning)
+        p0, cov = curve_fit(planck_cutoff, epoch1['freq'] * (1. + z), epoch1['lum'], p0=p0,
+                            bounds=([T_range[0], R_range[0]], [T_range[1], R_range[1]]))
     temp, radius = p0
     dtemp, drad = np.sqrt(np.diag(cov))
     lum, dlum = stefan_boltzmann(temp, radius, dtemp, drad, cov[0, 1])

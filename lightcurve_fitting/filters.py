@@ -258,6 +258,7 @@ all_filters = [
     Filter('B', '#0057FF', 2, 'Johnson', 4.063e-23, filename='jnsn-bu-183.asci'),
     Filter(['B_S', 'b', 'bs'], '#4B00FF', 2, 'Swift', 4.093e-23, filename='Swift_UVOT.B.dat', angstrom=True),
     Filter(['g', "g'", 'gp', 'F475W'], '#00CCFF', 1, 'Gunn', filename='sdss-gp-183.asci'),
+    Filter('g-DECam', '#00CCFF', 1, 'DECam', filename='CTIO_DECam.g.dat', angstrom=True),
     Filter(['c', 'cyan'], 'c', 1, 'ATLAS', filename='ATLAS_cyan.txt'),
     Filter('V', '#79FF00', 1, 'Johnson', 3.636e-23, filename='jnsn-vx-183.asci', textcolor='#46CC00'),
     Filter(['V_S', 'v', 'vs'], '#00FF30', 1, 'Swift', 3.664e-23, filename='Swift_UVOT.V.dat', angstrom=True),
@@ -270,11 +271,15 @@ all_filters = [
     Filter('w', 'w', 0, 'Gunn', filename='pstr-wx-183.asci', linecolor='k'),
     Filter(['o', 'orange'], 'orange', 0, 'ATLAS', filename='ATLAS_orange.txt'),
     Filter(['r', "r'", 'rp', 'F625W'], '#FF7D00', 0, 'Gunn', filename='sdss-rp-183.asci'),
+    Filter('r-DECam', '#FF7D00', 0, 'DECam', filename='CTIO_DECam.r.dat', angstrom=True),
     Filter(['R', 'Rc', 'R_s'], '#FF7000', 0, 'Johnson', 3.064e-23, filename='cous-rs-183.asci'),  # '#CC5900'
     Filter(['i', "i'", 'ip', 'F775W'], '#90002C', -1, 'Gunn', filename='sdss-ip-183.asci'),
+    Filter('i-DECam', '#90002C', -1, 'DECam', filename='CTIO_DECam.i.dat', angstrom=True),
     Filter(['I', 'Ic'], '#66000B', -1, 'Johnson', 2.416e-23, filename='cous-ic-183.asci'),  # brightened from '#1C0003'
     Filter(['z', "z'", 'Z', 'zs'], '#000000', -2, 'Gunn', filename='pstr-zs-183.asci'),
+    Filter('z-DECam', '#000000', -2, 'DECam', filename='CTIO_DECam.z.dat', angstrom=True),
     Filter('y', 'y', -3, 'Gunn', filename='pstr-yx-183.asci'),
+    Filter('y-DECam', 'y', -3, 'DECam', filename='CTIO_DECam.Y.dat', angstrom=True),
     Filter('J', '#444444', -2, 'UKIRT', 1.589e-23, filename='Gemini_Flamingos2.J.dat', angstrom=True),
     Filter('H', '#888888', -3, 'UKIRT', 1.021e-23, filename='Gemini_Flamingos2.H.dat', angstrom=True),
     Filter(['K', 'Ks'], '#CCCCCC', -4, 'UKIRT', 0.640e-23, filename='Gemini_Flamingos2.Ks.dat', angstrom=True),

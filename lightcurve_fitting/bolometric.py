@@ -521,7 +521,9 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
             masked=True)
 
     sampler = None
+    lc = lc[np.isfinite(lc['dmag']) & (lc['dmag'] > 0.)]
     for epoch1 in group_by_epoch(lc, res):
+        epoch1.sn = lc.sn
         epoch1.calcFlux()
         epoch1 = epoch1.bin(delta=np.inf)
         epoch1.calcMag()

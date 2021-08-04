@@ -505,6 +505,7 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
     if colors is None:
         colors = []
 
+    use_src = 'source' in lc.colnames
     t0 = LC(names=['MJD', 'dMJD0', 'dMJD1',
                    'temp', 'radius', 'dtemp', 'dradius',  # best fit from scipy.curve_fit
                    'lum', 'dlum',  # total bolometric luminosity from scipy.curve_fit
@@ -514,10 +515,10 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
                    'L_int',  # pseudobolometric luminosity from direct integration of the SED
                    'npoints']
             + colors + ['d({})'.format(c) for c in colors] + ['lolims({})'.format(c) for c in colors]
-            + ['uplims({})'.format(c) for c in colors] + ['filts', 'source'],
+            + ['uplims({})'.format(c) for c in colors] + ['filts'] + (['source'] if use_src else []),
             dtype=[float, float, float, float, float, float, float, float, float, float, float, float, float, float,
                    float, float, float, float, float, float, int]
-            + [float] * 2 * len(colors) + [bool] * 2 * len(colors) + ['S6', lc['source'].dtype],
+            + [float] * 2 * len(colors) + [bool] * 2 * len(colors) + ['S6'] + ([lc['source'].dtype] if use_src else []),
             masked=True)
 
     sampler = None
@@ -586,7 +587,7 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
                T_mcmc, R_mcmc, dT0_mcmc, dT1_mcmc, dR0_mcmc, dR1_mcmc, L_mcmc, dL_mcmc0, dL_mcmc1,
                L_int, nfilt] + color_mags + color_dmags
         row_bool = color_lolims + color_uplims
-        row_string = [filtstr, epoch1['source'][0]]
+        row_string = [filtstr] + ([epoch1['source'][0]] if use_src else [])
         mask = np.concatenate([np.isnan(row), np.zeros_like(row_bool), ~np.array(row_string, dtype=bool)])
         t0.add_row(row + row_bool + row_string, mask=mask)
 

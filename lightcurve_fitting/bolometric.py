@@ -588,7 +588,8 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
                L_int, nfilt] + color_mags + color_dmags
         row_bool = color_lolims + color_uplims
         row_string = [filtstr] + ([epoch1['source'][0]] if use_src else [])
-        mask = np.concatenate([np.isnan(row), np.zeros_like(row_bool), ~np.array(row_string, dtype=bool)])
+        mask = np.concatenate([np.isnan(row), np.zeros_like(row_bool, dtype=bool),
+                               ~np.array([bool(rs) for rs in row_string])])
         t0.add_row(row + row_bool + row_string, mask=mask)
 
     if save_table_as is not None and t0:

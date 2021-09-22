@@ -80,6 +80,8 @@ def readfitsspec(filename, header=False, ext=None):
     hdr = hdu.header
     flux = data.flatten()[:max(data.shape)]
     remove_duplicate_wcs(hdr)  # some problem with Gemini pipeline
+    if hdr.get('CUNIT1') in ['Angstroms', 'angstroms', 'deg', 'pixel']:
+        hdr['CUNIT1'] = 'Angstrom'  # WCS object needs recognizable units
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
         wcs = WCS(removebadcards(hdr), naxis=1, relax=False, fix=False)
@@ -116,12 +118,16 @@ def convert_spectrum_units(wl, flux, hdr, default_bunit='erg / (Angstrom cm2 s)'
     """
     bunit = hdr.get('BUNIT', default_bunit)
     if 'Angstrom' not in bunit:
-        bunit = bunit.replace('Ang', 'Angstrom').replace('A', 'Angstrom')
+        bunit = bunit.replace('Ang', 'Angstrom')
+    if 'Angstrom' not in bunit:
+        bunit = bunit.replace('A', 'Angstrom')
     cunit = hdr.get('CUNIT1', default_cunit)
-    if cunit == 'angstroms':
-        cunit = cunit.replace('angstroms', 'Angstrom')
+    if cunit.lower() == 'angstroms':
+        cunit = cunit.rstrip('s')
     wl = u.Quantity(wl, cunit).to(default_cunit)
-    flux = u.Quantity(flux, bunit).to(default_bunit, u.equivalencies.spectral_density(wl))
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        flux = u.Quantity(flux, bunit).to(default_bunit, u.equivalencies.spectral_density(wl))
     return wl.value, flux.value
 
 

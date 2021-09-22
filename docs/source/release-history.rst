@@ -2,6 +2,19 @@
 Release History
 ===============
 
+v0.3.0 (2021-09-22)
+-------------------
+* Switch the default table format from ``'ascii.fixed_width'`` to just ``'ascii'``
+* Add more recognized column names for light curves
+* Add more recognized filter names, including an "unknown" filter
+* Add option to include intrinsic scatter in model fitting
+* Do not require ``'nondet'`` or ``'source'`` columns
+* Improve handling of units in spectra files
+* Include automatic axis labels and filter legend in light curve plot
+* Make bolometric module compatible with numpy 1.20
+* Allow ``calcPhase`` to function without a ``Supernova`` object
+* Allow color curves to be plotted against phase (in addition to MJD)
+
 v0.2.0 (2020-12-08)
 -------------------
 * Recognize several other names for LC columns (e.g., "filter" for "filt")

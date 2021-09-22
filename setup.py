@@ -40,7 +40,7 @@ setup(
     description="Tools to fit analytical models to multiband light curves of astronomical transients",
     long_description=readme,
     author="Griffin Hosseinzadeh",
-    author_email='griffin.hosseinzadeh@cfa.harvard.edu',
+    author_email='griffin0@arizona.edu',
     url='https://github.com/griffin-h/lightcurve_fitting',
     python_requires='>={}'.format('.'.join(str(n) for n in min_version)),
     packages=find_packages(exclude=['docs', 'tests']),

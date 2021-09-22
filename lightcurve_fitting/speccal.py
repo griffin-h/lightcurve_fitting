@@ -212,8 +212,10 @@ def readspec(f, verbose=False):
     elif ext == '.json':
         x, y, hdr = readOSCspec(f)
     elif ext in ['.ascii', '.asci', '.flm', '.txt', '.dat']:
-        t = Table.read(f, format='ascii.no_header')
-        x, y = t['col1'], t['col2']
+        t = Table.read(f, format='ascii')
+        # assume it's the first two columns, regardless of if column names are given
+        x = t.columns[0]
+        y = t.columns[1]
         if 'comments' in t.meta:
             hdr = {kwd.strip(' #'): val.strip(' "\'') for kwd, val in
                    [(line.split('=')[0], '='.join(line.split(' / ')[0].split('=')[1:])) for line in t.meta['comments']

@@ -254,8 +254,8 @@ def readspec(f, verbose=False):
             break
     else:  # hope it's in the filename
         import re
-        m1 = re.search('[0-9][0-9][0-9][0-9][0-9][0-9][0-9]\.[0-9][0-9][0-9][0-9]', f)  # JD w/4 decimals
-        m2 = re.search('(19|20)[0-9][0-9](0[0-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])', f)  # YYYYMMDD
+        m1 = re.search('24[0-9][0-9][0-9][0-9][0-9]\.[0-9]+', f)  # JD w/1 or more decimals
+        m2 = re.search('([12][90][0-9][0-9])-?(0[0-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])', f)  # YYYYMMDD
         m_tns = re.search(
             '(19|20)[0-9][0-9]-(0[0-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])_([01][0-9]|2[0-4])-[0-5][0-9]-[0-5][0-9]',
             f)  # YYYY-MM-DD_HH:MM:SS
@@ -264,8 +264,7 @@ def readspec(f, verbose=False):
             m = m1.group()
             date = Time(float(m), format='jd')
         elif m2 is not None:
-            m = m2.group()
-            date = Time('-'.join([m[0:4], m[4:6], m[6:8]]))
+            date = Time('-'.join(m2.groups()))
         elif m_tns is not None:
             m = m_tns.group()
             d, t = m.split('_')

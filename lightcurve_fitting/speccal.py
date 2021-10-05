@@ -117,6 +117,8 @@ def convert_spectrum_units(wl, flux, hdr, default_bunit='erg / (Angstrom cm2 s)'
         Input fluxes converted to `default_bunit`
     """
     bunit = hdr.get('BUNIT', default_bunit)
+    if bunit == 'adu':
+        bunit = default_bunit
     if 'Angstrom' not in bunit:
         bunit = bunit.replace('Ang', 'Angstrom')
     if 'Angstrom' not in bunit:

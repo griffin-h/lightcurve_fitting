@@ -230,7 +230,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         ax.errorbar(lc_filt['MJD'] - mjd_offset, lc_filt['lum'] / yscale + offset, lc_filt['dlum'] / yscale,
                     ls='none', marker='o', **filt.plotstyle)
         ax.plot(xfit - mjd_offset, yfit / yscale + offset, color=filt.linecolor, alpha=0.05)
-        txt = '${}{:+.1f}$'.format(filt.name, offset) if offset else filt.name
+        txt = f'${filt.name}{offset:+.1f}$' if filt.italics else rf'$\mathrm{{{filt.name}}}{offset:+.1f}$'
         ax.text(1.03, yfit[-1, 0] / yscale + offset, txt, color=filt.textcolor,
                 ha='left', va='center', transform=ax.get_yaxis_transform())
     ax.set_xlabel('MJD $-$ {:.0f}'.format(mjd_offset))

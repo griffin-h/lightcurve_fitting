@@ -2,6 +2,10 @@
 Release History
 ===============
 
+Unreleased
+----------
+* Don't italicize some filter names
+
 v0.3.0 (2021-09-22)
 -------------------
 * Switch the default table format from ``'ascii.fixed_width'`` to just ``'ascii'``

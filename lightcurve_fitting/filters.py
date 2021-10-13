@@ -38,6 +38,8 @@ class Filter:
         The line color used when plotting photometry in this filter. Default: same as ``color``.
     textcolor : str, tuple, optional
         The color used when printing the name of this filter. Default: same as ``linecolor``.
+    italics : bool, optional
+        Italicize the filter name when used with LaTeX. Default: True.
 
     Attributes
     ----------
@@ -53,6 +55,8 @@ class Filter:
         The line color used when plotting photometry in this filter
     textcolor : str, tuple
         The color used when printing the name of this filter
+    italics : bool
+        Italicize the filter name when used with LaTeX
     mec : str, tuple
         The marker edge color used when plotting photometry in this filter
     plotstyle : dict
@@ -86,7 +90,7 @@ class Filter:
     """The names of recognized filters listed in (approximate) decreasing order of effective frequency"""
 
     def __init__(self, names, color='k', offset=0, system=None, fnu=3.631e-23, filename='', angstrom=False,
-                 linecolor=None, textcolor=None):
+                 linecolor=None, textcolor=None, italics=True):
         if type(names) == list:
             self.name = names[0]
             self.names = names
@@ -110,6 +114,7 @@ class Filter:
             self.textcolor = textcolor
         else:
             self.textcolor = self.linecolor
+        self.italics = italics
         self.system = system
         if self.system == 'Johnson':
             self.mec = 'k'
@@ -262,12 +267,13 @@ all_filters = [
     Filter(['c', 'cyan'], 'c', 1, 'ATLAS', filename='ATLAS_cyan.txt'),
     Filter('V', '#79FF00', 1, 'Johnson', 3.636e-23, filename='jnsn-vx-183.asci', textcolor='#46CC00'),
     Filter(['V_S', 'v', 'vs'], '#00FF30', 1, 'Swift', 3.664e-23, filename='Swift_UVOT.V.dat', angstrom=True),
-    Filter(['unfilt.', '0', 'Clear', 'C', 'clear'], 'w', 0, 'Itagaki', filename='KAF-1001E.asci', linecolor='k'),
-    Filter('white', 'w', 0, 'MOSFiT', filename='white.txt', linecolor='k'),
+    Filter(['unfilt.', '0', 'Clear', 'C', 'clear'], 'w', 0, 'Itagaki', filename='KAF-1001E.asci', linecolor='k',
+           italics=False),
+    Filter('white', 'w', 0, 'MOSFiT', filename='white.txt', linecolor='k', italics=False),
     Filter(['pseudobolometric', 'griz'], 'w', 0, 'MOSFiT', filename='pseudobolometric.txt', linecolor='k'),
     Filter('G', 'w', 0, 'Gaia', filename='GAIA_GAIA0.G.dat', angstrom=True, linecolor='k'),
-    Filter('Kepler', 'r', 0, 'Kepler', filename='Kepler_Kepler.K.dat', angstrom=True),
-    Filter('TESS', 'r', 0, 'TESS', filename='TESS_TESS.Red.dat', angstrom=True),
+    Filter('Kepler', 'r', 0, 'Kepler', filename='Kepler_Kepler.K.dat', angstrom=True, italics=False),
+    Filter('TESS', 'r', 0, 'TESS', filename='TESS_TESS.Red.dat', angstrom=True, italics=False),
     Filter('w', 'w', 0, 'Gunn', filename='pstr-wx-183.asci', linecolor='k'),
     Filter(['o', 'orange'], 'orange', 0, 'ATLAS', filename='ATLAS_orange.txt'),
     Filter(['r', "r'", 'rp', 'F625W'], '#FF7D00', 0, 'Gunn', filename='sdss-rp-183.asci'),
@@ -284,7 +290,7 @@ all_filters = [
     Filter('H', '#888888', -3, 'UKIRT', 1.021e-23, filename='Gemini_Flamingos2.H.dat', angstrom=True),
     Filter(['K', 'Ks'], '#CCCCCC', -4, 'UKIRT', 0.640e-23, filename='Gemini_Flamingos2.Ks.dat', angstrom=True),
     Filter('L', 'r', -4, 'UKIRT', 0.285e-23),
-    Filter(['unknown', '?'], 'w', 0, 'unknown', linecolor='k')]
+    Filter(['unknown', '?'], 'w', 0, 'unknown', linecolor='k', italics=False)]
 Filter.order = [f.name for f in all_filters]
 filtdict = {}
 for filt in all_filters:

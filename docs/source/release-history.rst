@@ -5,6 +5,7 @@ Release History
 Unreleased
 ----------
 * Don't italicize some filter names
+* Return axes objects in light curve corner plot
 
 v0.3.0 (2021-09-22)
 -------------------

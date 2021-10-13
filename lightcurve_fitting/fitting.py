@@ -182,6 +182,10 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
     -------
     fig : matplotlib.pyplot.Figure
         Figure object containing the plot
+    corner_ax : array-like
+        Array of matplotlib.pyplot.Axes objects corresponding to the corner plot
+    ax : matplotlib.pyplot.Axes
+        Axes object for the light curve inset
     """
     if model_kwargs is None:
         model_kwargs = {}
@@ -243,7 +247,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         fig.savefig(save_plot_as)
         print('saving figure as ' + save_plot_as)
 
-    return fig
+    return fig, corner_axes, ax
 
 
 def format_credible_interval(x, sigfigs=1, percentiles=(15.87, 50., 84.14), axis=0, varnames=None, units=None):

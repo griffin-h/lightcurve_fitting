@@ -148,7 +148,7 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
 
 def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
                       num_models_to_plot=100, lcaxis_posn=(0.7, 0.55, 0.2, 0.4),
-                      filter_spacing=0.5, tmin=None, tmax=None, t0_offset=None, save_plot_as=''):
+                      filter_spacing=0.5, tmin=None, tmax=None, t0_offset=None, save_plot_as='', ycol='lum'):
     """
     Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model light curves.
 
@@ -177,6 +177,8 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         the model light curve.
     save_plot_as : str, optional
         Filename to which to save the resulting plot
+    ycol : str, optional
+        Quantity to plot on the light curve inset. Choices: "lum" (default) or "absmag".
 
     Returns
     -------
@@ -223,23 +225,31 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
     y_fit = model(xfit, ufilts, *ps, **model_kwargs)
 
     mjd_offset = np.floor(tmin)
-    if y_fit.max() > 0.:
+    if ycol == 'lum':
+        dycol = 'dlum'
         yscale = 10. ** np.round(np.log10(y_fit.max()))
-    else:
+        ylabel = 'Luminosity $L_\\nu$ (10$^{{{:.0f}}}$ erg s$^{{-1}}$ Hz$^{{-1}}$) + Offset'.format(
+            np.log10(yscale) + 7)  # W --> erg / s
+    elif ycol == 'absmag':
+        dycol = 'dmag'
         yscale = 1.
+        ylabel = 'Absolute Magnitude + Offset'
+        y_fit = [[[filt.M0]] for filt in ufilts] - 2.5 * np.log10(y_fit)
+        ax.invert_yaxis()
+    else:
+        raise ValueError(f'ycol="{ycol}" is not recognized. Use "lum" or "absmag".')
     offset = -len(ufilts) // 2 * filter_spacing
     for filt, yfit in zip(ufilts, y_fit):
         offset += filter_spacing
         lc_filt = lc.where(filter=filt)
-        ax.errorbar(lc_filt['MJD'] - mjd_offset, lc_filt['lum'] / yscale + offset, lc_filt['dlum'] / yscale,
+        ax.errorbar(lc_filt['MJD'] - mjd_offset, lc_filt[ycol] / yscale + offset, lc_filt[dycol] / yscale,
                     ls='none', marker='o', **filt.plotstyle)
         ax.plot(xfit - mjd_offset, yfit / yscale + offset, color=filt.linecolor, alpha=0.05)
         txt = f'${filt.name}{offset:+.1f}$' if filt.italics else rf'$\mathrm{{{filt.name}}}{offset:+.1f}$'
         ax.text(1.03, yfit[-1, 0] / yscale + offset, txt, color=filt.textcolor,
                 ha='left', va='center', transform=ax.get_yaxis_transform())
     ax.set_xlabel('MJD $-$ {:.0f}'.format(mjd_offset))
-    ax.set_ylabel('Luminosity $L_\\nu$ (10$^{{{:.0f}}}$ erg s$^{{-1}}$ Hz$^{{-1}}$) + Offset'
-                  .format(np.log10(yscale) + 7))  # W --> erg / s
+    ax.set_ylabel(ylabel)
 
     paramtexts = format_credible_interval(sampler_flatchain, varnames=model.input_names, units=model.units)
     fig.text(0.45, 0.95, '\n'.join(paramtexts), va='top', ha='center', fontdict={'size': 'large'})

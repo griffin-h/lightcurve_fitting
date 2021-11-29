@@ -9,6 +9,7 @@ Unreleased
 * Give option to plot magnitudes in light curve corner plot
 * Fix plotting of wavelength when units are supplied
 * Add option to calculate phase in rest-frame hours
+* Issue warning when filters do not receive extinction correction
 
 v0.3.0 (2021-09-22)
 -------------------

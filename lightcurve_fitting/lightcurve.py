@@ -297,10 +297,19 @@ class LC(Table):
             self.meta['hostext'] = {}
 
         self['absmag'] = self['mag'].data - self.meta['dm']
-        for filt, A in self.meta['extinction'].items():
-            self['absmag'][self['filter'] == filtdict[filt]] -= A
-        for filt, A in self.meta['hostext'].items():
-            self['absmag'][self['filter'] == filtdict[filt]] -= A
+        for filtobj in set(self['filter']):
+            for filt in filtobj.names:
+                if filt in self.meta['extinction']:
+                    self['absmag'][self['filter'] == filtobj] -= self.meta['extinction'][filt]
+                    break
+            else:
+                print('MW extinction not applied to filter', filtobj)
+            for filt in filtobj.names:
+                if filt in self.meta['extinction']:
+                    self['absmag'][self['filter'] == filtobj] -= self.meta['hostext'][filtobj.char]
+                    break
+            else:
+                print('host extinction not applied to filter', filtobj)
 
     def calcLum(self, nondetSigmas=None):
         """

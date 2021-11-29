@@ -305,8 +305,8 @@ class LC(Table):
             else:
                 print('MW extinction not applied to filter', filtobj)
             for filt in filtobj.names:
-                if filt in self.meta['extinction']:
-                    self['absmag'][self['filter'] == filtobj] -= self.meta['hostext'][filtobj.char]
+                if filt in self.meta['hostext']:
+                    self['absmag'][self['filter'] == filtobj] -= self.meta['hostext'][filt]
                     break
             else:
                 print('host extinction not applied to filter', filtobj)

@@ -8,6 +8,7 @@ Unreleased
 * Return axes objects in light curve corner plot
 * Give option to plot magnitudes in light curve corner plot
 * Fix plotting of wavelength when units are supplied
+* Add option to calculate phase in rest-frame hours
 
 v0.3.0 (2021-09-22)
 -------------------

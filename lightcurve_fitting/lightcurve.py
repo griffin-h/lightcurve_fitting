@@ -345,7 +345,7 @@ class LC(Table):
             self.sn.peakdate = np.nan
         self.sn.peakcriteria = criteria
 
-    def calcPhase(self, rdsp=False):
+    def calcPhase(self, rdsp=False, hours=False):
         """
         Calculate the rest-frame ``'phase'`` column from the ``'MJD'`` column and ``self.sn.refmjd`` and ``self.sn.z``
 
@@ -374,6 +374,12 @@ class LC(Table):
             self['dphase0'] = self['dMJD0'] / (1. + self.meta['redshift'])
         if 'dMJD1' in self.colnames:
             self['dphase1'] = self['dMJD1'] / (1. + self.meta['redshift'])
+        if hours:
+            self['phase'] *= 24.
+            if 'dphase0' in self.colnames:
+                self['dphase0'] *= 24.
+            if 'dphase1' in self.colnames:
+                self['dphase1'] *= 24.
 
     def plot(self, xcol='phase', ycol='absmag', offset_factor=1., color='filter', marker=None, use_lines=False,
              normalize=False, fillmark=True, **kwargs):

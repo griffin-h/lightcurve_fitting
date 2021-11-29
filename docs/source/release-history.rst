@@ -7,6 +7,7 @@ Unreleased
 * Don't italicize some filter names
 * Return axes objects in light curve corner plot
 * Give option to plot magnitudes in light curve corner plot
+* Fix plotting of wavelength when units are supplied
 
 v0.3.0 (2021-09-22)
 -------------------

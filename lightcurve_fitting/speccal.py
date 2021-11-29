@@ -85,7 +85,10 @@ def readfitsspec(filename, header=False, ext=None):
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
         wcs = WCS(removebadcards(hdr), naxis=1, relax=False, fix=False)
-    wl = wcs.wcs_pix2world(np.arange(len(flux)), 0)[0]
+    if 'CUNIT1' in hdr:
+        wl = wcs.pixel_to_world(np.arange(len(flux))).to(hdr['CUNIT1']).value
+    else:
+        wl = wcs.wcs_pix2world(np.arange(len(flux)), 0)[0]
     if header:
         return wl, flux, hdr
     else:

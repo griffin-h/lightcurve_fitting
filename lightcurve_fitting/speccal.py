@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import os
 import warnings
 import json
+import re
 
 
 def removebadcards(hdr):
@@ -214,22 +215,23 @@ def readspec(f, verbose=False):
         x, y, hdr = readfitsspec(f, header=True)
     elif ext == '.json':
         x, y, hdr = readOSCspec(f)
-    elif ext in ['.ascii', '.asci', '.flm', '.txt', '.dat']:
+    elif ext in ['.ascii', '.asci', '.flm', '.txt', '.dat', '.csv']:
         t = Table.read(f, format='ascii')
         # assume it's the first two columns, regardless of if column names are given
         x = t.columns[0]
         y = t.columns[1]
-        if 'comments' in t.meta:
-            hdr = {kwd.strip(' #'): val.strip(' "\'') for kwd, val in
-                   [(line.split('=')[0], '='.join(line.split(' / ')[0].split('=')[1:])) for line in t.meta['comments']
-                    if '=' in line]}
-            # (anything before first '=', anything between first '=' and ' / ')
-        else:
-            hdr = {}
+        hdr = {}
+        comments = t.meta.get('comments', [])
+        for line in comments:
+            match = re.search('([^ ]*) *[=:] *([^/]*)', line)
+            if match is None:
+                continue
+            kwd, val = match.groups()  # (anything before first '='/':', anything between first '='/':' and '/')
+            hdr[kwd.strip(' #')] = val.strip(' "\'')
     else:
         raise Exception('ext not recognized:', f)
-
-    for kwd in ['MJD-OBS', 'MJD_OBS', 'MJD', 'JD', 'DATE-AVG', 'UTMIDDLE', 'DATE-OBS', 'DATE_BEG', 'UTSHUT']:
+    for kwd in ['MJD-OBS', 'MJD_OBS', 'MJD', 'JD', 'DATE-AVG', 'UTMIDDLE', 'DATE-OBS', 'DATE_BEG', 'UTSHUT', 'OBS_DATE',
+                'AVE_MJD']:
         if kwd in hdr and hdr[kwd]:
             if 'MJD' in kwd:
                 date = Time(float(hdr[kwd]), format='mjd')
@@ -239,6 +241,8 @@ def readspec(f, verbose=False):
                 date = Time(float(hdr[kwd]) + 2400000, format='jd')
             elif 'T' in hdr[kwd]:
                 date = Time(hdr[kwd])
+            elif kwd == 'OBS_DATE':
+                date = Time(hdr[kwd].split('+')[0])
             elif '-' in hdr[kwd]:
                 for kwd2 in ['UTMIDDLE', 'EXPSTART', 'UT']:
                     if kwd2 in hdr and type(hdr[kwd2]) == str and ':' in hdr[kwd2]:
@@ -256,7 +260,6 @@ def readspec(f, verbose=False):
                 continue
             break
     else:  # hope it's in the filename
-        import re
         m1 = re.search('24[0-9][0-9][0-9][0-9][0-9]\.[0-9]+', f)  # JD w/1 or more decimals
         m2 = re.search('([12][90][0-9][0-9])-?(0[0-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])', f)  # YYYYMMDD
         m_tns = re.search(
@@ -284,6 +287,8 @@ def readspec(f, verbose=False):
         telescope = ''
     if 'INSTRUME' in hdr:
         instrument = hdr['INSTRUME'].strip()
+    elif 'INSTRUMENT_ID' in hdr:
+        instrument = hdr['INSTRUMENT_ID']
     else:
         instrument = ''
 

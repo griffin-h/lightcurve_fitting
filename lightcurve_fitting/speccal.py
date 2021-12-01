@@ -124,7 +124,7 @@ def convert_spectrum_units(wl, flux, hdr, default_bunit='erg / (Angstrom cm2 s)'
         bunit = bunit.replace('Ang', 'Angstrom')
     if 'Angstrom' not in bunit:
         bunit = bunit.replace('A', 'Angstrom')
-    cunit = hdr.get('CUNIT1', default_cunit)
+    cunit = hdr.get('CUNIT1', hdr.get('XUNITS', default_cunit))
     if cunit.lower() == 'angstroms':
         cunit = cunit.rstrip('s')
     wl = u.Quantity(wl, cunit).to(default_cunit)

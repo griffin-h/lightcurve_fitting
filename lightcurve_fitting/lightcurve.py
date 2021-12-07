@@ -31,6 +31,7 @@ arrow = Arrow(0.2, 0.3)
 othermarkers = ('o', *MarkerStyle.filled_markers[2:])
 itermarkers = itertools.cycle(othermarkers)
 usedmarkers = []
+itercolors = itertools.cycle(plt.rcParams['axes.prop_cycle'].by_key()['color'])
 
 # if you edit this list, also add the new names to usage.rst
 column_names = {
@@ -453,14 +454,14 @@ class LC(Table):
             plottable = self[plotthese]
         else:
             return
-        groupby = []
+        groupby = set()
         if color in plottable.keys():
-            groupby.append(color)
+            groupby.add(color)
         if marker in plottable.keys():
-            groupby.append(marker)
+            groupby.add(marker)
         if groupby:
-            plottable = plottable.group_by(groupby)
-        for g in plottable.groups:
+            plottable = plottable.group_by(list(groupby))
+        for g, k in zip(plottable.groups, plottable.groups.keys):
             filt = g['filter'][0]
             if color == 'filter':
                 col = filt.color
@@ -469,8 +470,7 @@ class LC(Table):
                 col = self.sn.plotcolor
                 mec = col if col not in ['w', '#FFFFFF'] else 'k'
             else:
-                col = 'k'
-                mec = 'k'
+                col = mec = next(itercolors)
             mfc = col if fillmark else 'none'
             if marker == 'name':
                 mark = self.sn.marker
@@ -481,14 +481,12 @@ class LC(Table):
                             self.markers[g[marker][0]] = nextmarker
                             break
                     else:
-                        for nextmarker in itermarkers:
-                            self.markers[g[marker][0]] = nextmarker
-                            break
+                        self.markers[g[marker][0]] = next(itermarkers)
                 mark = self.markers[g[marker][0]]
             elif marker in MarkerStyle.markers:
                 mark = marker
             else:
-                mark = MarkerStyle.markers[0]
+                mark = next(itermarkers)
             usedmarkers.append(mark)
             if use_lines:
                 g.sort(xcol)
@@ -504,12 +502,14 @@ class LC(Table):
                 y -= self.sn.peakabsmag
             if 'mag' in ycol and 'nondet' in g.keys() and marker:  # don't plot if no markers used
                 plt.plot(x[g['nondet']], y[g['nondet']], marker=arrow, linestyle='none', ms=25, mec=mec, **plot_kwargs)
-            if len(filt.name) >= 4 and not filt.offset:
-                label = filt.name
-            elif offset_factor:
-                label = '${}{:+.0f}$'.format(filt.name, -filt.offset * offset_factor)
-            else:
-                label = '${}$'.format(filt.name)
+            if 'filter' in k.colnames:
+                if len(filt.name) >= 4 and not filt.offset:
+                    k['filter'] = filt.name
+                elif offset_factor:
+                    k['filter'] = '${}{:+.0f}$'.format(filt.name, -filt.offset * offset_factor)
+                else:
+                    k['filter'] = '${}$'.format(filt.name)
+            label = ' '.join([str(kv) for kv in k.values()])
             if self.sn is None:
                 linestyle = None
                 linewidth = None

@@ -350,10 +350,10 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
             ax1.set_ylabel('$F_\\nu$ (W Hz$^{-1}$)')
             ax2 = plt.subplot(212)
         good = ~np.isnan(flux)
-        wl = wl[good] * u.angstrom
+        lam = wl[good] * u.angstrom
         Flam = flux[good] * u.erg / u.s / u.angstrom / u.cm**2
-        nu = const.c / wl
-        Fnu = (Flam * wl / nu).to(u.W / u.Hz / u.m**2).value[::-1]
+        nu = const.c / lam
+        Fnu = (Flam * lam / nu).to(u.W / u.Hz / u.m**2).value[::-1]
         nu = nu.to(u.THz).value[::-1]
         if subtract_percentile is not None:
             Fnu -= np.nanpercentile(Fnu, subtract_percentile)
@@ -380,7 +380,8 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
             freqs.append(filt.freq_eff.value)
         if not ratios:
             print('no filters for', spec)
-            plt.close(fig)
+            if show:
+                plt.close(fig)
             continue
         scale = np.mean(ratios)
         if order:

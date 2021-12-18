@@ -283,10 +283,18 @@ def readspec(f, verbose=False):
 
     if 'TELESCOP' in hdr:
         telescope = hdr['TELESCOP'].strip()
+    elif 'TELESCOPE' in hdr:
+        telescope = hdr['TELESCOPE'].strip()
+    elif 'OBSERVAT' in hdr:
+        telescope = hdr['OBSERVAT'].strip()
     else:
         telescope = ''
     if 'INSTRUME' in hdr:
         instrument = hdr['INSTRUME'].strip()
+    elif 'INSTRUMENT' in hdr:
+        instrument = hdr['INSTRUMENT'].strip()
+    elif 'INSTR' in hdr:
+        instrument = hdr['INSTR'].strip()
     elif 'INSTRUMENT_ID' in hdr:
         instrument = hdr['INSTRUMENT_ID']
     else:

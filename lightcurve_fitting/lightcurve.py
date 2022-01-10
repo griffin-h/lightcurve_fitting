@@ -336,19 +336,10 @@ class LC(Table):
             Use only a subset of the light curve matching some criteria when calculating the peak date (stored in
             ``self.sn.peakcriteria``
         """
-        useforpeak = np.ones_like(self, bool)
         if 'nondet' in self.colnames:
-            useforpeak &= ~self['nondet']
-        for key, value in criteria.items():
-            if isinstance(value, list):
-                subuseforpeak = np.tile(False, len(self))
-                for val in value:
-                    subuseforpeak |= self[key] == val
-            else:
-                subuseforpeak = self[key] == value
-            useforpeak &= subuseforpeak
-        if np.any(useforpeak):
-            peaktable = self[useforpeak]
+            criteria['nondet'] = False
+        peaktable = self.where(**criteria)
+        if len(peaktable):
             imin = np.argmin(peaktable['mag'])
             self.sn.peakdate = peaktable['MJD'][imin]
         else:
@@ -439,20 +430,10 @@ class LC(Table):
                 marker = 'telescope'
             else:
                 marker = 'o'
-        plotthese = np.tile(True, len(self))
         criteria = {key: val for key, val in kwargs.items() if key in self.colnames}
         plot_kwargs = {key: val for key, val in kwargs.items() if key not in self.colnames}
-        for key, value in criteria.items():
-            if isinstance(value, list):
-                subplotthese = np.tile(False, len(self))
-                for val in value:
-                    subplotthese |= self[key] == val
-            else:
-                subplotthese = self[key] == value
-            plotthese &= subplotthese
-        if np.any(plotthese):
-            plottable = self[plotthese]
-        else:
+        plottable = self.where(**criteria)
+        if len(plottable) == 0:
             return
         groupby = set()
         if color in plottable.keys():

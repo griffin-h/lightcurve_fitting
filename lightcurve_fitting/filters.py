@@ -196,6 +196,9 @@ class Filter:
                 ax2.set_xlabel('Frequency (THz)')
                 ax2.set_ylabel('Transmission')
 
+            self.wl_eff = wl_eff
+            self.dwl = dwl
+            self.wl_range = (wl_eff.value - wl0, wl1 - wl_eff.value)
             self.freq_eff = freq_eff
             self.dfreq = -dfreq
             self.freq_range = (freq_eff.value - freq0, freq1 - freq_eff.value)

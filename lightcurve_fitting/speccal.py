@@ -339,11 +339,14 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
         filt.read_curve()
         filt.trans.sort('freq')
 
+    plt.ion()
+    fig = plt.figure(figsize=(8., 6.))
+
     for spec in spectra:
         wl, flux, time, _, _ = readspec(spec)
         mjd = time.mjd
         if show:
-            fig = plt.figure(figsize=(8., 6.))
+            fig.clf()
             ax1 = plt.subplot(211)
             lc.plot(xcol='MJD', ycol='flux', offset_factor=0)
             ax1.axvline(mjd)
@@ -376,7 +379,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
             ratio = flux_lc / flux_spec
             if show:
                 ax2.axvspan(freq0, freq1, color=filt.color, alpha=0.2)
-                ax2.plot(filt.freq_eff, flux_lc, marker='o', color=filt.color, zorder=5)
+                ax2.plot(filt.freq_eff, flux_lc, marker='o', zorder=5, **filt.plotstyle)
             ratios.append(ratio)
             freqs.append(filt.freq_eff.value)
         if not ratios:
@@ -399,7 +402,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
             if order:
                 ax2.plot(nu, Fnu * corr, color='C2', label='rescaled & warped')
                 plt.legend(loc='best')
-            plt.show()
+            plt.pause(0.1)
             ans = input('accept this scale? [Y/n] ')
         if not show or ans.lower() != 'n':
             data_out = np.array([wl[good], flux[good] * corr]).T

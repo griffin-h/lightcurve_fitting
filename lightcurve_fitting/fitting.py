@@ -9,7 +9,7 @@ from pkg_resources import resource_filename
 
 def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p_up=None,
                     nwalkers=100, nsteps=1000, nsteps_burnin=1000, model_kwargs=None,
-                    show=False, save_sampler_as='', use_sigma=False):
+                    show=False, save_plot_as='', save_sampler_as='', use_sigma=False):
     """
     Fit an analytical model to observed photometry using a Markov-chain Monte Carlo routine
 
@@ -41,6 +41,8 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
         Keyword arguments to be passed to the model
     show : bool, optional
         If True, plot and display the chain histories
+    save_plot_as : str, optional
+        Save a plot of the chain histories to this filename
     save_sampler_as : str, optional
         Save the aggregated chain histories to this filename
     use_sigma : bool, optional
@@ -120,8 +122,10 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
 
     starting_guesses = np.random.rand(nwalkers, ndim) * (p_up - p_lo) + p_lo
     pos, _, _ = sampler.run_mcmc(starting_guesses, nsteps_burnin, progress=True, progress_kwargs={'desc': ' Burn-in'})
-    if show:
-        f1, ax1 = plt.subplots(ndim, figsize=(6, 2 * ndim))
+
+    if show or save_plot_as:
+        fig, ax = plt.subplots(ndim, 2, figsize=(12., 2. * ndim))
+        ax1 = ax[:, 0]
         for i in range(ndim):
             ax1[i].plot(sampler.chain[:, :, i].T, 'k', alpha=0.2)
             ax1[i].set_ylabel(model.axis_labels[i])
@@ -134,14 +138,23 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
         np.save(save_sampler_as, sampler.flatchain)
         print('saving sampler.flatchain as ' + save_sampler_as)
 
-    if show:
-        f2, ax2 = plt.subplots(ndim, figsize=(6, 2 * ndim))
+    if show or save_plot_as:
+        ax2 = ax[:, 1]
         for i in range(ndim):
             ax2[i].plot(sampler.chain[:, :, i].T, 'k', alpha=0.2)
             ax2[i].set_ylabel(model.axis_labels[i])
+            ax2[i].yaxis.set_label_position('right')
+            ax2[i].yaxis.tick_right()
         ax2[0].set_title('After Burn In')
         ax2[-1].set_xlabel('Step Number')
-        plt.show()
+        fig.tight_layout()
+
+        if save_plot_as:
+            print('saving chain plot as ' + save_plot_as)
+            fig.savefig(save_plot_as)
+
+        if show:
+            plt.show()
 
     return sampler
 

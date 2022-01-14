@@ -4,6 +4,7 @@ Release History
 
 Unreleased
 ----------
+* Fix bug in min/max validity times when using intrinsic scatter parameter
 * Don't italicize some filter names
 * Return axes objects in light curve corner plot
 * Give option to plot magnitudes in light curve corner plot

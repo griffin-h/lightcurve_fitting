@@ -169,7 +169,7 @@ If you used the Rabinak & Waxman option, the model fails even earlier, but you w
 .. code-block:: python
 
     p_mean = sampler.flatchain.mean(axis=0)
-    t_max = ShockCooling2.t_max(*p_mean)
+    t_max = ShockCooling2.t_max(p_mean)
     print(t_max)
     if lc_early['MJD'].max() > t_max:
         print('Warning: your model is not valid for all your observations')

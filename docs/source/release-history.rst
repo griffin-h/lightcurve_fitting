@@ -12,6 +12,7 @@ Unreleased
 * Add option to calculate phase in rest-frame hours
 * Issue warning when filters do not receive extinction correction
 * Switch from to generic filter curves from the SVO Filter Profile Service where possible
+* Add progress bars for MCMC fitting
 
 v0.3.0 (2021-09-22)
 -------------------

@@ -14,6 +14,7 @@ Unreleased
 * Switch from to generic filter curves from the SVO Filter Profile Service where possible
 * Add progress bars for MCMC fitting
 * Add option to save chain plots. Burn-in and sampling plots are combined into the same figure.
+* Add option to save chain in bolometric light curve fitting
 
 v0.3.0 (2021-09-22)
 -------------------

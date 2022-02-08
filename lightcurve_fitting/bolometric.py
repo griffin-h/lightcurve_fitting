@@ -106,7 +106,7 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
         elif prev_temp is not None:
             return prev_temp.logpdf(p[0]) - np.log(p[1])
         else:
-            return -np.sum(np.log(p))
+            return -np.log(p[1])
 
     def log_likelihood(p, filtobj, y, dy):
         y_fit = blackbody_to_filters(filtobj, p[0], p[1], z, cutoff_freq)

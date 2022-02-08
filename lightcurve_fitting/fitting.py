@@ -9,7 +9,7 @@ from pkg_resources import resource_filename
 
 def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p_up=None,
                     nwalkers=100, nsteps=1000, nsteps_burnin=1000, model_kwargs=None,
-                    show=False, save_sampler_as='', use_sigma=False):
+                    show=False, save_plot_as='', save_sampler_as='', use_sigma=False):
     """
     Fit an analytical model to observed photometry using a Markov-chain Monte Carlo routine
 
@@ -41,6 +41,8 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
         Keyword arguments to be passed to the model
     show : bool, optional
         If True, plot and display the chain histories
+    save_plot_as : str, optional
+        Save a plot of the chain histories to this filename
     save_sampler_as : str, optional
         Save the aggregated chain histories to this filename
     use_sigma : bool, optional
@@ -119,9 +121,11 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior)
 
     starting_guesses = np.random.rand(nwalkers, ndim) * (p_up - p_lo) + p_lo
-    pos, _, _ = sampler.run_mcmc(starting_guesses, nsteps_burnin)
-    if show:
-        f1, ax1 = plt.subplots(ndim, figsize=(6, 2 * ndim))
+    pos, _, _ = sampler.run_mcmc(starting_guesses, nsteps_burnin, progress=True, progress_kwargs={'desc': ' Burn-in'})
+
+    if show or save_plot_as:
+        fig, ax = plt.subplots(ndim, 2, figsize=(12., 2. * ndim))
+        ax1 = ax[:, 0]
         for i in range(ndim):
             ax1[i].plot(sampler.chain[:, :, i].T, 'k', alpha=0.2)
             ax1[i].set_ylabel(model.axis_labels[i])
@@ -129,26 +133,35 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
         ax1[-1].set_xlabel('Step Number')
 
     sampler.reset()
-    sampler.run_mcmc(pos, nsteps)
+    sampler.run_mcmc(pos, nsteps, progress=True, progress_kwargs={'desc': 'Sampling'})
     if save_sampler_as:
         np.save(save_sampler_as, sampler.flatchain)
         print('saving sampler.flatchain as ' + save_sampler_as)
 
-    if show:
-        f2, ax2 = plt.subplots(ndim, figsize=(6, 2 * ndim))
+    if show or save_plot_as:
+        ax2 = ax[:, 1]
         for i in range(ndim):
             ax2[i].plot(sampler.chain[:, :, i].T, 'k', alpha=0.2)
             ax2[i].set_ylabel(model.axis_labels[i])
+            ax2[i].yaxis.set_label_position('right')
+            ax2[i].yaxis.tick_right()
         ax2[0].set_title('After Burn In')
         ax2[-1].set_xlabel('Step Number')
-        plt.show()
+        fig.tight_layout()
+
+        if save_plot_as:
+            print('saving chain plot as ' + save_plot_as)
+            fig.savefig(save_plot_as)
+
+        if show:
+            plt.show()
 
     return sampler
 
 
 def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
                       num_models_to_plot=100, lcaxis_posn=(0.7, 0.55, 0.2, 0.4),
-                      filter_spacing=0.5, tmin=None, tmax=None, t0_offset=None, save_plot_as=''):
+                      filter_spacing=0.5, tmin=None, tmax=None, t0_offset=None, save_plot_as='', ycol='lum'):
     """
     Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model light curves.
 
@@ -177,11 +190,17 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         the model light curve.
     save_plot_as : str, optional
         Filename to which to save the resulting plot
+    ycol : str, optional
+        Quantity to plot on the light curve inset. Choices: "lum" (default) or "absmag".
 
     Returns
     -------
     fig : matplotlib.pyplot.Figure
         Figure object containing the plot
+    corner_ax : array-like
+        Array of matplotlib.pyplot.Axes objects corresponding to the corner plot
+    ax : matplotlib.pyplot.Axes
+        Axes object for the light curve inset
     """
     if model_kwargs is None:
         model_kwargs = {}
@@ -219,23 +238,31 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
     y_fit = model(xfit, ufilts, *ps, **model_kwargs)
 
     mjd_offset = np.floor(tmin)
-    if y_fit.max() > 0.:
+    if ycol == 'lum':
+        dycol = 'dlum'
         yscale = 10. ** np.round(np.log10(y_fit.max()))
-    else:
+        ylabel = 'Luminosity $L_\\nu$ (10$^{{{:.0f}}}$ erg s$^{{-1}}$ Hz$^{{-1}}$) + Offset'.format(
+            np.log10(yscale) + 7)  # W --> erg / s
+    elif ycol == 'absmag':
+        dycol = 'dmag'
         yscale = 1.
+        ylabel = 'Absolute Magnitude + Offset'
+        y_fit = [[[filt.M0]] for filt in ufilts] - 2.5 * np.log10(y_fit)
+        ax.invert_yaxis()
+    else:
+        raise ValueError(f'ycol="{ycol}" is not recognized. Use "lum" or "absmag".')
     offset = -len(ufilts) // 2 * filter_spacing
     for filt, yfit in zip(ufilts, y_fit):
         offset += filter_spacing
         lc_filt = lc.where(filter=filt)
-        ax.errorbar(lc_filt['MJD'] - mjd_offset, lc_filt['lum'] / yscale + offset, lc_filt['dlum'] / yscale,
+        ax.errorbar(lc_filt['MJD'] - mjd_offset, lc_filt[ycol] / yscale + offset, lc_filt[dycol] / yscale,
                     ls='none', marker='o', **filt.plotstyle)
         ax.plot(xfit - mjd_offset, yfit / yscale + offset, color=filt.linecolor, alpha=0.05)
-        txt = '${}{:+.1f}$'.format(filt.name, offset) if offset else filt.name
+        txt = f'${filt.name}{offset:+.1f}$' if filt.italics else rf'$\mathrm{{{filt.name}}}{offset:+.1f}$'
         ax.text(1.03, yfit[-1, 0] / yscale + offset, txt, color=filt.textcolor,
                 ha='left', va='center', transform=ax.get_yaxis_transform())
     ax.set_xlabel('MJD $-$ {:.0f}'.format(mjd_offset))
-    ax.set_ylabel('Luminosity $L_\\nu$ (10$^{{{:.0f}}}$ erg s$^{{-1}}$ Hz$^{{-1}}$) + Offset'
-                  .format(np.log10(yscale) + 7))  # W --> erg / s
+    ax.set_ylabel(ylabel)
 
     paramtexts = format_credible_interval(sampler_flatchain, varnames=model.input_names, units=model.units)
     fig.text(0.45, 0.95, '\n'.join(paramtexts), va='top', ha='center', fontdict={'size': 'large'})
@@ -243,7 +270,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         fig.savefig(save_plot_as)
         print('saving figure as ' + save_plot_as)
 
-    return fig
+    return fig, corner_axes, ax
 
 
 def format_credible_interval(x, sigfigs=1, percentiles=(15.87, 50., 84.14), axis=0, varnames=None, units=None):

@@ -2,6 +2,7 @@
 
 import numpy as np
 from .lightcurve import LC
+from .filters import filtdict
 from astropy import constants as const, units as u
 from astropy.io import fits
 from astropy.wcs import WCS
@@ -12,6 +13,7 @@ import matplotlib.pyplot as plt
 import os
 import warnings
 import json
+import re
 
 
 def removebadcards(hdr):
@@ -85,7 +87,10 @@ def readfitsspec(filename, header=False, ext=None):
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
         wcs = WCS(removebadcards(hdr), naxis=1, relax=False, fix=False)
-    wl = wcs.wcs_pix2world(np.arange(len(flux)), 0)[0]
+    if 'CUNIT1' in hdr:
+        wl = wcs.pixel_to_world(np.arange(len(flux))).to(hdr['CUNIT1']).value
+    else:
+        wl = wcs.wcs_pix2world(np.arange(len(flux)), 0)[0]
     if header:
         return wl, flux, hdr
     else:
@@ -123,7 +128,7 @@ def convert_spectrum_units(wl, flux, hdr, default_bunit='erg / (Angstrom cm2 s)'
         bunit = bunit.replace('Ang', 'Angstrom')
     if 'Angstrom' not in bunit:
         bunit = bunit.replace('A', 'Angstrom')
-    cunit = hdr.get('CUNIT1', default_cunit)
+    cunit = hdr.get('CUNIT1', hdr.get('XUNITS', default_cunit))
     if cunit.lower() == 'angstroms':
         cunit = cunit.rstrip('s')
     wl = u.Quantity(wl, cunit).to(default_cunit)
@@ -213,22 +218,23 @@ def readspec(f, verbose=False):
         x, y, hdr = readfitsspec(f, header=True)
     elif ext == '.json':
         x, y, hdr = readOSCspec(f)
-    elif ext in ['.ascii', '.asci', '.flm', '.txt', '.dat']:
+    elif ext in ['.ascii', '.asci', '.flm', '.txt', '.dat', '.csv']:
         t = Table.read(f, format='ascii')
         # assume it's the first two columns, regardless of if column names are given
         x = t.columns[0]
         y = t.columns[1]
-        if 'comments' in t.meta:
-            hdr = {kwd.strip(' #'): val.strip(' "\'') for kwd, val in
-                   [(line.split('=')[0], '='.join(line.split(' / ')[0].split('=')[1:])) for line in t.meta['comments']
-                    if '=' in line]}
-            # (anything before first '=', anything between first '=' and ' / ')
-        else:
-            hdr = {}
+        hdr = {}
+        comments = t.meta.get('comments', [])
+        for line in comments:
+            match = re.search('([^ ]*) *[=:] *([^/]*)', line)
+            if match is None:
+                continue
+            kwd, val = match.groups()  # (anything before first '='/':', anything between first '='/':' and '/')
+            hdr[kwd.strip(' #')] = val.strip(' "\'')
     else:
         raise Exception('ext not recognized:', f)
-
-    for kwd in ['MJD-OBS', 'MJD_OBS', 'MJD', 'JD', 'DATE-AVG', 'UTMIDDLE', 'DATE-OBS', 'DATE_BEG', 'UTSHUT']:
+    for kwd in ['MJD-OBS', 'MJD_OBS', 'MJD', 'JD', 'DATE-AVG', 'UTMIDDLE', 'DATE-OBS', 'DATE_BEG', 'UTSHUT', 'OBS_DATE',
+                'AVE_MJD']:
         if kwd in hdr and hdr[kwd]:
             if 'MJD' in kwd:
                 date = Time(float(hdr[kwd]), format='mjd')
@@ -238,6 +244,8 @@ def readspec(f, verbose=False):
                 date = Time(float(hdr[kwd]) + 2400000, format='jd')
             elif 'T' in hdr[kwd]:
                 date = Time(hdr[kwd])
+            elif kwd == 'OBS_DATE':
+                date = Time(hdr[kwd].split('+')[0])
             elif '-' in hdr[kwd]:
                 for kwd2 in ['UTMIDDLE', 'EXPSTART', 'UT']:
                     if kwd2 in hdr and type(hdr[kwd2]) == str and ':' in hdr[kwd2]:
@@ -255,7 +263,6 @@ def readspec(f, verbose=False):
                 continue
             break
     else:  # hope it's in the filename
-        import re
         m1 = re.search('24[0-9][0-9][0-9][0-9][0-9]\.[0-9]+', f)  # JD w/1 or more decimals
         m2 = re.search('([12][90][0-9][0-9])-?(0[0-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])', f)  # YYYYMMDD
         m_tns = re.search(
@@ -279,10 +286,20 @@ def readspec(f, verbose=False):
 
     if 'TELESCOP' in hdr:
         telescope = hdr['TELESCOP'].strip()
+    elif 'TELESCOPE' in hdr:
+        telescope = hdr['TELESCOPE'].strip()
+    elif 'OBSERVAT' in hdr:
+        telescope = hdr['OBSERVAT'].strip()
     else:
         telescope = ''
     if 'INSTRUME' in hdr:
         instrument = hdr['INSTRUME'].strip()
+    elif 'INSTRUMENT' in hdr:
+        instrument = hdr['INSTRUMENT'].strip()
+    elif 'INSTR' in hdr:
+        instrument = hdr['INSTR'].strip()
+    elif 'INSTRUMENT_ID' in hdr:
+        instrument = hdr['INSTRUMENT_ID']
     else:
         instrument = ''
 
@@ -315,7 +332,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
         Plot the observed light curve and the uncalibrated and calibrated spectra, and ask whether to save the results
     """
     if filters is not None:
-        lc = lc.where(filt=filters)
+        lc = lc.where(filter=[filtdict[f] for f in filters])
     lc.calcFlux()
     lc.sort('MJD')
     filts = set(lc['filter'])
@@ -324,11 +341,14 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
         filt.read_curve()
         filt.trans.sort('freq')
 
+    plt.ion()
+    fig = plt.figure(figsize=(8., 6.))
+
     for spec in spectra:
         wl, flux, time, _, _ = readspec(spec)
         mjd = time.mjd
         if show:
-            fig = plt.figure(figsize=(8., 6.))
+            fig.clf()
             ax1 = plt.subplot(211)
             lc.plot(xcol='MJD', ycol='flux', offset_factor=0)
             ax1.axvline(mjd)
@@ -336,10 +356,10 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
             ax1.set_ylabel('$F_\\nu$ (W Hz$^{-1}$)')
             ax2 = plt.subplot(212)
         good = ~np.isnan(flux)
-        wl = wl[good] * u.angstrom
+        lam = wl[good] * u.angstrom
         Flam = flux[good] * u.erg / u.s / u.angstrom / u.cm**2
-        nu = const.c / wl
-        Fnu = (Flam * wl / nu).to(u.W / u.Hz / u.m**2).value[::-1]
+        nu = const.c / lam
+        Fnu = (Flam * lam / nu).to(u.W / u.Hz / u.m**2).value[::-1]
         nu = nu.to(u.THz).value[::-1]
         if subtract_percentile is not None:
             Fnu -= np.nanpercentile(Fnu, subtract_percentile)
@@ -361,12 +381,13 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
             ratio = flux_lc / flux_spec
             if show:
                 ax2.axvspan(freq0, freq1, color=filt.color, alpha=0.2)
-                ax2.plot(filt.freq_eff, flux_lc, marker='o', color=filt.color, zorder=5)
+                ax2.plot(filt.freq_eff, flux_lc, marker='o', zorder=5, **filt.plotstyle)
             ratios.append(ratio)
             freqs.append(filt.freq_eff.value)
         if not ratios:
             print('no filters for', spec)
-            plt.close(fig)
+            if show:
+                plt.close(fig)
             continue
         scale = np.mean(ratios)
         if order:
@@ -383,7 +404,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
             if order:
                 ax2.plot(nu, Fnu * corr, color='C2', label='rescaled & warped')
                 plt.legend(loc='best')
-            plt.show()
+            plt.pause(0.1)
             ans = input('accept this scale? [Y/n] ')
         if not show or ans.lower() != 'n':
             data_out = np.array([wl[good], flux[good] * corr]).T

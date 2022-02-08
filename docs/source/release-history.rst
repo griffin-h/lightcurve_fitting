@@ -2,6 +2,21 @@
 Release History
 ===============
 
+v0.4.0 (2022-02-08)
+-------------------
+* Fix bug in min/max validity times when using intrinsic scatter parameter
+* Change prior on blackbody temperature from log-uniform to uniform
+* Don't italicize some filter names
+* Return axes objects in light curve corner plot
+* Give option to plot magnitudes in light curve corner plot
+* Fix plotting of wavelength when units are supplied
+* Add option to calculate phase in rest-frame hours
+* Issue warning when filters do not receive extinction correction
+* Switch from to generic filter curves from the SVO Filter Profile Service where possible
+* Add progress bars for MCMC fitting
+* Add option to save chain plots. Burn-in and sampling plots are combined into the same figure.
+* Add option to save chain in bolometric light curve fitting
+
 v0.3.0 (2021-09-22)
 -------------------
 * Switch the default table format from ``'ascii.fixed_width'`` to just ``'ascii'``

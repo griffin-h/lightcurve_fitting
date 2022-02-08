@@ -31,6 +31,7 @@ arrow = Arrow(0.2, 0.3)
 othermarkers = ('o', *MarkerStyle.filled_markers[2:])
 itermarkers = itertools.cycle(othermarkers)
 usedmarkers = []
+itercolors = itertools.cycle(plt.rcParams['axes.prop_cycle'].by_key()['color'])
 
 # if you edit this list, also add the new names to usage.rst
 column_names = {
@@ -297,10 +298,19 @@ class LC(Table):
             self.meta['hostext'] = {}
 
         self['absmag'] = self['mag'].data - self.meta['dm']
-        for filt, A in self.meta['extinction'].items():
-            self['absmag'][self['filter'] == filtdict[filt]] -= A
-        for filt, A in self.meta['hostext'].items():
-            self['absmag'][self['filter'] == filtdict[filt]] -= A
+        for filtobj in set(self['filter']):
+            for filt in filtobj.names:
+                if filt in self.meta['extinction']:
+                    self['absmag'][self['filter'] == filtobj] -= self.meta['extinction'][filt]
+                    break
+            else:
+                print('MW extinction not applied to filter', filtobj)
+            for filt in filtobj.names:
+                if filt in self.meta['hostext']:
+                    self['absmag'][self['filter'] == filtobj] -= self.meta['hostext'][filt]
+                    break
+            else:
+                print('host extinction not applied to filter', filtobj)
 
     def calcLum(self, nondetSigmas=None):
         """
@@ -326,26 +336,17 @@ class LC(Table):
             Use only a subset of the light curve matching some criteria when calculating the peak date (stored in
             ``self.sn.peakcriteria``
         """
-        useforpeak = np.ones_like(self, bool)
         if 'nondet' in self.colnames:
-            useforpeak &= ~self['nondet']
-        for key, value in criteria.items():
-            if isinstance(value, list):
-                subuseforpeak = np.tile(False, len(self))
-                for val in value:
-                    subuseforpeak |= self[key] == val
-            else:
-                subuseforpeak = self[key] == value
-            useforpeak &= subuseforpeak
-        if np.any(useforpeak):
-            peaktable = self[useforpeak]
+            criteria['nondet'] = False
+        peaktable = self.where(**criteria)
+        if len(peaktable):
             imin = np.argmin(peaktable['mag'])
             self.sn.peakdate = peaktable['MJD'][imin]
         else:
             self.sn.peakdate = np.nan
         self.sn.peakcriteria = criteria
 
-    def calcPhase(self, rdsp=False):
+    def calcPhase(self, rdsp=False, hours=False):
         """
         Calculate the rest-frame ``'phase'`` column from the ``'MJD'`` column and ``self.sn.refmjd`` and ``self.sn.z``
 
@@ -374,6 +375,12 @@ class LC(Table):
             self['dphase0'] = self['dMJD0'] / (1. + self.meta['redshift'])
         if 'dMJD1' in self.colnames:
             self['dphase1'] = self['dMJD1'] / (1. + self.meta['redshift'])
+        if hours:
+            self['phase'] *= 24.
+            if 'dphase0' in self.colnames:
+                self['dphase0'] *= 24.
+            if 'dphase1' in self.colnames:
+                self['dphase1'] *= 24.
 
     def plot(self, xcol='phase', ycol='absmag', offset_factor=1., color='filter', marker=None, use_lines=False,
              normalize=False, fillmark=True, **kwargs):
@@ -423,29 +430,19 @@ class LC(Table):
                 marker = 'telescope'
             else:
                 marker = 'o'
-        plotthese = np.tile(True, len(self))
         criteria = {key: val for key, val in kwargs.items() if key in self.colnames}
         plot_kwargs = {key: val for key, val in kwargs.items() if key not in self.colnames}
-        for key, value in criteria.items():
-            if isinstance(value, list):
-                subplotthese = np.tile(False, len(self))
-                for val in value:
-                    subplotthese |= self[key] == val
-            else:
-                subplotthese = self[key] == value
-            plotthese &= subplotthese
-        if np.any(plotthese):
-            plottable = self[plotthese]
-        else:
+        plottable = self.where(**criteria)
+        if len(plottable) == 0:
             return
-        groupby = []
+        groupby = set()
         if color in plottable.keys():
-            groupby.append(color)
+            groupby.add(color)
         if marker in plottable.keys():
-            groupby.append(marker)
+            groupby.add(marker)
         if groupby:
-            plottable = plottable.group_by(groupby)
-        for g in plottable.groups:
+            plottable = plottable.group_by(list(groupby))
+        for g, k in zip(plottable.groups, plottable.groups.keys):
             filt = g['filter'][0]
             if color == 'filter':
                 col = filt.color
@@ -454,8 +451,7 @@ class LC(Table):
                 col = self.sn.plotcolor
                 mec = col if col not in ['w', '#FFFFFF'] else 'k'
             else:
-                col = 'k'
-                mec = 'k'
+                col = mec = next(itercolors)
             mfc = col if fillmark else 'none'
             if marker == 'name':
                 mark = self.sn.marker
@@ -466,14 +462,12 @@ class LC(Table):
                             self.markers[g[marker][0]] = nextmarker
                             break
                     else:
-                        for nextmarker in itermarkers:
-                            self.markers[g[marker][0]] = nextmarker
-                            break
+                        self.markers[g[marker][0]] = next(itermarkers)
                 mark = self.markers[g[marker][0]]
             elif marker in MarkerStyle.markers:
                 mark = marker
             else:
-                mark = MarkerStyle.markers[0]
+                mark = next(itermarkers)
             usedmarkers.append(mark)
             if use_lines:
                 g.sort(xcol)
@@ -489,12 +483,14 @@ class LC(Table):
                 y -= self.sn.peakabsmag
             if 'mag' in ycol and 'nondet' in g.keys() and marker:  # don't plot if no markers used
                 plt.plot(x[g['nondet']], y[g['nondet']], marker=arrow, linestyle='none', ms=25, mec=mec, **plot_kwargs)
-            if len(filt.name) >= 4 and not filt.offset:
-                label = filt.name
-            elif offset_factor:
-                label = '${}{:+.0f}$'.format(filt.name, -filt.offset * offset_factor)
-            else:
-                label = '${}$'.format(filt.name)
+            if 'filter' in k.colnames:
+                if len(filt.name) >= 4 and not filt.offset:
+                    k['filter'] = filt.name
+                elif offset_factor:
+                    k['filter'] = '${}{:+.0f}$'.format(filt.name, -filt.offset * offset_factor)
+                else:
+                    k['filter'] = '${}$'.format(filt.name)
+            label = ' '.join([str(kv) for kv in k.values()])
             if self.sn is None:
                 linestyle = None
                 linewidth = None

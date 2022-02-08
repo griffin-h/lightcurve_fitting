@@ -53,7 +53,7 @@ def pseudo(temp, radius, z, filter0=filtdict['I'], filter1=filtdict['U'], cutoff
 
 
 def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, burnin_steps=200, steps=100,
-                   T_range=(1., 100.), R_range=(0.01, 1000.), cutoff_freq=np.inf, prev_temp=None):
+                   T_range=(1., 100.), R_range=(0.01, 1000.), cutoff_freq=np.inf, prev_temp=None, save_chains=False):
     """
     Fit a blackbody spectrum to a spectral energy distribution using a Markov-chain Monte Carlo routine
 
@@ -83,6 +83,8 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
         Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)
     prev_temp : scipy.stats.gaussian_kde, optional
         Temperature distribution from fitting the previous epoch's SED. If given, this is used as the prior.
+    save_chains : bool, optional
+        If True, save the MCMC chain histories to the directory ``outpath``. Default: only save the corner plot
 
     Returns
     -------
@@ -104,7 +106,7 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
         elif prev_temp is not None:
             return prev_temp.logpdf(p[0]) - np.log(p[1])
         else:
-            return -np.sum(np.log(p))
+            return -np.log(p[1])
 
     def log_likelihood(p, filtobj, y, dy):
         y_fit = blackbody_to_filters(filtobj, p[0], p[1], z, cutoff_freq)
@@ -155,6 +157,9 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
     filename = os.path.join(outpath, f'{mjdavg:.1f}.png')
     print(filename)
     f4.savefig(filename)
+    if save_chains:
+        chain_filename = os.path.join(outpath, f'{mjdavg:.1f}.npy')
+        np.save(chain_filename, sampler.flatchain)
     if show:
         plt.show()
     else:
@@ -458,7 +463,7 @@ def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1, xcol='MJD'):
 
 def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=200, steps=100,
                          T_range=(1., 100.), R_range=(0.01, 1000.), save_table_as=None, min_nfilt=3,
-                         cutoff_freq=np.inf, show=False, colors=None, do_mcmc=True):
+                         cutoff_freq=np.inf, show=False, colors=None, do_mcmc=True, save_chains=False):
     """
     Calculate the full bolometric light curve from a table of broadband photometry
 
@@ -469,7 +474,7 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
     z : float
         Redshift between the blackbody (rest frame) and the filters (observed frame)
     outpath : str, optional
-        Directory to which to save the corner plots. Default: current directory
+        Directory to which to save the corner plots and MCMC chains. Default: current directory
     res : float, optional
         Approximate resolution for grouping, in days. Default: 1 day.
     nwalkers : int, optional
@@ -495,6 +500,8 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
     do_mcmc : bool, optional
         If True (default), also fit the spectral energy distribution with an MCMC routine. This is slower but gives
         more realistic uncertainties.
+    save_chains : bool, optional
+        If True, save the MCMC chain histories to the directory ``outpath``. Default: only save the corner plot
 
     Returns
     -------
@@ -567,7 +574,7 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
                 raise ValueError
             sampler = blackbody_mcmc(epoch1, z, p0, outpath=outpath, nwalkers=nwalkers, burnin_steps=burnin_steps,
                                      steps=steps, T_range=T_range, R_range=R_range, cutoff_freq=cutoff_freq, show=show,
-                                     prev_temp=prev_temp)
+                                     prev_temp=prev_temp, save_chains=save_chains)
             L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq=cutoff_freq)
             (T_mcmc, R_mcmc), (dT0_mcmc, dR0_mcmc), (dT1_mcmc, dR1_mcmc) = median_and_unc(sampler.flatchain)
             L_mcmc, dL_mcmc0, dL_mcmc1 = median_and_unc(L_mcmc_opt)

@@ -1,74 +1,37 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>lightcurve_fitting.bolometric &mdash; lightcurve_fitting 0.2.0.post1+g732a255 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
-
-  
-  
-  
-  
-
-  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>lightcurve_fitting.bolometric &mdash; lightcurve_fitting 0.4.0.post2+gbf4f34f documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
         <script src="../../_static/clipboard.min.js"></script>
         <script src="../../_static/copybutton.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> lightcurve_fitting
-          
-
-          
+            <a href="../../index.html" class="icon icon-home"> lightcurve_fitting
           </a>
-
-          
-            
-            
               <div class="version">
-                0.2.0.post1+g732a255
+                0.4.0.post2+gbf4f34f
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -76,18 +39,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
@@ -95,67 +47,30 @@
 <li class="toctree-l1"><a class="reference internal" href="../../release-history.html">Release History</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">lightcurve_fitting</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../index.html">Module code</a> &raquo;</li>
-        
       <li>lightcurve_fitting.bolometric</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for lightcurve_fitting.bolometric</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">.filters</span> <span class="kn">import</span> <span class="n">all_filters</span><span class="p">,</span> <span class="n">filtdict</span>
 <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">blackbody_to_filters</span><span class="p">,</span> <span class="n">planck_fast</span>
@@ -167,12 +82,13 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">AutoLocator</span>
-<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span><span class="p">,</span> <span class="n">OptimizeWarning</span>
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gaussian_kde</span>
 <span class="kn">import</span> <span class="nn">emcee</span>
 <span class="kn">import</span> <span class="nn">corner</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_filename</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="k">for</span> <span class="n">filt</span> <span class="ow">in</span> <span class="n">all_filters</span><span class="p">:</span>
     <span class="n">filt</span><span class="o">.</span><span class="n">read_curve</span><span class="p">()</span>
@@ -211,7 +127,7 @@
 
 
 <div class="viewcode-block" id="blackbody_mcmc"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.blackbody_mcmc">[docs]</a><span class="k">def</span> <span class="nf">blackbody_mcmc</span><span class="p">(</span><span class="n">epoch1</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outpath</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">nwalkers</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">burnin_steps</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                   <span class="n">T_range</span><span class="o">=</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">),</span> <span class="n">R_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">1000.</span><span class="p">),</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">prev_temp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                   <span class="n">T_range</span><span class="o">=</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">),</span> <span class="n">R_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">1000.</span><span class="p">),</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">prev_temp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_chains</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fit a blackbody spectrum to a spectral energy distribution using a Markov-chain Monte Carlo routine</span>
 
@@ -241,6 +157,8 @@
 <span class="sd">        Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)</span>
 <span class="sd">    prev_temp : scipy.stats.gaussian_kde, optional</span>
 <span class="sd">        Temperature distribution from fitting the previous epoch&#39;s SED. If given, this is used as the prior.</span>
+<span class="sd">    save_chains : bool, optional</span>
+<span class="sd">        If True, save the MCMC chain histories to the directory ``outpath``. Default: only save the corner plot</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -262,7 +180,7 @@
         <span class="k">elif</span> <span class="n">prev_temp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">prev_temp</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">filtobj</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dy</span><span class="p">):</span>
         <span class="n">y_fit</span> <span class="o">=</span> <span class="n">blackbody_to_filters</span><span class="p">(</span><span class="n">filtobj</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">z</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="p">)</span>
@@ -313,6 +231,9 @@
     <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outpath</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">mjdavg</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">.png&#39;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="n">f4</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">save_chains</span><span class="p">:</span>
+        <span class="n">chain_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outpath</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">mjdavg</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">.npy&#39;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">chain_filename</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">flatchain</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
@@ -491,8 +412,11 @@
     <span class="k">def</span> <span class="nf">planck_cutoff</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">planck_fast</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="p">)</span>
 
-    <span class="n">p0</span><span class="p">,</span> <span class="n">cov</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">planck_cutoff</span><span class="p">,</span> <span class="n">epoch1</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">z</span><span class="p">),</span> <span class="n">epoch1</span><span class="p">[</span><span class="s1">&#39;lum&#39;</span><span class="p">],</span> <span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span>
-                        <span class="n">bounds</span><span class="o">=</span><span class="p">([</span><span class="n">T_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">R_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">T_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">R_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]]))</span>
+    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">epoch1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">OptimizeWarning</span><span class="p">)</span>
+        <span class="n">p0</span><span class="p">,</span> <span class="n">cov</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">planck_cutoff</span><span class="p">,</span> <span class="n">epoch1</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">z</span><span class="p">),</span> <span class="n">epoch1</span><span class="p">[</span><span class="s1">&#39;lum&#39;</span><span class="p">],</span> <span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span>
+                            <span class="n">bounds</span><span class="o">=</span><span class="p">([</span><span class="n">T_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">R_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">T_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">R_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]]))</span>
     <span class="n">temp</span><span class="p">,</span> <span class="n">radius</span> <span class="o">=</span> <span class="n">p0</span>
     <span class="n">dtemp</span><span class="p">,</span> <span class="n">drad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">cov</span><span class="p">))</span>
     <span class="n">lum</span><span class="p">,</span> <span class="n">dlum</span> <span class="o">=</span> <span class="n">stefan_boltzmann</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">dtemp</span><span class="p">,</span> <span class="n">drad</span><span class="p">,</span> <span class="n">cov</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
@@ -571,7 +495,7 @@
     <span class="k">return</span> <span class="n">mags</span><span class="p">,</span> <span class="n">dmags</span><span class="p">,</span> <span class="n">lolims</span><span class="p">,</span> <span class="n">uplims</span></div>
 
 
-<div class="viewcode-block" id="plot_color_curves"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.plot_color_curves">[docs]</a><span class="k">def</span> <span class="nf">plot_color_curves</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">limit_length</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+<div class="viewcode-block" id="plot_color_curves"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.plot_color_curves">[docs]</a><span class="k">def</span> <span class="nf">plot_color_curves</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">limit_length</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s1">&#39;MJD&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the color curves calculated by :func:`calculate_bolometric`.</span>
 
@@ -594,13 +518,18 @@
     <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">filtdict</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">t</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">filtdict</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">has_masked_values</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">mask</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">all</span><span class="p">()):</span>
                 <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">:</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;d(</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">limit_length</span><span class="p">),</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;dMJD0&#39;</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;dMJD1&#39;</span><span class="p">]),</span> <span class="n">fmt</span><span class="o">=</span><span class="n">fmt</span><span class="p">,</span>
+        <span class="n">dcolor_colname</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;d(</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">)&#39;</span>
+        <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">has_masked_values</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">mask</span><span class="p">[</span><span class="n">dcolor_colname</span><span class="p">]</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">dcolor</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">dcolor_colname</span><span class="p">]</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">limit_length</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dcolor</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">dcolor_colname</span><span class="p">]</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">xcol</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="n">dcolor</span><span class="p">,</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;d</span><span class="si">{</span><span class="n">xcol</span><span class="si">}</span><span class="s1">0&#39;</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;d</span><span class="si">{</span><span class="n">xcol</span><span class="si">}</span><span class="s1">1&#39;</span><span class="p">]),</span> <span class="n">fmt</span><span class="o">=</span><span class="n">fmt</span><span class="p">,</span>
                      <span class="n">lolims</span><span class="o">=</span><span class="n">t</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;lolims(</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">],</span> <span class="n">uplims</span><span class="o">=</span><span class="n">t</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;uplims(</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;$</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">$&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;MJD&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Color (mag)&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">fig</span></div>
@@ -608,7 +537,7 @@
 
 <div class="viewcode-block" id="calculate_bolometric"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.calculate_bolometric">[docs]</a><span class="k">def</span> <span class="nf">calculate_bolometric</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">outpath</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">nwalkers</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">burnin_steps</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
                          <span class="n">T_range</span><span class="o">=</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">),</span> <span class="n">R_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">1000.</span><span class="p">),</span> <span class="n">save_table_as</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_nfilt</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-                         <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">do_mcmc</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                         <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">do_mcmc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save_chains</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the full bolometric light curve from a table of broadband photometry</span>
 
@@ -619,7 +548,7 @@
 <span class="sd">    z : float</span>
 <span class="sd">        Redshift between the blackbody (rest frame) and the filters (observed frame)</span>
 <span class="sd">    outpath : str, optional</span>
-<span class="sd">        Directory to which to save the corner plots. Default: current directory</span>
+<span class="sd">        Directory to which to save the corner plots and MCMC chains. Default: current directory</span>
 <span class="sd">    res : float, optional</span>
 <span class="sd">        Approximate resolution for grouping, in days. Default: 1 day.</span>
 <span class="sd">    nwalkers : int, optional</span>
@@ -645,6 +574,8 @@
 <span class="sd">    do_mcmc : bool, optional</span>
 <span class="sd">        If True (default), also fit the spectral energy distribution with an MCMC routine. This is slower but gives</span>
 <span class="sd">        more realistic uncertainties.</span>
+<span class="sd">    save_chains : bool, optional</span>
+<span class="sd">        If True, save the MCMC chain histories to the directory ``outpath``. Default: only save the corner plot</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -655,6 +586,7 @@
     <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
 
+    <span class="n">use_src</span> <span class="o">=</span> <span class="s1">&#39;source&#39;</span> <span class="ow">in</span> <span class="n">lc</span><span class="o">.</span><span class="n">colnames</span>
     <span class="n">t0</span> <span class="o">=</span> <span class="n">LC</span><span class="p">(</span><span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">,</span> <span class="s1">&#39;dMJD0&#39;</span><span class="p">,</span> <span class="s1">&#39;dMJD1&#39;</span><span class="p">,</span>
                    <span class="s1">&#39;temp&#39;</span><span class="p">,</span> <span class="s1">&#39;radius&#39;</span><span class="p">,</span> <span class="s1">&#39;dtemp&#39;</span><span class="p">,</span> <span class="s1">&#39;dradius&#39;</span><span class="p">,</span>  <span class="c1"># best fit from scipy.curve_fit</span>
                    <span class="s1">&#39;lum&#39;</span><span class="p">,</span> <span class="s1">&#39;dlum&#39;</span><span class="p">,</span>  <span class="c1"># total bolometric luminosity from scipy.curve_fit</span>
@@ -664,14 +596,16 @@
                    <span class="s1">&#39;L_int&#39;</span><span class="p">,</span>  <span class="c1"># pseudobolometric luminosity from direct integration of the SED</span>
                    <span class="s1">&#39;npoints&#39;</span><span class="p">]</span>
             <span class="o">+</span> <span class="n">colors</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;d(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;lolims(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">]</span>
-            <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;uplims(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;filts&#39;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">],</span>
+            <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;uplims(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;filts&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">([</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">use_src</span> <span class="k">else</span> <span class="p">[]),</span>
             <span class="n">dtype</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span>
                    <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
-            <span class="o">+</span> <span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;S6&#39;</span><span class="p">,</span> <span class="n">lc</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">],</span>
+            <span class="o">+</span> <span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;S6&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">([</span><span class="n">lc</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="k">if</span> <span class="n">use_src</span> <span class="k">else</span> <span class="p">[]),</span>
             <span class="n">masked</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">sampler</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">lc</span> <span class="o">=</span> <span class="n">lc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">lc</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lc</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.</span><span class="p">)]</span>
     <span class="k">for</span> <span class="n">epoch1</span> <span class="ow">in</span> <span class="n">group_by_epoch</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">res</span><span class="p">):</span>
+        <span class="n">epoch1</span><span class="o">.</span><span class="n">sn</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">sn</span>
         <span class="n">epoch1</span><span class="o">.</span><span class="n">calcFlux</span><span class="p">()</span>
         <span class="n">epoch1</span> <span class="o">=</span> <span class="n">epoch1</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">delta</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
         <span class="n">epoch1</span><span class="o">.</span><span class="n">calcMag</span><span class="p">()</span>
@@ -714,7 +648,7 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span>
             <span class="n">sampler</span> <span class="o">=</span> <span class="n">blackbody_mcmc</span><span class="p">(</span><span class="n">epoch1</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">outpath</span><span class="o">=</span><span class="n">outpath</span><span class="p">,</span> <span class="n">nwalkers</span><span class="o">=</span><span class="n">nwalkers</span><span class="p">,</span> <span class="n">burnin_steps</span><span class="o">=</span><span class="n">burnin_steps</span><span class="p">,</span>
                                      <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span> <span class="n">T_range</span><span class="o">=</span><span class="n">T_range</span><span class="p">,</span> <span class="n">R_range</span><span class="o">=</span><span class="n">R_range</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">cutoff_freq</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="n">show</span><span class="p">,</span>
-                                     <span class="n">prev_temp</span><span class="o">=</span><span class="n">prev_temp</span><span class="p">)</span>
+                                     <span class="n">prev_temp</span><span class="o">=</span><span class="n">prev_temp</span><span class="p">,</span> <span class="n">save_chains</span><span class="o">=</span><span class="n">save_chains</span><span class="p">)</span>
             <span class="n">L_mcmc_opt</span> <span class="o">=</span> <span class="n">pseudo</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">flatchain</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">sampler</span><span class="o">.</span><span class="n">flatchain</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">z</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">cutoff_freq</span><span class="p">)</span>
             <span class="p">(</span><span class="n">T_mcmc</span><span class="p">,</span> <span class="n">R_mcmc</span><span class="p">),</span> <span class="p">(</span><span class="n">dT0_mcmc</span><span class="p">,</span> <span class="n">dR0_mcmc</span><span class="p">),</span> <span class="p">(</span><span class="n">dT1_mcmc</span><span class="p">,</span> <span class="n">dR1_mcmc</span><span class="p">)</span> <span class="o">=</span> <span class="n">median_and_unc</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">flatchain</span><span class="p">)</span>
             <span class="n">L_mcmc</span><span class="p">,</span> <span class="n">dL_mcmc0</span><span class="p">,</span> <span class="n">dL_mcmc1</span> <span class="o">=</span> <span class="n">median_and_unc</span><span class="p">(</span><span class="n">L_mcmc_opt</span><span class="p">)</span>
@@ -734,60 +668,42 @@
                <span class="n">T_mcmc</span><span class="p">,</span> <span class="n">R_mcmc</span><span class="p">,</span> <span class="n">dT0_mcmc</span><span class="p">,</span> <span class="n">dT1_mcmc</span><span class="p">,</span> <span class="n">dR0_mcmc</span><span class="p">,</span> <span class="n">dR1_mcmc</span><span class="p">,</span> <span class="n">L_mcmc</span><span class="p">,</span> <span class="n">dL_mcmc0</span><span class="p">,</span> <span class="n">dL_mcmc1</span><span class="p">,</span>
                <span class="n">L_int</span><span class="p">,</span> <span class="n">nfilt</span><span class="p">]</span> <span class="o">+</span> <span class="n">color_mags</span> <span class="o">+</span> <span class="n">color_dmags</span>
         <span class="n">row_bool</span> <span class="o">=</span> <span class="n">color_lolims</span> <span class="o">+</span> <span class="n">color_uplims</span>
-        <span class="n">row_string</span> <span class="o">=</span> <span class="p">[</span><span class="n">filtstr</span><span class="p">,</span> <span class="n">epoch1</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">row</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">row_bool</span><span class="p">),</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row_string</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)])</span>
+        <span class="n">row_string</span> <span class="o">=</span> <span class="p">[</span><span class="n">filtstr</span><span class="p">]</span> <span class="o">+</span> <span class="p">([</span><span class="n">epoch1</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="k">if</span> <span class="n">use_src</span> <span class="k">else</span> <span class="p">[])</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">row</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">row_bool</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span>
+                               <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">bool</span><span class="p">(</span><span class="n">rs</span><span class="p">)</span> <span class="k">for</span> <span class="n">rs</span> <span class="ow">in</span> <span class="n">row_string</span><span class="p">])])</span>
         <span class="n">t0</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">row</span> <span class="o">+</span> <span class="n">row_bool</span> <span class="o">+</span> <span class="n">row_string</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">save_table_as</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">t0</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">save_table_as</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii.fixed_width&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">save_table_as</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">t0</span><span class="p">:</span>
+        <span class="n">t0</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">save_table_as</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii.fixed_width_two_line&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">t0</span></div>
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        
-        &copy; Copyright 2019, Griffin Hosseinzadeh
-
-    </p>
+    <p>&#169; Copyright 2019, Griffin Hosseinzadeh.</p>
   </div>
-    
-    
-    
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

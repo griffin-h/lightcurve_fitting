@@ -13,7 +13,7 @@ standard ``Table.read()`` method. I'm going to read an example light curve of SN
     from lightcurve_fitting.lightcurve import LC
     from pkg_resources import resource_filename
 
-    filename = resource_filename('lightcurve_fitting', 'example/SN2016bkv.table')
+    filename = resource_filename('lightcurve_fitting', 'example/SN2016bkv.txt')
     lc = LC.read(filename)
     print(lc)
 
@@ -21,10 +21,10 @@ The following column names are used by the package, although the light curve can
 [alternative column names are given in square brackets]:
 
  * MJD (required): modified Julian date of the observation [mjd, JD, jd (JD/jd are converted)]
- * mag (required): magnitude of the observation [Magnitude, Mag, ab_mag, PSFmag, MAG, omag, magnitude]
+ * mag (required): magnitude of the observation [Magnitude, Mag, ab_mag, PSFmag, MAG, omag, magnitude, apparent_mag]
  * dmag (required): uncertainty on the magnitude [Magnitude_Error, magerr, MagErr, mag_err, e_mag, Error, err, PSFerr,
-   MAGERR, e_omag, e_magnitude]
- * filt (required): name of the filter [filter, Filter, band, FLT]
+   MAGERR, e_omag, e_magnitude, apparent_mag_err, Mag_Err]
+ * filt (required): name of the filter [filter, Filter, band, FLT, Band]
  * filter (automatic): the filter object (see :ref:`Filters` below)
  * nondet: True if the magnitude is an upper limit, False otherwise [Is_Limit, UL, l_omag, upper_limit, upperlimit]
  * flux: the spectral flux density (:math:`F_ν`, arbitrary units) of the observation [FLUXCAL]
@@ -169,13 +169,13 @@ If you used the Rabinak & Waxman option, the model fails even earlier, but you w
 .. code-block:: python
 
     p_mean = sampler.flatchain.mean(axis=0)
-    t_max = ShockCooling2.t_max(*p_mean)
+    t_max = ShockCooling2.t_max(p_mean)
     print(t_max)
     if lc_early['MJD'].max() > t_max:
         print('Warning: your model is not valid for all your observations')
 
-Calibating Spectra to Photometry
---------------------------------
+Calibrating Spectra to Photometry
+---------------------------------
 The ``speccal`` module (somewhat experimental right now) can be used to calibrate spectra to observed photometry.
 
 .. code-block:: python

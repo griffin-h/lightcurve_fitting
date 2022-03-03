@@ -1,76 +1,41 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Usage &mdash; lightcurve_fitting 0.2.0.post1+g732a255 documentation</title>
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
-
-  
-  
-  
-  
-
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Usage &mdash; lightcurve_fitting 0.4.0.post2+gbf4f34f documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="API Documentation" href="api.html" />
     <link rel="prev" title="Installation" href="installation.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
-            <a href="index.html" class="icon icon-home" alt="Documentation Home"> lightcurve_fitting
-          
-
-          
+            <a href="index.html" class="icon icon-home"> lightcurve_fitting
           </a>
-
-          
-            
-            
               <div class="version">
-                0.2.0.post1+g732a255
+                0.4.0.post2+gbf4f34f
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -78,18 +43,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
@@ -97,79 +51,40 @@
 <li class="toctree-l2"><a class="reference internal" href="#filters">Filters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bolometric-light-curves">Bolometric Light Curves</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#model-fitting">Model Fitting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#calibating-spectra-to-photometry">Calibating Spectra to Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calibrating-spectra-to-photometry">Calibrating Spectra to Photometry</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-history.html">Release History</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">lightcurve_fitting</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li>Usage</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="usage">
+             
+  <section id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="light-curves">
+<section id="light-curves">
 <h2>Light Curves<a class="headerlink" href="#light-curves" title="Permalink to this headline">¶</a></h2>
 <p>The core of this package is the <code class="docutils literal notranslate"><span class="pre">lightcurve.LC</span></code> object. This is an extension of the Astropy <code class="docutils literal notranslate"><span class="pre">Table</span></code> object, which contains
 tabular data, in this case broadband photometric observations. You can read light curve data from a file using the
@@ -177,7 +92,7 @@ standard <code class="docutils literal notranslate"><span class="pre">Table.read
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lightcurve_fitting.lightcurve</span> <span class="kn">import</span> <span class="n">LC</span>
 <span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_filename</span>
 
-<span class="n">filename</span> <span class="o">=</span> <span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;lightcurve_fitting&#39;</span><span class="p">,</span> <span class="s1">&#39;example/SN2016bkv.table&#39;</span><span class="p">)</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;lightcurve_fitting&#39;</span><span class="p">,</span> <span class="s1">&#39;example/SN2016bkv.txt&#39;</span><span class="p">)</span>
 <span class="n">lc</span> <span class="o">=</span> <span class="n">LC</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span>
 </pre></div>
@@ -187,10 +102,10 @@ standard <code class="docutils literal notranslate"><span class="pre">Table.read
 <blockquote>
 <div><ul class="simple">
 <li><p>MJD (required): modified Julian date of the observation [mjd, JD, jd (JD/jd are converted)]</p></li>
-<li><p>mag (required): magnitude of the observation [Magnitude, Mag, ab_mag, PSFmag, MAG, omag, magnitude]</p></li>
+<li><p>mag (required): magnitude of the observation [Magnitude, Mag, ab_mag, PSFmag, MAG, omag, magnitude, apparent_mag]</p></li>
 <li><p>dmag (required): uncertainty on the magnitude [Magnitude_Error, magerr, MagErr, mag_err, e_mag, Error, err, PSFerr,
-MAGERR, e_omag, e_magnitude]</p></li>
-<li><p>filt (required): name of the filter [filter, Filter, band, FLT]</p></li>
+MAGERR, e_omag, e_magnitude, apparent_mag_err, Mag_Err]</p></li>
+<li><p>filt (required): name of the filter [filter, Filter, band, FLT, Band]</p></li>
 <li><p>filter (automatic): the filter object (see <a class="reference internal" href="#filters"><span class="std std-ref">Filters</span></a> below)</p></li>
 <li><p>nondet: True if the magnitude is an upper limit, False otherwise [Is_Limit, UL, l_omag, upper_limit, upperlimit]</p></li>
 <li><p>flux: the spectral flux density (<span class="math notranslate nohighlight">\(F_ν\)</span>, arbitrary units) of the observation [FLUXCAL]</p></li>
@@ -231,14 +146,14 @@ as well as a method for plotting the light curve in a single command:</p>
 <span class="n">lc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="s1">&#39;MJD&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="filters">
+</section>
+<section id="filters">
 <h2>Filters<a class="headerlink" href="#filters" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">filters</span></code> submodule defines a <code class="docutils literal notranslate"><span class="pre">Filter</span></code> object that stores information about the broadband filters: transmission
 function, photometric system, and styles for plotting. You mostly won’t have to touch this module, unless you are
 adding new filters.</p>
-</div>
-<div class="section" id="bolometric-light-curves">
+</section>
+<section id="bolometric-light-curves">
 <h2>Bolometric Light Curves<a class="headerlink" href="#bolometric-light-curves" title="Permalink to this headline">¶</a></h2>
 <p>You can make a bolometric light curve and color curves from the photometry table with the <code class="docutils literal notranslate"><span class="pre">bolometric</span></code> module.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lightcurve_fitting.bolometric</span> <span class="kn">import</span> <span class="n">calculate_bolometric</span><span class="p">,</span> <span class="n">plot_bolometric_results</span><span class="p">,</span> <span class="n">plot_color_curves</span>
@@ -291,8 +206,8 @@ To save the plot, give <code class="docutils literal notranslate"><span class="p
 <li><p>whether the color is an upper limit, <code class="docutils literal notranslate"><span class="pre">uplims(B-V)</span></code> (i.e., <span class="math notranslate nohighlight">\(V\)</span> was an upper limit).</p></li>
 </ul>
 </div></blockquote>
-</div>
-<div class="section" id="model-fitting">
+</section>
+<section id="model-fitting">
 <h2>Model Fitting<a class="headerlink" href="#model-fitting" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">models</span></code> and <code class="docutils literal notranslate"><span class="pre">fitting</span></code> submodules allow you to fit analytical models to the observed data. Right now, the only choices are:</p>
 <blockquote>
@@ -336,15 +251,15 @@ so you should check that you have not included observations where the model goes
 If you have, you should rerun the fit without those points.
 If you used the Rabinak &amp; Waxman option, the model fails even earlier, but you will have to check that manually.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">p_mean</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">flatchain</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">t_max</span> <span class="o">=</span> <span class="n">ShockCooling2</span><span class="o">.</span><span class="n">t_max</span><span class="p">(</span><span class="o">*</span><span class="n">p_mean</span><span class="p">)</span>
+<span class="n">t_max</span> <span class="o">=</span> <span class="n">ShockCooling2</span><span class="o">.</span><span class="n">t_max</span><span class="p">(</span><span class="n">p_mean</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">t_max</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">lc_early</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">t_max</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning: your model is not valid for all your observations&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="calibating-spectra-to-photometry">
-<h2>Calibating Spectra to Photometry<a class="headerlink" href="#calibating-spectra-to-photometry" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="calibrating-spectra-to-photometry">
+<h2>Calibrating Spectra to Photometry<a class="headerlink" href="#calibrating-spectra-to-photometry" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">speccal</span></code> module (somewhat experimental right now) can be used to calibrate spectra to observed photometry.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lightcurve_fitting.speccal</span> <span class="kn">import</span> <span class="n">calibrate_spectra</span>
 
@@ -358,63 +273,38 @@ The ratios of these two flux measurements (for each filter) are fit with a polyn
 Multiplying by this best-fit polynomial calibrates the spectrum to the photometry.
 Each calibrated spectrum is saved to a text file with the prefix <code class="docutils literal notranslate"><span class="pre">photcal_</span></code>.
 I recommend using <code class="docutils literal notranslate"><span class="pre">show=True</span></code> to visualize the process.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="api.html" class="btn btn-neutral float-right" title="API Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        
-        &copy; Copyright 2019, Griffin Hosseinzadeh
-
-    </p>
+    <p>&#169; Copyright 2019, Griffin Hosseinzadeh.</p>
   </div>
-    
-    
-    
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

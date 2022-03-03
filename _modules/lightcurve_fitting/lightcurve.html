@@ -1,74 +1,37 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>lightcurve_fitting.lightcurve &mdash; lightcurve_fitting 0.2.0.post1+g732a255 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
-
-  
-  
-  
-  
-
-  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>lightcurve_fitting.lightcurve &mdash; lightcurve_fitting 0.4.0.post2+gbf4f34f documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
         <script src="../../_static/clipboard.min.js"></script>
         <script src="../../_static/copybutton.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> lightcurve_fitting
-          
-
-          
+            <a href="../../index.html" class="icon icon-home"> lightcurve_fitting
           </a>
-
-          
-            
-            
               <div class="version">
-                0.2.0.post1+g732a255
+                0.4.0.post2+gbf4f34f
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -76,18 +39,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
@@ -95,67 +47,30 @@
 <li class="toctree-l1"><a class="reference internal" href="../../release-history.html">Release History</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">lightcurve_fitting</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../index.html">Module code</a> &raquo;</li>
-        
       <li>lightcurve_fitting.lightcurve</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for lightcurve_fitting.lightcurve</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -190,21 +105,27 @@
 <span class="n">othermarkers</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">MarkerStyle</span><span class="o">.</span><span class="n">filled_markers</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
 <span class="n">itermarkers</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">cycle</span><span class="p">(</span><span class="n">othermarkers</span><span class="p">)</span>
 <span class="n">usedmarkers</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">itercolors</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">cycle</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;axes.prop_cycle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">by_key</span><span class="p">()[</span><span class="s1">&#39;color&#39;</span><span class="p">])</span>
 
 <span class="c1"># if you edit this list, also add the new names to usage.rst</span>
 <span class="n">column_names</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;filt&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="s1">&#39;Filter&#39;</span><span class="p">,</span> <span class="s1">&#39;band&#39;</span><span class="p">,</span> <span class="s1">&#39;FLT&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;telescope&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Telescope&#39;</span><span class="p">,</span> <span class="s1">&#39;Tel&#39;</span><span class="p">,</span> <span class="s1">&#39;tel+inst&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Source&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;mag&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Magnitude&#39;</span><span class="p">,</span> <span class="s1">&#39;Mag&#39;</span><span class="p">,</span> <span class="s1">&#39;ab_mag&#39;</span><span class="p">,</span> <span class="s1">&#39;PSFmag&#39;</span><span class="p">,</span> <span class="s1">&#39;MAG&#39;</span><span class="p">,</span> <span class="s1">&#39;omag&#39;</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;dmag&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Magnitude_Error&#39;</span><span class="p">,</span> <span class="s1">&#39;magerr&#39;</span><span class="p">,</span> <span class="s1">&#39;MagErr&#39;</span><span class="p">,</span> <span class="s1">&#39;mag_err&#39;</span><span class="p">,</span> <span class="s1">&#39;e_mag&#39;</span><span class="p">,</span> <span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="s1">&#39;err&#39;</span><span class="p">,</span> <span class="s1">&#39;PSFerr&#39;</span><span class="p">,</span> <span class="s1">&#39;MAGERR&#39;</span><span class="p">,</span> <span class="s1">&#39;e_omag&#39;</span><span class="p">,</span>
-             <span class="s1">&#39;e_magnitude&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;MJD&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;mjd&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;JD&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;jd&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;phase&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Phase&#39;</span><span class="p">,</span> <span class="s1">&#39;PHASE&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;flux&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;FLUXCAL&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;dflux&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;FLUXCALERR&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;nondet&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Is_Limit&#39;</span><span class="p">,</span> <span class="s1">&#39;UL&#39;</span><span class="p">,</span> <span class="s1">&#39;l_omag&#39;</span><span class="p">,</span> <span class="s1">&#39;upper_limit&#39;</span><span class="p">,</span> <span class="s1">&#39;upperlimit&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;Filter&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;filt&#39;</span><span class="p">,</span> <span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="s1">&#39;Filter&#39;</span><span class="p">,</span> <span class="s1">&#39;band&#39;</span><span class="p">,</span> <span class="s1">&#39;FLT&#39;</span><span class="p">,</span> <span class="s1">&#39;Band&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;Telescope&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;telescope&#39;</span><span class="p">,</span> <span class="s1">&#39;Telescope&#39;</span><span class="p">,</span> <span class="s1">&#39;Tel&#39;</span><span class="p">,</span> <span class="s1">&#39;tel+inst&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;Source&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;Source&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;Apparent Magnitude&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">,</span> <span class="s1">&#39;Magnitude&#39;</span><span class="p">,</span> <span class="s1">&#39;Mag&#39;</span><span class="p">,</span> <span class="s1">&#39;ab_mag&#39;</span><span class="p">,</span> <span class="s1">&#39;PSFmag&#39;</span><span class="p">,</span> <span class="s1">&#39;MAG&#39;</span><span class="p">,</span> <span class="s1">&#39;omag&#39;</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="s1">&#39;apparent_mag&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;Apparent Magnitude Uncertainty&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s1">&#39;dmag&#39;</span><span class="p">,</span> <span class="s1">&#39;Magnitude_Error&#39;</span><span class="p">,</span> <span class="s1">&#39;magerr&#39;</span><span class="p">,</span> <span class="s1">&#39;MagErr&#39;</span><span class="p">,</span> <span class="s1">&#39;mag_err&#39;</span><span class="p">,</span> <span class="s1">&#39;e_mag&#39;</span><span class="p">,</span> <span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="s1">&#39;err&#39;</span><span class="p">,</span> <span class="s1">&#39;PSFerr&#39;</span><span class="p">,</span> <span class="s1">&#39;MAGERR&#39;</span><span class="p">,</span> <span class="s1">&#39;e_omag&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;e_magnitude&#39;</span><span class="p">,</span> <span class="s1">&#39;apparent_mag_err&#39;</span><span class="p">,</span> <span class="s1">&#39;Mag_Err&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;MJD&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">,</span> <span class="s1">&#39;mjd&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;JD&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;JD&#39;</span><span class="p">,</span> <span class="s1">&#39;jd&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;Phase (rest days)&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="s1">&#39;Phase&#39;</span><span class="p">,</span> <span class="s1">&#39;PHASE&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;Flux $F_ν$ (W m$^{-2}$ Hz$^{-1}$)&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">,</span> <span class="s1">&#39;FLUXCAL&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;Flux Uncertainty&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;dflux&#39;</span><span class="p">,</span> <span class="s1">&#39;FLUXCALERR&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;Nondetection&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">,</span> <span class="s1">&#39;Is_Limit&#39;</span><span class="p">,</span> <span class="s1">&#39;UL&#39;</span><span class="p">,</span> <span class="s1">&#39;l_omag&#39;</span><span class="p">,</span> <span class="s1">&#39;upper_limit&#39;</span><span class="p">,</span> <span class="s1">&#39;upperlimit&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;Absolute Magnitude&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;Luminosity $L_ν$ (W Hz$^{-1}$)&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;lum&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;Luminosity Uncertainty&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;dlum&#39;</span><span class="p">],</span>
 <span class="p">}</span>
 
 
@@ -226,6 +147,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sn</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">=</span> <span class="mf">3.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;filt&#39;</span><span class="p">,</span> <span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">markers</span> <span class="o">=</span> <span class="n">markers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
 <div class="viewcode-block" id="LC.where"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.where">[docs]</a>    <span class="k">def</span> <span class="nf">where</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -270,13 +192,17 @@
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">use</span><span class="p">]</span>
         <span class="n">selected</span><span class="o">.</span><span class="n">sn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span>
         <span class="n">selected</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span>
+        <span class="n">selected</span><span class="o">.</span><span class="n">markers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">markers</span>
         <span class="k">return</span> <span class="n">selected</span></div>
+
+<div class="viewcode-block" id="LC.get"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span> <span class="k">else</span> <span class="n">default</span></div>
 
 <div class="viewcode-block" id="LC.normalize_column_names"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.normalize_column_names">[docs]</a>    <span class="k">def</span> <span class="nf">normalize_column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Rename any recognizable columns to their standard names for this package (see `lightcurve.column_names`).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">good_key</span><span class="p">,</span> <span class="n">bad_keys</span> <span class="ow">in</span> <span class="n">column_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">good_key</span><span class="p">,</span> <span class="o">*</span><span class="n">bad_keys</span> <span class="ow">in</span> <span class="n">column_names</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">good_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">bad_key</span> <span class="ow">in</span> <span class="n">bad_keys</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">bad_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
@@ -301,7 +227,8 @@
 <span class="sd">        read_curve : bool, optional</span>
 <span class="sd">            Read in the transmission function for each filter encountered (default)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">is_masked</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">else</span> <span class="n">filtdict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filt&#39;</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">filtdict</span><span class="p">[</span><span class="s1">&#39;?&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">is_masked</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filtdict</span> <span class="k">else</span> <span class="n">filtdict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
+                          <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filt&#39;</span><span class="p">]]</span>
         <span class="n">is_swift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">bool</span><span class="p">)</span>
         <span class="k">if</span> <span class="s1">&#39;telescope&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="n">is_swift</span> <span class="o">|=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;telescope&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Swift&#39;</span>
@@ -315,8 +242,7 @@
                 <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">][</span><span class="n">is_swift</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filt&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">filt</span><span class="p">)]</span> <span class="o">=</span> <span class="n">filtdict</span><span class="p">[</span><span class="n">swiftfilt</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">read_curve</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">filt</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]):</span>
-                <span class="k">if</span> <span class="n">filt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">filt</span><span class="o">.</span><span class="n">read_curve</span><span class="p">()</span></div>
+                <span class="n">filt</span><span class="o">.</span><span class="n">read_curve</span><span class="p">()</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">zp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -340,7 +266,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">=</span> <span class="n">nondetSigmas</span>
         <span class="k">if</span> <span class="n">zp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">zp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zp</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dflux&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mag2flux</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">],</span> <span class="n">zp</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dflux&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mag2flux</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">],</span> <span class="n">zp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nondet&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LC.bin"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.bin">[docs]</a>    <span class="k">def</span> <span class="nf">bin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">groupby</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -406,7 +332,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">findNondet</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">zp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">zp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zp</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flux2mag</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dflux&#39;</span><span class="p">],</span> <span class="n">zp</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flux2mag</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dflux&#39;</span><span class="p">],</span> <span class="n">zp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nondet&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LC.calcAbsMag"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcAbsMag">[docs]</a>    <span class="k">def</span> <span class="nf">calcAbsMag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extinction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hostext</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -446,10 +372,19 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;hostext&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;dm&#39;</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">filt</span><span class="p">,</span> <span class="n">A</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;extinction&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">][</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">filtdict</span><span class="p">[</span><span class="n">filt</span><span class="p">]]</span> <span class="o">-=</span> <span class="n">A</span>
-        <span class="k">for</span> <span class="n">filt</span><span class="p">,</span> <span class="n">A</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;hostext&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">][</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">filtdict</span><span class="p">[</span><span class="n">filt</span><span class="p">]]</span> <span class="o">-=</span> <span class="n">A</span></div>
+        <span class="k">for</span> <span class="n">filtobj</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">filt</span> <span class="ow">in</span> <span class="n">filtobj</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">filt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;extinction&#39;</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">][</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">filtobj</span><span class="p">]</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;extinction&#39;</span><span class="p">][</span><span class="n">filt</span><span class="p">]</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MW extinction not applied to filter&#39;</span><span class="p">,</span> <span class="n">filtobj</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">filt</span> <span class="ow">in</span> <span class="n">filtobj</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">filt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;hostext&#39;</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">][</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">filtobj</span><span class="p">]</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;hostext&#39;</span><span class="p">][</span><span class="n">filt</span><span class="p">]</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;host extinction not applied to filter&#39;</span><span class="p">,</span> <span class="n">filtobj</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LC.calcLum"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcLum">[docs]</a>    <span class="k">def</span> <span class="nf">calcLum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -462,7 +397,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">nondetSigmas</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">=</span> <span class="n">nondetSigmas</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;lum&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dlum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mag2flux</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">zp</span> <span class="o">+</span> <span class="mf">90.19</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">],</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;lum&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dlum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mag2flux</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">zp</span> <span class="o">+</span> <span class="mf">90.19</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nondet&#39;</span><span class="p">),</span>
                                              <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LC.findPeak"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.findPeak">[docs]</a>    <span class="k">def</span> <span class="nf">findPeak</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">criteria</span><span class="p">):</span>
@@ -475,26 +410,17 @@
 <span class="sd">            Use only a subset of the light curve matching some criteria when calculating the peak date (stored in</span>
 <span class="sd">            ``self.sn.peakcriteria``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">useforpeak</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
         <span class="k">if</span> <span class="s1">&#39;nondet&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
-            <span class="n">useforpeak</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">criteria</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="n">subuseforpeak</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-                <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-                    <span class="n">subuseforpeak</span> <span class="o">|=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="n">val</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">subuseforpeak</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span>
-            <span class="n">useforpeak</span> <span class="o">&amp;=</span> <span class="n">subuseforpeak</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">useforpeak</span><span class="p">):</span>
-            <span class="n">peaktable</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">useforpeak</span><span class="p">]</span>
+            <span class="n">criteria</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">peaktable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">**</span><span class="n">criteria</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaktable</span><span class="p">):</span>
             <span class="n">imin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">peaktable</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">peakdate</span> <span class="o">=</span> <span class="n">peaktable</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">][</span><span class="n">imin</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">peakdate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">peakcriteria</span> <span class="o">=</span> <span class="n">criteria</span></div>
 
-<div class="viewcode-block" id="LC.calcPhase"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcPhase">[docs]</a>    <span class="k">def</span> <span class="nf">calcPhase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdsp</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="LC.calcPhase"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcPhase">[docs]</a>    <span class="k">def</span> <span class="nf">calcPhase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdsp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hours</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the rest-frame ``&#39;phase&#39;`` column from the ``&#39;MJD&#39;`` column and ``self.sn.refmjd`` and ``self.sn.z``</span>
 
@@ -503,22 +429,34 @@
 <span class="sd">        rdsp : bool, optional</span>
 <span class="sd">            Define phase as rest-frame days since peak, rather than rest-frame days since explosion</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">rdsp</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">peakdate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;must run sn.findPeak() first&#39;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">rdsp</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">refmjd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">peakdate</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">explosion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">refmjd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">explosion</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s1">&#39;nondet&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
-                <span class="n">detections</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">nondet</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;refmjd&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rdsp</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">peakdate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;must run sn.findPeak() first&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">rdsp</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">refmjd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">peakdate</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">explosion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">refmjd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">explosion</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">detections</span> <span class="o">=</span> <span class="bp">self</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">refmjd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">detections</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">phase</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">refmjd</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">phase</span></div>
+                <span class="k">if</span> <span class="s1">&#39;nondet&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                    <span class="n">detections</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">nondet</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">detections</span> <span class="o">=</span> <span class="bp">self</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">refmjd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">detections</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;refmjd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">refmjd</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;redshift&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">z</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;refmjd&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;redshift&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s1">&#39;dMJD0&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dphase0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dMJD0&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;redshift&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s1">&#39;dMJD1&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dphase1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dMJD1&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;redshift&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">hours</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">24.</span>
+            <span class="k">if</span> <span class="s1">&#39;dphase0&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dphase0&#39;</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">24.</span>
+            <span class="k">if</span> <span class="s1">&#39;dphase1&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dphase1&#39;</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">24.</span></div>
 
-<div class="viewcode-block" id="LC.plot"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="s1">&#39;absmag&#39;</span><span class="p">,</span> <span class="n">offset_factor</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="n">use_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<div class="viewcode-block" id="LC.plot"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="s1">&#39;absmag&#39;</span><span class="p">,</span> <span class="n">offset_factor</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fillmark</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the light curve, with nondetections marked with a downward-pointing arrow</span>
@@ -534,7 +472,7 @@
 <span class="sd">        color : str, optional</span>
 <span class="sd">            Column that controls the color of the lines and points. Default: ``&#39;filter&#39;``</span>
 <span class="sd">        marker : str, optional</span>
-<span class="sd">            Column that controls the marker shape. Default: ``&#39;source&#39;``</span>
+<span class="sd">            Column that controls the marker shape. Default: ``&#39;source&#39;`` or ``&#39;telescope&#39;``</span>
 <span class="sd">        use_lines : bool, optional</span>
 <span class="sd">            Connect light curve points with lines. Default: False</span>
 <span class="sd">        normalize : bool, optional</span>
@@ -545,7 +483,6 @@
 <span class="sd">            Keyword arguments matching column names in the light curve are used to specify a subset of points to plot.</span>
 <span class="sd">            Additional keyword arguments passed to :func:`matplotlib.pyplot.plot`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">global</span> <span class="n">markers</span>
         <span class="n">xchoices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="s1">&#39;MJD&#39;</span><span class="p">]</span>
         <span class="k">while</span> <span class="n">xcol</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">xchoices</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span>
@@ -560,29 +497,26 @@
                 <span class="n">ycol</span> <span class="o">=</span> <span class="n">ychoices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;no columns found for y-axis&#39;</span><span class="p">)</span>
-        <span class="n">plotthese</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">marker</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;source&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;source&#39;</span>
+            <span class="k">elif</span> <span class="s1">&#39;telescope&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;telescope&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span>
         <span class="n">criteria</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">}</span>
         <span class="n">plot_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">}</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">criteria</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="n">subplotthese</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-                <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-                    <span class="n">subplotthese</span> <span class="o">|=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="n">val</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">subplotthese</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span>
-            <span class="n">plotthese</span> <span class="o">&amp;=</span> <span class="n">subplotthese</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">plotthese</span><span class="p">):</span>
-            <span class="n">plottable</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">plotthese</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="n">plottable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">**</span><span class="n">criteria</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">plottable</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="n">groupby</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">groupby</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">plottable</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">groupby</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+            <span class="n">groupby</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">marker</span> <span class="ow">in</span> <span class="n">plottable</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">groupby</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span>
+            <span class="n">groupby</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">groupby</span><span class="p">:</span>
-            <span class="n">plottable</span> <span class="o">=</span> <span class="n">plottable</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">groupby</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">plottable</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+            <span class="n">plottable</span> <span class="o">=</span> <span class="n">plottable</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">groupby</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">plottable</span><span class="o">.</span><span class="n">groups</span><span class="p">,</span> <span class="n">plottable</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">keys</span><span class="p">):</span>
             <span class="n">filt</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">color</span> <span class="o">==</span> <span class="s1">&#39;filter&#39;</span><span class="p">:</span>
                 <span class="n">col</span> <span class="o">=</span> <span class="n">filt</span><span class="o">.</span><span class="n">color</span>
@@ -591,26 +525,23 @@
                 <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">plotcolor</span>
                 <span class="n">mec</span> <span class="o">=</span> <span class="n">col</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="s1">&#39;#FFFFFF&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="s1">&#39;k&#39;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">col</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
-                <span class="n">mec</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="n">mec</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">itercolors</span><span class="p">)</span>
             <span class="n">mfc</span> <span class="o">=</span> <span class="n">col</span> <span class="k">if</span> <span class="n">fillmark</span> <span class="k">else</span> <span class="s1">&#39;none&#39;</span>
             <span class="k">if</span> <span class="n">marker</span> <span class="o">==</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span>
                 <span class="n">mark</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">marker</span>
             <span class="k">elif</span> <span class="n">marker</span> <span class="ow">in</span> <span class="n">plottable</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">g</span><span class="p">[</span><span class="n">marker</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">markers</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">g</span><span class="p">[</span><span class="n">marker</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">markers</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">nextmarker</span> <span class="ow">in</span> <span class="n">othermarkers</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">nextmarker</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">usedmarkers</span><span class="p">:</span>
-                            <span class="n">markers</span><span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="n">marker</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">nextmarker</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">markers</span><span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="n">marker</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">nextmarker</span>
                             <span class="k">break</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">for</span> <span class="n">nextmarker</span> <span class="ow">in</span> <span class="n">itermarkers</span><span class="p">:</span>
-                            <span class="n">markers</span><span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="n">marker</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">nextmarker</span>
-                            <span class="k">break</span>
-                <span class="n">mark</span> <span class="o">=</span> <span class="n">markers</span><span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="n">marker</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
-            <span class="k">elif</span> <span class="ow">not</span> <span class="n">marker</span><span class="p">:</span>
-                <span class="n">mark</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">markers</span><span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="n">marker</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">itermarkers</span><span class="p">)</span>
+                <span class="n">mark</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">markers</span><span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="n">marker</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="k">elif</span> <span class="n">marker</span> <span class="ow">in</span> <span class="n">MarkerStyle</span><span class="o">.</span><span class="n">markers</span><span class="p">:</span>
                 <span class="n">mark</span> <span class="o">=</span> <span class="n">marker</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mark</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">itermarkers</span><span class="p">)</span>
             <span class="n">usedmarkers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mark</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">use_lines</span><span class="p">:</span>
                 <span class="n">g</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span>
@@ -626,12 +557,18 @@
                 <span class="n">y</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">peakabsmag</span>
             <span class="k">if</span> <span class="s1">&#39;mag&#39;</span> <span class="ow">in</span> <span class="n">ycol</span> <span class="ow">and</span> <span class="s1">&#39;nondet&#39;</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="n">marker</span><span class="p">:</span>  <span class="c1"># don&#39;t plot if no markers used</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]],</span> <span class="n">y</span><span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]],</span> <span class="n">marker</span><span class="o">=</span><span class="n">arrow</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="n">mec</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;filter&#39;</span> <span class="ow">in</span> <span class="n">k</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filt</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">filt</span><span class="o">.</span><span class="n">offset</span><span class="p">:</span>
+                    <span class="n">k</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filt</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">elif</span> <span class="n">offset_factor</span><span class="p">:</span>
+                    <span class="n">k</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;$</span><span class="si">{}{:+.0f}</span><span class="s1">$&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filt</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="o">-</span><span class="n">filt</span><span class="o">.</span><span class="n">offset</span> <span class="o">*</span> <span class="n">offset_factor</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">k</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;$</span><span class="si">{}</span><span class="s1">$&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filt</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">kv</span><span class="p">)</span> <span class="k">for</span> <span class="n">kv</span> <span class="ow">in</span> <span class="n">k</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">label</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="n">linestyle</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="n">linewidth</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">name</span>
                 <span class="n">linestyle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">linestyle</span>
                 <span class="n">linewidth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">linewidth</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">use_lines</span><span class="p">:</span>
@@ -647,10 +584,15 @@
                          <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kwargs</span><span class="p">)</span>
         <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">()</span>
         <span class="k">if</span> <span class="s1">&#39;mag&#39;</span> <span class="ow">in</span> <span class="n">ycol</span> <span class="ow">and</span> <span class="n">ymax</span> <span class="o">&gt;</span> <span class="n">ymin</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ymax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">)</span></div>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ymax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">axlabel</span><span class="p">,</span> <span class="n">keys</span> <span class="ow">in</span> <span class="n">column_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">xcol</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">axlabel</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">ycol</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">axlabel</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LC.read"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.read">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii.fixed_width&#39;</span><span class="p">,</span> <span class="n">fill_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">fill_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">fill_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">fill_values</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)]</span>
         <span class="n">t</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">LC</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="nb">format</span><span class="p">,</span> <span class="n">fill_values</span><span class="o">=</span><span class="n">fill_values</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -786,49 +728,30 @@
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        
-        &copy; Copyright 2019, Griffin Hosseinzadeh
-
-    </p>
+    <p>&#169; Copyright 2019, Griffin Hosseinzadeh.</p>
   </div>
-    
-    
-    
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

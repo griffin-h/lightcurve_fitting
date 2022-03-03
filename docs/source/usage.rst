@@ -175,7 +175,7 @@ If you used the Rabinak & Waxman option, the model fails even earlier, but you w
         print('Warning: your model is not valid for all your observations')
 
 Calibrating Spectra to Photometry
---------------------------------
+---------------------------------
 The ``speccal`` module (somewhat experimental right now) can be used to calibrate spectra to observed photometry.
 
 .. code-block:: python

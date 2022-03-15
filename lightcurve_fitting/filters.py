@@ -139,6 +139,9 @@ class Filter:
         self.freq_eff = None
         self.dfreq = None
         self.freq_range = None
+        self.wl_eff = None
+        self.dwl = None
+        self.wl_range = None
 
     def read_curve(self, show=False, force=False):
         """

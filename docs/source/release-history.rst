@@ -12,6 +12,7 @@ Unreleased
 * Allow linewidth/linestyle to be passed as ``plot_kwargs``
 * Recognize `marker='none'` when plotting a light curve
 * Do not plot black lines for Johnson filters when using ``plot_lines``
+* Allow adjustment of font sizes in light curve corner plots
 
 v0.4.0 (2022-02-08)
 -------------------

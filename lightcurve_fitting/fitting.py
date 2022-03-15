@@ -161,7 +161,8 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
 
 def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
                       num_models_to_plot=100, lcaxis_posn=(0.7, 0.55, 0.2, 0.4),
-                      filter_spacing=0.5, tmin=None, tmax=None, t0_offset=None, save_plot_as='', ycol='lum'):
+                      filter_spacing=0.5, tmin=None, tmax=None, t0_offset=None, save_plot_as='', ycol='lum',
+                      textsize='medium', param_textsize='large'):
     """
     Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model light curves.
 
@@ -192,6 +193,10 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         Filename to which to save the resulting plot
     ycol : str, optional
         Quantity to plot on the light curve inset. Choices: "lum" (default) or "absmag".
+    textsize : str, optional
+        Font size for the x- and y-axis labels, as well as the tick labels. Default: 'medium'
+    param_textsize : str, optional
+        Font size for the parameter text. Default: 'large'
 
     Returns
     -------
@@ -218,8 +223,11 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
             sampler_flatchain_corner[:, i_t0] -= t0_offset
             model.axis_labels[i_t0] = '$t_0 - {:.0f}$ (d)'.format(t0_offset)
 
-    fig = corner.corner(sampler_flatchain_corner, labels=model.axis_labels)
+    fig = corner.corner(sampler_flatchain_corner, labels=model.axis_labels, label_kwargs={'size': textsize})
     corner_axes = np.array(fig.get_axes()).reshape(sampler_flatchain.shape[-1], sampler_flatchain.shape[-1])
+    for i in range(sampler_flatchain.shape[-1]):
+        corner_axes[i, 0].tick_params(labelsize=textsize)
+        corner_axes[-1, i].tick_params(labelsize=textsize)
 
     for ax in np.diag(corner_axes):
         ax.spines['top'].set_visible(False)
@@ -259,13 +267,14 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
                     ls='none', marker='o', **filt.plotstyle)
         ax.plot(xfit - mjd_offset, yfit / yscale + offset, color=filt.linecolor, alpha=0.05)
         txt = f'${filt.name}{offset:+.1f}$' if filt.italics else rf'$\mathrm{{{filt.name}}}{offset:+.1f}$'
-        ax.text(1.03, yfit[-1, 0] / yscale + offset, txt, color=filt.textcolor,
+        ax.text(1.03, yfit[-1, 0] / yscale + offset, txt, color=filt.textcolor, fontdict={'size': textsize},
                 ha='left', va='center', transform=ax.get_yaxis_transform())
-    ax.set_xlabel('MJD $-$ {:.0f}'.format(mjd_offset))
-    ax.set_ylabel(ylabel)
+    ax.set_xlabel('MJD $-$ {:.0f}'.format(mjd_offset), size=textsize)
+    ax.set_ylabel(ylabel, size=textsize)
+    ax.tick_params(labelsize=textsize)
 
     paramtexts = format_credible_interval(sampler_flatchain, varnames=model.input_names, units=model.units)
-    fig.text(0.45, 0.95, '\n'.join(paramtexts), va='top', ha='center', fontdict={'size': 'large'})
+    fig.text(0.45, 0.95, '\n'.join(paramtexts), va='top', ha='center', fontdict={'size': param_textsize})
     if save_plot_as:
         fig.savefig(save_plot_as)
         print('saving figure as ' + save_plot_as)

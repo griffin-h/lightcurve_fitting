@@ -9,6 +9,7 @@ Unreleased
 * Add option to consider other columns when dividing light curves into epochs
 * Recognize spectra stored as FITS tables
 * Don't crash when plotting ungrouped light curve
+* Allow linewidth/linestyle to be passed as ``plot_kwargs``
 
 v0.4.0 (2022-02-08)
 -------------------

@@ -445,6 +445,12 @@ class LC(Table):
             keys = plottable.groups.keys
         else:
             keys = [Table()]
+        if self.sn is None:
+            linestyle = plot_kwargs.pop('linestyle') if 'linestyle' in plot_kwargs else None
+            linewidth = plot_kwargs.pop('linewidth') if 'linewidth' in plot_kwargs else None
+        else:
+            linestyle = self.sn.linestyle
+            linewidth = self.sn.linewidth
         for g, k in zip(plottable.groups, keys):
             filt = g['filter'][0]
             if color == 'filter':
@@ -494,12 +500,6 @@ class LC(Table):
                 else:
                     k['filter'] = '${}$'.format(filt.name)
             label = ' '.join([str(kv) for kv in k.values()])
-            if self.sn is None:
-                linestyle = None
-                linewidth = None
-            else:
-                linestyle = self.sn.linestyle
-                linewidth = self.sn.linewidth
             if not use_lines:
                 plt.errorbar(x, y, yerr, color=mec, mfc=mfc, mec=mec, marker=mark, linestyle='none', label=label,
                              **plot_kwargs)

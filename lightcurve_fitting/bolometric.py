@@ -225,7 +225,7 @@ def plot_bolometric_results(t0, save_plot_as=None):
     return fig
 
 
-def group_by_epoch(lc, res=1.):
+def group_by_epoch(lc, res=1., also_group_by=()):
     """
     Group a light curve into epochs that will be treated as single spectral energy distributions.
 
@@ -244,7 +244,11 @@ def group_by_epoch(lc, res=1.):
     x = lc['MJD'].data / res
     frac = np.median(x - np.trunc(x))
     lc['bin'] = np.round(x - frac + np.round(frac)) * res
-    epochs = lc.group_by('bin')
+    group_by = ['bin'] + list(also_group_by)
+    for col in also_group_by:
+        if np.ma.is_masked(lc[col]):
+            lc[col] = lc[col].filled()
+    epochs = lc.group_by(group_by)
     return epochs.groups
 
 
@@ -476,7 +480,8 @@ def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1, xcol='MJD'):
 
 def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=200, steps=100,
                          T_range=(1., 100.), R_range=(0.01, 1000.), save_table_as=None, min_nfilt=3,
-                         cutoff_freq=np.inf, show=False, colors=None, do_mcmc=True, save_chains=False, use_sigma=False):
+                         cutoff_freq=np.inf, show=False, colors=None, do_mcmc=True, save_chains=False, use_sigma=False,
+                         also_group_by=()):
     """
     Calculate the full bolometric light curve from a table of broadband photometry
 
@@ -517,6 +522,8 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
         If True, save the MCMC chain histories to the directory ``outpath``. Default: only save the corner plot
     use_sigma : bool, optional
         Include an intrinsic scatter parameter in the MCMC fit. Default: False.
+    also_group_by : list, optional
+        Group by these columns in addition to epoch
 
     Returns
     -------
@@ -545,7 +552,7 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
 
     sampler = None
     lc = lc[np.isfinite(lc['dmag']) & (lc['dmag'] > 0.)]
-    for epoch1 in group_by_epoch(lc, res):
+    for epoch1 in group_by_epoch(lc, res, also_group_by):
         epoch1.sn = lc.sn
         epoch1.calcFlux()
         epoch1 = epoch1.bin(delta=np.inf)

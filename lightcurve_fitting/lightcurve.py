@@ -511,7 +511,7 @@ class LC(Table):
                 plt.plot(x[g['nondet']], y[g['nondet']], color=mec, mfc=mfc, mec=mec, marker=mark, linestyle='none',
                          **plot_kwargs)
             else:
-                plt.plot(x, y, color=mec, mfc=mfc, mec=mec, marker=mark, label=label, linestyle=linestyle,
+                plt.plot(x, y, color=col, mfc=mfc, mec=mec, marker=mark, label=label, linestyle=linestyle,
                          linewidth=linewidth, **plot_kwargs)
         ymin, ymax = plt.ylim()
         if 'mag' in ycol and ymax > ymin:

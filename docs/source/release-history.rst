@@ -11,6 +11,7 @@ Unreleased
 * Don't crash when plotting ungrouped light curve
 * Allow linewidth/linestyle to be passed as ``plot_kwargs``
 * Recognize `marker='none'` when plotting a light curve
+* Do not plot black lines for Johnson filters when using ``plot_lines``
 
 v0.4.0 (2022-02-08)
 -------------------

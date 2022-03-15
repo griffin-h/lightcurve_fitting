@@ -80,17 +80,21 @@ def readfitsspec(filename, header=False, ext=None):
         hdu = hdulist[ext]
     data = hdu.data
     hdr = hdu.header
-    flux = data.flatten()[:max(data.shape)]
-    remove_duplicate_wcs(hdr)  # some problem with Gemini pipeline
-    if hdr.get('CUNIT1') in ['Angstroms', 'angstroms', 'deg', 'pixel']:
-        hdr['CUNIT1'] = 'Angstrom'  # WCS object needs recognizable units
-    with warnings.catch_warnings():
-        warnings.simplefilter('ignore')
-        wcs = WCS(removebadcards(hdr), naxis=1, relax=False, fix=False)
-    if 'CUNIT1' in hdr:
-        wl = wcs.pixel_to_world(np.arange(len(flux))).to(hdr['CUNIT1']).value
+    if isinstance(hdu, fits.BinTableHDU):
+        wl = data['wavelength']
+        flux = data['flux']
     else:
-        wl = wcs.wcs_pix2world(np.arange(len(flux)), 0)[0]
+        flux = data.flatten()[:max(data.shape)]
+        remove_duplicate_wcs(hdr)  # some problem with Gemini pipeline
+        if hdr.get('CUNIT1') in ['Angstroms', 'angstroms', 'deg', 'pixel']:
+            hdr['CUNIT1'] = 'Angstrom'  # WCS object needs recognizable units
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            wcs = WCS(removebadcards(hdr), naxis=1, relax=False, fix=False)
+        if 'CUNIT1' in hdr:
+            wl = wcs.pixel_to_world(np.arange(len(flux))).to(hdr['CUNIT1']).value
+        else:
+            wl = wcs.wcs_pix2world(np.arange(len(flux)), 0)[0]
     if header:
         return wl, flux, hdr
     else:

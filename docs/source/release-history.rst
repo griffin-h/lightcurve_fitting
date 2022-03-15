@@ -7,6 +7,7 @@ Unreleased
 * Add intrinsic scatter option to bolometric light curve creation
 * Add more MJD digits in bolometric output files
 * Add option to consider other columns when dividing light curves into epochs
+* Recognize spectra stored as FITS tables
 
 v0.4.0 (2022-02-08)
 -------------------

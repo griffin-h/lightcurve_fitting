@@ -10,6 +10,7 @@ Unreleased
 * Recognize spectra stored as FITS tables
 * Don't crash when plotting ungrouped light curve
 * Allow linewidth/linestyle to be passed as ``plot_kwargs``
+* Recognize `marker='none'` when plotting a light curve
 
 v0.4.0 (2022-02-08)
 -------------------

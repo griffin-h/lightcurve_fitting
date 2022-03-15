@@ -475,6 +475,8 @@ class LC(Table):
                 mark = self.markers[g[marker][0]]
             elif marker in MarkerStyle.markers:
                 mark = marker
+            elif marker == 'none':
+                mark = None
             else:
                 mark = next(itermarkers)
             usedmarkers.append(mark)

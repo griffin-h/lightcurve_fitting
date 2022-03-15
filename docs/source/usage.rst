@@ -108,6 +108,13 @@ If they didn't, try adjusting the number of burn-in steps (``burnin_steps``).
 To save the table, give ``save_table_as='filename.table'`` as an argument to ``calculate_bolometric``.
 To save the plot, give ``save_plot_as='filename.pdf'`` as an argument to ``plot_bolometric_results``.
 
+You can include an intrinsic scatter term (:math:`\sigma`) in your MCMC SED fits by setting ``use_sigma=True``. Here, :math:`\sigma` is a constant uncertainty, in units of the median photometric uncertainty (:math:`\bar{\sigma}`), added in quadrature to the photometric uncertainty on each point (:math:`\sigma_i`). In other words
+
+.. math::
+    \sigma_{i,\mathrm{eff}} = \sqrt{ \sigma_i^2 + \left( \sigma * \bar{\sigma} \right)^2 }
+
+You can also set a maximum for this intrinsic scatter using the ``sigma_max`` keyword (default: 10).
+
 Beware of the units I'm using:
 
  * Temperatures are in kilokelvins (kK).

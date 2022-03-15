@@ -2,6 +2,10 @@
 Release History
 ===============
 
+Unreleased
+----------
+* Add intrinsic scatter option to bolometric light curve creation
+
 v0.4.0 (2022-02-08)
 -------------------
 * Fix bug in min/max validity times when using intrinsic scatter parameter

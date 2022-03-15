@@ -442,7 +442,10 @@ class LC(Table):
             groupby.add(marker)
         if groupby:
             plottable = plottable.group_by(list(groupby))
-        for g, k in zip(plottable.groups, plottable.groups.keys):
+            keys = plottable.groups.keys
+        else:
+            keys = [Table()]
+        for g, k in zip(plottable.groups, keys):
             filt = g['filter'][0]
             if color == 'filter':
                 col = filt.color

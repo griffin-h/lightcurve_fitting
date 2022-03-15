@@ -8,6 +8,7 @@ Unreleased
 * Add more MJD digits in bolometric output files
 * Add option to consider other columns when dividing light curves into epochs
 * Recognize spectra stored as FITS tables
+* Don't crash when plotting ungrouped light curve
 
 v0.4.0 (2022-02-08)
 -------------------

@@ -3,6 +3,7 @@ import astropy.constants as const
 import astropy.units as u
 from astropy.table import Table
 from pkg_resources import resource_filename
+from abc import ABCMeta, abstractmethod
 
 k_B = const.k_B.to("eV / kK").value
 c3 = (4 * np.pi * const.sigma_sb.to("erg s-1 Rsun-2 kK-4").value) ** -0.5 / 1000.  # Rsun --> kiloRsun
@@ -432,18 +433,57 @@ CompanionShocking = Model(companion_shocking,
                           )
 
 
-def log_flat_prior(p):
-    """
-    A uniform prior in the logarithm of the parameter, i.e., :math:`\\frac{dP}{dp} \\propto \\frac{1}{p}`
-    """
-    return p ** -1
+class Prior:
+    __metaclass__ = ABCMeta
+
+    def __init__(self, p_min=-np.inf, p_max=np.inf):
+        self.p_min = p_min
+        self.p_max = p_max
+
+    def __call__(self, p):
+        if self.p_min < p < self.p_max:
+            return self.logp(p)
+        else:
+            return -np.inf
+
+    @abstractmethod
+    def logp(self, p):
+        pass
 
 
-def flat_prior(p):
+class UniformPrior(Prior):
     """
     A uniform prior in the parameter, i.e., :math:`\\frac{dP}{dp} \\propto 1`
     """
-    return np.ones_like(p)
+    def logp(self, p):
+        return np.zeros_like(p)
+
+
+class LogUniformPrior(Prior):
+    """
+    A uniform prior in the logarithm of the parameter, i.e., :math:`\\frac{dP}{dp} \\propto \\frac{1}{p}`
+    """
+    def __init__(self, p_min=0., p_max=np.inf):
+        if p_min < 0.:
+            raise ValueError('a log-uniform prior cannot have negative limits')
+        super().__init__(p_min, p_max)
+
+    def logp(self, p):
+        return -np.log(p)
+
+
+class GaussianPrior(Prior):
+    """
+    A Gaussian prior centered at `mean` with standard deviation `stddev`, i.e.,
+    :math:`\\frac{dP}{dp} \\propto \\exp \\left( \\frac{(p - \\mu)^2}{2 \\sigma^2} \\right)`
+    """
+    def __init__(self, p_min=-np.inf, p_max=np.inf, mean=0., stddev=1.):
+        super().__init__(p_min, p_max)
+        self.mean = mean
+        self.stddev = stddev
+
+    def logp(self, p):
+        return -0.5 * ((p - self.mean) / self.stddev) ** 2.
 
 
 c1 = (const.h / const.k_B).to(u.kK / u.THz).value

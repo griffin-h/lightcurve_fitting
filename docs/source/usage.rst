@@ -148,23 +148,27 @@ However, in order to measure, for example, the progenitor radius, one must use t
 
 .. code-block:: python
 
-    from lightcurve_fitting.models import ShockCooling2
+    from lightcurve_fitting.models import ShockCooling2, UniformPrior
     from lightcurve_fitting.fitting import lightcurve_mcmc, lightcurve_corner
 
     # Fit only the early light curve
     lc_early = lc.where(MJD_min=57468., MJD_max=57485.)
 
     # Define the priors and initial guesses
-    p_min = [0., 0., 0., 57468.]
-    p_max = [100., 100., 100., 57468.7]
+    priors = [
+        UniformPrior(0., 100.),
+        UniformPrior(0., 100.),
+        UniformPrior(0., 100.),
+        UniformPrior(57468., 57468.7),
+    ]
     p_lo = [20., 2., 20., 57468.5]
     p_up = [50., 5., 50., 57468.7]
 
     redshift = 0.002
 
     sampler = fitting.lightcurve_mcmc(lc_early, ShockCooling2, model_kwargs={'z': redshift},
-                                  p_min=p_min, p_max=p_max, p_lo=p_lo, p_up=p_up,
-                                  nwalkers=10, nsteps=100, nsteps_burnin=100, show=True)
+                                      priors=priors, p_lo=p_lo, p_up=p_up,
+                                      nwalkers=10, nsteps=100, nsteps_burnin=100, show=True)
     lightcurve_corner(lc_early, ShockCooling2, sampler.flatchain, model_kwargs={'z': redshift})
 
 **Another note on the shock cooling models:**

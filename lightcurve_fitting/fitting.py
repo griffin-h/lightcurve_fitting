@@ -3,8 +3,11 @@ import matplotlib.pyplot as plt
 import astropy.units as u
 import emcee
 import corner
-from .models import CompanionShocking, scale_sifto, flat_prior
+from .models import CompanionShocking, scale_sifto, UniformPrior
 from pkg_resources import resource_filename
+import warnings
+
+PRIOR_WARNING = 'The p_max/p_min keywords are deprecated. Use the priors keyword instead.'
 
 
 def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p_up=None,
@@ -21,16 +24,14 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
         The model to fit to the light curve. Available models: :class:`models.ShockCooling`,
         :class:`models.ShockCooling2`, :class:`models.CompanionShocking`
     priors : list, optional
-        Prior probability distributions for each model parameter. Available priors: :func:`models.flat_prior` (default),
-        :func:`models.log_flat_prior`
+        Prior probability distributions for each model parameter. Available priors:
+        :func:`models.UniformPrior` (default), :func:`models.LogUniformPrior`, :func:`models.GaussianPrior`
     p_min, p_max : list, optional
-        Lower bounds on the priors for each parameter. Omit individual bounds using :mod:`-numpy.inf`.
-    p_max : list, optional
-        Upper bounds on the priors for each parameter. Omit individual bounds using :mod:`numpy.inf`.
-    p_lo : list, optional
-        Lower bounds on the starting guesses for each paramter. Default: equal to ``p_min``.
-    p_up : list, optional
-        Upper bounds on the starting guesses for each parameter. Default: equal to ``p_max``.
+        DEPRECATED: Use `priors` instead
+    p_lo : list
+        Lower bounds on the starting guesses for each paramter
+    p_up : list
+        Upper bounds on the starting guesses for each parameter
     nwalkers : int, optional
         Number of walkers (chains) for the MCMC routine. Default: 100
     nsteps : int, optional
@@ -73,24 +74,23 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
 
     ndim = model.nparams + use_sigma
 
-    if priors is None:
-        priors = [flat_prior] * ndim
-    elif len(priors) != ndim:
-        raise Exception('priors must have length {:d}'.format(ndim))
-
+    # DEPRECATED
     if p_min is None:
         p_min = np.tile(-np.inf, ndim)
     elif len(p_min) == ndim:
         p_min = np.array(p_min, float)
+        warnings.warn(PRIOR_WARNING)
     else:
-        raise Exception('p_min must have length {:d}'.format(ndim))
+        raise Exception(PRIOR_WARNING)
 
+    # DEPRECATED
     if p_max is None:
         p_max = np.tile(np.inf, ndim)
     elif len(p_max) == ndim:
         p_max = np.array(p_max, float)
+        warnings.warn(PRIOR_WARNING)
     else:
-        raise Exception('p_max must have length {:d}'.format(ndim))
+        raise Exception(PRIOR_WARNING)
 
     if p_lo is None:
         p_lo = p_min
@@ -99,24 +99,26 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     else:
         raise Exception('p_lo must have length {:d}'.format(ndim))
 
-    if p_up is None:
-        p_up = p_max
-    elif len(p_up) == ndim:
+    if len(p_up) == ndim:
         p_up = np.array(p_up, float)
     else:
         raise Exception('p_up must have length {:d}'.format(ndim))
 
+    if priors is None:
+        priors = [UniformPrior(p0, p1) for p0, p1 in zip(p_min, p_max)]
+    elif len(priors) != ndim:
+        raise Exception('priors must have length {:d}'.format(ndim))
+
     def log_posterior(p):
-        if np.any(p < p_min) or np.any(p > p_max):
-            return -np.inf
-        else:
-            log_prior = 0.
-            for prior, p_i in zip(priors, p):
-                log_prior += np.log(prior(p_i))
-            y_fit = model(t, f, *p, **model_kwargs)
-            sigma = dy * np.sqrt(1. + p[-1] ** 2.) if use_sigma else dy
-            log_likelihood = -0.5 * np.sum(np.log(2 * np.pi * sigma ** 2.) + ((y - y_fit) / sigma) ** 2.)
-            return log_prior + log_likelihood
+        log_prior = 0.
+        for prior, p_i in zip(priors, p):
+            log_prior += prior(p_i)
+        if np.isinf(log_prior):
+            return log_prior
+        y_fit = model(t, f, *p, **model_kwargs)
+        sigma = dy * np.sqrt(1. + p[-1] ** 2.) if use_sigma else dy
+        log_likelihood = -0.5 * np.sum(np.log(2 * np.pi * sigma ** 2.) + ((y - y_fit) / sigma) ** 2.)
+        return log_prior + log_likelihood
 
     sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior)
 

@@ -4,15 +4,23 @@ Release History
 
 Unreleased
 ----------
+For the first time, this release introduces a change that is not backward compatible.
+To enable the use of Gaussian priors, I have had to make the prior specification a little more complex.
+Instead of using ``p_min`` and ``p_max`` to specify the bounds on a uniform prior, users will have to define the shape and bounds on each prior using the ``priors`` keyword.
+This takes a list of ``Prior`` objects, e.g., ``models.UniformPrior``, ``models.LogUniformPrior``, or ``models.GaussianPrior``.
+See the updated example in :ref:`Model Fitting`.
+For now, the code will still work if you use ``p_min`` and ``p_max``, but a warning will be issued to encourage you to switch.
+
 * Add intrinsic scatter option to bolometric light curve creation
 * Add more MJD digits in bolometric output files
 * Add option to consider other columns when dividing light curves into epochs
 * Recognize spectra stored as FITS tables
 * Don't crash when plotting ungrouped light curve
 * Allow linewidth/linestyle to be passed as ``plot_kwargs``
-* Recognize `marker='none'` when plotting a light curve
+* Recognize ``marker='none'`` when plotting a light curve
 * Do not plot black lines for Johnson filters when using ``plot_lines``
 * Allow adjustment of font sizes in light curve corner plots
+* Change priors from functions to classes (see above)
 
 v0.4.0 (2022-02-08)
 -------------------

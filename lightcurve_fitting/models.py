@@ -6,7 +6,7 @@ from pkg_resources import resource_filename
 from abc import ABCMeta, abstractmethod
 
 k_B = const.k_B.to("eV / kK").value
-c3 = (4 * np.pi * const.sigma_sb.to("erg s-1 Rsun-2 kK-4").value) ** -0.5 / 1000.  # Rsun --> kiloRsun
+c3 = (4. * np.pi * const.sigma_sb.to("erg s-1 Rsun-2 kK-4").value) ** -0.5 / 1000.  # Rsun --> kiloRsun
 
 
 def format_unit(unit):
@@ -44,18 +44,18 @@ class Model:
     ----------
     func : function
         A function that defines the analytical model
-    input_names : list
+    input_names : iterable
         A list of parameter names
-    units : list
+    units : iterable
         A list of units (:class:`astropy.unit.Unit`) for each parameter
 
     Attributes
     ----------
     func : function
         The function that defines the analytical model
-    input_names : list
+    input_names : iterable
         A list of the parameter names
-    units : list
+    units : iterable
         A list of the units for each parameter
     nparams : int
         The number of parameters in the model
@@ -73,6 +73,85 @@ class Model:
 
     def __call__(self, *args, **kwargs):
         return self.func(*args[:self.nparams+2], **kwargs)  # +2 for times and filters
+
+
+def shock_cooling_temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW=False):
+    """
+    The shock cooling model of Sapir & Waxman (https://doi.org/10.3847/1538-4357/aa64df).
+
+    This version of the model is written in terms of physical parameters :math:`v_s, M_\\mathrm{env}, f_ρ M, R`:
+
+    :math:`T(t) = \\frac{T_\\mathrm{col}}{T_\\mathrm{ph}} T_0 \\left(\\frac{v_s^2 t^2}{f_ρ M κ}\\right)^{ε_1}
+    \\frac{R^{1/4}}{κ^{1/4}} t^{-1/2}` (Eq. 23)
+
+    :math:`L(t) = A \\exp\\left[-\\left(\\frac{a t}{t_\\mathrm{tr}}\\right)^α\\right]
+    L_0 \\left(\\frac{v_s t^2}{f_ρ M κ}\\right)^{-ε_2} \\frac{v_s^2 R}{κ}` (Eq. 18-19)
+
+    :math:`t_\\mathrm{tr} = (19.5\\,\\mathrm{d}) \\left(\\frac{κ * M_\\mathrm{env}}{v_s} \\right)^{1/2}` (Eq. 20)
+
+    Parameters
+    ----------
+    t_in : float, array-like
+        Time in days
+    v_s : float, array-like
+        The shock speed in :math:`10^{8.5}` cm/s
+    M_env : float, array-like
+        The envelope mass in solar masses
+    f_rho_M : float, array-like
+        The product :math:`f_ρ M`, where ":math:`f_ρ` is a numerical factor of order unity that depends on the inner
+        envelope structure" and :math:`M` is the ejecta mass in solar masses
+    R : float, array-like
+        The progenitor radius in :math:`10^{13}` cm
+    t_exp : float, array-like
+        The explosion epoch
+    kappa : float, array-like
+        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
+    n : float, array-like
+        The polytropic index of the progenitor. Must be either 1.5 or 3.
+    RW : bool, optional
+        Reduce the model to the simpler form of Rabinak & Waxman (https://doi.org/10.1088/0004-637X/728/1/63)
+
+    Returns
+    -------
+    T_K : array-like
+        The model blackbody temperatures in units of kilokelvins
+    R_bb : array-like
+        The model blackbody radii in units of 1000 solar radii
+    """
+    if n == 1.5:
+        A = 0.94
+        a = 1.67
+        alpha = 0.8
+        epsilon_1 = 0.027
+        epsilon_2 = 0.086
+        L_0 = 2.0e42
+        T_0 = 1.61
+        Tph_to_Tcol = 1.1
+    elif n == 3.:
+        A = 0.79
+        a = 4.57
+        alpha = 0.73
+        epsilon_1 = 0.016
+        epsilon_2 = 0.175
+        L_0 = 2.1e42
+        T_0 = 1.69
+        Tph_to_Tcol = 1.0
+    else:
+        raise ValueError('n can only be 1.5 or 3')
+
+    if RW:
+        a = 0.
+        Tph_to_Tcol = 1.2
+
+    t = t_in.reshape(-1, 1) - t_exp
+    L_RW = L_0 * (t ** 2 * v_s / (f_rho_M * kappa)) ** -epsilon_2 * v_s ** 2 * R / kappa
+    t_tr = 19.5 * (kappa * M_env / v_s) ** 0.5
+    L = L_RW * A * np.exp(-(a * t / t_tr) ** alpha)
+    T_ph = T_0 * (t ** 2 * v_s ** 2 / (f_rho_M * kappa)) ** epsilon_1 * kappa ** -0.25 * t ** -0.5 * R ** 0.25
+    T_col = T_ph * Tph_to_Tcol
+    T_K = np.squeeze(T_col) / k_B
+    R_bb = c3 * np.squeeze(L) ** 0.5 * T_K ** -2
+    return T_K, R_bb
 
 
 def shock_cooling(t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW=False, z=0.):
@@ -120,42 +199,8 @@ def shock_cooling(t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW
     y_fit : array-like
         The filtered model light curves
     """
-    if n == 1.5:
-        A = 0.94
-        a = 1.67
-        alpha = 0.8
-        epsilon_1 = 0.027
-        epsilon_2 = 0.086
-        L_0 = 2.0e42
-        T_0 = 1.61
-        Tph_to_Tcol = 1.1
-    elif n == 3.:
-        A = 0.79
-        a = 4.57
-        alpha = 0.73
-        epsilon_1 = 0.016
-        epsilon_2 = 0.175
-        L_0 = 2.1e42
-        T_0 = 1.69
-        Tph_to_Tcol = 1.0
-    else:
-        raise ValueError('n can only be 1.5 or 3')
-
-    if RW:
-        a = 0.
-        Tph_to_Tcol = 1.2
-
-    t = t_in.reshape(-1, 1) - t_exp
-    L_RW = L_0 * (t ** 2 * v_s / (f_rho_M * kappa)) ** -epsilon_2 * v_s ** 2 * R / kappa
-    t_tr = 19.5 * (kappa * M_env / v_s) ** 0.5
-    L = L_RW * A * np.exp(-(a * t / t_tr) ** alpha)
-    T_ph = T_0 * (t ** 2 * v_s ** 2 / (f_rho_M * kappa)) ** epsilon_1 * kappa ** -0.25 * t ** -0.5 * R ** 0.25
-    T_col = T_ph * Tph_to_Tcol
-    T_K = np.squeeze(T_col) / k_B
-    R_bb = c3 * np.squeeze(L) ** 0.5 * T_K ** -2
-
+    T_K, R_bb = shock_cooling_temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp, kappa, n, RW)
     y_fit = blackbody_to_filters(f, T_K, R_bb, z)
-
     return y_fit
 
 
@@ -177,7 +222,7 @@ def t_max(p, kappa=1.):
     """
     The maximum validity time for the :func:`shock_cooling` model
 
-    :math:`t_\\mathrm{max} = (7.4\,\\mathrm{d}) \\left(\\frac{R}{κ}\\right)^{0.55} + t_\\mathrm{exp}` (Eq. 24)
+    :math:`t_\\mathrm{max} = (7.4\\,\\mathrm{d}) \\left(\\frac{R}{κ}\\right)^{0.55} + t_\\mathrm{exp}` (Eq. 24)
     """
     R = p[3]
     t_exp = p[4] if len(p) > 4 else 0.

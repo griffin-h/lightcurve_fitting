@@ -167,11 +167,11 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
     f4.tight_layout()
 
     os.makedirs(outpath, exist_ok=True)
-    filename = os.path.join(outpath, f'{mjdavg:.1f}.png')
+    filename = os.path.join(outpath, f'{mjdavg:.3f}.png')
     print(filename)
     f4.savefig(filename)
     if save_chains:
-        chain_filename = os.path.join(outpath, f'{mjdavg:.1f}.npy')
+        chain_filename = os.path.join(outpath, f'{mjdavg:.3f}.npy')
         np.save(chain_filename, sampler.flatchain)
     if show:
         plt.show()

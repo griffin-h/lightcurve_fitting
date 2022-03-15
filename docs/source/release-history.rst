@@ -5,6 +5,7 @@ Release History
 Unreleased
 ----------
 * Add intrinsic scatter option to bolometric light curve creation
+* Add more MJD digits in bolometric output files
 
 v0.4.0 (2022-02-08)
 -------------------

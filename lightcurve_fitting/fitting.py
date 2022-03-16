@@ -58,13 +58,16 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     if model_kwargs is None:
         model_kwargs = {}
 
-    lc.calcAbsMag()
-    lc.calcLum()
+    if model.output_quantity == 'flux':
+        lc.calcFlux()
+    elif model.output_quantity == 'lum':
+        lc.calcAbsMag()
+        lc.calcLum()
 
     f = lc['filter'].data
     t = lc['MJD'].data
-    y = lc['lum'].data
-    dy = lc['dlum'].data
+    y = lc[model.output_quantity].data
+    dy = lc['d'+model.output_quantity].data
 
     if model == CompanionShocking:
         scale_sifto(lc)
@@ -163,7 +166,7 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
 
 def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
                       num_models_to_plot=100, lcaxis_posn=(0.7, 0.55, 0.2, 0.4),
-                      filter_spacing=0.5, tmin=None, tmax=None, t0_offset=None, save_plot_as='', ycol='lum',
+                      filter_spacing=0.5, tmin=None, tmax=None, t0_offset=None, save_plot_as='', ycol=None,
                       textsize='medium', param_textsize='large'):
     """
     Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model light curves.
@@ -194,7 +197,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
     save_plot_as : str, optional
         Filename to which to save the resulting plot
     ycol : str, optional
-        Quantity to plot on the light curve inset. Choices: "lum" (default) or "absmag".
+        Quantity to plot on the light curve inset. Choices: "lum", "flux", or "absmag". Default: model.output_quantity
     textsize : str, optional
         Font size for the x- and y-axis labels, as well as the tick labels. Default: 'medium'
     param_textsize : str, optional
@@ -211,6 +214,8 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
     """
     if model_kwargs is None:
         model_kwargs = {}
+    if ycol is None:
+        ycol = model.output_quantity
     plt.style.use(resource_filename('lightcurve_fitting', 'serif.mplstyle'))
 
     choices = np.random.choice(sampler_flatchain.shape[0], num_models_to_plot)
@@ -259,8 +264,13 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         ylabel = 'Absolute Magnitude + Offset'
         y_fit = [[[filt.M0]] for filt in ufilts] - 2.5 * np.log10(y_fit)
         ax.invert_yaxis()
+    elif ycol == 'flux':
+        dycol = 'dflux'
+        yscale = 10. ** np.round(np.log10(y_fit.max()))
+        ylabel = 'Flux $F_\\nu$ (10$^{{{:.0f}}}$ erg s$^{{-1}}$ m$^{{-2}}$ Hz$^{{-1}}$) + Offset'.format(
+            np.log10(yscale) + 7)  # W --> erg / s
     else:
-        raise ValueError(f'ycol="{ycol}" is not recognized. Use "lum" or "absmag".')
+        raise ValueError(f'ycol="{ycol}" is not recognized. Use "lum", "absmag", "flux".')
     offset = -len(ufilts) // 2 * filter_spacing
     for filt, yfit in zip(ufilts, y_fit):
         offset += filter_spacing

@@ -7,6 +7,7 @@ from abc import ABCMeta, abstractmethod
 
 k_B = const.k_B.to("eV / kK").value
 c3 = (4. * np.pi * const.sigma_sb.to("erg s-1 Rsun-2 kK-4").value) ** -0.5 / 1000.  # Rsun --> kiloRsun
+c4 = 1. / (4. * np.pi * u.Mpc.to(u.m) ** 2.)
 
 
 def format_unit(unit):
@@ -61,8 +62,10 @@ class Model:
         The number of parameters in the model
     axis_labels : list
         Axis labels for each paramter (including name and unit)
+    output_quantity : str, optional
+        Quantity output by the model: 'lum' (default) or 'flux'
     """
-    def __init__(self, func, input_names, units):
+    def __init__(self, func, input_names, units, output_quantity='lum'):
         self.func = func
         self.input_names = input_names
         self.units = units
@@ -70,6 +73,7 @@ class Model:
         self.axis_labels = ['${}$ ({})'.format(var, format_unit(unit))
                             if unit is not u.dimensionless_unscaled else '${}$'.format(var)
                             for var, unit in zip(input_names, units)]
+        self.output_quantity = output_quantity
 
     def __call__(self, *args, **kwargs):
         return self.func(*args[:self.nparams+2], **kwargs)  # +2 for times and filters
@@ -247,6 +251,56 @@ ShockCooling = Model(shock_cooling,
                      )
 ShockCooling.t_min = t_min
 ShockCooling.t_max = t_max
+
+
+def shock_cooling3(t_in, f, v_s, M_env, f_rho_M, R, dist, ebv=0., t_exp=0., kappa=1., n=1.5, RW=False, z=0.):
+    T_K, R_bb = shock_cooling_temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp, kappa, n, RW)
+    lum = blackbody_to_filters(f, T_K, R_bb, z, ebv=ebv)
+    flux = c4 * lum / dist ** 2.
+    return flux
+
+
+def t_min3(p, kappa=1.):
+    """
+    The minimum validity time for the :func:`shock_cooling` model
+
+    :math:`t_\\mathrm{min} = (0.2\\,\\mathrm{d}) \\frac{R}{v_s}
+    \\max\\left[0.5, \\frac{R^{0.4}}{(f_ρ M κ)^{0.2} v_s^{-0.7}}\\right] + t_\\mathrm{exp}` (Eq. 17)
+    """
+    return t_min([p[0], p[1], p[2], p[3], p[6] if len(p) > 6 else 0.], kappa)
+
+
+def t_max3(p, kappa=1.):
+    """
+    The maximum validity time for the :func:`shock_cooling` model
+
+    :math:`t_\\mathrm{max} = (7.4\\,\\mathrm{d}) \\left(\\frac{R}{κ}\\right)^{0.55} + t_\\mathrm{exp}` (Eq. 24)
+    """
+    return t_max([p[0], p[1], p[2], p[3], p[6] if len(p) > 6 else 0.], kappa)
+
+
+ShockCooling3 = Model(shock_cooling3,
+                      [
+                          'v_\\mathrm{s*}',
+                          'M_\\mathrm{env}',
+                          'f_\\rho M',
+                          'R',
+                          'd_L',
+                          'E(B-V)',
+                          't_0',
+                      ],
+                      [
+                          10. ** 8.5 * u.cm / u.s,
+                          u.Msun,
+                          u.Msun,
+                          1e13 * u.cm,
+                          u.Mpc,
+                          u.mag,
+                          u.d,
+                      ],
+                      output_quantity='flux')
+ShockCooling3.t_min = t_min3
+ShockCooling3.t_max = t_max3
 
 
 def shock_cooling2(t_in, f, T_1, L_1, t_tr, t_exp=0., n=1.5, RW=False, z=0.):

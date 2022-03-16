@@ -138,6 +138,7 @@ The ``models`` and ``fitting`` submodules allow you to fit analytical models to 
    formulated in terms of :math:`v_s, M_\mathrm{env}, f_ρ M, R`
  * ``ShockCooling2``, which is the same Sapir & Waxman model but formulated in terms of scaling parameters :math:`T_1, L_1, t_\mathrm{tr}`.
    This was used in my paper on SN 2016bkv: https://doi.org/10.3847/1538-4357/aac5f6.
+ * ``ShockCooling3``, which is the same as ``ShockCooling`` but with :math:`d_L` and :math:`E(B-V)` as free parameters. (Therefore it fits the flux instead of the luminosity.) This was used in my paper on SN 2021yja (submitted).
 
 **Note on the shock cooling models:**
 There are degeneracies between many of the physical parameters that make them difficult to fit independently.

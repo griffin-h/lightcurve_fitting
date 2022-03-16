@@ -22,6 +22,7 @@ For now, the code will still work if you use ``p_min`` and ``p_max``, but a warn
 * Allow adjustment of font sizes in light curve corner plots
 * Change priors from functions to classes (see above)
 * Allow for a reddened blackbody SED in models
+* Add ShockCooling3 model: same as ShockCooling but with :math:`d_L` and :math:`E(B-V)` as free parameters
 
 v0.4.0 (2022-02-08)
 -------------------

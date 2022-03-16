@@ -2,8 +2,8 @@
 Release History
 ===============
 
-Unreleased
-----------
+v0.5.0 (2022-03-16)
+-------------------
 For the first time, this release introduces a change that is not backward compatible.
 To enable the use of Gaussian priors, I have had to make the prior specification a little more complex.
 Instead of using ``p_min`` and ``p_max`` to specify the bounds on a uniform prior, users will have to define the shape and bounds on each prior using the ``priors`` keyword.

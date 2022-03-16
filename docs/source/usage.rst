@@ -86,7 +86,7 @@ You can make a bolometric light curve and color curves from the photometry table
     plot_bolometric_results(t)
     plot_color_curves(t)
 
-The light curve is divided into epochs (defined by the ``bin`` argument to ``calculate_bolometric``), and processed four different ways:
+The light curve is divided into epochs (defined by the ``bin`` and ``also_group_by`` arguments to ``calculate_bolometric``), and processed four different ways:
 
  * Fitting the Planck function using ``scipy.curve_fit``. This is very fast but may not give reliable uncertainties.
    The columns ``temp``, ``radius``, ``dtemp``, and ``dradius`` come from this fit.
@@ -121,6 +121,21 @@ Optionally, you can calculate colors at each epoch by giving the argument ``colo
  * whether the color is a lower limit, ``lolims(B-V)`` (i.e., :math:`B` was an upper limit), and
  * whether the color is an upper limit, ``uplims(B-V)`` (i.e., :math:`V` was an upper limit).
 
+Intrinsic Scatter
+^^^^^^^^^^^^^^^^^
+
+You can include an intrinsic scatter term (:math:`\sigma`) in your MCMC fits by setting ``use_sigma=True``. :math:`\sigma` is added in quadrature to the photometric uncertainty on each point (:math:`\sigma_i`). If you choose ``sigma_type='relative'``, :math:`\sigma` will be in units of the individual photometric uncertainties, i.e.,
+
+.. math::
+    \sigma_{i,\mathrm{eff}} = \sqrt{ \sigma_i^2 + \left( \sigma * \sigma_i \right)^2 }
+
+If you choose ``sigma_type='absolute'``, :math:`\sigma` will be in units of the median photometric uncertainty (:math:`\bar\sigma`), i.e.,
+
+.. math::
+    \sigma_{i,\mathrm{eff}} = \sqrt{ \sigma_i^2 + \left( \sigma * \bar{\sigma} \right)^2 }
+
+For bolometric light curve fitting, you can also set a maximum for this intrinsic scatter using the ``sigma_max`` keyword (default: 10). (For model fitting, you can set a maximum using the ``priors`` keyword.)
+
 Model Fitting
 -------------
 The ``models`` and ``fitting`` submodules allow you to fit analytical models to the observed data. Right now, the only choices are:
@@ -131,6 +146,7 @@ The ``models`` and ``fitting`` submodules allow you to fit analytical models to 
    formulated in terms of :math:`v_s, M_\mathrm{env}, f_ρ M, R`
  * ``ShockCooling2``, which is the same Sapir & Waxman model but formulated in terms of scaling parameters :math:`T_1, L_1, t_\mathrm{tr}`.
    This was used in my paper on SN 2016bkv: https://doi.org/10.3847/1538-4357/aac5f6.
+ * ``ShockCooling3``, which is the same as ``ShockCooling`` but with :math:`d_L` and :math:`E(B-V)` as free parameters. (Therefore it fits the flux instead of the luminosity.) This was used in my paper on SN 2021yja (submitted).
 
 **Note on the shock cooling models:**
 There are degeneracies between many of the physical parameters that make them difficult to fit independently.
@@ -141,23 +157,27 @@ However, in order to measure, for example, the progenitor radius, one must use t
 
 .. code-block:: python
 
-    from lightcurve_fitting.models import ShockCooling2
+    from lightcurve_fitting.models import ShockCooling2, UniformPrior
     from lightcurve_fitting.fitting import lightcurve_mcmc, lightcurve_corner
 
     # Fit only the early light curve
     lc_early = lc.where(MJD_min=57468., MJD_max=57485.)
 
     # Define the priors and initial guesses
-    p_min = [0., 0., 0., 57468.]
-    p_max = [100., 100., 100., 57468.7]
+    priors = [
+        UniformPrior(0., 100.),
+        UniformPrior(0., 100.),
+        UniformPrior(0., 100.),
+        UniformPrior(57468., 57468.7),
+    ]
     p_lo = [20., 2., 20., 57468.5]
     p_up = [50., 5., 50., 57468.7]
 
     redshift = 0.002
 
     sampler = fitting.lightcurve_mcmc(lc_early, ShockCooling2, model_kwargs={'z': redshift},
-                                  p_min=p_min, p_max=p_max, p_lo=p_lo, p_up=p_up,
-                                  nwalkers=10, nsteps=100, nsteps_burnin=100, show=True)
+                                      priors=priors, p_lo=p_lo, p_up=p_up,
+                                      nwalkers=10, nsteps=100, nsteps_burnin=100, show=True)
     lightcurve_corner(lc_early, ShockCooling2, sampler.flatchain, model_kwargs={'z': redshift})
 
 **Another note on the shock cooling models:**
@@ -173,6 +193,8 @@ If you used the Rabinak & Waxman option, the model fails even earlier, but you w
     print(t_max)
     if lc_early['MJD'].max() > t_max:
         print('Warning: your model is not valid for all your observations')
+
+Note that you can add an :ref:`Intrinsic Scatter` to your model fits as well.
 
 Calibrating Spectra to Photometry
 ---------------------------------

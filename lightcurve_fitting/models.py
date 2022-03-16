@@ -3,9 +3,11 @@ import astropy.constants as const
 import astropy.units as u
 from astropy.table import Table
 from pkg_resources import resource_filename
+from abc import ABCMeta, abstractmethod
 
 k_B = const.k_B.to("eV / kK").value
-c3 = (4 * np.pi * const.sigma_sb.to("erg s-1 Rsun-2 kK-4").value) ** -0.5 / 1000.  # Rsun --> kiloRsun
+c3 = (4. * np.pi * const.sigma_sb.to("erg s-1 Rsun-2 kK-4").value) ** -0.5 / 1000.  # Rsun --> kiloRsun
+c4 = 1. / (4. * np.pi * u.Mpc.to(u.m) ** 2.)
 
 
 def format_unit(unit):
@@ -43,25 +45,27 @@ class Model:
     ----------
     func : function
         A function that defines the analytical model
-    input_names : list
+    input_names : iterable
         A list of parameter names
-    units : list
+    units : iterable
         A list of units (:class:`astropy.unit.Unit`) for each parameter
 
     Attributes
     ----------
     func : function
         The function that defines the analytical model
-    input_names : list
+    input_names : iterable
         A list of the parameter names
-    units : list
+    units : iterable
         A list of the units for each parameter
     nparams : int
         The number of parameters in the model
     axis_labels : list
         Axis labels for each paramter (including name and unit)
+    output_quantity : str, optional
+        Quantity output by the model: 'lum' (default) or 'flux'
     """
-    def __init__(self, func, input_names, units):
+    def __init__(self, func, input_names, units, output_quantity='lum'):
         self.func = func
         self.input_names = input_names
         self.units = units
@@ -69,9 +73,89 @@ class Model:
         self.axis_labels = ['${}$ ({})'.format(var, format_unit(unit))
                             if unit is not u.dimensionless_unscaled else '${}$'.format(var)
                             for var, unit in zip(input_names, units)]
+        self.output_quantity = output_quantity
 
     def __call__(self, *args, **kwargs):
         return self.func(*args[:self.nparams+2], **kwargs)  # +2 for times and filters
+
+
+def shock_cooling_temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW=False):
+    """
+    The shock cooling model of Sapir & Waxman (https://doi.org/10.3847/1538-4357/aa64df).
+
+    This version of the model is written in terms of physical parameters :math:`v_s, M_\\mathrm{env}, f_ρ M, R`:
+
+    :math:`T(t) = \\frac{T_\\mathrm{col}}{T_\\mathrm{ph}} T_0 \\left(\\frac{v_s^2 t^2}{f_ρ M κ}\\right)^{ε_1}
+    \\frac{R^{1/4}}{κ^{1/4}} t^{-1/2}` (Eq. 23)
+
+    :math:`L(t) = A \\exp\\left[-\\left(\\frac{a t}{t_\\mathrm{tr}}\\right)^α\\right]
+    L_0 \\left(\\frac{v_s t^2}{f_ρ M κ}\\right)^{-ε_2} \\frac{v_s^2 R}{κ}` (Eq. 18-19)
+
+    :math:`t_\\mathrm{tr} = (19.5\\,\\mathrm{d}) \\left(\\frac{κ * M_\\mathrm{env}}{v_s} \\right)^{1/2}` (Eq. 20)
+
+    Parameters
+    ----------
+    t_in : float, array-like
+        Time in days
+    v_s : float, array-like
+        The shock speed in :math:`10^{8.5}` cm/s
+    M_env : float, array-like
+        The envelope mass in solar masses
+    f_rho_M : float, array-like
+        The product :math:`f_ρ M`, where ":math:`f_ρ` is a numerical factor of order unity that depends on the inner
+        envelope structure" and :math:`M` is the ejecta mass in solar masses
+    R : float, array-like
+        The progenitor radius in :math:`10^{13}` cm
+    t_exp : float, array-like
+        The explosion epoch
+    kappa : float, array-like
+        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
+    n : float, array-like
+        The polytropic index of the progenitor. Must be either 1.5 or 3.
+    RW : bool, optional
+        Reduce the model to the simpler form of Rabinak & Waxman (https://doi.org/10.1088/0004-637X/728/1/63)
+
+    Returns
+    -------
+    T_K : array-like
+        The model blackbody temperatures in units of kilokelvins
+    R_bb : array-like
+        The model blackbody radii in units of 1000 solar radii
+    """
+    if n == 1.5:
+        A = 0.94
+        a = 1.67
+        alpha = 0.8
+        epsilon_1 = 0.027
+        epsilon_2 = 0.086
+        L_0 = 2.0e42
+        T_0 = 1.61
+        Tph_to_Tcol = 1.1
+    elif n == 3.:
+        A = 0.79
+        a = 4.57
+        alpha = 0.73
+        epsilon_1 = 0.016
+        epsilon_2 = 0.175
+        L_0 = 2.1e42
+        T_0 = 1.69
+        Tph_to_Tcol = 1.0
+    else:
+        raise ValueError('n can only be 1.5 or 3')
+
+    if RW:
+        a = 0.
+        Tph_to_Tcol = 1.2
+
+    t = t_in.reshape(-1, 1) - t_exp
+    L_RW = L_0 * (t ** 2 * v_s / (f_rho_M * kappa)) ** -epsilon_2 * v_s ** 2 * R / kappa
+    t_tr = 19.5 * (kappa * M_env / v_s) ** 0.5
+    L = L_RW * A * np.exp(-(a * t / t_tr) ** alpha)
+    T_ph = T_0 * (t ** 2 * v_s ** 2 / (f_rho_M * kappa)) ** epsilon_1 * kappa ** -0.25 * t ** -0.5 * R ** 0.25
+    T_col = T_ph * Tph_to_Tcol
+    T_K = np.squeeze(T_col) / k_B
+    R_bb = c3 * np.squeeze(L) ** 0.5 * T_K ** -2
+    return T_K, R_bb
 
 
 def shock_cooling(t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW=False, z=0.):
@@ -119,42 +203,8 @@ def shock_cooling(t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW
     y_fit : array-like
         The filtered model light curves
     """
-    if n == 1.5:
-        A = 0.94
-        a = 1.67
-        alpha = 0.8
-        epsilon_1 = 0.027
-        epsilon_2 = 0.086
-        L_0 = 2.0e42
-        T_0 = 1.61
-        Tph_to_Tcol = 1.1
-    elif n == 3.:
-        A = 0.79
-        a = 4.57
-        alpha = 0.73
-        epsilon_1 = 0.016
-        epsilon_2 = 0.175
-        L_0 = 2.1e42
-        T_0 = 1.69
-        Tph_to_Tcol = 1.0
-    else:
-        raise ValueError('n can only be 1.5 or 3')
-
-    if RW:
-        a = 0.
-        Tph_to_Tcol = 1.2
-
-    t = t_in.reshape(-1, 1) - t_exp
-    L_RW = L_0 * (t ** 2 * v_s / (f_rho_M * kappa)) ** -epsilon_2 * v_s ** 2 * R / kappa
-    t_tr = 19.5 * (kappa * M_env / v_s) ** 0.5
-    L = L_RW * A * np.exp(-(a * t / t_tr) ** alpha)
-    T_ph = T_0 * (t ** 2 * v_s ** 2 / (f_rho_M * kappa)) ** epsilon_1 * kappa ** -0.25 * t ** -0.5 * R ** 0.25
-    T_col = T_ph * Tph_to_Tcol
-    T_K = np.squeeze(T_col) / k_B
-    R_bb = c3 * np.squeeze(L) ** 0.5 * T_K ** -2
-
+    T_K, R_bb = shock_cooling_temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp, kappa, n, RW)
     y_fit = blackbody_to_filters(f, T_K, R_bb, z)
-
     return y_fit
 
 
@@ -176,7 +226,7 @@ def t_max(p, kappa=1.):
     """
     The maximum validity time for the :func:`shock_cooling` model
 
-    :math:`t_\\mathrm{max} = (7.4\,\\mathrm{d}) \\left(\\frac{R}{κ}\\right)^{0.55} + t_\\mathrm{exp}` (Eq. 24)
+    :math:`t_\\mathrm{max} = (7.4\\,\\mathrm{d}) \\left(\\frac{R}{κ}\\right)^{0.55} + t_\\mathrm{exp}` (Eq. 24)
     """
     R = p[3]
     t_exp = p[4] if len(p) > 4 else 0.
@@ -201,6 +251,56 @@ ShockCooling = Model(shock_cooling,
                      )
 ShockCooling.t_min = t_min
 ShockCooling.t_max = t_max
+
+
+def shock_cooling3(t_in, f, v_s, M_env, f_rho_M, R, dist, ebv=0., t_exp=0., kappa=1., n=1.5, RW=False, z=0.):
+    T_K, R_bb = shock_cooling_temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp, kappa, n, RW)
+    lum = blackbody_to_filters(f, T_K, R_bb, z, ebv=ebv)
+    flux = c4 * lum / dist ** 2.
+    return flux
+
+
+def t_min3(p, kappa=1.):
+    """
+    The minimum validity time for the :func:`shock_cooling` model
+
+    :math:`t_\\mathrm{min} = (0.2\\,\\mathrm{d}) \\frac{R}{v_s}
+    \\max\\left[0.5, \\frac{R^{0.4}}{(f_ρ M κ)^{0.2} v_s^{-0.7}}\\right] + t_\\mathrm{exp}` (Eq. 17)
+    """
+    return t_min([p[0], p[1], p[2], p[3], p[6] if len(p) > 6 else 0.], kappa)
+
+
+def t_max3(p, kappa=1.):
+    """
+    The maximum validity time for the :func:`shock_cooling` model
+
+    :math:`t_\\mathrm{max} = (7.4\\,\\mathrm{d}) \\left(\\frac{R}{κ}\\right)^{0.55} + t_\\mathrm{exp}` (Eq. 24)
+    """
+    return t_max([p[0], p[1], p[2], p[3], p[6] if len(p) > 6 else 0.], kappa)
+
+
+ShockCooling3 = Model(shock_cooling3,
+                      [
+                          'v_\\mathrm{s*}',
+                          'M_\\mathrm{env}',
+                          'f_\\rho M',
+                          'R',
+                          'd_L',
+                          'E(B-V)',
+                          't_0',
+                      ],
+                      [
+                          10. ** 8.5 * u.cm / u.s,
+                          u.Msun,
+                          u.Msun,
+                          1e13 * u.cm,
+                          u.Mpc,
+                          u.mag,
+                          u.d,
+                      ],
+                      output_quantity='flux')
+ShockCooling3.t_min = t_min3
+ShockCooling3.t_max = t_max3
 
 
 def shock_cooling2(t_in, f, T_1, L_1, t_tr, t_exp=0., n=1.5, RW=False, z=0.):
@@ -432,18 +532,57 @@ CompanionShocking = Model(companion_shocking,
                           )
 
 
-def log_flat_prior(p):
-    """
-    A uniform prior in the logarithm of the parameter, i.e., :math:`\\frac{dP}{dp} \\propto \\frac{1}{p}`
-    """
-    return p ** -1
+class Prior:
+    __metaclass__ = ABCMeta
+
+    def __init__(self, p_min=-np.inf, p_max=np.inf):
+        self.p_min = p_min
+        self.p_max = p_max
+
+    def __call__(self, p):
+        if self.p_min < p < self.p_max:
+            return self.logp(p)
+        else:
+            return -np.inf
+
+    @abstractmethod
+    def logp(self, p):
+        pass
 
 
-def flat_prior(p):
+class UniformPrior(Prior):
     """
     A uniform prior in the parameter, i.e., :math:`\\frac{dP}{dp} \\propto 1`
     """
-    return np.ones_like(p)
+    def logp(self, p):
+        return np.zeros_like(p)
+
+
+class LogUniformPrior(Prior):
+    """
+    A uniform prior in the logarithm of the parameter, i.e., :math:`\\frac{dP}{dp} \\propto \\frac{1}{p}`
+    """
+    def __init__(self, p_min=0., p_max=np.inf):
+        if p_min < 0.:
+            raise ValueError('a log-uniform prior cannot have negative limits')
+        super().__init__(p_min, p_max)
+
+    def logp(self, p):
+        return -np.log(p)
+
+
+class GaussianPrior(Prior):
+    """
+    A Gaussian prior centered at `mean` with standard deviation `stddev`, i.e.,
+    :math:`\\frac{dP}{dp} \\propto \\exp \\left( \\frac{(p - \\mu)^2}{2 \\sigma^2} \\right)`
+    """
+    def __init__(self, p_min=-np.inf, p_max=np.inf, mean=0., stddev=1.):
+        super().__init__(p_min, p_max)
+        self.mean = mean
+        self.stddev = stddev
+
+    def logp(self, p):
+        return -0.5 * ((p - self.mean) / self.stddev) ** 2.
 
 
 c1 = (const.h / const.k_B).to(u.kK / u.THz).value
@@ -472,11 +611,11 @@ def planck_fast(nu, T, R, cutoff_freq=np.inf):
     float, array-like
         The spectral luminosity density (:math:`L_ν`) of the source in watts per hertz
     """
-    return c2 * np.squeeze(np.outer(R ** 2, nu ** 3 * np.minimum(1., cutoff_freq / nu))
-                           / (np.exp(c1 * np.outer(T ** -1, nu)) - 1))
+    return c2 * np.squeeze(np.multiply.outer(R ** 2, nu ** 3 * np.minimum(1., cutoff_freq / nu))
+                           / (np.exp(c1 * np.multiply.outer(T ** -1, nu)) - 1))
 
 
-def blackbody_to_filters(filters, T, R, z=0., cutoff_freq=np.inf):
+def blackbody_to_filters(filters, T, R, z=0., cutoff_freq=np.inf, ebv=0.):
     """
     The average spectral luminosity density (:math:`L_ν`) of a blackbody as observed through one or more filters
 
@@ -492,6 +631,9 @@ def blackbody_to_filters(filters, T, R, z=0., cutoff_freq=np.inf):
         Redshift between the blackbody source and the observed filters
     cutoff_freq : float, optional
         Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)
+    ebv : float, array-like, optional
+        Selective extinction E(B-V) in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with R_V=3.1.
+        Its shape must be broadcastable to T and R. Default: 0.
 
     Returns
     -------
@@ -502,11 +644,11 @@ def blackbody_to_filters(filters, T, R, z=0., cutoff_freq=np.inf):
     R = np.array(R)
     if T.shape != R.shape:
         raise Exception('T & R must have the same shape')
+    np.broadcast(T, ebv)  # check if T and ebv are brodcastable, otherwise raise a ValueError
     if T.ndim == 1 and len(T) == len(filters):  # pointwise
-        y_fit = np.array([f.blackbody(t, r, z, cutoff_freq) for f, t, r in zip(filters, T, R)])
+        y_fit = np.array([f.blackbody(t, r, z, cutoff_freq, ebv) for f, t, r in zip(filters, T, R)])
     else:
-        y_fit = np.array([f.blackbody(T.flatten(), R.flatten(), z, cutoff_freq) for f in filters])
-        y_fit = y_fit.reshape(len(filters), *T.shape)
+        y_fit = np.array([f.blackbody(T, R, z, cutoff_freq, ebv) for f in filters])
     return y_fit
 
 

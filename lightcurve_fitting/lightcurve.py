@@ -442,7 +442,16 @@ class LC(Table):
             groupby.add(marker)
         if groupby:
             plottable = plottable.group_by(list(groupby))
-        for g, k in zip(plottable.groups, plottable.groups.keys):
+            keys = plottable.groups.keys
+        else:
+            keys = [Table()]
+        if self.sn is None:
+            linestyle = plot_kwargs.pop('linestyle') if 'linestyle' in plot_kwargs else None
+            linewidth = plot_kwargs.pop('linewidth') if 'linewidth' in plot_kwargs else None
+        else:
+            linestyle = self.sn.linestyle
+            linewidth = self.sn.linewidth
+        for g, k in zip(plottable.groups, keys):
             filt = g['filter'][0]
             if color == 'filter':
                 col = filt.color
@@ -466,6 +475,8 @@ class LC(Table):
                 mark = self.markers[g[marker][0]]
             elif marker in MarkerStyle.markers:
                 mark = marker
+            elif marker == 'none':
+                mark = None
             else:
                 mark = next(itermarkers)
             usedmarkers.append(mark)
@@ -491,12 +502,6 @@ class LC(Table):
                 else:
                     k['filter'] = '${}$'.format(filt.name)
             label = ' '.join([str(kv) for kv in k.values()])
-            if self.sn is None:
-                linestyle = None
-                linewidth = None
-            else:
-                linestyle = self.sn.linestyle
-                linewidth = self.sn.linewidth
             if not use_lines:
                 plt.errorbar(x, y, yerr, color=mec, mfc=mfc, mec=mec, marker=mark, linestyle='none', label=label,
                              **plot_kwargs)
@@ -506,7 +511,7 @@ class LC(Table):
                 plt.plot(x[g['nondet']], y[g['nondet']], color=mec, mfc=mfc, mec=mec, marker=mark, linestyle='none',
                          **plot_kwargs)
             else:
-                plt.plot(x, y, color=mec, mfc=mfc, mec=mec, marker=mark, label=label, linestyle=linestyle,
+                plt.plot(x, y, color=col, mfc=mfc, mec=mec, marker=mark, label=label, linestyle=linestyle,
                          linewidth=linewidth, **plot_kwargs)
         ymin, ymax = plt.ylim()
         if 'mag' in ycol and ymax > ymin:

@@ -3,13 +3,16 @@ import matplotlib.pyplot as plt
 import astropy.units as u
 import emcee
 import corner
-from .models import CompanionShocking, scale_sifto, flat_prior
+from .models import CompanionShocking, scale_sifto, UniformPrior
 from pkg_resources import resource_filename
+import warnings
+
+PRIOR_WARNING = 'The p_max/p_min keywords are deprecated. Use the priors keyword instead.'
 
 
 def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p_up=None,
                     nwalkers=100, nsteps=1000, nsteps_burnin=1000, model_kwargs=None,
-                    show=False, save_plot_as='', save_sampler_as='', use_sigma=False):
+                    show=False, save_plot_as='', save_sampler_as='', use_sigma=False, sigma_type='relative'):
     """
     Fit an analytical model to observed photometry using a Markov-chain Monte Carlo routine
 
@@ -21,16 +24,14 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
         The model to fit to the light curve. Available models: :class:`models.ShockCooling`,
         :class:`models.ShockCooling2`, :class:`models.CompanionShocking`
     priors : list, optional
-        Prior probability distributions for each model parameter. Available priors: :func:`models.flat_prior` (default),
-        :func:`models.log_flat_prior`
+        Prior probability distributions for each model parameter. Available priors:
+        :func:`models.UniformPrior` (default), :func:`models.LogUniformPrior`, :func:`models.GaussianPrior`
     p_min, p_max : list, optional
-        Lower bounds on the priors for each parameter. Omit individual bounds using :mod:`-numpy.inf`.
-    p_max : list, optional
-        Upper bounds on the priors for each parameter. Omit individual bounds using :mod:`numpy.inf`.
-    p_lo : list, optional
-        Lower bounds on the starting guesses for each paramter. Default: equal to ``p_min``.
-    p_up : list, optional
-        Upper bounds on the starting guesses for each parameter. Default: equal to ``p_max``.
+        DEPRECATED: Use `priors` instead
+    p_lo : list
+        Lower bounds on the starting guesses for each paramter
+    p_up : list
+        Upper bounds on the starting guesses for each parameter
     nwalkers : int, optional
         Number of walkers (chains) for the MCMC routine. Default: 100
     nsteps : int, optional
@@ -47,6 +48,9 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
         Save the aggregated chain histories to this filename
     use_sigma : bool, optional
         If True, treat the last parameter as an intrinsic scatter parameter that does not get passed to the model
+    sigma_type : str, optional
+        If 'relative' (default), sigma will be in units of the individual photometric uncertainties.
+        If 'absolute', sigma will be in units of the median photometric uncertainty.
 
     Returns
     -------
@@ -57,13 +61,16 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     if model_kwargs is None:
         model_kwargs = {}
 
-    lc.calcAbsMag()
-    lc.calcLum()
+    if model.output_quantity == 'flux':
+        lc.calcFlux()
+    elif model.output_quantity == 'lum':
+        lc.calcAbsMag()
+        lc.calcLum()
 
     f = lc['filter'].data
     t = lc['MJD'].data
-    y = lc['lum'].data
-    dy = lc['dlum'].data
+    y = lc[model.output_quantity].data
+    dy = lc['d'+model.output_quantity].data
 
     if model == CompanionShocking:
         scale_sifto(lc)
@@ -73,24 +80,23 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
 
     ndim = model.nparams + use_sigma
 
-    if priors is None:
-        priors = [flat_prior] * ndim
-    elif len(priors) != ndim:
-        raise Exception('priors must have length {:d}'.format(ndim))
-
+    # DEPRECATED
     if p_min is None:
         p_min = np.tile(-np.inf, ndim)
     elif len(p_min) == ndim:
         p_min = np.array(p_min, float)
+        warnings.warn(PRIOR_WARNING)
     else:
-        raise Exception('p_min must have length {:d}'.format(ndim))
+        raise Exception(PRIOR_WARNING)
 
+    # DEPRECATED
     if p_max is None:
         p_max = np.tile(np.inf, ndim)
     elif len(p_max) == ndim:
         p_max = np.array(p_max, float)
+        warnings.warn(PRIOR_WARNING)
     else:
-        raise Exception('p_max must have length {:d}'.format(ndim))
+        raise Exception(PRIOR_WARNING)
 
     if p_lo is None:
         p_lo = p_min
@@ -99,24 +105,33 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     else:
         raise Exception('p_lo must have length {:d}'.format(ndim))
 
-    if p_up is None:
-        p_up = p_max
-    elif len(p_up) == ndim:
+    if len(p_up) == ndim:
         p_up = np.array(p_up, float)
     else:
         raise Exception('p_up must have length {:d}'.format(ndim))
 
+    if priors is None:
+        priors = [UniformPrior(p0, p1) for p0, p1 in zip(p_min, p_max)]
+    elif len(priors) != ndim:
+        raise Exception('priors must have length {:d}'.format(ndim))
+
+    if sigma_type == 'relative':
+        sigma_units = dy
+    elif sigma_type == 'absolute':
+        sigma_units = np.median(dy)
+    else:
+        raise Exception('sigma_type must either be "relative" or "absolute"')
+
     def log_posterior(p):
-        if np.any(p < p_min) or np.any(p > p_max):
-            return -np.inf
-        else:
-            log_prior = 0.
-            for prior, p_i in zip(priors, p):
-                log_prior += np.log(prior(p_i))
-            y_fit = model(t, f, *p, **model_kwargs)
-            sigma = dy * np.sqrt(1. + p[-1] ** 2.) if use_sigma else dy
-            log_likelihood = -0.5 * np.sum(np.log(2 * np.pi * sigma ** 2.) + ((y - y_fit) / sigma) ** 2.)
-            return log_prior + log_likelihood
+        log_prior = 0.
+        for prior, p_i in zip(priors, p):
+            log_prior += prior(p_i)
+        if np.isinf(log_prior):
+            return log_prior
+        y_fit = model(t, f, *p, **model_kwargs)
+        sigma = np.sqrt(dy ** 2. + (p[-1] * sigma_units) ** 2.) if use_sigma else dy
+        log_likelihood = -0.5 * np.sum(np.log(2 * np.pi * sigma ** 2.) + ((y - y_fit) / sigma) ** 2.)
+        return log_prior + log_likelihood
 
     sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior)
 
@@ -161,7 +176,8 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
 
 def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
                       num_models_to_plot=100, lcaxis_posn=(0.7, 0.55, 0.2, 0.4),
-                      filter_spacing=0.5, tmin=None, tmax=None, t0_offset=None, save_plot_as='', ycol='lum'):
+                      filter_spacing=0.5, tmin=None, tmax=None, t0_offset=None, save_plot_as='', ycol=None,
+                      textsize='medium', param_textsize='large'):
     """
     Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model light curves.
 
@@ -191,7 +207,11 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
     save_plot_as : str, optional
         Filename to which to save the resulting plot
     ycol : str, optional
-        Quantity to plot on the light curve inset. Choices: "lum" (default) or "absmag".
+        Quantity to plot on the light curve inset. Choices: "lum", "flux", or "absmag". Default: model.output_quantity
+    textsize : str, optional
+        Font size for the x- and y-axis labels, as well as the tick labels. Default: 'medium'
+    param_textsize : str, optional
+        Font size for the parameter text. Default: 'large'
 
     Returns
     -------
@@ -204,6 +224,8 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
     """
     if model_kwargs is None:
         model_kwargs = {}
+    if ycol is None:
+        ycol = model.output_quantity
     plt.style.use(resource_filename('lightcurve_fitting', 'serif.mplstyle'))
 
     choices = np.random.choice(sampler_flatchain.shape[0], num_models_to_plot)
@@ -218,8 +240,11 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
             sampler_flatchain_corner[:, i_t0] -= t0_offset
             model.axis_labels[i_t0] = '$t_0 - {:.0f}$ (d)'.format(t0_offset)
 
-    fig = corner.corner(sampler_flatchain_corner, labels=model.axis_labels)
+    fig = corner.corner(sampler_flatchain_corner, labels=model.axis_labels, label_kwargs={'size': textsize})
     corner_axes = np.array(fig.get_axes()).reshape(sampler_flatchain.shape[-1], sampler_flatchain.shape[-1])
+    for i in range(sampler_flatchain.shape[-1]):
+        corner_axes[i, 0].tick_params(labelsize=textsize)
+        corner_axes[-1, i].tick_params(labelsize=textsize)
 
     for ax in np.diag(corner_axes):
         ax.spines['top'].set_visible(False)
@@ -249,8 +274,13 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         ylabel = 'Absolute Magnitude + Offset'
         y_fit = [[[filt.M0]] for filt in ufilts] - 2.5 * np.log10(y_fit)
         ax.invert_yaxis()
+    elif ycol == 'flux':
+        dycol = 'dflux'
+        yscale = 10. ** np.round(np.log10(y_fit.max()))
+        ylabel = 'Flux $F_\\nu$ (10$^{{{:.0f}}}$ erg s$^{{-1}}$ m$^{{-2}}$ Hz$^{{-1}}$) + Offset'.format(
+            np.log10(yscale) + 7)  # W --> erg / s
     else:
-        raise ValueError(f'ycol="{ycol}" is not recognized. Use "lum" or "absmag".')
+        raise ValueError(f'ycol="{ycol}" is not recognized. Use "lum", "absmag", "flux".')
     offset = -len(ufilts) // 2 * filter_spacing
     for filt, yfit in zip(ufilts, y_fit):
         offset += filter_spacing
@@ -259,13 +289,14 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
                     ls='none', marker='o', **filt.plotstyle)
         ax.plot(xfit - mjd_offset, yfit / yscale + offset, color=filt.linecolor, alpha=0.05)
         txt = f'${filt.name}{offset:+.1f}$' if filt.italics else rf'$\mathrm{{{filt.name}}}{offset:+.1f}$'
-        ax.text(1.03, yfit[-1, 0] / yscale + offset, txt, color=filt.textcolor,
+        ax.text(1.03, yfit[-1, 0] / yscale + offset, txt, color=filt.textcolor, fontdict={'size': textsize},
                 ha='left', va='center', transform=ax.get_yaxis_transform())
-    ax.set_xlabel('MJD $-$ {:.0f}'.format(mjd_offset))
-    ax.set_ylabel(ylabel)
+    ax.set_xlabel('MJD $-$ {:.0f}'.format(mjd_offset), size=textsize)
+    ax.set_ylabel(ylabel, size=textsize)
+    ax.tick_params(labelsize=textsize)
 
     paramtexts = format_credible_interval(sampler_flatchain, varnames=model.input_names, units=model.units)
-    fig.text(0.45, 0.95, '\n'.join(paramtexts), va='top', ha='center', fontdict={'size': 'large'})
+    fig.text(0.45, 0.95, '\n'.join(paramtexts), va='top', ha='center', fontdict={'size': param_textsize})
     if save_plot_as:
         fig.savefig(save_plot_as)
         print('saving figure as ' + save_plot_as)

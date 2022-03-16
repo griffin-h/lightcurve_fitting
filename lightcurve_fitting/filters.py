@@ -7,6 +7,7 @@ import os
 from .models import planck_fast
 from pkg_resources import resource_filename
 from functools import total_ordering
+from extinction import fitzpatrick99 as extinction_law
 
 
 @total_ordering
@@ -139,6 +140,9 @@ class Filter:
         self.freq_eff = None
         self.dfreq = None
         self.freq_range = None
+        self.wl_eff = None
+        self.dwl = None
+        self.wl_range = None
 
     def read_curve(self, show=False, force=False):
         """
@@ -203,7 +207,7 @@ class Filter:
             self.dfreq = -dfreq
             self.freq_range = (freq_eff.value - freq0, freq1 - freq_eff.value)
 
-    def blackbody(self, T, R, z=0., cutoff_freq=np.inf):
+    def blackbody(self, T, R, z=0., cutoff_freq=np.inf, ebv=0.):
         """
         Returns the average Lnu of a blackbody in this filter
 
@@ -218,13 +222,18 @@ class Filter:
         cutoff_freq : float, optional
             Cutoff frequency of the blackbody in terahertz as defined in https://doi.org/10.3847/1538-4357/aa9334.
             Default: unmodified blackbody.
+        ebv : float, array-like, optional
+            Selective extinction E(B-V) in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with R_V=3.1.
+            Its shape must be broadcastable to T and R. Default: 0.
 
         Returns
         -------
         Lnu : float or array-like
             Average spectral luminosity in the filter in watts per hertz
         """
-        return np.trapz(planck_fast(self.trans['freq'].data * (1. + z), T, R, cutoff_freq)
+        wl = self.trans['wl'].to(u.angstrom).value / (1. + z)
+        A = np.squeeze([extinction_law(wl, 3.1 * e) for e in np.atleast_1d(ebv)])
+        return np.trapz(planck_fast(self.trans['freq'].data * (1. + z), T, R, cutoff_freq) * 10. ** (A / -2.5)
                         * self.trans['T_norm_per_freq'].data, self.trans['freq'].data)
 
     def __str__(self):

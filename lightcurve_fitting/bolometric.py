@@ -53,7 +53,8 @@ def pseudo(temp, radius, z, filter0=filtdict['I'], filter1=filtdict['U'], cutoff
 
 
 def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, burnin_steps=200, steps=100,
-                   T_range=(1., 100.), R_range=(0.01, 1000.), cutoff_freq=np.inf, prev_temp=None, save_chains=False):
+                   T_range=(1., 100.), R_range=(0.01, 1000.), cutoff_freq=np.inf, prev_temp=None, save_chains=False,
+                   use_sigma=False, sigma_type='relative', sigma_max=10.):
     """
     Fit a blackbody spectrum to a spectral energy distribution using a Markov-chain Monte Carlo routine
 
@@ -85,6 +86,13 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
         Temperature distribution from fitting the previous epoch's SED. If given, this is used as the prior.
     save_chains : bool, optional
         If True, save the MCMC chain histories to the directory ``outpath``. Default: only save the corner plot
+    use_sigma : bool, optional
+        Include an intrinsic scatter parameter. Default: False.
+    sigma_type : str, optional
+        If 'relative' (default), sigma will be in units of the individual photometric uncertainties.
+        If 'absolute', sigma will be in units of the median photometric uncertainty.
+    sigma_max : float, optional
+        Maximum allowed intrinsic scatters (in units of the median uncertainty) in the prior. Default: 10.
 
     Returns
     -------
@@ -101,16 +109,25 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
 
     def log_prior(p):  # p = [T, R]
         if (np.any(p[0] < T_range[0]) or np.any(p[0] > T_range[1])
-                or np.any(p[1] < R_range[0]) or np.any(p[1] > R_range[1])):
+                or np.any(p[1] < R_range[0]) or np.any(p[1] > R_range[1])
+                or (use_sigma and np.any(p[2] > sigma_max))):
             return -np.inf
         elif prev_temp is not None:
-            return prev_temp.logpdf(p[0]) - np.log(p[1])
+            return prev_temp.logpdf(p[0]) - np.log(p[1]) - (p[2] ** 2. / 2. if use_sigma else 0.)
         else:
-            return -np.log(p[1])
+            return -np.log(p[1]) - (p[2] ** 2. / 2. if use_sigma else 0.)
+
+    if sigma_type == 'relative':
+        sigma_units = dy
+    elif sigma_type == 'absolute':
+        sigma_units = np.median(dy)
+    else:
+        raise Exception('sigma_type must either be "relative" or "absolute"')
 
     def log_likelihood(p, filtobj, y, dy):
         y_fit = blackbody_to_filters(filtobj, p[0], p[1], z, cutoff_freq)
-        return -0.5 * np.sum(np.log(2 * np.pi * dy ** 2) + ((y - y_fit) / dy) ** 2, -1)
+        sigma = np.sqrt(dy ** 2. + (p[2] * sigma_units) ** 2.) if use_sigma else dy
+        return -0.5 * np.sum(np.log(2 * np.pi * sigma ** 2.) + ((y - y_fit) / sigma) ** 2.)
 
     def log_posterior(p, filtobj, y, dy):
         return log_prior(p) + log_likelihood(p, filtobj, y, dy)
@@ -118,6 +135,9 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
     ndim = 2
     starting_guesses = np.random.randn(nwalkers, ndim) + p0
     starting_guesses[starting_guesses <= 0.] = 1.
+    if use_sigma:
+        ndim += 1
+        starting_guesses = np.append(starting_guesses, np.abs(np.random.randn(nwalkers, 1)), axis=1)
 
     sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior, args=[filtobj, y, dy])
     pos, _, _ = sampler.run_mcmc(starting_guesses, burnin_steps)
@@ -134,7 +154,10 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
         for i in range(len(ax3)):
             ax3[i].plot(sampler.chain[:, :, i].T, 'k', alpha=0.2)
 
-    f4 = corner.corner(sampler.flatchain, labels=['T (kK)', 'R (1000 R$_\\odot$)'])
+    labels = ['T (kK)', 'R (1000 R$_\\odot$)']
+    if use_sigma:
+        labels.append('$\\sigma$')
+    f4 = corner.corner(sampler.flatchain, labels=labels)
     ax = f4.get_axes()[1]
     ps = sampler.flatchain[np.random.choice(sampler.flatchain.shape[0], 100)].T
     xfit = np.arange(100., max(1000., min(filtobj).freq_eff.value))
@@ -154,11 +177,11 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
     f4.tight_layout()
 
     os.makedirs(outpath, exist_ok=True)
-    filename = os.path.join(outpath, f'{mjdavg:.1f}.png')
+    filename = os.path.join(outpath, f'{mjdavg:.3f}.png')
     print(filename)
     f4.savefig(filename)
     if save_chains:
-        chain_filename = os.path.join(outpath, f'{mjdavg:.1f}.npy')
+        chain_filename = os.path.join(outpath, f'{mjdavg:.3f}.npy')
         np.save(chain_filename, sampler.flatchain)
     if show:
         plt.show()
@@ -212,7 +235,7 @@ def plot_bolometric_results(t0, save_plot_as=None):
     return fig
 
 
-def group_by_epoch(lc, res=1.):
+def group_by_epoch(lc, res=1., also_group_by=()):
     """
     Group a light curve into epochs that will be treated as single spectral energy distributions.
 
@@ -231,7 +254,11 @@ def group_by_epoch(lc, res=1.):
     x = lc['MJD'].data / res
     frac = np.median(x - np.trunc(x))
     lc['bin'] = np.round(x - frac + np.round(frac)) * res
-    epochs = lc.group_by('bin')
+    group_by = ['bin'] + list(also_group_by)
+    for col in also_group_by:
+        if np.ma.is_masked(lc[col]):
+            lc[col] = lc[col].filled()
+    epochs = lc.group_by(group_by)
     return epochs.groups
 
 
@@ -463,7 +490,8 @@ def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1, xcol='MJD'):
 
 def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=200, steps=100,
                          T_range=(1., 100.), R_range=(0.01, 1000.), save_table_as=None, min_nfilt=3,
-                         cutoff_freq=np.inf, show=False, colors=None, do_mcmc=True, save_chains=False):
+                         cutoff_freq=np.inf, show=False, colors=None, do_mcmc=True, save_chains=False, use_sigma=False,
+                         also_group_by=()):
     """
     Calculate the full bolometric light curve from a table of broadband photometry
 
@@ -502,6 +530,10 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
         more realistic uncertainties.
     save_chains : bool, optional
         If True, save the MCMC chain histories to the directory ``outpath``. Default: only save the corner plot
+    use_sigma : bool, optional
+        Include an intrinsic scatter parameter in the MCMC fit. Default: False.
+    also_group_by : list, optional
+        Group by these columns in addition to epoch
 
     Returns
     -------
@@ -530,7 +562,7 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
 
     sampler = None
     lc = lc[np.isfinite(lc['dmag']) & (lc['dmag'] > 0.)]
-    for epoch1 in group_by_epoch(lc, res):
+    for epoch1 in group_by_epoch(lc, res, also_group_by):
         epoch1.sn = lc.sn
         epoch1.calcFlux()
         epoch1 = epoch1.bin(delta=np.inf)
@@ -574,11 +606,12 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
                 raise ValueError
             sampler = blackbody_mcmc(epoch1, z, p0, outpath=outpath, nwalkers=nwalkers, burnin_steps=burnin_steps,
                                      steps=steps, T_range=T_range, R_range=R_range, cutoff_freq=cutoff_freq, show=show,
-                                     prev_temp=prev_temp, save_chains=save_chains)
+                                     prev_temp=prev_temp, save_chains=save_chains, use_sigma=use_sigma)
             L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq=cutoff_freq)
-            (T_mcmc, R_mcmc), (dT0_mcmc, dR0_mcmc), (dT1_mcmc, dR1_mcmc) = median_and_unc(sampler.flatchain)
+            (T_mcmc, R_mcmc), (dT0_mcmc, dR0_mcmc), (dT1_mcmc, dR1_mcmc) = median_and_unc(sampler.flatchain[:, :2])
             L_mcmc, dL_mcmc0, dL_mcmc1 = median_and_unc(L_mcmc_opt)
-        except ValueError:
+        except ValueError as e:
+            print(e)
             T_mcmc = R_mcmc = dT0_mcmc = dR0_mcmc = dT1_mcmc = dR1_mcmc = L_mcmc = dL_mcmc0 = dL_mcmc1 = np.nan
 
         # direct integration

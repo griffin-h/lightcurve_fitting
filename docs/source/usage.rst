@@ -108,13 +108,6 @@ If they didn't, try adjusting the number of burn-in steps (``burnin_steps``).
 To save the table, give ``save_table_as='filename.table'`` as an argument to ``calculate_bolometric``.
 To save the plot, give ``save_plot_as='filename.pdf'`` as an argument to ``plot_bolometric_results``.
 
-You can include an intrinsic scatter term (:math:`\sigma`) in your MCMC SED fits by setting ``use_sigma=True``. Here, :math:`\sigma` is a constant uncertainty, in units of the median photometric uncertainty (:math:`\bar{\sigma}`), added in quadrature to the photometric uncertainty on each point (:math:`\sigma_i`). In other words
-
-.. math::
-    \sigma_{i,\mathrm{eff}} = \sqrt{ \sigma_i^2 + \left( \sigma * \bar{\sigma} \right)^2 }
-
-You can also set a maximum for this intrinsic scatter using the ``sigma_max`` keyword (default: 10).
-
 Beware of the units I'm using:
 
  * Temperatures are in kilokelvins (kK).
@@ -127,6 +120,21 @@ Optionally, you can calculate colors at each epoch by giving the argument ``colo
  * the uncertainty on the color, ``d(B-V)``,
  * whether the color is a lower limit, ``lolims(B-V)`` (i.e., :math:`B` was an upper limit), and
  * whether the color is an upper limit, ``uplims(B-V)`` (i.e., :math:`V` was an upper limit).
+
+Intrinsic Scatter
+^^^^^^^^^^^^^^^^^
+
+You can include an intrinsic scatter term (:math:`\sigma`) in your MCMC fits by setting ``use_sigma=True``. :math:`\sigma` is added in quadrature to the photometric uncertainty on each point (:math:`\sigma_i`). If you choose ``sigma_type='relative'``, :math:`\sigma` will be in units of the individual photometric uncertainties, i.e.,
+
+.. math::
+    \sigma_{i,\mathrm{eff}} = \sqrt{ \sigma_i^2 + \left( \sigma * \sigma_i \right)^2 }
+
+If you choose ``sigma_type='absolute'``, :math:`\sigma` will be in units of the median photometric uncertainty (:math:`\bar\sigma`), i.e.,
+
+.. math::
+    \sigma_{i,\mathrm{eff}} = \sqrt{ \sigma_i^2 + \left( \sigma * \bar{\sigma} \right)^2 }
+
+For bolometric light curve fitting, you can also set a maximum for this intrinsic scatter using the ``sigma_max`` keyword (default: 10). (For model fitting, you can set a maximum using the ``priors`` keyword.)
 
 Model Fitting
 -------------
@@ -185,6 +193,8 @@ If you used the Rabinak & Waxman option, the model fails even earlier, but you w
     print(t_max)
     if lc_early['MJD'].max() > t_max:
         print('Warning: your model is not valid for all your observations')
+
+Note that you can add an :ref:`Intrinsic Scatter` to your model fits as well.
 
 Calibrating Spectra to Photometry
 --------------------------------

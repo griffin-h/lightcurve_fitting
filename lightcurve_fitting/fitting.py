@@ -12,7 +12,7 @@ PRIOR_WARNING = 'The p_max/p_min keywords are deprecated. Use the priors keyword
 
 def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p_up=None,
                     nwalkers=100, nsteps=1000, nsteps_burnin=1000, model_kwargs=None,
-                    show=False, save_plot_as='', save_sampler_as='', use_sigma=False):
+                    show=False, save_plot_as='', save_sampler_as='', use_sigma=False, sigma_type='relative'):
     """
     Fit an analytical model to observed photometry using a Markov-chain Monte Carlo routine
 
@@ -48,6 +48,9 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
         Save the aggregated chain histories to this filename
     use_sigma : bool, optional
         If True, treat the last parameter as an intrinsic scatter parameter that does not get passed to the model
+    sigma_type : str, optional
+        If 'relative' (default), sigma will be in units of the individual photometric uncertainties.
+        If 'absolute', sigma will be in units of the median photometric uncertainty.
 
     Returns
     -------
@@ -112,6 +115,13 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     elif len(priors) != ndim:
         raise Exception('priors must have length {:d}'.format(ndim))
 
+    if sigma_type == 'relative':
+        sigma_units = dy
+    elif sigma_type == 'absolute':
+        sigma_units = np.median(dy)
+    else:
+        raise Exception('sigma_type must either be "relative" or "absolute"')
+
     def log_posterior(p):
         log_prior = 0.
         for prior, p_i in zip(priors, p):
@@ -119,7 +129,7 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
         if np.isinf(log_prior):
             return log_prior
         y_fit = model(t, f, *p, **model_kwargs)
-        sigma = dy * np.sqrt(1. + p[-1] ** 2.) if use_sigma else dy
+        sigma = np.sqrt(dy ** 2. + (p[-1] * sigma_units) ** 2.) if use_sigma else dy
         log_likelihood = -0.5 * np.sum(np.log(2 * np.pi * sigma ** 2.) + ((y - y_fit) / sigma) ** 2.)
         return log_prior + log_likelihood
 

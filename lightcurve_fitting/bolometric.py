@@ -54,7 +54,7 @@ def pseudo(temp, radius, z, filter0=filtdict['I'], filter1=filtdict['U'], cutoff
 
 def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, burnin_steps=200, steps=100,
                    T_range=(1., 100.), R_range=(0.01, 1000.), cutoff_freq=np.inf, prev_temp=None, save_chains=False,
-                   use_sigma=False, sigma_max=10.):
+                   use_sigma=False, sigma_type='relative', sigma_max=10.):
     """
     Fit a blackbody spectrum to a spectral energy distribution using a Markov-chain Monte Carlo routine
 
@@ -88,6 +88,9 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
         If True, save the MCMC chain histories to the directory ``outpath``. Default: only save the corner plot
     use_sigma : bool, optional
         Include an intrinsic scatter parameter. Default: False.
+    sigma_type : str, optional
+        If 'relative' (default), sigma will be in units of the individual photometric uncertainties.
+        If 'absolute', sigma will be in units of the median photometric uncertainty.
     sigma_max : float, optional
         Maximum allowed intrinsic scatters (in units of the median uncertainty) in the prior. Default: 10.
 
@@ -114,9 +117,16 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
         else:
             return -np.log(p[1]) - (p[2] ** 2. / 2. if use_sigma else 0.)
 
+    if sigma_type == 'relative':
+        sigma_units = dy
+    elif sigma_type == 'absolute':
+        sigma_units = np.median(dy)
+    else:
+        raise Exception('sigma_type must either be "relative" or "absolute"')
+
     def log_likelihood(p, filtobj, y, dy):
         y_fit = blackbody_to_filters(filtobj, p[0], p[1], z, cutoff_freq)
-        sigma = np.sqrt(dy ** 2. + (p[2] * np.median(dy)) ** 2.) if use_sigma else dy
+        sigma = np.sqrt(dy ** 2. + (p[2] * sigma_units) ** 2.) if use_sigma else dy
         return -0.5 * np.sum(np.log(2 * np.pi * sigma ** 2.) + ((y - y_fit) / sigma) ** 2.)
 
     def log_posterior(p, filtobj, y, dy):

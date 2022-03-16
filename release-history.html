@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Release History &mdash; lightcurve_fitting 0.4.0.post3+g97785c2 documentation</title>
+  <title>Release History &mdash; lightcurve_fitting 0.5.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -18,6 +18,7 @@
         <script src="_static/doctools.js"></script>
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -32,7 +33,7 @@
             <a href="index.html" class="icon icon-home"> lightcurve_fitting
           </a>
               <div class="version">
-                0.4.0.post3+g97785c2
+                0.5.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -47,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v0-5-0-2022-03-16">v0.5.0 (2022-03-16)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-4-0-2022-02-08">v0.4.0 (2022-02-08)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-3-0-2021-09-22">v0.3.0 (2021-09-22)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-2-0-2020-12-08">v0.2.0 (2020-12-08)</a></li>
@@ -82,6 +84,30 @@
              
   <section id="release-history">
 <h1>Release History<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
+<section id="v0-5-0-2022-03-16">
+<h2>v0.5.0 (2022-03-16)<a class="headerlink" href="#v0-5-0-2022-03-16" title="Permalink to this headline">¶</a></h2>
+<p>For the first time, this release introduces a change that is not backward compatible.
+To enable the use of Gaussian priors, I have had to make the prior specification a little more complex.
+Instead of using <code class="docutils literal notranslate"><span class="pre">p_min</span></code> and <code class="docutils literal notranslate"><span class="pre">p_max</span></code> to specify the bounds on a uniform prior, users will have to define the shape and bounds on each prior using the <code class="docutils literal notranslate"><span class="pre">priors</span></code> keyword.
+This takes a list of <code class="docutils literal notranslate"><span class="pre">Prior</span></code> objects, e.g., <code class="docutils literal notranslate"><span class="pre">models.UniformPrior</span></code>, <code class="docutils literal notranslate"><span class="pre">models.LogUniformPrior</span></code>, or <code class="docutils literal notranslate"><span class="pre">models.GaussianPrior</span></code>.
+See the updated example in <a class="reference internal" href="usage.html#model-fitting"><span class="std std-ref">Model Fitting</span></a>.
+For now, the code will still work if you use <code class="docutils literal notranslate"><span class="pre">p_min</span></code> and <code class="docutils literal notranslate"><span class="pre">p_max</span></code>, but a warning will be issued to encourage you to switch.</p>
+<ul class="simple">
+<li><p>Add intrinsic scatter option to bolometric light curve creation</p></li>
+<li><p>Add more MJD digits in bolometric output files</p></li>
+<li><p>Add option to consider other columns when dividing light curves into epochs</p></li>
+<li><p>Recognize spectra stored as FITS tables</p></li>
+<li><p>Don’t crash when plotting ungrouped light curve</p></li>
+<li><p>Allow linewidth/linestyle to be passed as <code class="docutils literal notranslate"><span class="pre">plot_kwargs</span></code></p></li>
+<li><p>Recognize <code class="docutils literal notranslate"><span class="pre">marker='none'</span></code> when plotting a light curve</p></li>
+<li><p>Do not plot black lines for Johnson filters when using <code class="docutils literal notranslate"><span class="pre">plot_lines</span></code></p></li>
+<li><p>Allow adjustment of font sizes in light curve corner plots</p></li>
+<li><p>Change priors from functions to classes (see above)</p></li>
+<li><p>Allow for a reddened blackbody SED in models</p></li>
+<li><p>Add ShockCooling3 model: same as ShockCooling but with <span class="math notranslate nohighlight">\(d_L\)</span> and <span class="math notranslate nohighlight">\(E(B-V)\)</span> as free parameters</p></li>
+<li><p>Add option to make sigma an absolute intrinsic scatter</p></li>
+</ul>
+</section>
 <section id="v0-4-0-2022-02-08">
 <h2>v0.4.0 (2022-02-08)<a class="headerlink" href="#v0-4-0-2022-02-08" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">

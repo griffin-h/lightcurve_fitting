@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Usage &mdash; lightcurve_fitting 0.4.0.post3+g97785c2 documentation</title>
+  <title>Usage &mdash; lightcurve_fitting 0.5.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -34,7 +34,7 @@
             <a href="index.html" class="icon icon-home"> lightcurve_fitting
           </a>
               <div class="version">
-                0.4.0.post3+g97785c2
+                0.5.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -49,7 +49,10 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#light-curves">Light Curves</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#filters">Filters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#bolometric-light-curves">Bolometric Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bolometric-light-curves">Bolometric Light Curves</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#intrinsic-scatter">Intrinsic Scatter</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#model-fitting">Model Fitting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#calibrating-spectra-to-photometry">Calibrating Spectra to Photometry</a></li>
 </ul>
@@ -166,7 +169,7 @@ adding new filters.</p>
 <span class="n">plot_color_curves</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The light curve is divided into epochs (defined by the <code class="docutils literal notranslate"><span class="pre">bin</span></code> argument to <code class="docutils literal notranslate"><span class="pre">calculate_bolometric</span></code>), and processed four different ways:</p>
+<p>The light curve is divided into epochs (defined by the <code class="docutils literal notranslate"><span class="pre">bin</span></code> and <code class="docutils literal notranslate"><span class="pre">also_group_by</span></code> arguments to <code class="docutils literal notranslate"><span class="pre">calculate_bolometric</span></code>), and processed four different ways:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>Fitting the Planck function using <code class="docutils literal notranslate"><span class="pre">scipy.curve_fit</span></code>. This is very fast but may not give reliable uncertainties.
@@ -206,6 +209,16 @@ To save the plot, give <code class="docutils literal notranslate"><span class="p
 <li><p>whether the color is an upper limit, <code class="docutils literal notranslate"><span class="pre">uplims(B-V)</span></code> (i.e., <span class="math notranslate nohighlight">\(V\)</span> was an upper limit).</p></li>
 </ul>
 </div></blockquote>
+<section id="intrinsic-scatter">
+<h3>Intrinsic Scatter<a class="headerlink" href="#intrinsic-scatter" title="Permalink to this headline">¶</a></h3>
+<p>You can include an intrinsic scatter term (<span class="math notranslate nohighlight">\(\sigma\)</span>) in your MCMC fits by setting <code class="docutils literal notranslate"><span class="pre">use_sigma=True</span></code>. <span class="math notranslate nohighlight">\(\sigma\)</span> is added in quadrature to the photometric uncertainty on each point (<span class="math notranslate nohighlight">\(\sigma_i\)</span>). If you choose <code class="docutils literal notranslate"><span class="pre">sigma_type='relative'</span></code>, <span class="math notranslate nohighlight">\(\sigma\)</span> will be in units of the individual photometric uncertainties, i.e.,</p>
+<div class="math notranslate nohighlight">
+\[\sigma_{i,\mathrm{eff}} = \sqrt{ \sigma_i^2 + \left( \sigma * \sigma_i \right)^2 }\]</div>
+<p>If you choose <code class="docutils literal notranslate"><span class="pre">sigma_type='absolute'</span></code>, <span class="math notranslate nohighlight">\(\sigma\)</span> will be in units of the median photometric uncertainty (<span class="math notranslate nohighlight">\(\bar\sigma\)</span>), i.e.,</p>
+<div class="math notranslate nohighlight">
+\[\sigma_{i,\mathrm{eff}} = \sqrt{ \sigma_i^2 + \left( \sigma * \bar{\sigma} \right)^2 }\]</div>
+<p>For bolometric light curve fitting, you can also set a maximum for this intrinsic scatter using the <code class="docutils literal notranslate"><span class="pre">sigma_max</span></code> keyword (default: 10). (For model fitting, you can set a maximum using the <code class="docutils literal notranslate"><span class="pre">priors</span></code> keyword.)</p>
+</section>
 </section>
 <section id="model-fitting">
 <h2>Model Fitting<a class="headerlink" href="#model-fitting" title="Permalink to this headline">¶</a></h2>
@@ -218,6 +231,7 @@ This was used in my paper on SN 2017cbv: <a class="reference external" href="htt
 formulated in terms of <span class="math notranslate nohighlight">\(v_s, M_\mathrm{env}, f_ρ M, R\)</span></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ShockCooling2</span></code>, which is the same Sapir &amp; Waxman model but formulated in terms of scaling parameters <span class="math notranslate nohighlight">\(T_1, L_1, t_\mathrm{tr}\)</span>.
 This was used in my paper on SN 2016bkv: <a class="reference external" href="https://doi.org/10.3847/1538-4357/aac5f6">https://doi.org/10.3847/1538-4357/aac5f6</a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ShockCooling3</span></code>, which is the same as <code class="docutils literal notranslate"><span class="pre">ShockCooling</span></code> but with <span class="math notranslate nohighlight">\(d_L\)</span> and <span class="math notranslate nohighlight">\(E(B-V)\)</span> as free parameters. (Therefore it fits the flux instead of the luminosity.) This was used in my paper on SN 2021yja (submitted).</p></li>
 </ul>
 </div></blockquote>
 <p><strong>Note on the shock cooling models:</strong>
@@ -225,23 +239,27 @@ There are degeneracies between many of the physical parameters that make them di
 This led us to fit develop the <code class="docutils literal notranslate"><span class="pre">ShockCooling2</span></code> model just to see if the model could fit the data at all.
 Since it did not fit well, we concluded that the physical parameters we could have obtained by fitting the <code class="docutils literal notranslate"><span class="pre">ShockCooling</span></code> model were irrelevant.
 However, in order to measure, for example, the progenitor radius, one must use the <code class="docutils literal notranslate"><span class="pre">ShockCooling</span></code> model.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lightcurve_fitting.models</span> <span class="kn">import</span> <span class="n">ShockCooling2</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lightcurve_fitting.models</span> <span class="kn">import</span> <span class="n">ShockCooling2</span><span class="p">,</span> <span class="n">UniformPrior</span>
 <span class="kn">from</span> <span class="nn">lightcurve_fitting.fitting</span> <span class="kn">import</span> <span class="n">lightcurve_mcmc</span><span class="p">,</span> <span class="n">lightcurve_corner</span>
 
 <span class="c1"># Fit only the early light curve</span>
 <span class="n">lc_early</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">MJD_min</span><span class="o">=</span><span class="mf">57468.</span><span class="p">,</span> <span class="n">MJD_max</span><span class="o">=</span><span class="mf">57485.</span><span class="p">)</span>
 
 <span class="c1"># Define the priors and initial guesses</span>
-<span class="n">p_min</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">57468.</span><span class="p">]</span>
-<span class="n">p_max</span> <span class="o">=</span> <span class="p">[</span><span class="mf">100.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">,</span> <span class="mf">57468.7</span><span class="p">]</span>
+<span class="n">priors</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">UniformPrior</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">),</span>
+    <span class="n">UniformPrior</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">),</span>
+    <span class="n">UniformPrior</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">),</span>
+    <span class="n">UniformPrior</span><span class="p">(</span><span class="mf">57468.</span><span class="p">,</span> <span class="mf">57468.7</span><span class="p">),</span>
+<span class="p">]</span>
 <span class="n">p_lo</span> <span class="o">=</span> <span class="p">[</span><span class="mf">20.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">,</span> <span class="mf">57468.5</span><span class="p">]</span>
 <span class="n">p_up</span> <span class="o">=</span> <span class="p">[</span><span class="mf">50.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">50.</span><span class="p">,</span> <span class="mf">57468.7</span><span class="p">]</span>
 
 <span class="n">redshift</span> <span class="o">=</span> <span class="mf">0.002</span>
 
 <span class="n">sampler</span> <span class="o">=</span> <span class="n">fitting</span><span class="o">.</span><span class="n">lightcurve_mcmc</span><span class="p">(</span><span class="n">lc_early</span><span class="p">,</span> <span class="n">ShockCooling2</span><span class="p">,</span> <span class="n">model_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="n">redshift</span><span class="p">},</span>
-                              <span class="n">p_min</span><span class="o">=</span><span class="n">p_min</span><span class="p">,</span> <span class="n">p_max</span><span class="o">=</span><span class="n">p_max</span><span class="p">,</span> <span class="n">p_lo</span><span class="o">=</span><span class="n">p_lo</span><span class="p">,</span> <span class="n">p_up</span><span class="o">=</span><span class="n">p_up</span><span class="p">,</span>
-                              <span class="n">nwalkers</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">nsteps_burnin</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                                  <span class="n">priors</span><span class="o">=</span><span class="n">priors</span><span class="p">,</span> <span class="n">p_lo</span><span class="o">=</span><span class="n">p_lo</span><span class="p">,</span> <span class="n">p_up</span><span class="o">=</span><span class="n">p_up</span><span class="p">,</span>
+                                  <span class="n">nwalkers</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">nsteps_burnin</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">lightcurve_corner</span><span class="p">(</span><span class="n">lc_early</span><span class="p">,</span> <span class="n">ShockCooling2</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">flatchain</span><span class="p">,</span> <span class="n">model_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="n">redshift</span><span class="p">})</span>
 </pre></div>
 </div>
@@ -257,6 +275,7 @@ If you used the Rabinak &amp; Waxman option, the model fails even earlier, but y
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning: your model is not valid for all your observations&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Note that you can add an <a class="reference internal" href="#intrinsic-scatter"><span class="std std-ref">Intrinsic Scatter</span></a> to your model fits as well.</p>
 </section>
 <section id="calibrating-spectra-to-photometry">
 <h2>Calibrating Spectra to Photometry<a class="headerlink" href="#calibrating-spectra-to-photometry" title="Permalink to this headline">¶</a></h2>

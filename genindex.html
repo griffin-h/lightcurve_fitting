@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; lightcurve_fitting 0.4.0.post3+g97785c2 documentation</title>
+  <title>Index &mdash; lightcurve_fitting 0.5.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> lightcurve_fitting
           </a>
               <div class="version">
-                0.4.0.post3+g97785c2
+                0.5.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -88,6 +88,7 @@
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
  | <a href="#W"><strong>W</strong></a>
  | <a href="#Z"><strong>Z</strong></a>
  
@@ -157,11 +158,9 @@
 </li>
       <li><a href="api.html#lightcurve_fitting.lightcurve.LC.findNondet">findNondet() (lightcurve_fitting.lightcurve.LC method)</a>
 </li>
-      <li><a href="api.html#lightcurve_fitting.lightcurve.LC.findPeak">findPeak() (lightcurve_fitting.lightcurve.LC method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#lightcurve_fitting.models.flat_prior">flat_prior() (in module lightcurve_fitting.models)</a>
+      <li><a href="api.html#lightcurve_fitting.lightcurve.LC.findPeak">findPeak() (lightcurve_fitting.lightcurve.LC method)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.lightcurve.flux2mag">flux2mag() (in module lightcurve_fitting.lightcurve)</a>
 </li>
@@ -175,10 +174,12 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#lightcurve_fitting.lightcurve.LC.get">get() (lightcurve_fitting.lightcurve.LC method)</a>
+      <li><a href="api.html#lightcurve_fitting.models.GaussianPrior">GaussianPrior (class in lightcurve_fitting.models)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#lightcurve_fitting.lightcurve.LC.get">get() (lightcurve_fitting.lightcurve.LC method)</a>
+</li>
       <li><a href="api.html#lightcurve_fitting.bolometric.group_by_epoch">group_by_epoch() (in module lightcurve_fitting.bolometric)</a>
 </li>
   </ul></td>
@@ -220,8 +221,6 @@
         <li><a href="api.html#module-lightcurve_fitting.fitting">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     lightcurve_fitting.lightcurve
 
@@ -229,6 +228,8 @@
         <li><a href="api.html#module-lightcurve_fitting.lightcurve">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     lightcurve_fitting.models
 
@@ -245,7 +246,17 @@
       </ul></li>
       <li><a href="api.html#lightcurve_fitting.fitting.lightcurve_mcmc">lightcurve_mcmc() (in module lightcurve_fitting.fitting)</a>
 </li>
-      <li><a href="api.html#lightcurve_fitting.models.log_flat_prior">log_flat_prior() (in module lightcurve_fitting.models)</a>
+      <li><a href="api.html#lightcurve_fitting.models.GaussianPrior.logp">logp() (lightcurve_fitting.models.GaussianPrior method)</a>
+
+      <ul>
+        <li><a href="api.html#lightcurve_fitting.models.LogUniformPrior.logp">(lightcurve_fitting.models.LogUniformPrior method)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.Prior.logp">(lightcurve_fitting.models.Prior method)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.UniformPrior.logp">(lightcurve_fitting.models.UniformPrior method)</a>
+</li>
+      </ul></li>
+      <li><a href="api.html#lightcurve_fitting.models.LogUniformPrior">LogUniformPrior (class in lightcurve_fitting.models)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -310,6 +321,8 @@
 </li>
       <li><a href="api.html#lightcurve_fitting.bolometric.plot_color_curves">plot_color_curves() (in module lightcurve_fitting.bolometric)</a>
 </li>
+      <li><a href="api.html#lightcurve_fitting.models.Prior">Prior (class in lightcurve_fitting.models)</a>
+</li>
       <li><a href="api.html#lightcurve_fitting.bolometric.pseudo">pseudo() (in module lightcurve_fitting.bolometric)</a>
 </li>
   </ul></td>
@@ -344,9 +357,13 @@
 </li>
       <li><a href="api.html#lightcurve_fitting.models.shock_cooling">shock_cooling() (in module lightcurve_fitting.models)</a>
 </li>
+      <li><a href="api.html#lightcurve_fitting.models.shock_cooling2">shock_cooling2() (in module lightcurve_fitting.models)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#lightcurve_fitting.models.shock_cooling2">shock_cooling2() (in module lightcurve_fitting.models)</a>
+      <li><a href="api.html#lightcurve_fitting.models.shock_cooling3">shock_cooling3() (in module lightcurve_fitting.models)</a>
+</li>
+      <li><a href="api.html#lightcurve_fitting.models.shock_cooling_temperature_radius">shock_cooling_temperature_radius() (in module lightcurve_fitting.models)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.bolometric.stefan_boltzmann">stefan_boltzmann() (in module lightcurve_fitting.bolometric)</a>
 </li>
@@ -360,11 +377,23 @@
 </li>
       <li><a href="api.html#lightcurve_fitting.models.t_max2">t_max2() (in module lightcurve_fitting.models)</a>
 </li>
+      <li><a href="api.html#lightcurve_fitting.models.t_max3">t_max3() (in module lightcurve_fitting.models)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#lightcurve_fitting.models.t_min">t_min() (in module lightcurve_fitting.models)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.models.t_min2">t_min2() (in module lightcurve_fitting.models)</a>
+</li>
+      <li><a href="api.html#lightcurve_fitting.models.t_min3">t_min3() (in module lightcurve_fitting.models)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#lightcurve_fitting.models.UniformPrior">UniformPrior (class in lightcurve_fitting.models)</a>
 </li>
   </ul></td>
 </tr></table>

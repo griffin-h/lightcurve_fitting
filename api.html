@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API Documentation &mdash; lightcurve_fitting 0.4.0.post3+g97785c2 documentation</title>
+  <title>API Documentation &mdash; lightcurve_fitting 0.5.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -34,7 +34,7 @@
             <a href="index.html" class="icon icon-home"> lightcurve_fitting
           </a>
               <div class="version">
-                0.4.0.post3+g97785c2
+                0.5.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -131,7 +131,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.bolometric.blackbody_mcmc">
-<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.bolometric.</span></span><span class="sig-name descname"><span class="pre">blackbody_mcmc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">burnin_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">100.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.01,</span> <span class="pre">1000.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_chains</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/bolometric.html#blackbody_mcmc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.bolometric.blackbody_mcmc" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.bolometric.</span></span><span class="sig-name descname"><span class="pre">blackbody_mcmc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">burnin_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">100.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.01,</span> <span class="pre">1000.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_chains</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'relative'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/bolometric.html#blackbody_mcmc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.bolometric.blackbody_mcmc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit a blackbody spectrum to a spectral energy distribution using a Markov-chain Monte Carlo routine</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -161,6 +161,13 @@
 <dt><strong>prev_temp</strong><span class="classifier">scipy.stats.gaussian_kde, optional</span></dt><dd><p>Temperature distribution from fitting the previous epoch’s SED. If given, this is used as the prior.</p>
 </dd>
 <dt><strong>save_chains</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, save the MCMC chain histories to the directory <code class="docutils literal notranslate"><span class="pre">outpath</span></code>. Default: only save the corner plot</p>
+</dd>
+<dt><strong>use_sigma</strong><span class="classifier">bool, optional</span></dt><dd><p>Include an intrinsic scatter parameter. Default: False.</p>
+</dd>
+<dt><strong>sigma_type</strong><span class="classifier">str, optional</span></dt><dd><p>If ‘relative’ (default), sigma will be in units of the individual photometric uncertainties.
+If ‘absolute’, sigma will be in units of the median photometric uncertainty.</p>
+</dd>
+<dt><strong>sigma_max</strong><span class="classifier">float, optional</span></dt><dd><p>Maximum allowed intrinsic scatters (in units of the median uncertainty) in the prior. Default: 10.</p>
 </dd>
 </dl>
 </dd>
@@ -203,7 +210,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.bolometric.calculate_bolometric">
-<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.bolometric.</span></span><span class="sig-name descname"><span class="pre">calculate_bolometric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">burnin_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">100.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.01,</span> <span class="pre">1000.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_table_as</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_nfilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_mcmc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_chains</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/bolometric.html#calculate_bolometric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.bolometric.calculate_bolometric" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.bolometric.</span></span><span class="sig-name descname"><span class="pre">calculate_bolometric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">burnin_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">100.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.01,</span> <span class="pre">1000.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_table_as</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_nfilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_mcmc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_chains</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">also_group_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/bolometric.html#calculate_bolometric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.bolometric.calculate_bolometric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the full bolometric light curve from a table of broadband photometry</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -241,6 +248,10 @@ more realistic uncertainties.</p>
 </dd>
 <dt><strong>save_chains</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, save the MCMC chain histories to the directory <code class="docutils literal notranslate"><span class="pre">outpath</span></code>. Default: only save the corner plot</p>
 </dd>
+<dt><strong>use_sigma</strong><span class="classifier">bool, optional</span></dt><dd><p>Include an intrinsic scatter parameter in the MCMC fit. Default: False.</p>
+</dd>
+<dt><strong>also_group_by</strong><span class="classifier">list, optional</span></dt><dd><p>Group by these columns in addition to epoch</p>
+</dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -254,7 +265,7 @@ more realistic uncertainties.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.bolometric.group_by_epoch">
-<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.bolometric.</span></span><span class="sig-name descname"><span class="pre">group_by_epoch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/bolometric.html#group_by_epoch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.bolometric.group_by_epoch" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.bolometric.</span></span><span class="sig-name descname"><span class="pre">group_by_epoch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">also_group_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/bolometric.html#group_by_epoch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.bolometric.group_by_epoch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Group a light curve into epochs that will be treated as single spectral energy distributions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -353,7 +364,7 @@ more realistic uncertainties.</p>
 </dd>
 <dt><strong>colors</strong><span class="classifier">list, optional</span></dt><dd><p>List of colors to plot, e.g., <code class="docutils literal notranslate"><span class="pre">['g-r',</span> <span class="pre">'r-i']</span></code>. By default, plot all recognizable colors.</p>
 </dd>
-<dt><strong>fmt</strong><span class="classifier">str, optional</span></dt><dd><p>Format string, passed to <code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.errorbar()</span></code></p>
+<dt><strong>fmt</strong><span class="classifier">str, optional</span></dt><dd><p>Format string, passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.errorbar.html#matplotlib.pyplot.errorbar" title="(in Matplotlib v3.5.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.errorbar()</span></code></a></p>
 </dd>
 <dt><strong>limit_length</strong><span class="classifier">float, optional</span></dt><dd><p>Length (in data units) of the upper and lower limit markers</p>
 </dd>
@@ -511,7 +522,7 @@ given in ångströms.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="lightcurve_fitting.filters.Filter.blackbody">
-<span class="sig-name descname"><span class="pre">blackbody</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/filters.html#Filter.blackbody"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.filters.Filter.blackbody" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">blackbody</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/filters.html#Filter.blackbody"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.filters.Filter.blackbody" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the average Lnu of a blackbody in this filter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -524,6 +535,9 @@ given in ångströms.</p>
 </dd>
 <dt><strong>cutoff_freq</strong><span class="classifier">float, optional</span></dt><dd><p>Cutoff frequency of the blackbody in terahertz as defined in <a class="reference external" href="https://doi.org/10.3847/1538-4357/aa9334">https://doi.org/10.3847/1538-4357/aa9334</a>.
 Default: unmodified blackbody.</p>
+</dd>
+<dt><strong>ebv</strong><span class="classifier">float, array-like, optional</span></dt><dd><p>Selective extinction E(B-V) in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with R_V=3.1.
+Its shape must be broadcastable to T and R. Default: 0.</p>
 </dd>
 </dl>
 </dd>
@@ -596,7 +610,7 @@ Default: unmodified blackbody.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.fitting.lightcurve_corner">
-<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.fitting.</span></span><span class="sig-name descname"><span class="pre">lightcurve_corner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_flatchain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_models_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lcaxis_posn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.7,</span> <span class="pre">0.55,</span> <span class="pre">0.2,</span> <span class="pre">0.4)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_as</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ycol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lum'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/fitting.html#lightcurve_corner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.fitting.lightcurve_corner" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.fitting.</span></span><span class="sig-name descname"><span class="pre">lightcurve_corner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_flatchain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_models_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lcaxis_posn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.7,</span> <span class="pre">0.55,</span> <span class="pre">0.2,</span> <span class="pre">0.4)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_as</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ycol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">textsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'medium'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_textsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'large'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/fitting.html#lightcurve_corner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.fitting.lightcurve_corner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model light curves.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -624,7 +638,11 @@ the model light curve.</p>
 </dd>
 <dt><strong>save_plot_as</strong><span class="classifier">str, optional</span></dt><dd><p>Filename to which to save the resulting plot</p>
 </dd>
-<dt><strong>ycol</strong><span class="classifier">str, optional</span></dt><dd><p>Quantity to plot on the light curve inset. Choices: “lum” (default) or “absmag”.</p>
+<dt><strong>ycol</strong><span class="classifier">str, optional</span></dt><dd><p>Quantity to plot on the light curve inset. Choices: “lum”, “flux”, or “absmag”. Default: model.output_quantity</p>
+</dd>
+<dt><strong>textsize</strong><span class="classifier">str, optional</span></dt><dd><p>Font size for the x- and y-axis labels, as well as the tick labels. Default: ‘medium’</p>
+</dd>
+<dt><strong>param_textsize</strong><span class="classifier">str, optional</span></dt><dd><p>Font size for the parameter text. Default: ‘large’</p>
 </dd>
 </dl>
 </dd>
@@ -643,7 +661,7 @@ the model light curve.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.fitting.lightcurve_mcmc">
-<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.fitting.</span></span><span class="sig-name descname"><span class="pre">lightcurve_mcmc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">priors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_lo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_up</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsteps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsteps_burnin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_as</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_sampler_as</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/fitting.html#lightcurve_mcmc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.fitting.lightcurve_mcmc" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.fitting.</span></span><span class="sig-name descname"><span class="pre">lightcurve_mcmc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">priors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_lo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_up</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsteps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsteps_burnin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_as</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_sampler_as</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'relative'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/fitting.html#lightcurve_mcmc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.fitting.lightcurve_mcmc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit an analytical model to observed photometry using a Markov-chain Monte Carlo routine</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -653,16 +671,14 @@ the model light curve.</p>
 <dt><strong>model</strong><span class="classifier">lightcurve_fitting.models.Model</span></dt><dd><p>The model to fit to the light curve. Available models: <code class="xref py py-class docutils literal notranslate"><span class="pre">models.ShockCooling</span></code>,
 <code class="xref py py-class docutils literal notranslate"><span class="pre">models.ShockCooling2</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">models.CompanionShocking</span></code></p>
 </dd>
-<dt><strong>priors</strong><span class="classifier">list, optional</span></dt><dd><p>Prior probability distributions for each model parameter. Available priors: <code class="xref py py-func docutils literal notranslate"><span class="pre">models.flat_prior()</span></code> (default),
-<code class="xref py py-func docutils literal notranslate"><span class="pre">models.log_flat_prior()</span></code></p>
+<dt><strong>priors</strong><span class="classifier">list, optional</span></dt><dd><p>Prior probability distributions for each model parameter. Available priors:
+<code class="xref py py-func docutils literal notranslate"><span class="pre">models.UniformPrior()</span></code> (default), <code class="xref py py-func docutils literal notranslate"><span class="pre">models.LogUniformPrior()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">models.GaussianPrior()</span></code></p>
 </dd>
-<dt><strong>p_min, p_max</strong><span class="classifier">list, optional</span></dt><dd><p>Lower bounds on the priors for each parameter. Omit individual bounds using <code class="xref py py-mod docutils literal notranslate"><span class="pre">-numpy.inf</span></code>.</p>
+<dt><strong>p_min, p_max</strong><span class="classifier">list, optional</span></dt><dd><p>DEPRECATED: Use <cite>priors</cite> instead</p>
 </dd>
-<dt><strong>p_max</strong><span class="classifier">list, optional</span></dt><dd><p>Upper bounds on the priors for each parameter. Omit individual bounds using <code class="xref py py-mod docutils literal notranslate"><span class="pre">numpy.inf</span></code>.</p>
+<dt><strong>p_lo</strong><span class="classifier">list</span></dt><dd><p>Lower bounds on the starting guesses for each paramter</p>
 </dd>
-<dt><strong>p_lo</strong><span class="classifier">list, optional</span></dt><dd><p>Lower bounds on the starting guesses for each paramter. Default: equal to <code class="docutils literal notranslate"><span class="pre">p_min</span></code>.</p>
-</dd>
-<dt><strong>p_up</strong><span class="classifier">list, optional</span></dt><dd><p>Upper bounds on the starting guesses for each parameter. Default: equal to <code class="docutils literal notranslate"><span class="pre">p_max</span></code>.</p>
+<dt><strong>p_up</strong><span class="classifier">list</span></dt><dd><p>Upper bounds on the starting guesses for each parameter</p>
 </dd>
 <dt><strong>nwalkers</strong><span class="classifier">int, optional</span></dt><dd><p>Number of walkers (chains) for the MCMC routine. Default: 100</p>
 </dd>
@@ -679,6 +695,9 @@ the model light curve.</p>
 <dt><strong>save_sampler_as</strong><span class="classifier">str, optional</span></dt><dd><p>Save the aggregated chain histories to this filename</p>
 </dd>
 <dt><strong>use_sigma</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, treat the last parameter as an intrinsic scatter parameter that does not get passed to the model</p>
+</dd>
+<dt><strong>sigma_type</strong><span class="classifier">str, optional</span></dt><dd><p>If ‘relative’ (default), sigma will be in units of the individual photometric uncertainties.
+If ‘absolute’, sigma will be in units of the median photometric uncertainty.</p>
 </dd>
 </dl>
 </dd>
@@ -697,7 +716,7 @@ the model light curve.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="lightcurve_fitting.lightcurve.Arrow">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.lightcurve.</span></span><span class="sig-name descname"><span class="pre">Arrow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#Arrow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.Arrow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.path.Path</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://matplotlib.org/stable/api/path_api.html#matplotlib.path.Path" title="(in Matplotlib v3.5.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.path.Path</span></code></a></p>
 <p>An downward-pointing arrow-shaped <code class="docutils literal notranslate"><span class="pre">Path</span></code>, whose head has half-width <code class="docutils literal notranslate"><span class="pre">hx</span></code> and height <code class="docutils literal notranslate"><span class="pre">hy</span></code> (in units of length)</p>
 </dd></dl>
 
@@ -899,7 +918,7 @@ if any. Otherwise do not correct for host galaxy extinction.</p>
 <dt><strong>fillmark</strong><span class="classifier">bool, optional</span></dt><dd><p>Fill each marker with color. Default: True</p>
 </dd>
 <dt><strong>kwargs</strong><span class="classifier">dict, optional</span></dt><dd><p>Keyword arguments matching column names in the light curve are used to specify a subset of points to plot.
-Additional keyword arguments passed to <code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code>.</p>
+Additional keyword arguments passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html#matplotlib.pyplot.plot" title="(in Matplotlib v3.5.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
@@ -1333,8 +1352,33 @@ values. If <code class="docutils literal notranslate"><span class="pre">value</s
 <section id="module-lightcurve_fitting.models">
 <span id="lightcurve-fitting-models-module"></span><h2>lightcurve_fitting.models module<a class="headerlink" href="#module-lightcurve_fitting.models" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.GaussianPrior">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">GaussianPrior</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stddev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#GaussianPrior"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.GaussianPrior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#lightcurve_fitting.models.Prior" title="lightcurve_fitting.models.Prior"><code class="xref py py-class docutils literal notranslate"><span class="pre">lightcurve_fitting.models.Prior</span></code></a></p>
+<p>A Gaussian prior centered at <cite>mean</cite> with standard deviation <cite>stddev</cite>, i.e.,
+<span class="math notranslate nohighlight">\(\frac{dP}{dp} \propto \exp \left( \frac{(p - \mu)^2}{2 \sigma^2} \right)\)</span></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.GaussianPrior.logp">
+<span class="sig-name descname"><span class="pre">logp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#GaussianPrior.logp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.GaussianPrior.logp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.LogUniformPrior">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">LogUniformPrior</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#LogUniformPrior"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.LogUniformPrior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#lightcurve_fitting.models.Prior" title="lightcurve_fitting.models.Prior"><code class="xref py py-class docutils literal notranslate"><span class="pre">lightcurve_fitting.models.Prior</span></code></a></p>
+<p>A uniform prior in the logarithm of the parameter, i.e., <span class="math notranslate nohighlight">\(\frac{dP}{dp} \propto \frac{1}{p}\)</span></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.LogUniformPrior.logp">
+<span class="sig-name descname"><span class="pre">logp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#LogUniformPrior.logp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.LogUniformPrior.logp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="lightcurve_fitting.models.Model">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.Model" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_quantity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lum'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.Model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>An analytical model, defined by a function and its parameters</p>
 <dl class="field-list simple">
@@ -1342,9 +1386,9 @@ values. If <code class="docutils literal notranslate"><span class="pre">value</s
 <dd class="field-odd"><dl class="simple">
 <dt><strong>func</strong><span class="classifier">function</span></dt><dd><p>A function that defines the analytical model</p>
 </dd>
-<dt><strong>input_names</strong><span class="classifier">list</span></dt><dd><p>A list of parameter names</p>
+<dt><strong>input_names</strong><span class="classifier">iterable</span></dt><dd><p>A list of parameter names</p>
 </dd>
-<dt><strong>units</strong><span class="classifier">list</span></dt><dd><p>A list of units (<code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.unit.Unit</span></code>) for each parameter</p>
+<dt><strong>units</strong><span class="classifier">iterable</span></dt><dd><p>A list of units (<code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.unit.Unit</span></code>) for each parameter</p>
 </dd>
 </dl>
 </dd>
@@ -1352,22 +1396,47 @@ values. If <code class="docutils literal notranslate"><span class="pre">value</s
 <dd class="field-even"><dl class="simple">
 <dt><strong>func</strong><span class="classifier">function</span></dt><dd><p>The function that defines the analytical model</p>
 </dd>
-<dt><strong>input_names</strong><span class="classifier">list</span></dt><dd><p>A list of the parameter names</p>
+<dt><strong>input_names</strong><span class="classifier">iterable</span></dt><dd><p>A list of the parameter names</p>
 </dd>
-<dt><strong>units</strong><span class="classifier">list</span></dt><dd><p>A list of the units for each parameter</p>
+<dt><strong>units</strong><span class="classifier">iterable</span></dt><dd><p>A list of the units for each parameter</p>
 </dd>
 <dt><strong>nparams</strong><span class="classifier">int</span></dt><dd><p>The number of parameters in the model</p>
 </dd>
 <dt><strong>axis_labels</strong><span class="classifier">list</span></dt><dd><p>Axis labels for each paramter (including name and unit)</p>
+</dd>
+<dt><strong>output_quantity</strong><span class="classifier">str, optional</span></dt><dd><p>Quantity output by the model: ‘lum’ (default) or ‘flux’</p>
 </dd>
 </dl>
 </dd>
 </dl>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.Prior">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">Prior</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#Prior"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.Prior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.Prior.logp">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">logp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#Prior.logp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.Prior.logp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.UniformPrior">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">UniformPrior</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#UniformPrior"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.UniformPrior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#lightcurve_fitting.models.Prior" title="lightcurve_fitting.models.Prior"><code class="xref py py-class docutils literal notranslate"><span class="pre">lightcurve_fitting.models.Prior</span></code></a></p>
+<p>A uniform prior in the parameter, i.e., <span class="math notranslate nohighlight">\(\frac{dP}{dp} \propto 1\)</span></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.UniformPrior.logp">
+<span class="sig-name descname"><span class="pre">logp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#UniformPrior.logp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.UniformPrior.logp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.models.blackbody_to_filters">
-<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">blackbody_to_filters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#blackbody_to_filters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.blackbody_to_filters" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">blackbody_to_filters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#blackbody_to_filters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.blackbody_to_filters" title="Permalink to this definition">¶</a></dt>
 <dd><p>The average spectral luminosity density (<span class="math notranslate nohighlight">\(L_ν\)</span>) of a blackbody as observed through one or more filters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1381,6 +1450,9 @@ values. If <code class="docutils literal notranslate"><span class="pre">value</s
 <dt><strong>z</strong><span class="classifier">float</span></dt><dd><p>Redshift between the blackbody source and the observed filters</p>
 </dd>
 <dt><strong>cutoff_freq</strong><span class="classifier">float, optional</span></dt><dd><p>Cutoff frequency (in terahertz) for a modified blackbody spectrum (see <a class="reference external" href="https://doi.org/10.3847/1538-4357/aa9334">https://doi.org/10.3847/1538-4357/aa9334</a>)</p>
+</dd>
+<dt><strong>ebv</strong><span class="classifier">float, array-like, optional</span></dt><dd><p>Selective extinction E(B-V) in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with R_V=3.1.
+Its shape must be broadcastable to T and R. Default: 0.</p>
 </dd>
 </dl>
 </dd>
@@ -1441,12 +1513,6 @@ the ejecta velocity in units of <span class="math notranslate nohighlight">\(10^
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="lightcurve_fitting.models.flat_prior">
-<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">flat_prior</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#flat_prior"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.flat_prior" title="Permalink to this definition">¶</a></dt>
-<dd><p>A uniform prior in the parameter, i.e., <span class="math notranslate nohighlight">\(\frac{dP}{dp} \propto 1\)</span></p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.models.format_unit">
 <span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">format_unit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#format_unit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.format_unit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use LaTeX to format a physical unit, which may consist of an order of magnitude times a base unit</p>
@@ -1464,12 +1530,6 @@ the ejecta velocity in units of <span class="math notranslate nohighlight">\(10^
 </dl>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lightcurve_fitting.models.log_flat_prior">
-<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">log_flat_prior</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#log_flat_prior"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.log_flat_prior" title="Permalink to this definition">¶</a></dt>
-<dd><p>A uniform prior in the logarithm of the parameter, i.e., <span class="math notranslate nohighlight">\(\frac{dP}{dp} \propto \frac{1}{p}\)</span></p>
 </dd></dl>
 
 <dl class="py function">
@@ -1632,6 +1692,56 @@ envelope structure” and <span class="math notranslate nohighlight">\(M\)</span
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.shock_cooling3">
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">shock_cooling3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_rho_M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_exp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RW</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#shock_cooling3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.shock_cooling3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.shock_cooling_temperature_radius">
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">shock_cooling_temperature_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_rho_M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_exp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RW</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#shock_cooling_temperature_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.shock_cooling_temperature_radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>The shock cooling model of Sapir &amp; Waxman (<a class="reference external" href="https://doi.org/10.3847/1538-4357/aa64df">https://doi.org/10.3847/1538-4357/aa64df</a>).</p>
+<p>This version of the model is written in terms of physical parameters <span class="math notranslate nohighlight">\(v_s, M_\mathrm{env}, f_ρ M, R\)</span>:</p>
+<p><span class="math notranslate nohighlight">\(T(t) = \frac{T_\mathrm{col}}{T_\mathrm{ph}} T_0 \left(\frac{v_s^2 t^2}{f_ρ M κ}\right)^{ε_1}
+\frac{R^{1/4}}{κ^{1/4}} t^{-1/2}\)</span> (Eq. 23)</p>
+<p><span class="math notranslate nohighlight">\(L(t) = A \exp\left[-\left(\frac{a t}{t_\mathrm{tr}}\right)^α\right]
+L_0 \left(\frac{v_s t^2}{f_ρ M κ}\right)^{-ε_2} \frac{v_s^2 R}{κ}\)</span> (Eq. 18-19)</p>
+<p><span class="math notranslate nohighlight">\(t_\mathrm{tr} = (19.5\,\mathrm{d}) \left(\frac{κ * M_\mathrm{env}}{v_s} \right)^{1/2}\)</span> (Eq. 20)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>t_in</strong><span class="classifier">float, array-like</span></dt><dd><p>Time in days</p>
+</dd>
+<dt><strong>v_s</strong><span class="classifier">float, array-like</span></dt><dd><p>The shock speed in <span class="math notranslate nohighlight">\(10^{8.5}\)</span> cm/s</p>
+</dd>
+<dt><strong>M_env</strong><span class="classifier">float, array-like</span></dt><dd><p>The envelope mass in solar masses</p>
+</dd>
+<dt><strong>f_rho_M</strong><span class="classifier">float, array-like</span></dt><dd><p>The product <span class="math notranslate nohighlight">\(f_ρ M\)</span>, where “<span class="math notranslate nohighlight">\(f_ρ\)</span> is a numerical factor of order unity that depends on the inner
+envelope structure” and <span class="math notranslate nohighlight">\(M\)</span> is the ejecta mass in solar masses</p>
+</dd>
+<dt><strong>R</strong><span class="classifier">float, array-like</span></dt><dd><p>The progenitor radius in <span class="math notranslate nohighlight">\(10^{13}\)</span> cm</p>
+</dd>
+<dt><strong>t_exp</strong><span class="classifier">float, array-like</span></dt><dd><p>The explosion epoch</p>
+</dd>
+<dt><strong>kappa</strong><span class="classifier">float, array-like</span></dt><dd><p>The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)</p>
+</dd>
+<dt><strong>n</strong><span class="classifier">float, array-like</span></dt><dd><p>The polytropic index of the progenitor. Must be either 1.5 or 3.</p>
+</dd>
+<dt><strong>RW</strong><span class="classifier">bool, optional</span></dt><dd><p>Reduce the model to the simpler form of Rabinak &amp; Waxman (<a class="reference external" href="https://doi.org/10.1088/0004-637X/728/1/63">https://doi.org/10.1088/0004-637X/728/1/63</a>)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>T_K</strong><span class="classifier">array-like</span></dt><dd><p>The model blackbody temperatures in units of kilokelvins</p>
+</dd>
+<dt><strong>R_bb</strong><span class="classifier">array-like</span></dt><dd><p>The model blackbody radii in units of 1000 solar radii</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.models.t_max">
 <span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">t_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#t_max"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.t_max" title="Permalink to this definition">¶</a></dt>
 <dd><p>The maximum validity time for the <a class="reference internal" href="#lightcurve_fitting.models.shock_cooling" title="lightcurve_fitting.models.shock_cooling"><code class="xref py py-func docutils literal notranslate"><span class="pre">shock_cooling()</span></code></a> model</p>
@@ -1643,6 +1753,13 @@ envelope structure” and <span class="math notranslate nohighlight">\(M\)</span
 <span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">t_max2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#t_max2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.t_max2" title="Permalink to this definition">¶</a></dt>
 <dd><p>The maximum validity time for the <a class="reference internal" href="#lightcurve_fitting.models.shock_cooling2" title="lightcurve_fitting.models.shock_cooling2"><code class="xref py py-func docutils literal notranslate"><span class="pre">shock_cooling2()</span></code></a> model</p>
 <p><span class="math notranslate nohighlight">\(t_\mathrm{max} = \left(\frac{8.12\,\mathrm{kK}}{T_1}\right)^{1/(2 ε_1 - 0.5)} + t_\mathrm{exp}\)</span></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.t_max3">
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">t_max3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#t_max3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.t_max3" title="Permalink to this definition">¶</a></dt>
+<dd><p>The maximum validity time for the <a class="reference internal" href="#lightcurve_fitting.models.shock_cooling" title="lightcurve_fitting.models.shock_cooling"><code class="xref py py-func docutils literal notranslate"><span class="pre">shock_cooling()</span></code></a> model</p>
+<p><span class="math notranslate nohighlight">\(t_\mathrm{max} = (7.4\,\mathrm{d}) \left(\frac{R}{κ}\right)^{0.55} + t_\mathrm{exp}\)</span> (Eq. 24)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1664,6 +1781,14 @@ envelope structure” and <span class="math notranslate nohighlight">\(M\)</span
 </dl>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.t_min3">
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">t_min3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#t_min3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.t_min3" title="Permalink to this definition">¶</a></dt>
+<dd><p>The minimum validity time for the <a class="reference internal" href="#lightcurve_fitting.models.shock_cooling" title="lightcurve_fitting.models.shock_cooling"><code class="xref py py-func docutils literal notranslate"><span class="pre">shock_cooling()</span></code></a> model</p>
+<p><span class="math notranslate nohighlight">\(t_\mathrm{min} = (0.2\,\mathrm{d}) \frac{R}{v_s}
+\max\left[0.5, \frac{R^{0.4}}{(f_ρ M κ)^{0.2} v_s^{-0.7}}\right] + t_\mathrm{exp}\)</span> (Eq. 17)</p>
 </dd></dl>
 
 </section>

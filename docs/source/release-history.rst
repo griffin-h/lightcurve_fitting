@@ -21,6 +21,7 @@ For now, the code will still work if you use ``p_min`` and ``p_max``, but a warn
 * Do not plot black lines for Johnson filters when using ``plot_lines``
 * Allow adjustment of font sizes in light curve corner plots
 * Change priors from functions to classes (see above)
+* Allow for a reddened blackbody SED in models
 
 v0.4.0 (2022-02-08)
 -------------------

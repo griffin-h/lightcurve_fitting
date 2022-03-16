@@ -557,11 +557,11 @@ def planck_fast(nu, T, R, cutoff_freq=np.inf):
     float, array-like
         The spectral luminosity density (:math:`L_ν`) of the source in watts per hertz
     """
-    return c2 * np.squeeze(np.outer(R ** 2, nu ** 3 * np.minimum(1., cutoff_freq / nu))
-                           / (np.exp(c1 * np.outer(T ** -1, nu)) - 1))
+    return c2 * np.squeeze(np.multiply.outer(R ** 2, nu ** 3 * np.minimum(1., cutoff_freq / nu))
+                           / (np.exp(c1 * np.multiply.outer(T ** -1, nu)) - 1))
 
 
-def blackbody_to_filters(filters, T, R, z=0., cutoff_freq=np.inf):
+def blackbody_to_filters(filters, T, R, z=0., cutoff_freq=np.inf, ebv=0.):
     """
     The average spectral luminosity density (:math:`L_ν`) of a blackbody as observed through one or more filters
 
@@ -577,6 +577,9 @@ def blackbody_to_filters(filters, T, R, z=0., cutoff_freq=np.inf):
         Redshift between the blackbody source and the observed filters
     cutoff_freq : float, optional
         Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)
+    ebv : float, array-like, optional
+        Selective extinction E(B-V) in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with R_V=3.1.
+        Its shape must be broadcastable to T and R. Default: 0.
 
     Returns
     -------
@@ -587,11 +590,11 @@ def blackbody_to_filters(filters, T, R, z=0., cutoff_freq=np.inf):
     R = np.array(R)
     if T.shape != R.shape:
         raise Exception('T & R must have the same shape')
+    np.broadcast(T, ebv)  # check if T and ebv are brodcastable, otherwise raise a ValueError
     if T.ndim == 1 and len(T) == len(filters):  # pointwise
-        y_fit = np.array([f.blackbody(t, r, z, cutoff_freq) for f, t, r in zip(filters, T, R)])
+        y_fit = np.array([f.blackbody(t, r, z, cutoff_freq, ebv) for f, t, r in zip(filters, T, R)])
     else:
-        y_fit = np.array([f.blackbody(T.flatten(), R.flatten(), z, cutoff_freq) for f in filters])
-        y_fit = y_fit.reshape(len(filters), *T.shape)
+        y_fit = np.array([f.blackbody(T, R, z, cutoff_freq, ebv) for f in filters])
     return y_fit
 
 

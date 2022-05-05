@@ -148,7 +148,7 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
         ax1[-1].set_xlabel('Step Number')
 
     sampler.reset()
-    sampler.run_mcmc(pos, nsteps, progress=True, progress_kwargs={'desc': 'Sampling'})
+    sampler.run_mcmc(pos, nsteps, progress=True, progress_kwargs={'desc': 'Sampling'}, skip_initial_state_check=True)
     if save_sampler_as:
         np.save(save_sampler_as, sampler.flatchain)
         print('saving sampler.flatchain as ' + save_sampler_as)

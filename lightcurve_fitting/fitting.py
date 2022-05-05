@@ -337,7 +337,7 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
         ax.errorbar(lc_filt['MJD'] - mjd_offset, lc_filt[ycol] / yscale + offset, lc_filt[dycol] / yscale,
                     ls='none', marker='o', **filt.plotstyle)
         ax.plot(xfit - mjd_offset, yfit / yscale + offset, color=filt.linecolor, alpha=0.05)
-        txt = f'${filt.name}{offset:+.1f}$' if filt.italics else rf'$\mathrm{{{filt.name}}}{offset:+.1f}$'
+        txt = f'${filt.name}{offset:+g}$' if filt.italics else rf'$\mathrm{{{filt.name}}}{offset:+g}$'
         ax.text(1.03, yfit[-1, 0] / yscale + offset, txt, color=filt.textcolor, fontdict={'size': textsize},
                 ha='left', va='center', transform=ax.get_yaxis_transform())
     ax.set_xlabel('MJD $-$ {:f}'.format(mjd_offset).rstrip('0').rstrip('.'), size=textsize)

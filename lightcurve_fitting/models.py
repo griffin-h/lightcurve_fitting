@@ -419,6 +419,7 @@ ShockCooling2.t_max = t_max2
 
 sifto_filename = resource_filename('lightcurve_fitting', 'models/sifto.dat')
 sifto = Table.read(sifto_filename, format='ascii')
+sifto['x'] = sifto['r']  # assume DLT40 = r for now
 
 
 def scale_sifto(sn_lc):
@@ -518,7 +519,7 @@ def stretched_sifto(t_in, f, t_peak, stretch):
     """
     The SiFTO SN Ia model (https://doi.org/10.1086/588518), offset and stretched by the input parameters
 
-    The SiFTO model is currently only available in the UBVgri filters.
+    The SiFTO model is currently only available in the UBVgri filters. We assume DLT40 can be modeled as r.
 
     Parameters
     ----------

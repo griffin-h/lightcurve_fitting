@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Usage &mdash; lightcurve_fitting 0.5.1 documentation</title>
+  <title>Usage &mdash; lightcurve_fitting 0.6.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -34,7 +34,7 @@
             <a href="index.html" class="icon icon-home"> lightcurve_fitting
           </a>
               <div class="version">
-                0.5.1
+                0.6.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -225,8 +225,10 @@ To save the plot, give <code class="docutils literal notranslate"><span class="p
 <p>The <code class="docutils literal notranslate"><span class="pre">models</span></code> and <code class="docutils literal notranslate"><span class="pre">fitting</span></code> submodules allow you to fit analytical models to the observed data. Right now, the only choices are:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">CompanionShocking</span></code>, which is the SiFTO Type Ia supernova template (Conley et al. <a class="reference external" href="https://doi.org/10.1086/588518">2008</a>) plus a shock component from Kasen (<a class="reference external" href="https://doi.org/10.1088/0004-637X/708/2/1025">2010</a>).
+<li><p><code class="docutils literal notranslate"><span class="pre">CompanionShocking</span></code>, which is the SiFTO Type Ia supernova template (Conley et al. <a class="reference external" href="https://doi.org/10.1086/588518">2008</a>) plus a shock component from Kasen (<a class="reference external" href="https://doi.org/10.1088/0004-637X/708/2/1025">2010</a>), with factors on the r and i SiFTO models and a factor on the U shock component.
 This was used in my paper on SN 2017cbv: <a class="reference external" href="https://doi.org/10.3847/2041-8213/aa8402">https://doi.org/10.3847/2041-8213/aa8402</a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CompanionShocking2</span></code>, which is the same SiFTO Type Ia supernova template plus a shock component, but with time offsets for the U and i SiFTO models instead of the three multiplicative factors.
+This was used in my paper on SN 2021aefx (submitted).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ShockCooling</span></code>, which is the Sapir &amp; Waxman (<a class="reference external" href="https://doi.org/10.3847/1538-4357/aa64df">2017</a>) model for shock cooling in a core-collapse supernova,
 formulated in terms of <span class="math notranslate nohighlight">\(v_s, M_\mathrm{env}, f_ρ M, R\)</span></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ShockCooling2</span></code>, which is the same Sapir &amp; Waxman model but formulated in terms of scaling parameters <span class="math notranslate nohighlight">\(T_1, L_1, t_\mathrm{tr}\)</span>.

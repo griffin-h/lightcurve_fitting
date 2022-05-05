@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API Documentation &mdash; lightcurve_fitting 0.5.1 documentation</title>
+  <title>API Documentation &mdash; lightcurve_fitting 0.6.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -34,7 +34,7 @@
             <a href="index.html" class="icon icon-home"> lightcurve_fitting
           </a>
               <div class="version">
-                0.5.1
+                0.6.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -364,7 +364,7 @@ more realistic uncertainties.</p>
 </dd>
 <dt><strong>colors</strong><span class="classifier">list, optional</span></dt><dd><p>List of colors to plot, e.g., <code class="docutils literal notranslate"><span class="pre">['g-r',</span> <span class="pre">'r-i']</span></code>. By default, plot all recognizable colors.</p>
 </dd>
-<dt><strong>fmt</strong><span class="classifier">str, optional</span></dt><dd><p>Format string, passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.errorbar.html#matplotlib.pyplot.errorbar" title="(in Matplotlib v3.5.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.errorbar()</span></code></a></p>
+<dt><strong>fmt</strong><span class="classifier">str, optional</span></dt><dd><p>Format string, passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.errorbar.html#matplotlib.pyplot.errorbar" title="(in Matplotlib v3.5.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.errorbar()</span></code></a></p>
 </dd>
 <dt><strong>limit_length</strong><span class="classifier">float, optional</span></dt><dd><p>Length (in data units) of the upper and lower limit markers</p>
 </dd>
@@ -572,6 +572,35 @@ Its shape must be broadcastable to T and R. Default: 0.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="lightcurve_fitting.filters.Filter.spectrum">
+<span class="sig-name descname"><span class="pre">spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/filters.html#Filter.spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.filters.Filter.spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the average value of the given spectrum in this filter</p>
+<p>The limits of integration come from the input spectrum, so if the spectrum does not cover the full filter, this
+function returns the average Lnu within the overlapping region, i.e., it does not extrapolate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>freq</strong><span class="classifier">astropy.units.Quantity</span></dt><dd><p>Frequency of the input spectrum (with units)</p>
+</dd>
+<dt><strong>lum</strong><span class="classifier">float or array-like</span></dt><dd><p>Spectral luminosity (Lnu) or flux (Fnu) of the input spectrum</p>
+</dd>
+<dt><strong>z</strong><span class="classifier">float, optional</span></dt><dd><p>Redshift between the spectrum and the filter</p>
+</dd>
+<dt><strong>ebv</strong><span class="classifier">float, array-like, optional</span></dt><dd><p>Selective extinction E(B-V) in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with R_V=3.1.
+Its shape must be broadcastable to T and R. Default: 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>Lnu</strong><span class="classifier">float or array-like</span></dt><dd><p>Average spectral luminosity (Lnu) or flux (Fnu) in the filter</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -633,8 +662,8 @@ luminosities. Default: 0.5</p>
 <dt><strong>tmin, tmax</strong><span class="classifier">float, optional</span></dt><dd><p>Starting and ending times for which to plot the models in the light curve inset. Default: determined by the
 time range of the observed light curve.</p>
 </dd>
-<dt><strong>t0_offset</strong><span class="classifier">float, optional</span></dt><dd><p>Reference time on the horizontal axis of the light curve inset. Default: determined by the starting time of
-the model light curve.</p>
+<dt><strong>t0_offset</strong><span class="classifier">float, optional</span></dt><dd><p>Reference time for the explosion time in the corner plot. Default: the earliest explosion time in
+<cite>sampler_flatchain</cite>, rounded down.</p>
 </dd>
 <dt><strong>save_plot_as</strong><span class="classifier">str, optional</span></dt><dd><p>Filename to which to save the resulting plot</p>
 </dd>
@@ -710,13 +739,50 @@ If ‘absolute’, sigma will be in units of the median photometric uncertainty.
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="lightcurve_fitting.fitting.lightcurve_model_plot">
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.fitting.</span></span><span class="sig-name descname"><span class="pre">lightcurve_model_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_flatchain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_models_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ycol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">textsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'medium'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mjd_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/fitting.html#lightcurve_model_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.fitting.lightcurve_model_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the observed and model light curves.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>lc</strong><span class="classifier">lightcurve_fitting.lightcurve.LC</span></dt><dd><p>Table of broadband photometry including columns “MJD”, “mag”, “dmag”, “filt”</p>
+</dd>
+<dt><strong>model</strong><span class="classifier">lightcurve_fitting.models.Model</span></dt><dd><p>The model that was fit to the light curve.</p>
+</dd>
+<dt><strong>sampler_flatchain</strong><span class="classifier">array-like</span></dt><dd><p>2D array containing the aggregated MCMC chain histories</p>
+</dd>
+<dt><strong>model_kwargs</strong><span class="classifier">dict, optional</span></dt><dd><p>Keyword arguments to be passed to the model</p>
+</dd>
+<dt><strong>num_models_to_plot</strong><span class="classifier">int, optional</span></dt><dd><p>Number of model realizations to plot in the light curve inset. Default: 100</p>
+</dd>
+<dt><strong>filter_spacing</strong><span class="classifier">float, optional</span></dt><dd><p>Spacing between filters in the light curve inset, in units determined by the order of magnitude of the
+luminosities. Default: 0.5</p>
+</dd>
+<dt><strong>tmin, tmax</strong><span class="classifier">float, optional</span></dt><dd><p>Starting and ending times for which to plot the models in the light curve inset. Default: determined by the
+time range of the observed light curve.</p>
+</dd>
+<dt><strong>ycol</strong><span class="classifier">str, optional</span></dt><dd><p>Quantity to plot on the light curve inset. Choices: “lum”, “flux”, or “absmag”. Default: model.output_quantity</p>
+</dd>
+<dt><strong>textsize</strong><span class="classifier">str, optional</span></dt><dd><p>Font size for the x- and y-axis labels, as well as the tick labels. Default: ‘medium’</p>
+</dd>
+<dt><strong>ax</strong><span class="classifier">matplotlib.pyplot.Axes</span></dt><dd><p>Axis on which to plot the light curves</p>
+</dd>
+<dt><strong>mjd_offset</strong><span class="classifier">float, optional</span></dt><dd><p>Reference time on the horizontal axis of the light curve inset. Default: determined by the starting time of
+the model light curve.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-lightcurve_fitting.lightcurve">
 <span id="lightcurve-fitting-lightcurve-module"></span><h2>lightcurve_fitting.lightcurve module<a class="headerlink" href="#module-lightcurve_fitting.lightcurve" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="lightcurve_fitting.lightcurve.Arrow">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.lightcurve.</span></span><span class="sig-name descname"><span class="pre">Arrow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#Arrow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.Arrow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://matplotlib.org/stable/api/path_api.html#matplotlib.path.Path" title="(in Matplotlib v3.5.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.path.Path</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://matplotlib.org/stable/api/path_api.html#matplotlib.path.Path" title="(in Matplotlib v3.5.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.path.Path</span></code></a></p>
 <p>An downward-pointing arrow-shaped <code class="docutils literal notranslate"><span class="pre">Path</span></code>, whose head has half-width <code class="docutils literal notranslate"><span class="pre">hx</span></code> and height <code class="docutils literal notranslate"><span class="pre">hy</span></code> (in units of length)</p>
 </dd></dl>
 
@@ -918,7 +984,7 @@ if any. Otherwise do not correct for host galaxy extinction.</p>
 <dt><strong>fillmark</strong><span class="classifier">bool, optional</span></dt><dd><p>Fill each marker with color. Default: True</p>
 </dd>
 <dt><strong>kwargs</strong><span class="classifier">dict, optional</span></dt><dd><p>Keyword arguments matching column names in the light curve are used to specify a subset of points to plot.
-Additional keyword arguments passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html#matplotlib.pyplot.plot" title="(in Matplotlib v3.5.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code></a>.</p>
+Additional keyword arguments passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html#matplotlib.pyplot.plot" title="(in Matplotlib v3.5.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
@@ -1467,12 +1533,51 @@ Its shape must be broadcastable to T and R. Default: 0.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.models.companion_shocking">
-<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">companion_shocking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_exp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a13</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Mc_v9_7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_peak</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stretch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rU</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#companion_shocking"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.companion_shocking" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">companion_shocking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_exp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a13</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Mc_v9_7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#companion_shocking"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.companion_shocking" title="Permalink to this definition">¶</a></dt>
+<dd><p>The companion shocking model of Kasen (<a class="reference external" href="https://doi.org/10.1088/0004-637X/708/2/1025">https://doi.org/10.1088/0004-637X/708/2/1025</a>)</p>
+<p>As written by Hosseinzadeh et al. (<a class="reference external" href="https://doi.org/10.3847/2041-8213/aa8402">https://doi.org/10.3847/2041-8213/aa8402</a>), the shock component is defined by:</p>
+<p><span class="math notranslate nohighlight">\(R_\mathrm{phot}(t) = (2700\,R_\odot) (M_c v_9^7)^{1/9} κ^{1/9} t^{7/9}\)</span> (Eq. 1)</p>
+<p><span class="math notranslate nohighlight">\(T_\mathrm{eff}(t) = (25\,\mathrm{kK}) a_{13}^{1/4} (M_c v_9^7)^{1/144} κ^{-35/144} t^{37/72}\)</span> (Eq. 2)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>t_in</strong><span class="classifier">float, array-like</span></dt><dd><p>Time in days</p>
+</dd>
+<dt><strong>f</strong><span class="classifier">lightcurve_fitting.filter.Filter, array-like</span></dt><dd><p>Filters for which to calculate the model</p>
+</dd>
+<dt><strong>t_exp</strong><span class="classifier">float, array-like</span></dt><dd><p>The explosion epoch</p>
+</dd>
+<dt><strong>a13</strong><span class="classifier">float, array-like</span></dt><dd><p>The binary separation in <span class="math notranslate nohighlight">\(10^{13}\)</span> cm</p>
+</dd>
+<dt><strong>Mc_v9_7</strong><span class="classifier">float, array-like</span></dt><dd><p>The product <span class="math notranslate nohighlight">\(M_c v_9^7\)</span>, where <span class="math notranslate nohighlight">\(M_c\)</span> is the ejecta mass in Chandrasekhar masses and <span class="math notranslate nohighlight">\(v_9\)</span> is
+the ejecta velocity in units of <span class="math notranslate nohighlight">\(10^9\)</span> cm/s</p>
+</dd>
+<dt><strong>kappa</strong><span class="classifier">float, array-like</span></dt><dd><p>The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)</p>
+</dd>
+<dt><strong>z</strong><span class="classifier">float, optional</span></dt><dd><p>The redshift between blackbody source and the observed filters</p>
+</dd>
+<dt><strong>cutoff_freq</strong><span class="classifier">float, optional</span></dt><dd><p>Cutoff frequency (in terahertz) for a modified blackbody spectrum (see <a class="reference external" href="https://doi.org/10.3847/1538-4357/aa9334">https://doi.org/10.3847/1538-4357/aa9334</a>)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>y_fit</strong><span class="classifier">array-like</span></dt><dd><p>The filtered model light curves</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.companion_shocking_plus_sifto">
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">companion_shocking_plus_sifto</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_exp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a13</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Mc_v9_7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_peak</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stretch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rU</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#companion_shocking_plus_sifto"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.companion_shocking_plus_sifto" title="Permalink to this definition">¶</a></dt>
 <dd><p>The companion shocking model of Kasen (<a class="reference external" href="https://doi.org/10.1088/0004-637X/708/2/1025">https://doi.org/10.1088/0004-637X/708/2/1025</a>) plus the SiFTO SN Ia model</p>
 <p>As written by Hosseinzadeh et al. (<a class="reference external" href="https://doi.org/10.3847/2041-8213/aa8402">https://doi.org/10.3847/2041-8213/aa8402</a>), the shock component is defined by:</p>
 <p><span class="math notranslate nohighlight">\(R_\mathrm{phot}(t) = (2700\,R_\odot) (M_c v_9^7)^{1/9} κ^{1/9} t^{7/9}\)</span> (Eq. 1)</p>
 <p><span class="math notranslate nohighlight">\(T_\mathrm{eff}(t) = (25\,\mathrm{kK}) a_{13}^{1/4} (M_c v_9^7)^{1/144} κ^{-35/144} t^{37/72}\)</span> (Eq. 2)</p>
 <p>The SiFTO model (<a class="reference external" href="https://doi.org/10.1086/588518">https://doi.org/10.1086/588518</a>) is currently only available in the UBVgri filters.</p>
+<p>This version of the model includes factors on the r and i SiFTO models, and a factor on the U shock component.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -1506,6 +1611,84 @@ the ejecta velocity in units of <span class="math notranslate nohighlight">\(10^
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>y_fit</strong><span class="classifier">array-like</span></dt><dd><p>The filtered model light curves</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.companion_shocking_plus_sifto2">
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">companion_shocking_plus_sifto2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_exp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a13</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Mc_v9_7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_peak</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stretch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtU</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dti</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#companion_shocking_plus_sifto2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.companion_shocking_plus_sifto2" title="Permalink to this definition">¶</a></dt>
+<dd><p>The companion shocking model of Kasen (<a class="reference external" href="https://doi.org/10.1088/0004-637X/708/2/1025">https://doi.org/10.1088/0004-637X/708/2/1025</a>) plus the SiFTO SN Ia model</p>
+<p>As written by Hosseinzadeh et al. (<a class="reference external" href="https://doi.org/10.3847/2041-8213/aa8402">https://doi.org/10.3847/2041-8213/aa8402</a>), the shock component is defined by:</p>
+<p><span class="math notranslate nohighlight">\(R_\mathrm{phot}(t) = (2700\,R_\odot) (M_c v_9^7)^{1/9} κ^{1/9} t^{7/9}\)</span> (Eq. 1)</p>
+<p><span class="math notranslate nohighlight">\(T_\mathrm{eff}(t) = (25\,\mathrm{kK}) a_{13}^{1/4} (M_c v_9^7)^{1/144} κ^{-35/144} t^{37/72}\)</span> (Eq. 2)</p>
+<p>The SiFTO model (<a class="reference external" href="https://doi.org/10.1086/588518">https://doi.org/10.1086/588518</a>) is currently only available in the UBVgri filters.</p>
+<p>This version of the model includes time offsets for the U and i SiFTO models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>t_in</strong><span class="classifier">float, array-like</span></dt><dd><p>Time in days</p>
+</dd>
+<dt><strong>f</strong><span class="classifier">lightcurve_fitting.filter.Filter, array-like</span></dt><dd><p>Filters for which to calculate the model</p>
+</dd>
+<dt><strong>t_exp</strong><span class="classifier">float, array-like</span></dt><dd><p>The explosion epoch</p>
+</dd>
+<dt><strong>a13</strong><span class="classifier">float, array-like</span></dt><dd><p>The binary separation in <span class="math notranslate nohighlight">\(10^{13}\)</span> cm</p>
+</dd>
+<dt><strong>Mc_v9_7</strong><span class="classifier">float, array-like</span></dt><dd><p>The product <span class="math notranslate nohighlight">\(M_c v_9^7\)</span>, where <span class="math notranslate nohighlight">\(M_c\)</span> is the ejecta mass in Chandrasekhar masses and <span class="math notranslate nohighlight">\(v_9\)</span> is
+the ejecta velocity in units of <span class="math notranslate nohighlight">\(10^9\)</span> cm/s</p>
+</dd>
+<dt><strong>t_peak</strong><span class="classifier">float, array-like</span></dt><dd><p>The epoch of maximum light for the SiFTO model</p>
+</dd>
+<dt><strong>stretch</strong><span class="classifier">float, array-like</span></dt><dd><p>The stretch for the SiFTO model</p>
+</dd>
+<dt><strong>dtU, dti</strong><span class="classifier">float, array-like</span></dt><dd><p>Time offsets for the U- and i-band SiFTO models relative to the other bands</p>
+</dd>
+<dt><strong>kappa</strong><span class="classifier">float, array-like</span></dt><dd><p>The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)</p>
+</dd>
+<dt><strong>z</strong><span class="classifier">float, optional</span></dt><dd><p>The redshift between blackbody source and the observed filters</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>y_fit</strong><span class="classifier">array-like</span></dt><dd><p>The filtered model light curves</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.companion_shocking_temperature_radius">
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">companion_shocking_temperature_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_exp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a13</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Mc_v9_7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#companion_shocking_temperature_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.companion_shocking_temperature_radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>The companion shocking model of Kasen (<a class="reference external" href="https://doi.org/10.1088/0004-637X/708/2/1025">https://doi.org/10.1088/0004-637X/708/2/1025</a>)</p>
+<p>As written by Hosseinzadeh et al. (<a class="reference external" href="https://doi.org/10.3847/2041-8213/aa8402">https://doi.org/10.3847/2041-8213/aa8402</a>), the shock component is defined by:</p>
+<p><span class="math notranslate nohighlight">\(R_\mathrm{phot}(t) = (2700\,R_\odot) (M_c v_9^7)^{1/9} κ^{1/9} t^{7/9}\)</span> (Eq. 1)</p>
+<p><span class="math notranslate nohighlight">\(T_\mathrm{eff}(t) = (25\,\mathrm{kK}) a_{13}^{1/4} (M_c v_9^7)^{1/144} κ^{-35/144} t^{37/72}\)</span> (Eq. 2)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>t_in</strong><span class="classifier">float, array-like</span></dt><dd><p>Time in days</p>
+</dd>
+<dt><strong>t_exp</strong><span class="classifier">float, array-like</span></dt><dd><p>The explosion epoch</p>
+</dd>
+<dt><strong>a13</strong><span class="classifier">float, array-like</span></dt><dd><p>The binary separation in <span class="math notranslate nohighlight">\(10^{13}\)</span> cm</p>
+</dd>
+<dt><strong>Mc_v9_7</strong><span class="classifier">float, array-like</span></dt><dd><p>The product <span class="math notranslate nohighlight">\(M_c v_9^7\)</span>, where <span class="math notranslate nohighlight">\(M_c\)</span> is the ejecta mass in Chandrasekhar masses and <span class="math notranslate nohighlight">\(v_9\)</span> is
+the ejecta velocity in units of <span class="math notranslate nohighlight">\(10^9\)</span> cm/s</p>
+</dd>
+<dt><strong>kappa</strong><span class="classifier">float, array-like</span></dt><dd><p>The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>T_kasen</strong><span class="classifier">array-like</span></dt><dd><p>The model blackbody temperatures in units of kilokelvins</p>
+</dd>
+<dt><strong>R_kasen</strong><span class="classifier">array-like</span></dt><dd><p>The model blackbody radii in units of 1000 solar radii</p>
 </dd>
 </dl>
 </dd>
@@ -1694,7 +1877,54 @@ envelope structure” and <span class="math notranslate nohighlight">\(M\)</span
 <dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.models.shock_cooling3">
 <span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">shock_cooling3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_rho_M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_exp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RW</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#shock_cooling3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.shock_cooling3" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The shock cooling model of Sapir &amp; Waxman (<a class="reference external" href="https://doi.org/10.3847/1538-4357/aa64df">https://doi.org/10.3847/1538-4357/aa64df</a>).</p>
+<p>This version of the model is written in terms of physical parameters <span class="math notranslate nohighlight">\(v_s, M_\mathrm{env}, f_ρ M, R\)</span>:</p>
+<p><span class="math notranslate nohighlight">\(T(t) = \frac{T_\mathrm{col}}{T_\mathrm{ph}} T_0 \left(\frac{v_s^2 t^2}{f_ρ M κ}\right)^{ε_1}
+\frac{R^{1/4}}{κ^{1/4}} t^{-1/2}\)</span> (Eq. 23)</p>
+<p><span class="math notranslate nohighlight">\(L(t) = A \exp\left[-\left(\frac{a t}{t_\mathrm{tr}}\right)^α\right]
+L_0 \left(\frac{v_s t^2}{f_ρ M κ}\right)^{-ε_2} \frac{v_s^2 R}{κ}\)</span> (Eq. 18-19)</p>
+<p><span class="math notranslate nohighlight">\(t_\mathrm{tr} = (19.5\,\mathrm{d}) \left(\frac{κ * M_\mathrm{env}}{v_s} \right)^{1/2}\)</span> (Eq. 20)</p>
+<p>This is the same as <a class="reference internal" href="#lightcurve_fitting.models.shock_cooling" title="lightcurve_fitting.models.shock_cooling"><code class="xref py py-func docutils literal notranslate"><span class="pre">shock_cooling()</span></code></a> but with distance and reddening as free parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>t_in</strong><span class="classifier">float, array-like</span></dt><dd><p>Time in days</p>
+</dd>
+<dt><strong>f</strong><span class="classifier">lightcurve_fitting.filter.Filter, array-like</span></dt><dd><p>Filters for which to calculate the model</p>
+</dd>
+<dt><strong>v_s</strong><span class="classifier">float, array-like</span></dt><dd><p>The shock speed in <span class="math notranslate nohighlight">\(10^{8.5}\)</span> cm/s</p>
+</dd>
+<dt><strong>M_env</strong><span class="classifier">float, array-like</span></dt><dd><p>The envelope mass in solar masses</p>
+</dd>
+<dt><strong>f_rho_M</strong><span class="classifier">float, array-like</span></dt><dd><p>The product <span class="math notranslate nohighlight">\(f_ρ M\)</span>, where “<span class="math notranslate nohighlight">\(f_ρ\)</span> is a numerical factor of order unity that depends on the inner
+envelope structure” and <span class="math notranslate nohighlight">\(M\)</span> is the ejecta mass in solar masses</p>
+</dd>
+<dt><strong>R</strong><span class="classifier">float, array-like</span></dt><dd><p>The progenitor radius in <span class="math notranslate nohighlight">\(10^{13}\)</span> cm</p>
+</dd>
+<dt><strong>dist</strong><span class="classifier">float, array-like</span></dt><dd><p>The luminosity distance to the supernova in Mpc</p>
+</dd>
+<dt><strong>ebv</strong><span class="classifier">float, array-like</span></dt><dd><p>The reddening <span class="math notranslate nohighlight">\(E(B-V)\)</span> to apply to the blackbody spectrum before integration</p>
+</dd>
+<dt><strong>t_exp</strong><span class="classifier">float, array-like</span></dt><dd><p>The explosion epoch</p>
+</dd>
+<dt><strong>kappa</strong><span class="classifier">float, array-like</span></dt><dd><p>The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)</p>
+</dd>
+<dt><strong>n</strong><span class="classifier">float, array-like</span></dt><dd><p>The polytropic index of the progenitor. Must be either 1.5 or 3.</p>
+</dd>
+<dt><strong>RW</strong><span class="classifier">bool, optional</span></dt><dd><p>Reduce the model to the simpler form of Rabinak &amp; Waxman (<a class="reference external" href="https://doi.org/10.1088/0004-637X/728/1/63">https://doi.org/10.1088/0004-637X/728/1/63</a>)</p>
+</dd>
+<dt><strong>z</strong><span class="classifier">float, optional</span></dt><dd><p>The redshift between blackbody source and the observed filters</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>y_fit</strong><span class="classifier">array-like</span></dt><dd><p>The filtered model light curves</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.models.shock_cooling_temperature_radius">
@@ -1735,6 +1965,35 @@ envelope structure” and <span class="math notranslate nohighlight">\(M\)</span
 <dt><strong>T_K</strong><span class="classifier">array-like</span></dt><dd><p>The model blackbody temperatures in units of kilokelvins</p>
 </dd>
 <dt><strong>R_bb</strong><span class="classifier">array-like</span></dt><dd><p>The model blackbody radii in units of 1000 solar radii</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.stretched_sifto">
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">stretched_sifto</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_peak</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stretch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtU</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dti</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#stretched_sifto"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.stretched_sifto" title="Permalink to this definition">¶</a></dt>
+<dd><p>The SiFTO SN Ia model (<a class="reference external" href="https://doi.org/10.1086/588518">https://doi.org/10.1086/588518</a>), offset and stretched by the input parameters</p>
+<p>The SiFTO model is currently only available in the UBVgri filters. We assume DLT40 can be modeled as r.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>t_in</strong><span class="classifier">float, array-like</span></dt><dd><p>Time in days</p>
+</dd>
+<dt><strong>f</strong><span class="classifier">lightcurve_fitting.filter.Filter, array-like</span></dt><dd><p>Filters for which to calculate the model</p>
+</dd>
+<dt><strong>t_peak</strong><span class="classifier">float, array-like</span></dt><dd><p>The epoch of maximum light for the SiFTO model</p>
+</dd>
+<dt><strong>stretch</strong><span class="classifier">float, array-like</span></dt><dd><p>The stretch for the SiFTO model</p>
+</dd>
+<dt><strong>dtU, dti</strong><span class="classifier">float, array-like</span></dt><dd><p>Time offsets for the U- and i-band models relative to the other bands</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>y_fit</strong><span class="classifier">array-like</span></dt><dd><p>The filtered model light curves</p>
 </dd>
 </dl>
 </dd>

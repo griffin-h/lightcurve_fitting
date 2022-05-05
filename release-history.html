@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Release History &mdash; lightcurve_fitting 0.5.1 documentation</title>
+  <title>Release History &mdash; lightcurve_fitting 0.6.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -33,7 +33,7 @@
             <a href="index.html" class="icon icon-home"> lightcurve_fitting
           </a>
               <div class="version">
-                0.5.1
+                0.6.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -48,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v0-6-0-2022-05-04">v0.6.0 (2022-05-04)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-5-0-2022-03-16">v0.5.0 (2022-03-16)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-4-0-2022-02-08">v0.4.0 (2022-02-08)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-3-0-2021-09-22">v0.3.0 (2021-09-22)</a></li>
@@ -84,6 +85,18 @@
              
   <section id="release-history">
 <h1>Release History<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
+<section id="v0-6-0-2022-05-04">
+<h2>v0.6.0 (2022-05-04)<a class="headerlink" href="#v0-6-0-2022-05-04" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add CompanionShocking2 model: similar to CompanionShocking model but with time shifts on U and i SiFTO tempates instead of the three multipicative factors</p></li>
+<li><p>Separate out the <code class="xref py py-func docutils literal notranslate"><span class="pre">lightcurve_model_plot()</span></code> function to allow plotting only the observed vs. model light curves (the inset from <code class="xref py py-func docutils literal notranslate"><span class="pre">lightcurve_corner()</span></code>)</p></li>
+<li><p>Add the <code class="xref py py-func docutils literal notranslate"><span class="pre">Filter.spectrum()</span></code> method to calculate synthetic photometry on an arbitrary spectrum</p></li>
+<li><p>Skip initial state check for post-burn-in MCMC (so it doesn’t crash half way through the fit)</p></li>
+<li><p>Treat the DLT40 filter as r when fitting the SiFTO model</p></li>
+<li><p>Minor changes to plot formatting (remove trailing zeros)</p></li>
+<li><p>Add missing docstring to <code class="xref py py-func docutils literal notranslate"><span class="pre">shock_cooling3()</span></code></p></li>
+</ul>
+</section>
 <section id="v0-5-0-2022-03-16">
 <h2>v0.5.0 (2022-03-16)<a class="headerlink" href="#v0-5-0-2022-03-16" title="Permalink to this headline">¶</a></h2>
 <p>For the first time, this release introduces a change that is not backward compatible.

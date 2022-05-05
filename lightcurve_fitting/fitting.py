@@ -202,8 +202,8 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         Starting and ending times for which to plot the models in the light curve inset. Default: determined by the
         time range of the observed light curve.
     t0_offset : float, optional
-        Reference time on the horizontal axis of the light curve inset. Default: determined by the starting time of
-        the model light curve.
+        Reference time for the explosion time in the corner plot. Default: the earliest explosion time in
+        `sampler_flatchain`, rounded down.
     save_plot_as : str, optional
         Filename to which to save the resulting plot
     ycol : str, optional
@@ -228,9 +228,6 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         ycol = model.output_quantity
     plt.style.use(resource_filename('lightcurve_fitting', 'serif.mplstyle'))
 
-    choices = np.random.choice(sampler_flatchain.shape[0], num_models_to_plot)
-    ps = sampler_flatchain[choices].T
-
     sampler_flatchain_corner = sampler_flatchain.copy()
     if 't_0' in model.input_names:
         i_t0 = model.input_names.index('t_0')
@@ -254,6 +251,57 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         ax.yaxis.set_ticks_position('none')
 
     ax = fig.add_axes(lcaxis_posn)
+    lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs, num_models_to_plot, filter_spacing,
+                          tmin, tmax, ycol, textsize, ax)
+
+    paramtexts = format_credible_interval(sampler_flatchain, varnames=model.input_names, units=model.units)
+    fig.text(0.45, 0.95, '\n'.join(paramtexts), va='top', ha='center', fontdict={'size': param_textsize})
+    if save_plot_as:
+        fig.savefig(save_plot_as)
+        print('saving figure as ' + save_plot_as)
+
+    return fig, corner_axes, ax
+
+
+def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_models_to_plot=100, filter_spacing=0.5,
+                          tmin=None, tmax=None, ycol=None, textsize='medium', ax=None):
+    """
+    Plot the observed and model light curves.
+
+    Parameters
+    ----------
+    lc : lightcurve_fitting.lightcurve.LC
+        Table of broadband photometry including columns "MJD", "mag", "dmag", "filt"
+    model : lightcurve_fitting.models.Model
+        The model that was fit to the light curve.
+    sampler_flatchain : array-like
+        2D array containing the aggregated MCMC chain histories
+    model_kwargs : dict, optional
+        Keyword arguments to be passed to the model
+    num_models_to_plot : int, optional
+        Number of model realizations to plot in the light curve inset. Default: 100
+    filter_spacing : float, optional
+        Spacing between filters in the light curve inset, in units determined by the order of magnitude of the
+        luminosities. Default: 0.5
+    tmin, tmax : float, optional
+        Starting and ending times for which to plot the models in the light curve inset. Default: determined by the
+        time range of the observed light curve.
+    ycol : str, optional
+        Quantity to plot on the light curve inset. Choices: "lum", "flux", or "absmag". Default: model.output_quantity
+    textsize : str, optional
+        Font size for the x- and y-axis labels, as well as the tick labels. Default: 'medium'
+    ax : matplotlib.pyplot.Axes
+        Axis on which to plot the light curves
+    mjd_offset : float, optional
+        Reference time on the horizontal axis of the light curve inset. Default: determined by the starting time of
+        the model light curve.
+    """
+    if ax is None:
+        ax = plt.axes()
+
+    choices = np.random.choice(sampler_flatchain.shape[0], num_models_to_plot)
+    ps = sampler_flatchain[choices].T
+
     if tmin is None:
         tmin = np.min(lc['MJD'])
     if tmax is None:
@@ -294,14 +342,6 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
     ax.set_xlabel('MJD $-$ {:.0f}'.format(mjd_offset), size=textsize)
     ax.set_ylabel(ylabel, size=textsize)
     ax.tick_params(labelsize=textsize)
-
-    paramtexts = format_credible_interval(sampler_flatchain, varnames=model.input_names, units=model.units)
-    fig.text(0.45, 0.95, '\n'.join(paramtexts), va='top', ha='center', fontdict={'size': param_textsize})
-    if save_plot_as:
-        fig.savefig(save_plot_as)
-        print('saving figure as ' + save_plot_as)
-
-    return fig, corner_axes, ax
 
 
 def format_credible_interval(x, sigfigs=1, percentiles=(15.87, 50., 84.14), axis=0, varnames=None, units=None):

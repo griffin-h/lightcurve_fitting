@@ -515,7 +515,7 @@ def companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, kappa=1., z=0., cutoff_freq
     return Lnu_kasen
 
 
-def stretched_sifto(t_in, f, t_peak, stretch):
+def stretched_sifto(t_in, f, t_peak, stretch, dtU=None, dti=None):
     """
     The SiFTO SN Ia model (https://doi.org/10.1086/588518), offset and stretched by the input parameters
 
@@ -531,6 +531,8 @@ def stretched_sifto(t_in, f, t_peak, stretch):
         The epoch of maximum light for the SiFTO model
     stretch : float, array-like
         The stretch for the SiFTO model
+    dtU, dti : float, array-like
+        Time offsets for the U- and i-band models relative to the other bands
 
     Returns
     -------
@@ -563,6 +565,8 @@ def companion_shocking_plus_sifto(t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch,
     :math:`T_\\mathrm{eff}(t) = (25\\,\\mathrm{kK}) a_{13}^{1/4} (M_c v_9^7)^{1/144} κ^{-35/144} t^{37/72}` (Eq. 2)
 
     The SiFTO model (https://doi.org/10.1086/588518) is currently only available in the UBVgri filters.
+
+    This version of the model includes factors on the r and i SiFTO models, and a factor on the U shock component.
 
     Parameters
     ----------
@@ -629,6 +633,80 @@ CompanionShocking = Model(companion_shocking_plus_sifto,
                               u.dimensionless_unscaled,
                               u.dimensionless_unscaled,
                               u.dimensionless_unscaled
+                          ]
+                          )
+
+
+def companion_shocking_plus_sifto2(t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, dtU=0., dti=0., kappa=1., z=0.):
+    """
+    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model
+
+    As written by Hosseinzadeh et al. (https://doi.org/10.3847/2041-8213/aa8402), the shock component is defined by:
+
+    :math:`R_\\mathrm{phot}(t) = (2700\\,R_\\odot) (M_c v_9^7)^{1/9} κ^{1/9} t^{7/9}` (Eq. 1)
+
+    :math:`T_\\mathrm{eff}(t) = (25\\,\\mathrm{kK}) a_{13}^{1/4} (M_c v_9^7)^{1/144} κ^{-35/144} t^{37/72}` (Eq. 2)
+
+    The SiFTO model (https://doi.org/10.1086/588518) is currently only available in the UBVgri filters.
+
+    This version of the model includes time offsets for the U and i SiFTO models.
+
+    Parameters
+    ----------
+    t_in : float, array-like
+        Time in days
+    f : lightcurve_fitting.filter.Filter, array-like
+        Filters for which to calculate the model
+    t_exp : float, array-like
+        The explosion epoch
+    a13 : float, array-like
+        The binary separation in :math:`10^{13}` cm
+    Mc_v9_7 : float, array-like
+        The product :math:`M_c v_9^7`, where :math:`M_c` is the ejecta mass in Chandrasekhar masses and :math:`v_9` is
+        the ejecta velocity in units of :math:`10^9` cm/s
+    t_peak : float, array-like
+        The epoch of maximum light for the SiFTO model
+    stretch : float, array-like
+        The stretch for the SiFTO model
+    dtU, dti : float, array-like
+        Time offsets for the U- and i-band SiFTO models relative to the other bands
+    kappa : float, array-like
+        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
+    z : float, optional
+        The redshift between blackbody source and the observed filters
+
+    Returns
+    -------
+    y_fit : array-like
+        The filtered model light curves
+    """
+    Lnu_kasen = companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, kappa, z)
+    Lnu_sifto = stretched_sifto(t_in, f, t_peak, stretch, dtU, dti)
+
+    kasen_factors = {'U': 1.}
+    y_fit = np.array([L1 * kasen_factors.get(filt.char, 1.) + L2 for L1, L2, filt in zip(Lnu_kasen, Lnu_sifto, f)])
+
+    return y_fit
+
+
+CompanionShocking2 = Model(companion_shocking_plus_sifto2,
+                          [
+                              't_0',
+                              'a',
+                              'M v^7',
+                              't_\\mathrm{max}',
+                              's',
+                              '\\Delta t_U',
+                              '\\Delta t_i',
+                          ],
+                          [
+                              u.d,
+                              10. ** 13. * u.cm,
+                              M_chandra * (1e9 * u.cm / u.s) ** 7,
+                              u.d,
+                              u.dimensionless_unscaled,
+                              u.d,
+                              u.d,
                           ]
                           )
 

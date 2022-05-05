@@ -140,8 +140,10 @@ Model Fitting
 -------------
 The ``models`` and ``fitting`` submodules allow you to fit analytical models to the observed data. Right now, the only choices are:
 
- * ``CompanionShocking``, which is the SiFTO Type Ia supernova template (Conley et al. `2008 <https://doi.org/10.1086/588518>`_) plus a shock component from Kasen (`2010 <https://doi.org/10.1088/0004-637X/708/2/1025>`_).
+ * ``CompanionShocking``, which is the SiFTO Type Ia supernova template (Conley et al. `2008 <https://doi.org/10.1086/588518>`_) plus a shock component from Kasen (`2010 <https://doi.org/10.1088/0004-637X/708/2/1025>`_), with factors on the r and i SiFTO models and a factor on the U shock component.
    This was used in my paper on SN 2017cbv: https://doi.org/10.3847/2041-8213/aa8402.
+ * ``CompanionShocking2``, which is the same SiFTO Type Ia supernova template plus a shock component, but with time offsets for the U and i SiFTO models instead of the three multiplicative factors.
+   This was used in my paper on SN 2021aefx (submitted).
  * ``ShockCooling``, which is the Sapir & Waxman (`2017 <https://doi.org/10.3847/1538-4357/aa64df>`_) model for shock cooling in a core-collapse supernova,
    formulated in terms of :math:`v_s, M_\mathrm{env}, f_ρ M, R`
  * ``ShockCooling2``, which is the same Sapir & Waxman model but formulated in terms of scaling parameters :math:`T_1, L_1, t_\mathrm{tr}`.

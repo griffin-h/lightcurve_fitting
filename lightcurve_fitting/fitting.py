@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import astropy.units as u
 import emcee
 import corner
-from .models import CompanionShocking, scale_sifto, UniformPrior
+from .models import CompanionShocking, CompanionShocking2, scale_sifto, UniformPrior
 from pkg_resources import resource_filename
 import warnings
 
@@ -72,7 +72,7 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     y = lc[model.output_quantity].data
     dy = lc['d'+model.output_quantity].data
 
-    if model == CompanionShocking:
+    if model in [CompanionShocking, CompanionShocking2]:
         scale_sifto(lc)
 
     if use_sigma:

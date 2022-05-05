@@ -264,7 +264,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
 
 
 def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_models_to_plot=100, filter_spacing=0.5,
-                          tmin=None, tmax=None, ycol=None, textsize='medium', ax=None):
+                          tmin=None, tmax=None, ycol=None, textsize='medium', ax=None, mjd_offset=None):
     """
     Plot the observed and model light curves.
 
@@ -310,7 +310,8 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
     ufilts = np.unique(lc['filter'])
     y_fit = model(xfit, ufilts, *ps, **model_kwargs)
 
-    mjd_offset = np.floor(tmin)
+    if mjd_offset is None:
+        mjd_offset = np.floor(tmin)
     if ycol == 'lum':
         dycol = 'dlum'
         yscale = 10. ** np.round(np.log10(y_fit.max()))
@@ -339,7 +340,7 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
         txt = f'${filt.name}{offset:+.1f}$' if filt.italics else rf'$\mathrm{{{filt.name}}}{offset:+.1f}$'
         ax.text(1.03, yfit[-1, 0] / yscale + offset, txt, color=filt.textcolor, fontdict={'size': textsize},
                 ha='left', va='center', transform=ax.get_yaxis_transform())
-    ax.set_xlabel('MJD $-$ {:.0f}'.format(mjd_offset), size=textsize)
+    ax.set_xlabel('MJD $-$ {:f}'.format(mjd_offset).rstrip('0').rstrip('.'), size=textsize)
     ax.set_ylabel(ylabel, size=textsize)
     ax.tick_params(labelsize=textsize)
 

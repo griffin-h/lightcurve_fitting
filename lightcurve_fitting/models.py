@@ -437,7 +437,121 @@ def scale_sifto(sn_lc):
         sifto[filt.char] *= np.max(lc_filt['lum']) / np.max(sifto[filt.char])
 
 
-def companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, rr, ri, rU, kappa=1., z=0.):
+def companion_shocking_temperature_radius(t_in, t_exp, a13, Mc_v9_7, kappa=1.):
+    """
+    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025)
+
+    As written by Hosseinzadeh et al. (https://doi.org/10.3847/2041-8213/aa8402), the shock component is defined by:
+
+    :math:`R_\\mathrm{phot}(t) = (2700\\,R_\\odot) (M_c v_9^7)^{1/9} κ^{1/9} t^{7/9}` (Eq. 1)
+
+    :math:`T_\\mathrm{eff}(t) = (25\\,\\mathrm{kK}) a_{13}^{1/4} (M_c v_9^7)^{1/144} κ^{-35/144} t^{37/72}` (Eq. 2)
+
+    Parameters
+    ----------
+    t_in : float, array-like
+        Time in days
+    t_exp : float, array-like
+        The explosion epoch
+    a13 : float, array-like
+        The binary separation in :math:`10^{13}` cm
+    Mc_v9_7 : float, array-like
+        The product :math:`M_c v_9^7`, where :math:`M_c` is the ejecta mass in Chandrasekhar masses and :math:`v_9` is
+        the ejecta velocity in units of :math:`10^9` cm/s
+    kappa : float, array-like
+        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
+
+    Returns
+    -------
+    T_kasen : array-like
+        The model blackbody temperatures in units of kilokelvins
+    R_kasen : array-like
+        The model blackbody radii in units of 1000 solar radii
+    """
+    t_wrt_exp = t_in.reshape(-1, 1) - t_exp
+    T_kasen = np.squeeze(25. * (a13 ** 36 * Mc_v9_7 * kappa ** -35 * t_wrt_exp ** -74) ** (1 / 144.))  # kK
+    R_kasen = np.squeeze(2.7 * (kappa * Mc_v9_7 * t_wrt_exp ** 7) ** (1 / 9.))  # kiloRsun
+    return T_kasen, R_kasen
+
+
+def companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, kappa=1., z=0., cutoff_freq=np.inf):
+    """
+    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025)
+
+    As written by Hosseinzadeh et al. (https://doi.org/10.3847/2041-8213/aa8402), the shock component is defined by:
+
+    :math:`R_\\mathrm{phot}(t) = (2700\\,R_\\odot) (M_c v_9^7)^{1/9} κ^{1/9} t^{7/9}` (Eq. 1)
+
+    :math:`T_\\mathrm{eff}(t) = (25\\,\\mathrm{kK}) a_{13}^{1/4} (M_c v_9^7)^{1/144} κ^{-35/144} t^{37/72}` (Eq. 2)
+
+    Parameters
+    ----------
+    t_in : float, array-like
+        Time in days
+    f : lightcurve_fitting.filter.Filter, array-like
+        Filters for which to calculate the model
+    t_exp : float, array-like
+        The explosion epoch
+    a13 : float, array-like
+        The binary separation in :math:`10^{13}` cm
+    Mc_v9_7 : float, array-like
+        The product :math:`M_c v_9^7`, where :math:`M_c` is the ejecta mass in Chandrasekhar masses and :math:`v_9` is
+        the ejecta velocity in units of :math:`10^9` cm/s
+    kappa : float, array-like
+        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
+    z : float, optional
+        The redshift between blackbody source and the observed filters
+    cutoff_freq : float, optional
+        Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)
+
+    Returns
+    -------
+    y_fit : array-like
+        The filtered model light curves
+    """
+    T_kasen, R_kasen = companion_shocking_temperature_radius(t_in, t_exp, a13, Mc_v9_7, kappa)
+    Lnu_kasen = blackbody_to_filters(f, T_kasen, R_kasen, z, cutoff_freq)
+    return Lnu_kasen
+
+
+def stretched_sifto(t_in, f, t_peak, stretch):
+    """
+    The SiFTO SN Ia model (https://doi.org/10.1086/588518), offset and stretched by the input parameters
+
+    The SiFTO model is currently only available in the UBVgri filters.
+
+    Parameters
+    ----------
+    t_in : float, array-like
+        Time in days
+    f : lightcurve_fitting.filter.Filter, array-like
+        Filters for which to calculate the model
+    t_peak : float, array-like
+        The epoch of maximum light for the SiFTO model
+    stretch : float, array-like
+        The stretch for the SiFTO model
+
+    Returns
+    -------
+    y_fit : array-like
+        The filtered model light curves
+    """
+    dt_peak = {'U': np.zeros_like(stretch) if dtU is None else dtU, 'i': np.zeros_like(stretch) if dti is None else dti}
+    t_wrt_peak = np.squeeze(t_in.reshape(-1, 1) - t_peak)
+    if t_wrt_peak.ndim <= 1 and len(t_wrt_peak) == len(f):  # pointwise
+        Lnu_sifto = np.array([np.interp(t - dt_peak.get(filt.char, 0.), sifto['Epoch'] * stretch, sifto[filt.char])
+                              for t, filt in zip(t_wrt_peak, f)])
+    elif t_wrt_peak.ndim <= 1:
+        Lnu_sifto = np.array([np.interp(t_wrt_peak - dt_peak.get(filt.char, 0.), sifto['Epoch'] * stretch, sifto[filt.char])
+                              for filt in f])
+    else:
+        Lnu_sifto = np.array([np.array([np.interp(t - dt, sifto['Epoch'] * s, sifto[filt.char])
+                                        for t, s, dt in zip(t_wrt_peak.T, stretch, dt_peak.get(filt.char, np.zeros_like(stretch)))]).T
+                              for filt in f])
+    return Lnu_sifto
+
+
+def companion_shocking_plus_sifto(t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, rr=1., ri=1., rU=1., kappa=1., z=0.):
     """
     The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model
 
@@ -482,22 +596,8 @@ def companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, rr, ri, rU
     y_fit : array-like
         The filtered model light curves
     """
-    t_wrt_exp = t_in.reshape(-1, 1) - t_exp
-    T_kasen = np.squeeze(25. * (a13 ** 36 * Mc_v9_7 * kappa ** -35 * t_wrt_exp ** -74) ** (1 / 144.))  # kK
-    R_kasen = np.squeeze(2.7 * (kappa * Mc_v9_7 * t_wrt_exp ** 7) ** (1 / 9.))  # kiloRsun
-    Lnu_kasen = blackbody_to_filters(f, T_kasen, R_kasen, z)
-
-    t_wrt_peak = np.squeeze(t_in.reshape(-1, 1) - t_peak)
-    if t_wrt_peak.ndim <= 1 and len(t_wrt_peak) == len(f):  # pointwise
-        Lnu_sifto = np.array([np.interp(t, sifto['Epoch'] * stretch, sifto[filt.char])
-                              for t, filt in zip(t_wrt_peak, f)])
-    elif t_wrt_peak.ndim <= 1:
-        Lnu_sifto = np.array([np.interp(t_wrt_peak, sifto['Epoch'] * stretch, sifto[filt.char])
-                              for filt in f])
-    else:
-        Lnu_sifto = np.array([np.array([np.interp(t, sifto['Epoch'] * s, sifto[filt.char])
-                                        for t, s in zip(t_wrt_peak.T, stretch)]).T
-                              for filt in f])
+    Lnu_kasen = companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, kappa, z)
+    Lnu_sifto = stretched_sifto(t_in, f, t_peak, stretch)
 
     sifto_factors = {'r': rr, 'i': ri}
     kasen_factors = {'U': rU}
@@ -508,7 +608,7 @@ def companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, rr, ri, rU
 
 
 M_chandra = u.def_unit('M_chandra', 1.4 * u.Msun, format={'latex': 'M_\\mathrm{Ch}'})
-CompanionShocking = Model(companion_shocking,
+CompanionShocking = Model(companion_shocking_plus_sifto,
                           [
                               't_0',
                               'a',

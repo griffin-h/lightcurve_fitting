@@ -2,6 +2,16 @@
 Release History
 ===============
 
+v0.6.0 (2022-05-04)
+-------------------
+* Add CompanionShocking2 model: similar to CompanionShocking model but with time shifts on U and i SiFTO tempates instead of the three multipicative factors
+* Separate out the :func:`lightcurve_model_plot` function to allow plotting only the observed vs. model light curves (the inset from :func:`lightcurve_corner`)
+* Add the :func:`Filter.spectrum` method to calculate synthetic photometry on an arbitrary spectrum
+* Skip initial state check for post-burn-in MCMC (so it doesn't crash half way through the fit)
+* Treat the DLT40 filter as r when fitting the SiFTO model
+* Minor changes to plot formatting (remove trailing zeros)
+* Add missing docstring to :func:`shock_cooling3`
+
 v0.5.0 (2022-03-16)
 -------------------
 For the first time, this release introduces a change that is not backward compatible.

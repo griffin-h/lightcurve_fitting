@@ -254,6 +254,56 @@ ShockCooling.t_max = t_max
 
 
 def shock_cooling3(t_in, f, v_s, M_env, f_rho_M, R, dist, ebv=0., t_exp=0., kappa=1., n=1.5, RW=False, z=0.):
+    """
+    The shock cooling model of Sapir & Waxman (https://doi.org/10.3847/1538-4357/aa64df).
+
+    This version of the model is written in terms of physical parameters :math:`v_s, M_\\mathrm{env}, f_ρ M, R`:
+
+    :math:`T(t) = \\frac{T_\\mathrm{col}}{T_\\mathrm{ph}} T_0 \\left(\\frac{v_s^2 t^2}{f_ρ M κ}\\right)^{ε_1}
+    \\frac{R^{1/4}}{κ^{1/4}} t^{-1/2}` (Eq. 23)
+
+    :math:`L(t) = A \\exp\\left[-\\left(\\frac{a t}{t_\\mathrm{tr}}\\right)^α\\right]
+    L_0 \\left(\\frac{v_s t^2}{f_ρ M κ}\\right)^{-ε_2} \\frac{v_s^2 R}{κ}` (Eq. 18-19)
+
+    :math:`t_\\mathrm{tr} = (19.5\\,\\mathrm{d}) \\left(\\frac{κ * M_\\mathrm{env}}{v_s} \\right)^{1/2}` (Eq. 20)
+
+    This is the same as :func:`shock_cooling` but with distance and reddening as free parameters.
+
+    Parameters
+    ----------
+    t_in : float, array-like
+        Time in days
+    f : lightcurve_fitting.filter.Filter, array-like
+        Filters for which to calculate the model
+    v_s : float, array-like
+        The shock speed in :math:`10^{8.5}` cm/s
+    M_env : float, array-like
+        The envelope mass in solar masses
+    f_rho_M : float, array-like
+        The product :math:`f_ρ M`, where ":math:`f_ρ` is a numerical factor of order unity that depends on the inner
+        envelope structure" and :math:`M` is the ejecta mass in solar masses
+    R : float, array-like
+        The progenitor radius in :math:`10^{13}` cm
+    dist : float, array-like
+        The luminosity distance to the supernova in Mpc
+    ebv : float, array-like
+        The reddening :math:`E(B-V)` to apply to the blackbody spectrum before integration
+    t_exp : float, array-like
+        The explosion epoch
+    kappa : float, array-like
+        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
+    n : float, array-like
+        The polytropic index of the progenitor. Must be either 1.5 or 3.
+    RW : bool, optional
+        Reduce the model to the simpler form of Rabinak & Waxman (https://doi.org/10.1088/0004-637X/728/1/63)
+    z : float, optional
+        The redshift between blackbody source and the observed filters
+
+    Returns
+    -------
+    y_fit : array-like
+        The filtered model light curves
+    """
     T_K, R_bb = shock_cooling_temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp, kappa, n, RW)
     lum = blackbody_to_filters(f, T_K, R_bb, z, ebv=ebv)
     flux = c4 * lum / dist ** 2.

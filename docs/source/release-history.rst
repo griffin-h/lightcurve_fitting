@@ -5,6 +5,7 @@ Release History
 Unpublished
 -----------
 * Add convenience function for preparing spectra to upload to WISeREP
+* Allow use of :func:`lc.findPeak` without :func:`Supernova` object
 
 v0.6.0 (2022-05-04)
 -------------------

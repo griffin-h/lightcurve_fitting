@@ -341,10 +341,13 @@ class LC(Table):
         peaktable = self.where(**criteria)
         if len(peaktable):
             imin = np.argmin(peaktable['mag'])
-            self.sn.peakdate = peaktable['MJD'][imin]
+            self.meta['peakdate'] = peaktable['MJD'][imin]
         else:
-            self.sn.peakdate = np.nan
-        self.sn.peakcriteria = criteria
+            self.meta['peakdate'] = np.nan
+        if self.sn is not None:
+            self.meta['redshift'] = self.sn.z  # needed for calcPhase
+            self.sn.peakdate = self.meta['peakdate']
+            self.sn.peakcriteria = criteria
 
     def calcPhase(self, rdsp=False, hours=False):
         """

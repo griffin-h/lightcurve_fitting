@@ -2,6 +2,10 @@
 Release History
 ===============
 
+Unpublished
+-----------
+* Add convenience function for preparing spectra to upload to WISeREP
+
 v0.6.0 (2022-05-04)
 -------------------
 * Add CompanionShocking2 model: similar to CompanionShocking model but with time shifts on U and i SiFTO tempates instead of the three multipicative factors

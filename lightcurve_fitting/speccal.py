@@ -4,7 +4,7 @@ import numpy as np
 from .lightcurve import LC
 from .filters import filtdict
 from astropy import constants as const, units as u
-from astropy.io import fits
+from astropy.io import fits, ascii
 from astropy.wcs import WCS
 from astropy.time import Time
 from astropy.table import Table
@@ -14,6 +14,7 @@ import os
 import warnings
 import json
 import re
+import shutil
 
 
 def removebadcards(hdr):
@@ -193,7 +194,7 @@ def readOSCspec(filepath):
     return superdict['filename'], times, tel, inst, wl, fx, np.ones(len(rows))
 
 
-def readspec(f, verbose=False):
+def readspec(f, verbose=False, return_header=False):
     """
     Read a spectrum from a FITS or ASCII file and try to identify where and when it was observed
 
@@ -203,6 +204,8 @@ def readspec(f, verbose=False):
         Filename from which to read the spectrum
     verbose : bool, optional
         If True, print the date and filename of the spectrum
+    return_header : bool, optional
+        If True, return the full header as an additional return value
 
     Returns
     -------
@@ -216,13 +219,15 @@ def readspec(f, verbose=False):
         Name of the telescope at which the spectrum was observed, if identifiable (otherwise ``''``)
     instrument: str
         Name of the instrument used to observe the spectrum, if identifiable (otherwise ``''``)
+    hdr : dict-like
+        If ``return_header=True``, metadata is returned as a FITS header or dictionary (for ASCII files)
     """
     ext = os.path.splitext(f)[1]
     if ext == '.fits':
         x, y, hdr = readfitsspec(f, header=True)
     elif ext == '.json':
         x, y, hdr = readOSCspec(f)
-    elif ext in ['.ascii', '.asci', '.flm', '.txt', '.dat', '.csv']:
+    else:  # assume it's some ASCII format
         t = Table.read(f, format='ascii')
         # assume it's the first two columns, regardless of if column names are given
         x = t.columns[0]
@@ -235,8 +240,6 @@ def readspec(f, verbose=False):
                 continue
             kwd, val = match.groups()  # (anything before first '='/':', anything between first '='/':' and '/')
             hdr[kwd.strip(' #')] = val.strip(' "\'')
-    else:
-        raise Exception('ext not recognized:', f)
     for kwd in ['MJD-OBS', 'MJD_OBS', 'MJD', 'JD', 'DATE-AVG', 'UTMIDDLE', 'DATE-OBS', 'DATE_BEG', 'UTSHUT', 'OBS_DATE',
                 'AVE_MJD']:
         if kwd in hdr and hdr[kwd]:
@@ -273,6 +276,7 @@ def readspec(f, verbose=False):
             '(19|20)[0-9][0-9]-(0[0-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])_([01][0-9]|2[0-4])-[0-5][0-9]-[0-5][0-9]',
             f)  # YYYY-MM-DD_HH:MM:SS
         m3 = re.search('[0-9][0-9][0-9]d', f)  # integer phase followed by 'd'
+        m4 = re.search('[0-9][0-9][0-9][0-9][0-9](\.[0-9]+)?', f)  # MJD w/1 or more decimals
         if m1 is not None:
             m = m1.group()
             date = Time(float(m), format='jd')
@@ -285,6 +289,9 @@ def readspec(f, verbose=False):
         elif m3 is not None:
             m = m3.group()
             date = Time(float(m[:-1]), format='mjd')
+        elif m4 is not None:
+            m = m4.group()
+            date = Time(float(m), format='mjd')
         else:
             date = None
 
@@ -311,7 +318,10 @@ def readspec(f, verbose=False):
 
     if verbose:
         print(date.isot, f)
-    return x, y, date, telescope, instrument
+    if return_header:
+        return x, y, date, telescope, instrument, hdr
+    else:
+        return x, y, date, telescope, instrument
 
 
 def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=None, show=False):
@@ -416,6 +426,147 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
             filename_out = os.path.join(path_in, 'photcal_' + filename_in).replace('.fits', '.txt')
             np.savetxt(filename_out, data_out, fmt='%.1f %.2e')
             print(filename_out)
+
+
+def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False):
+    """
+    Prepares a TSV file for uploading spectra to WISeREP (see https://www.wiserep.org/content/wiserep-getting-started).
+
+    Also copies all the spectrum files to a single directory, and converts any FITS files to ASCII.
+
+    Parameters
+    ----------
+    specpaths: list
+        List of paths to the spectrum files. Optionally, data quality can be specified in a tuple, e.g.,
+        [(filename1.fits, 3), (filename2.txt, 2), ...], where the second element is 1 (low), 2 (medium), or 3 (high).
+    wiserep_dir: str
+        Directory in which to collect the spectra. If it already exists, it will be deleted and remade.
+        The TSV file will be saved alongside this directory using the same name but with a '.tsv' extension.
+    verbose: bool, optional
+        If True, print a message when any file is copied or created.
+    """
+
+    # prepare the output directory
+    if os.path.exists(wiserep_dir):
+        ans = input(f'Are you sure you want to delete the directory {wiserep_dir}? [y/N] ')
+        if ans.lower() != 'y':
+            return
+        shutil.rmtree(wiserep_dir)
+    os.mkdir(wiserep_dir)
+
+    # collect the metadata
+    bibcode = input('bibcode: ')
+    rows = []
+    instruments = {}
+    for specpath in specpaths:
+        if isinstance(specpath, tuple):
+            specpath, quality = specpath
+            quality = min(max(round(quality), 1), 3)  # forces it to be 1, 2, or 3
+        else:
+            quality = 2  # medium quality
+        specfile = os.path.split(specpath)[-1]
+        ascii_file = specfile.replace('.fits', '.txt').replace('.csv', '.txt')
+        print()  # empty line between spectra
+        wl, flux, date, tel, inst, hdr = readspec(specpath, verbose=True, return_header=True)
+        groups = input('https://www.wiserep.org/groups\ngroup IDs (comma sep.): ')
+        if inst not in instruments:
+            inst_id = input(f'https://www.wiserep.org/aux\nlook up instrument ID for {inst} (required): ')
+            if inst and inst_id:
+                instruments[inst] = int(inst_id)
+        row = [
+            ascii_file,
+            specfile if specfile.endswith('.fits') else None,
+            date.iso,
+            instruments.get(inst, inst_id),
+            hdr.get('exptime'),
+            {'angstrom': 11, 'nm': 12, 'um': 13}.get(hdr.get('CUNIT1', hdr.get('XUNITS', 'angstrom')).lower()),
+            1,  # wavelength in air, hardcoded for now
+            1.,  # erg/cm2/s/Å, hardcoded for now
+            6,  # erg/cm2/s/Å, hardcoded for now
+            2 if specfile.startswith('photcal') else 1,  # method of flux calibration (1 = std star, 2 = photometry)
+            0,  # not extinction corrected
+            hdr.get('OBSERVER', 'Unknown'),
+            hdr.get('REDUCER'),
+            None,  # reduction date
+            float(hdr['APERWID']) if 'APERWID' in hdr else None,
+            hdr.get('DICHROIC'),
+            hdr.get('GRISM'),
+            hdr.get('GRATING'),
+            float(hdr['BLAZE']) if 'BLAZE' in hdr else None,
+            float(hdr['AIRMASS']) if 'AIRMASS' in hdr else None,
+            hdr.get('HA') or None,
+            10,  # spectrum of object
+            quality,  # spectrum quality
+            0.,  # spectrum proprietary period
+            'days',  # prop. period units
+            groups,
+            None,  # comments
+            bibcode or None,
+            None,  # contributor
+            None,  # related files
+            None,  # related files
+            None,  # related files
+            None,  # related files
+        ]
+        rows.append(row)
+
+        # copy and convert files
+        if not specfile.endswith('.csv'):
+            shutil.copy(specpath, wiserep_dir)
+            if verbose:
+                print(f'copied {specfile} to {wiserep_dir}')
+        if specfile.endswith('.fits') or specfile.endswith('.csv'):
+            data_out = np.transpose([wl, flux])
+            np.savetxt(os.path.join(wiserep_dir, ascii_file), data_out, fmt=('%f', '%e'), header=hdr.__repr__())
+            if verbose:
+                print(f'wrote {wiserep_dir}/{ascii_file}')
+
+    # create the table and write the TSV file
+    t = Table(rows=rows, names=[
+        'Ascii-filename*',
+        'FITS-filename*',
+        'Obs-date* [YYYY-MM-DD HH:MM:SS] / JD',
+        'Instrument-Id*',
+        'Exp-time (sec)',
+        'WL Units-id',
+        'WL Medium-Id',
+        'Flux Unit Coeff',
+        'Flux Units-Id',
+        'Flux Calib. By-Id',
+        'Extinction-Corrected-Id',
+        'Observer/s      ',
+        'Reducer/s   ',
+        'Reduction-date [YYYY-MM-DD HH:MM:SS] / JD',
+        'Aperture (Slit)',
+        'Dichroic',
+        'Grism',
+        'Grating',
+        'Blaze',
+        'Airmass',
+        'Hour Angle',
+        'Spec Type-Id',
+        'Spec Quality-Id',
+        'Spec. Prop-period value',
+        'Prop-period units',
+        'Assoc. Groups',
+        'Spec-Remarks',
+        'Publish (bibcode)',
+        'Contrib',
+        'Related-file1',
+        'RF1 Comments',
+        'Related-file2',
+        'RF2 Comments'
+    ], meta={'comments': ['TSV-type:\tspectra']})
+    # use the lower-level interface to add the second line with the defaults
+    writer = ascii.get_writer(ascii.Tab, fast_writer=False, comment='',
+                              fill_values=[('None', 'NULL'), ('', 'NULL'), ('UNKNOWN', 'NULL')])
+    lines = writer.write(t)
+    lines.insert(2, '\t\t\t\tNULL\t[default=11 (Angstrom)]\t[default=1 (Air)]\t[default=1.0]\t[default=6]\tNULL\tNULL\t[Unknown]\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\t[default=10=Object]\tNULL\tNULL\t[days/months/years]\t[Comma delim.]\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL')
+    with open(wiserep_dir + '.tsv', 'w') as f:
+        f.write('\n'.join(lines) + '\n')
+    if verbose:
+        print(f'\nwrote {wiserep_dir}.tsv')
+    return t
 
 
 if __name__ == '__main__':

@@ -11,6 +11,6 @@ include versioneer.py
 include lightcurve_fitting/_version.py
 
 include lightcurve_fitting/filters/*
-include lightcurve_fitting/example/SN2016bkv.table
+include lightcurve_fitting/example/SN2016bkv.txt
 include lightcurve_fitting/models/sifto.dat
 include lightcurve_fitting/serif.mplstyle

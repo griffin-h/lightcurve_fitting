@@ -52,7 +52,7 @@ setup(
     include_package_data=True,
     package_data={
         'lightcurve_fitting': [
-            'example/SN2016bkv.table',
+            'example/SN2016bkv.txt',
             'filters/*',
             'models/sifto.dat',
             'serif.mplstyle',

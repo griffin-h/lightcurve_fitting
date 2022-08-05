@@ -4,6 +4,7 @@ Release History
 
 Unpublished
 -----------
+* Raise an error if the initial parameter guesses are outside the prior
 * Add convenience function for preparing spectra to upload to WISeREP
 * Allow use of :func:`lc.findPeak` without :func:`Supernova` object
 

@@ -115,6 +115,12 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     elif len(priors) != ndim:
         raise Exception('priors must have length {:d}'.format(ndim))
 
+    for param, prior, p0, p1 in zip(model.input_names, priors, p_lo, p_up):
+        if p0 < prior.p_min:
+            raise Exception(f'starting guess for {param} (p_lo = {p0}) is outside prior (p_min = {prior.p_min})')
+        if p1 > prior.p_max:
+            raise Exception(f'starting guess for {param} (p_up = {p1}) is outside prior (p_max = {prior.p_max})')
+
     if sigma_type == 'relative':
         sigma_units = dy
     elif sigma_type == 'absolute':

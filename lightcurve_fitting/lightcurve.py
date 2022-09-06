@@ -41,7 +41,7 @@ column_names = {
     'Apparent Magnitude': ['mag', 'Magnitude', 'Mag', 'ab_mag', 'PSFmag', 'MAG', 'omag', 'magnitude', 'apparent_mag'],
     'Apparent Magnitude Uncertainty': [
         'dmag', 'Magnitude_Error', 'magerr', 'MagErr', 'mag_err', 'e_mag', 'Error', 'err', 'PSFerr', 'MAGERR', 'e_omag',
-        'e_magnitude', 'apparent_mag_err', 'Mag_Err',
+        'e_magnitude', 'apparent_mag_err', 'Mag_Err', 'emag',
     ],
     'MJD': ['MJD', 'mjd'],
     'JD': ['JD', 'jd'],

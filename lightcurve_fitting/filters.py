@@ -117,7 +117,7 @@ class Filter:
             self.textcolor = self.linecolor
         self.italics = italics
         self.system = system
-        if self.system == 'Johnson':
+        if self.system in ['Johnson', 'JWST MIRI']:
             self.mec = 'k'
         else:
             self.mec = self.linecolor
@@ -339,6 +339,24 @@ all_filters = [
     Filter('H', '#888888', -3, 'UKIRT', 1.021e-23, filename='Gemini_Flamingos2.H.dat', angstrom=True),
     Filter(['K', 'Ks'], '#CCCCCC', -4, 'UKIRT', 0.640e-23, filename='Gemini_Flamingos2.Ks.dat', angstrom=True),
     Filter('L', 'r', -4, 'UKIRT', 0.285e-23),
+    # JWST
+    Filter('F070W', 'C7', 0, 'JWST NIRCam', filename='JWST_NIRCam.F070W.dat', angstrom=True, italics=False),
+    Filter('F090W', 'C0', 0, 'JWST NIRCam', filename='JWST_NIRCam.F090W.dat', angstrom=True, italics=False),
+    Filter('F115W', 'C8', 0, 'JWST NIRCam', filename='JWST_NIRCam.F115W.dat', angstrom=True, italics=False),
+    Filter('F150W', 'C1', 0, 'JWST NIRCam', filename='JWST_NIRCam.F150W.dat', angstrom=True, italics=False),
+    Filter('F200W', 'C2', 0, 'JWST NIRCam', filename='JWST_NIRCam.F200W.dat', angstrom=True, italics=False),
+    Filter('F277W', 'C3', 0, 'JWST NIRCam', filename='JWST_NIRCam.F277W.dat', angstrom=True, italics=False),
+    Filter('F356W', 'C4', 0, 'JWST NIRCam', filename='JWST_NIRCam.F356W.dat', angstrom=True, italics=False),
+    Filter('F444W', 'C5', 0, 'JWST NIRCam', filename='JWST_NIRCam.F444W.dat', angstrom=True, italics=False),
+    Filter('F560W', 'C9', 0, 'JWST MIRI', filename='JWST_MIRI.F560W.dat', angstrom=True, italics=False),
+    Filter('F770W', 'C6', 0, 'JWST MIRI', filename='JWST_MIRI.F770W.dat', angstrom=True, italics=False),
+    Filter('F1000W', 'C7', 0, 'JWST MIRI', filename='JWST_MIRI.F1000W.dat', angstrom=True, italics=False),
+    Filter('F1130W', 'C0', 0, 'JWST MIRI', filename='JWST_MIRI.F1130W.dat', angstrom=True, italics=False),
+    Filter('F1280W', 'C8', 0, 'JWST MIRI', filename='JWST_MIRI.F1280W.dat', angstrom=True, italics=False),
+    Filter('F1500W', 'C1', 0, 'JWST MIRI', filename='JWST_MIRI.F1500W.dat', angstrom=True, italics=False),
+    Filter('F1800W', 'C9', 0, 'JWST MIRI', filename='JWST_MIRI.F1800W.dat', angstrom=True, italics=False),
+    Filter('F2100W', 'C2', 0, 'JWST MIRI', filename='JWST_MIRI.F2100W.dat', angstrom=True, italics=False),
+    Filter('F2550W', 'C3', 0, 'JWST MIRI', filename='JWST_MIRI.F2550W.dat', angstrom=True, italics=False),
     Filter(['unknown', '?'], 'w', 0, 'unknown', linecolor='k', italics=False)]
 Filter.order = [f.name for f in all_filters]
 filtdict = {}

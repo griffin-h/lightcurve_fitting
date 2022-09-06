@@ -52,6 +52,7 @@ column_names = {
     'Absolute Magnitude': ['absmag'],
     'Luminosity $L_ν$ (W Hz$^{-1}$)': ['lum'],
     'Luminosity Uncertainty': ['dlum'],
+    'Effective Wavelength (nm)': ['wl_eff'],  # calculated from filters; does not need to be in usage.rst
 }
 
 
@@ -412,6 +413,10 @@ class LC(Table):
             Keyword arguments matching column names in the light curve are used to specify a subset of points to plot.
             Additional keyword arguments passed to :func:`matplotlib.pyplot.plot`.
         """
+        if xcol.startswith('filter'):
+            unit = xcol.split(':')[-1] if ':' in xcol else None
+            xcol = 'wl_eff'
+            self[xcol] = [f.wl_eff.to(unit) if unit else f.wl_eff for f in self['filter']]
         xchoices = ['phase', 'MJD']
         while xcol not in self.keys():
             xchoices.remove(xcol)

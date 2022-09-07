@@ -875,9 +875,9 @@ def blackbody_to_filters(filters, T, R, z=0., cutoff_freq=np.inf, ebv=0.):
         raise Exception('T & R must have the same shape')
     np.broadcast(T, ebv)  # check if T and ebv are brodcastable, otherwise raise a ValueError
     if T.ndim == 1 and len(T) == len(filters):  # pointwise
-        y_fit = np.array([f.blackbody(t, r, z, cutoff_freq, ebv) for f, t, r in zip(filters, T, R)])
+        y_fit = np.array([f.synthesize(planck_fast, t, r, cutoff_freq, z=z, ebv=ebv) for f, t, r in zip(filters, T, R)])
     else:
-        y_fit = np.array([f.blackbody(T, R, z, cutoff_freq, ebv) for f in filters])
+        y_fit = np.array([f.synthesize(planck_fast, T, R, cutoff_freq, z=z, ebv=ebv) for f in filters])
     return y_fit
 
 

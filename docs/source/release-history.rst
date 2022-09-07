@@ -4,6 +4,7 @@ Release History
 
 Unpublished
 -----------
+* Generalize :func:`Filter.blackbody` to :func:`Filter.synthesize`
 * Add ability to plot ``LC`` data vs. filter effective wavelength (SED)
 * Add JWST filters
 * Raise an error if the initial parameter guesses are outside the prior

@@ -4,7 +4,6 @@ from astropy.table import Table
 import astropy.units as u
 import astropy.constants as const
 import os
-from .models import planck_fast
 from pkg_resources import resource_filename
 from functools import total_ordering
 from extinction import fitzpatrick99 as extinction_law
@@ -207,24 +206,20 @@ class Filter:
             self.dfreq = -dfreq
             self.freq_range = (freq_eff.value - freq0, freq1 - freq_eff.value)
 
-    def blackbody(self, T, R, z=0., cutoff_freq=np.inf, ebv=0.):
+    def synthesize(self, spectrum, *args, z=0., ebv=0., **kwargs):
         """
-        Returns the average Lnu of a blackbody in this filter
+        Returns the average Lnu of the given spectrum in this filter
 
         Parameters
         ----------
-        T : float or array-like
-            Temperature of the blackbody in kilokelvins
-        R : float or array-like
-            Radius of the blackbody in thousands of solar radii
+        spectrum : function
+            Function describing the spectrum. The first argument must be frequency in THz, and it must return spectral
+            luminosity in watts per hertz. All arguments are passed to this function except for keywords z and ebv.
         z : float, optional
-            Redshift between the blackbody source and the filter
-        cutoff_freq : float, optional
-            Cutoff frequency of the blackbody in terahertz as defined in https://doi.org/10.3847/1538-4357/aa9334.
-            Default: unmodified blackbody.
+            Redshift between the emission source and the observed filter. Default: 0.
         ebv : float, array-like, optional
             Selective extinction E(B-V) in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with R_V=3.1.
-            Its shape must be broadcastable to T and R. Default: 0.
+            Its shape must be broadcastable to any array-like arguments. Default: 0.
 
         Returns
         -------
@@ -233,7 +228,7 @@ class Filter:
         """
         wl = self.trans['wl'].to(u.angstrom).value / (1. + z)
         A = np.squeeze([extinction_law(wl, 3.1 * e) for e in np.atleast_1d(ebv)])
-        return np.trapz(planck_fast(self.trans['freq'].data * (1. + z), T, R, cutoff_freq) * 10. ** (A / -2.5)
+        return np.trapz(spectrum(self.trans['freq'].data * (1. + z), *args, **kwargs) * 10. ** (A / -2.5)
                         * self.trans['T_norm_per_freq'].data, self.trans['freq'].data)
 
     def spectrum(self, freq, lum, z=0., ebv=0.):
@@ -250,10 +245,10 @@ class Filter:
         lum : float or array-like
             Spectral luminosity (Lnu) or flux (Fnu) of the input spectrum
         z : float, optional
-            Redshift between the spectrum and the filter
+            Redshift between the spectrum and the filter. Default: 0.
         ebv : float, array-like, optional
             Selective extinction E(B-V) in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with R_V=3.1.
-            Its shape must be broadcastable to T and R. Default: 0.
+            Default: 0.
 
         Returns
         -------

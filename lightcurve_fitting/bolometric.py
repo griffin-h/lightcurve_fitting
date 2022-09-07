@@ -1,5 +1,5 @@
-from .filters import all_filters, filtdict
-from .models import blackbody_to_filters, planck_fast
+from .filters import all_filters, filtdict, extinction_law
+from .models import planck_fast, UniformPrior, LogUniformPrior, GaussianPrior
 from .lightcurve import LC
 
 from astropy import constants as const
@@ -52,20 +52,30 @@ def pseudo(temp, radius, z, filter0=filtdict['I'], filter1=filtdict['U'], cutoff
     return L_opt
 
 
-def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, burnin_steps=200, steps=100,
-                   T_range=(1., 100.), R_range=(0.01, 1000.), cutoff_freq=np.inf, prev_temp=None, save_chains=False,
-                   use_sigma=False, sigma_type='relative', sigma_max=10.):
+def spectrum_mcmc(spectrum, epoch1, priors, p0, z=0., ebv=0., spectrum_kwargs=None, show=False, outpath='.',
+                  nwalkers=10, burnin_steps=200, steps=100, save_chains=False, use_sigma=False, sigma_type='relative'):
     """
-    Fit a blackbody spectrum to a spectral energy distribution using a Markov-chain Monte Carlo routine
+    Fit the given spectral energy distribution to an epoch of photometry using a Markov-chain Monte Carlo routine
 
     Parameters
     ----------
+    spectrum : function
+        Function describing the spectrum. The first argument must be frequency in THz, and it must return spectral
+        luminosity in watts per hertz. For a blackbody, you can use :func:`models.planck_fast`.
     epoch1 : lightcurve_fitting.lightcurve.LC
         A single "epoch" of photometry that defines the observed spectral energy distribution
-    z : float
-        Redshift between the blackbody (rest frame) and the filters (observed frame)
-    p0 : list, tuple, array-like, optional
-        Initial guess for [temperature (kK), radius (1000 Rsun)]. Default: ``[10., 10.]``
+    priors : list
+        Prior probability distributions for each model parameter (and sigma, if used). Available priors:
+        :func:`models.UniformPrior` (default), :func:`models.LogUniformPrior`, :func:`models.GaussianPrior`
+    p0 : list, tuple, array-like
+        Initial guesses for each input parameter to ``spectrum``
+    z : float, optional
+        Redshift between the emission source and the observed filter. Default: 0.
+    ebv : float, array-like, optional
+        Selective extinction E(B-V) in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with R_V=3.1.
+        Its shape must be broadcastable to any array-like arguments. Default: 0.
+    spectrum_kwargs : dict, optional
+        Keyword arguments to be passed to the ``spectrum`` function.
     show : bool, optional
         Plot the chain histories, and display all plots at the end of the script. Default: only save the corner plot
     outpath : str, optional
@@ -75,15 +85,7 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
     burnin_steps : int, optional
         Number of MCMC steps before convergence. This part of the history is discarded. Default: 200
     steps : int, optional
-        Number of MCMC steps after convergence. This part of the history is used to calculate paramers. Default: 100.
-    T_range : tuple, list, array-like, optional
-        Range of allowed temperatures (in kilokelvins) in the prior. Default: ``(1., 100.)``
-    R_range : tuple, list, array-like, optional
-        Range of allowed radii (in 1000 solar radii) in the prior. Default: ``(0.01, 1000.)``
-    cutoff_freq : float, optional
-        Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)
-    prev_temp : scipy.stats.gaussian_kde, optional
-        Temperature distribution from fitting the previous epoch's SED. If given, this is used as the prior.
+        Number of MCMC steps after convergence. This part of the history is used to calculate parameters. Default: 100.
     save_chains : bool, optional
         If True, save the MCMC chain histories to the directory ``outpath``. Default: only save the corner plot
     use_sigma : bool, optional
@@ -91,8 +93,6 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
     sigma_type : str, optional
         If 'relative' (default), sigma will be in units of the individual photometric uncertainties.
         If 'absolute', sigma will be in units of the median photometric uncertainty.
-    sigma_max : float, optional
-        Maximum allowed intrinsic scatters (in units of the median uncertainty) in the prior. Default: 10.
 
     Returns
     -------
@@ -107,15 +107,8 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
     if p0 is None:
         p0 = [10., 10.]
 
-    def log_prior(p):  # p = [T, R]
-        if (np.any(p[0] < T_range[0]) or np.any(p[0] > T_range[1])
-                or np.any(p[1] < R_range[0]) or np.any(p[1] > R_range[1])
-                or (use_sigma and np.any(p[2] > sigma_max))):
-            return -np.inf
-        elif prev_temp is not None:
-            return prev_temp.logpdf(p[0]) - np.log(p[1]) - (p[2] ** 2. / 2. if use_sigma else 0.)
-        else:
-            return -np.log(p[1]) - (p[2] ** 2. / 2. if use_sigma else 0.)
+    if spectrum_kwargs is None:
+        spectrum_kwargs = {}
 
     if sigma_type == 'relative':
         sigma_units = dy
@@ -124,13 +117,17 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
     else:
         raise Exception('sigma_type must either be "relative" or "absolute"')
 
-    def log_likelihood(p, filtobj, y, dy):
-        y_fit = blackbody_to_filters(filtobj, p[0], p[1], z, cutoff_freq)
-        sigma = np.sqrt(dy ** 2. + (p[2] * sigma_units) ** 2.) if use_sigma else dy
-        return -0.5 * np.sum(np.log(2 * np.pi * sigma ** 2.) + ((y - y_fit) / sigma) ** 2.)
-
-    def log_posterior(p, filtobj, y, dy):
-        return log_prior(p) + log_likelihood(p, filtobj, y, dy)
+    def log_posterior(p):
+        log_prior = 0.
+        for prior, p_i in zip(priors, p):
+            log_prior += prior(p_i)
+        if np.isinf(log_prior):
+            return log_prior
+        y_fit = np.array([f.synthesize(spectrum, *p[:-1 if use_sigma else None], z=z, ebv=ebv, **spectrum_kwargs)
+                          for f in filtobj])
+        sigma = np.sqrt(dy ** 2. + (p[-1] * sigma_units) ** 2.) if use_sigma else dy
+        log_likelihood = -0.5 * np.sum(np.log(2 * np.pi * sigma ** 2.) + ((y - y_fit) / sigma) ** 2.)
+        return log_prior + log_likelihood
 
     ndim = 2
     starting_guesses = np.random.randn(nwalkers, ndim) + p0
@@ -139,7 +136,7 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
         ndim += 1
         starting_guesses = np.append(starting_guesses, np.abs(np.random.randn(nwalkers, 1)), axis=1)
 
-    sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior, args=[filtobj, y, dy])
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior)
     pos, _, _ = sampler.run_mcmc(starting_guesses, burnin_steps)
 
     # Plotting
@@ -161,7 +158,8 @@ def blackbody_mcmc(epoch1, z, p0=None, show=False, outpath='.', nwalkers=10, bur
     ax = f4.get_axes()[1]
     ps = sampler.flatchain[np.random.choice(sampler.flatchain.shape[0], 100)].T
     xfit = np.arange(100., max(1000., min(filtobj).freq_eff.value))
-    yfit = planck_fast(xfit * (1. + z), ps[0], ps[1], cutoff_freq)
+    freq = xfit * (1. + z)
+    yfit = spectrum(freq, *ps[:-1 if use_sigma else None], **spectrum_kwargs) * extinction_law(freq, ebv)
     plt.sca(ax)
     epoch1.plot(xcol='freq', ycol='lum', offset_factor=0.)
     ax.plot(xfit, yfit.T, color='k', alpha=0.05)
@@ -488,10 +486,9 @@ def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1, xcol='MJD'):
     return fig
 
 
-def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=200, steps=100,
-                         T_range=(1., 100.), R_range=(0.01, 1000.), save_table_as=None, min_nfilt=3,
-                         cutoff_freq=np.inf, show=False, colors=None, do_mcmc=True, save_chains=False, use_sigma=False,
-                         also_group_by=()):
+def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_steps=200, steps=100, priors=None,
+                         save_table_as=None, min_nfilt=3, cutoff_freq=np.inf, show=False, colors=None, do_mcmc=True,
+                         save_chains=False, use_sigma=False, sigma_type='relative', also_group_by=()):
     """
     Calculate the full bolometric light curve from a table of broadband photometry
 
@@ -499,8 +496,8 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
     ----------
     lc : lightcurve_fitting.lightcurve.LC
         Table of broadband photometry including columns "MJD", "mag", "dmag", "filt"
-    z : float
-        Redshift between the blackbody (rest frame) and the filters (observed frame)
+    z : float, optional
+        Redshift between the emission source and the observed filter. Default: 0.
     outpath : str, optional
         Directory to which to save the corner plots and MCMC chains. Default: current directory
     res : float, optional
@@ -511,10 +508,10 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
         Number of MCMC steps before convergence. This part of the history is discarded. Default: 200
     steps : int, optional
         Number of MCMC steps after convergence. This part of the history is used to calculate paramers. Default: 100.
-    T_range : tuple, list, array-like, optional
-        Range of allowed temperatures (in kilokelvins) in the prior. Default: ``(1., 100.)``
-    R_range : tuple, list, array-like, optional
-        Range of allowed radii (in 1000 solar radii) in the prior. Default: ``(0.01, 1000.)``
+    priors : list, optional
+        Prior probability distributions for temperature (in kilokelvins) and radius (in 1000 solar radii).
+        Available priors: :func:`models.UniformPrior`, :func:`models.LogUniformPrior`, :func:`models.GaussianPrior`.
+        Default: ``T = Uniform(1., 100.)``, ``R = LogUniform(0.01, 1000.)``, ``σ = Gaussian(0., 10., stddev=1.)``.
     save_table_as : str, optional
         Filename to which to save the output table of blackbody parameters and bolometric luminosities
     min_nfilt : int, optional
@@ -532,6 +529,9 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
         If True, save the MCMC chain histories to the directory ``outpath``. Default: only save the corner plot
     use_sigma : bool, optional
         Include an intrinsic scatter parameter in the MCMC fit. Default: False.
+    sigma_type : str, optional
+        If 'relative' (default), sigma will be in units of the individual photometric uncertainties.
+        If 'absolute', sigma will be in units of the median photometric uncertainty.
     also_group_by : list, optional
         Group by these columns in addition to epoch
 
@@ -560,6 +560,11 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
             + [float] * 2 * len(colors) + [bool] * 2 * len(colors) + ['S6'] + ([lc['source'].dtype] if use_src else []),
             masked=True)
 
+    if priors is None:
+        priors = [UniformPrior(1., 100.), LogUniformPrior(0.01, 1000.)]
+        if use_sigma:
+            priors.append(GaussianPrior(0., 10.))
+
     sampler = None
     lc = lc[np.isfinite(lc['dmag']) & (lc['dmag'] > 0.)]
     for epoch1 in group_by_epoch(lc, res, also_group_by):
@@ -582,10 +587,9 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
             continue
 
         if nfilt > 1:
-            prev_temp = None
             p0 = [10., 10.]
         elif sampler is not None:
-            prev_temp = gaussian_kde(sampler.flatchain[:, 0])
+            priors[0] = gaussian_kde(sampler.flatchain[:, 0]).logpdf
             p0 = np.median(sampler.flatchain, axis=0)
         else:
             continue
@@ -594,6 +598,8 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
         filtstr = ''.join([f.char for f in sorted(filts)])
 
         # blackbody - least squares
+        T_range = (priors[0].p_min, priors[0].p_max)
+        R_range = (priors[1].p_min, priors[1].p_max)
         try:
             temp, radius, dtemp, drad, lum, dlum, L_opt = blackbody_lstsq(epoch1, z, p0, T_range, R_range, cutoff_freq)
             p0 = [temp, radius]
@@ -604,9 +610,9 @@ def calculate_bolometric(lc, z, outpath='.', res=1., nwalkers=10, burnin_steps=2
         try:
             if not do_mcmc:
                 raise ValueError
-            sampler = blackbody_mcmc(epoch1, z, p0, outpath=outpath, nwalkers=nwalkers, burnin_steps=burnin_steps,
-                                     steps=steps, T_range=T_range, R_range=R_range, cutoff_freq=cutoff_freq, show=show,
-                                     prev_temp=prev_temp, save_chains=save_chains, use_sigma=use_sigma)
+            sampler = spectrum_mcmc(planck_fast, epoch1, priors, p0, z=z, spectrum_kwargs={'cutoff_freq': cutoff_freq},
+                                    outpath=outpath, nwalkers=nwalkers, burnin_steps=burnin_steps, steps=steps,
+                                    show=show, save_chains=save_chains, use_sigma=use_sigma, sigma_type=sigma_type)
             L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq=cutoff_freq)
             (T_mcmc, R_mcmc), (dT0_mcmc, dR0_mcmc), (dT1_mcmc, dR1_mcmc) = median_and_unc(sampler.flatchain[:, :2])
             L_mcmc, dL_mcmc0, dL_mcmc1 = median_and_unc(L_mcmc_opt)

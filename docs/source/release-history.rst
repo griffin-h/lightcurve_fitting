@@ -4,7 +4,8 @@ Release History
 
 Unpublished
 -----------
-* Generalize :func:`Filter.blackbody` to :func:`Filter.synthesize`
+* Generalize :func:`Filter.blackbody` to :func:`Filter.synthesize` and :func:`blackbody_mcmc` to :func:`spectrum_mcmc`
+* Allow for arbitrary priors in bolometric light curve fitting (see note at :ref:`v0.5.0 <v050>`)
 * Add ability to plot ``LC`` data vs. filter effective wavelength (SED)
 * Add JWST filters
 * Raise an error if the initial parameter guesses are outside the prior
@@ -20,6 +21,8 @@ v0.6.0 (2022-05-04)
 * Treat the DLT40 filter as r when fitting the SiFTO model
 * Minor changes to plot formatting (remove trailing zeros)
 * Add missing docstring to :func:`shock_cooling3`
+
+.. _v050:
 
 v0.5.0 (2022-03-16)
 -------------------

@@ -6,7 +6,30 @@ import astropy.constants as const
 import os
 from pkg_resources import resource_filename
 from functools import total_ordering
-from extinction import fitzpatrick99 as extinction_law
+from extinction import fitzpatrick99
+
+c = const.c.to(u.angstrom * u.THz).value
+
+
+def extinction_law(freq, ebv, rv=3.1):
+    """
+    A vectorized version of the Fitzpatrick (1999) extinction law from the ``extinction`` package
+
+    Parameters
+    ----------
+    freq : array-like
+        Frequencies in THz in the frame of the dust
+    ebv : array-like
+        Selective extinction :math:`E(B-V)` in magnitudes
+    rv : float, optional
+        Ratio of total to selective extinction :math:`R_V`. Default: 3.1.
+
+    Returns
+    -------
+    Extinction factor :math:`10^{A/-2.5}` at each input wavelength.
+    """
+    A = np.squeeze([fitzpatrick99(c / freq, rv * e) for e in np.atleast_1d(ebv)])
+    return 10. ** (A / -2.5)
 
 
 @total_ordering
@@ -226,9 +249,8 @@ class Filter:
         Lnu : float or array-like
             Average spectral luminosity in the filter in watts per hertz
         """
-        wl = self.trans['wl'].to(u.angstrom).value / (1. + z)
-        A = np.squeeze([extinction_law(wl, 3.1 * e) for e in np.atleast_1d(ebv)])
-        return np.trapz(spectrum(self.trans['freq'].data * (1. + z), *args, **kwargs) * 10. ** (A / -2.5)
+        freq = self.trans['freq'].value * (1. + z)
+        return np.trapz(spectrum(freq, *args, **kwargs) * extinction_law(freq, ebv)
                         * self.trans['T_norm_per_freq'].data, self.trans['freq'].data)
 
     def spectrum(self, freq, lum, z=0., ebv=0.):
@@ -240,8 +262,8 @@ class Filter:
 
         Parameters
         ----------
-        freq : astropy.units.Quantity
-            Frequency of the input spectrum (with units)
+        freq : float or array-like
+            Frequency of the input spectrum in THz
         lum : float or array-like
             Spectral luminosity (Lnu) or flux (Fnu) of the input spectrum
         z : float, optional
@@ -256,15 +278,11 @@ class Filter:
             Average spectral luminosity (Lnu) or flux (Fnu) in the filter
         """
         freq *= (1. + z)
-        wl = (const.c / freq).to(u.angstrom).value
-        A = np.squeeze([extinction_law(wl, 3.1 * e) for e in np.atleast_1d(ebv)])
-
         self.trans.sort('freq')
-        T_per_freq = self.trans['T'].quantity / self.trans['freq'].quantity
-        T_interp = np.interp(freq.value, self.trans['freq'].data, T_per_freq.value, left=0., right=0.)
+        T_per_freq = self.trans['T'].value / self.trans['freq'].value
+        T_interp = np.interp(freq, self.trans['freq'].value, T_per_freq, left=0., right=0.)
         T_norm_per_freq = T_interp / np.trapz(T_interp, freq)
-
-        return np.trapz(lum * 10. ** (A / -2.5) * T_norm_per_freq, freq)
+        return np.trapz(lum * extinction_law(freq, ebv) * T_norm_per_freq, freq)
 
     def __str__(self):
         return self.name

@@ -61,19 +61,19 @@ def spectrum_mcmc(spectrum, epoch1, priors, p0, z=0., ebv=0., spectrum_kwargs=No
     ----------
     spectrum : function
         Function describing the spectrum. The first argument must be frequency in THz, and it must return spectral
-        luminosity in watts per hertz. For a blackbody, you can use :func:`models.planck_fast`.
+        luminosity in watts per hertz. For a blackbody, you can use :func:`.models.planck_fast`.
     epoch1 : lightcurve_fitting.lightcurve.LC
         A single "epoch" of photometry that defines the observed spectral energy distribution
     priors : list
         Prior probability distributions for each model parameter (and sigma, if used). Available priors:
-        :func:`models.UniformPrior` (default), :func:`models.LogUniformPrior`, :func:`models.GaussianPrior`
+        :class:`.models.UniformPrior` (default), :class:`.models.LogUniformPrior`, :class:`.models.GaussianPrior`
     p0 : list, tuple, array-like
         Initial guesses for each input parameter to ``spectrum``
     z : float, optional
         Redshift between the emission source and the observed filter. Default: 0.
     ebv : float, array-like, optional
-        Selective extinction E(B-V) in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with R_V=3.1.
-        Its shape must be broadcastable to any array-like arguments. Default: 0.
+        Selective extinction :math:`E(B-V)` in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with
+        :math:`R_V=3.1`. Its shape must be broadcastable to any array-like arguments. Default: 0.
     spectrum_kwargs : dict, optional
         Keyword arguments to be passed to the ``spectrum`` function.
     show : bool, optional
@@ -448,12 +448,12 @@ def calc_colors(epoch1, colors):
 
 def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1, xcol='MJD'):
     """
-    Plot the color curves calculated by :func:`calculate_bolometric`.
+    Plot the color curves calculated by :func:`.calculate_bolometric`.
 
     Parameters
     ----------
     t : lightcurve_fitting.lightcurve.LC
-        Output table from :func:`calculate_bolometric`
+        Output table from :func:`.calculate_bolometric`
     colors : list, optional
         List of colors to plot, e.g., ``['g-r', 'r-i']``. By default, plot all recognizable colors.
     fmt : str, optional
@@ -509,8 +509,8 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
     steps : int, optional
         Number of MCMC steps after convergence. This part of the history is used to calculate paramers. Default: 100.
     priors : list, optional
-        Prior probability distributions for temperature (in kilokelvins) and radius (in 1000 solar radii).
-        Available priors: :func:`models.UniformPrior`, :func:`models.LogUniformPrior`, :func:`models.GaussianPrior`.
+        Prior probability distributions for temperature (in kilokelvins) and radius (in 1000 solar radii). Available
+        priors: :class:`.models.UniformPrior`, :class:`.models.LogUniformPrior`, :class:`.models.GaussianPrior`.
         Default: ``T = Uniform(1., 100.)``, ``R = LogUniform(0.01, 1000.)``, ``σ = Gaussian(0., 10., stddev=1.)``.
     save_table_as : str, optional
         Filename to which to save the output table of blackbody parameters and bolometric luminosities

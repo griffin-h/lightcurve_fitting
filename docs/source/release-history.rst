@@ -4,23 +4,23 @@ Release History
 
 Unpublished
 -----------
-* Generalize :func:`Filter.blackbody` to :func:`Filter.synthesize` and :func:`blackbody_mcmc` to :func:`spectrum_mcmc`
+* Generalize :meth:`Filter.blackbody` to :meth:`.Filter.synthesize` and :func:`blackbody_mcmc` to :func:`.spectrum_mcmc`
 * Allow for arbitrary priors in bolometric light curve fitting (see note at :ref:`v0.5.0 <v050>`)
-* Add ability to plot ``LC`` data vs. filter effective wavelength (SED)
+* Add ability to plot :class:`.LC` data vs. filter effective wavelength (SED)
 * Add JWST filters
 * Raise an error if the initial parameter guesses are outside the prior
 * Add convenience function for preparing spectra to upload to WISeREP
-* Allow use of :func:`lc.findPeak` without :func:`Supernova` object
+* Allow use of :meth:`.LC.findPeak` without :class:`.Supernova` object
 
 v0.6.0 (2022-05-04)
 -------------------
-* Add CompanionShocking2 model: similar to CompanionShocking model but with time shifts on U and i SiFTO tempates instead of the three multipicative factors
-* Separate out the :func:`lightcurve_model_plot` function to allow plotting only the observed vs. model light curves (the inset from :func:`lightcurve_corner`)
-* Add the :func:`Filter.spectrum` method to calculate synthetic photometry on an arbitrary spectrum
+* Add :class:`.CompanionShocking2` model: similar to :class:`.CompanionShocking` model but with time shifts on U and i SiFTO tempates instead of the three multipicative factors
+* Separate out the :func:`.lightcurve_model_plot` function to allow plotting only the observed vs. model light curves (the inset from :func:`.lightcurve_corner`)
+* Add the :meth:`.Filter.spectrum` method to calculate synthetic photometry on an arbitrary spectrum
 * Skip initial state check for post-burn-in MCMC (so it doesn't crash half way through the fit)
 * Treat the DLT40 filter as r when fitting the SiFTO model
 * Minor changes to plot formatting (remove trailing zeros)
-* Add missing docstring to :func:`shock_cooling3`
+* Add missing docstring to :func:`.shock_cooling3`
 
 .. _v050:
 
@@ -29,7 +29,7 @@ v0.5.0 (2022-03-16)
 For the first time, this release introduces a change that is not backward compatible.
 To enable the use of Gaussian priors, I have had to make the prior specification a little more complex.
 Instead of using ``p_min`` and ``p_max`` to specify the bounds on a uniform prior, users will have to define the shape and bounds on each prior using the ``priors`` keyword.
-This takes a list of ``Prior`` objects, e.g., ``models.UniformPrior``, ``models.LogUniformPrior``, or ``models.GaussianPrior``.
+This takes a list of :class:`.Prior` objects, e.g., :class:`.models.UniformPrior`, :class:`.models.LogUniformPrior`, or :class:`.models.GaussianPrior`.
 See the updated example in :ref:`Model Fitting`.
 For now, the code will still work if you use ``p_min`` and ``p_max``, but a warning will be issued to encourage you to switch.
 
@@ -44,7 +44,7 @@ For now, the code will still work if you use ``p_min`` and ``p_max``, but a warn
 * Allow adjustment of font sizes in light curve corner plots
 * Change priors from functions to classes (see above)
 * Allow for a reddened blackbody SED in models
-* Add ShockCooling3 model: same as ShockCooling but with :math:`d_L` and :math:`E(B-V)` as free parameters
+* Add :class:`.ShockCooling3` model: same as :class:`.ShockCooling` but with :math:`d_L` and :math:`E(B-V)` as free parameters
 * Add option to make sigma an absolute intrinsic scatter
 
 v0.4.0 (2022-02-08)
@@ -72,7 +72,7 @@ v0.3.0 (2021-09-22)
 * Improve handling of units in spectra files
 * Include automatic axis labels and filter legend in light curve plot
 * Make bolometric module compatible with numpy 1.20
-* Allow ``calcPhase`` to function without a ``Supernova`` object
+* Allow :meth:`.LC.calcPhase` to function without a :class:`.Supernova` object
 * Allow color curves to be plotted against phase (in addition to MJD)
 
 v0.2.0 (2020-12-08)

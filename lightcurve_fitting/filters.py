@@ -26,7 +26,8 @@ def extinction_law(freq, ebv, rv=3.1):
 
     Returns
     -------
-    Extinction factor :math:`10^{A/-2.5}` at each input wavelength.
+    extinction : array-like
+        Extinction factor :math:`10^{A/-2.5}` at each input wavelength.
     """
     A = np.squeeze([fitzpatrick99(c / freq, rv * e) for e in np.atleast_1d(ebv)])
     return 10. ** (A / -2.5)
@@ -241,8 +242,8 @@ class Filter:
         z : float, optional
             Redshift between the emission source and the observed filter. Default: 0.
         ebv : float, array-like, optional
-            Selective extinction E(B-V) in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with R_V=3.1.
-            Its shape must be broadcastable to any array-like arguments. Default: 0.
+            Selective extinction :math:`E(B-V)` in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with
+            :math:`R_V=3.1`. Its shape must be broadcastable to any array-like arguments. Default: 0.
 
         Returns
         -------
@@ -269,8 +270,8 @@ class Filter:
         z : float, optional
             Redshift between the spectrum and the filter. Default: 0.
         ebv : float, array-like, optional
-            Selective extinction E(B-V) in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with R_V=3.1.
-            Default: 0.
+            Selective extinction :math:`E(B-V)` in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with
+            :math:`R_V=3.1`. Default: 0.
 
         Returns
         -------

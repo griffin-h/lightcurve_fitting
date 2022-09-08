@@ -4,16 +4,15 @@ Usage
 
 Light Curves
 ------------
-The core of this package is the ``lightcurve.LC`` object. This is an extension of the Astropy ``Table`` object, which contains
+The core of this package is the :class:`.lightcurve.LC` object. This is an extension of the :class:`astropy.table.Table` object, which contains
 tabular data, in this case broadband photometric observations. You can read light curve data from a file using the
-standard ``Table.read()`` method. I'm going to read an example light curve of SN 2016bkv to be used from here on:
+standard :meth:`astropy.table.Table.read` method. I'm going to read an example light curve of SN 2016bkv to be used from here on:
 
 .. code-block:: python
 
     from lightcurve_fitting.lightcurve import LC
-    from pkg_resources import resource_filename
 
-    filename = resource_filename('lightcurve_fitting', 'example/SN2016bkv.txt')
+    filename = 'example/SN2016bkv.txt'
     lc = LC.read(filename)
     print(lc)
 
@@ -36,7 +35,7 @@ The following column names are used by the package, although the light curve can
  * telescope: the name of the telescope/instrument where this observation was carried out [Telescope, Tel, tel+inst]
  * source: the data source, either a telescope/instrument name or a literature reference [Source]
 
-The ``LC.meta`` attribute contains information needed to calculate absolute magnitudes and luminosities:
+The :attr:`LC.meta` attribute contains information needed to calculate absolute magnitudes and luminosities:
 
  * dm: the distance modulus
  * extinction: a dictionary containing Milky Way extinction corrections for each filter
@@ -57,7 +56,7 @@ The ``LC.meta`` attribute contains information needed to calculate absolute magn
      'I': 0.025,
     }
 
-The ``LC`` object has several methods for converting between the columns above (see API Documentation)
+The :class:`.LC` object has several methods for converting between the columns above,
 as well as a method for plotting the light curve in a single command:
 
 .. code-block:: python
@@ -67,13 +66,13 @@ as well as a method for plotting the light curve in a single command:
 
 Filters
 -------
-The ``filters`` submodule defines a ``Filter`` object that stores information about the broadband filters: transmission
+The :mod:`.filters` submodule defines a :class:`.Filter` object that stores information about the broadband filters: transmission
 function, photometric system, and styles for plotting. You mostly won't have to touch this module, unless you are
 adding new filters.
 
 Bolometric Light Curves
 -----------------------
-You can make a bolometric light curve and color curves from the photometry table with the ``bolometric`` module.
+You can make a bolometric light curve and color curves from the photometry table with the :mod:`.bolometric` module.
 
 .. code-block:: python
 
@@ -86,9 +85,9 @@ You can make a bolometric light curve and color curves from the photometry table
     plot_bolometric_results(t)
     plot_color_curves(t)
 
-The light curve is divided into epochs (defined by the ``bin`` and ``also_group_by`` arguments to ``calculate_bolometric``), and processed four different ways:
+The light curve is divided into epochs (defined by the ``bin`` and ``also_group_by`` arguments to :func:`.calculate_bolometric`), and processed four different ways:
 
- * Fitting the Planck function using ``scipy.curve_fit``. This is very fast but may not give reliable uncertainties.
+ * Fitting the Planck function using :func:`scipy.optimize.curve_fit`. This is very fast but may not give reliable uncertainties.
    The columns ``temp``, ``radius``, ``dtemp``, and ``dradius`` come from this fit.
  * The Stefan-Bolzmann law gives the total bolometric luminosity, ``lum`` and ``dlum``.
  * Integrating the Planck function between :math:`U` and :math:`I` band (observed) gives ``L_opt``.
@@ -105,8 +104,8 @@ The light curve is divided into epochs (defined by the ``bin`` and ``also_group_
 The MCMC routine saves a corner plot for each fit in the folder you specify (``outpath``).
 I highly recommend looking through these to make sure the fits converged.
 If they didn't, try adjusting the number of burn-in steps (``burnin_steps``).
-To save the table, give ``save_table_as='filename.table'`` as an argument to ``calculate_bolometric``.
-To save the plot, give ``save_plot_as='filename.pdf'`` as an argument to ``plot_bolometric_results``.
+To save the table, give ``save_table_as='filename.table'`` as an argument to :func:`.calculate_bolometric`.
+To save the plot, give ``save_plot_as='filename.pdf'`` as an argument to :func:`.plot_bolometric_results`.
 
 Beware of the units I'm using:
 
@@ -114,7 +113,7 @@ Beware of the units I'm using:
  * Radii are in thousands of solar radii (:math:`1000R_\odot`).
  * Luminosities are in watts (W). :math:`1\,\mathrm{W} = 10^7\,\mathrm{erg}\,\mathrm{s}^{-1}`
 
-Optionally, you can calculate colors at each epoch by giving the argument ``colors`` to ``calculate_bolometric``). These get saved in the same output table in four columns per color, e.g., for :math:`B-V`:
+Optionally, you can calculate colors at each epoch by giving the argument ``colors`` to :func:`.calculate_bolometric`. These get saved in the same output table in four columns per color, e.g., for :math:`B-V`:
 
  * the color itself, ``B-V``,
  * the uncertainty on the color, ``d(B-V)``,
@@ -138,23 +137,23 @@ For bolometric light curve fitting, you can also set a maximum for this intrinsi
 
 Model Fitting
 -------------
-The ``models`` and ``fitting`` submodules allow you to fit analytical models to the observed data. Right now, the only choices are:
+The :mod:`.models` and :mod:`.fitting` submodules allow you to fit analytical models to the observed data. Right now, the only choices are:
 
- * ``CompanionShocking``, which is the SiFTO Type Ia supernova template (Conley et al. `2008 <https://doi.org/10.1086/588518>`_) plus a shock component from Kasen (`2010 <https://doi.org/10.1088/0004-637X/708/2/1025>`_), with factors on the r and i SiFTO models and a factor on the U shock component.
-   This was used in my paper on SN 2017cbv: https://doi.org/10.3847/2041-8213/aa8402.
- * ``CompanionShocking2``, which is the same SiFTO Type Ia supernova template plus a shock component, but with time offsets for the U and i SiFTO models instead of the three multiplicative factors.
-   This was used in my paper on SN 2021aefx (submitted).
- * ``ShockCooling``, which is the Sapir & Waxman (`2017 <https://doi.org/10.3847/1538-4357/aa64df>`_) model for shock cooling in a core-collapse supernova,
-   formulated in terms of :math:`v_s, M_\mathrm{env}, f_ρ M, R`
- * ``ShockCooling2``, which is the same Sapir & Waxman model but formulated in terms of scaling parameters :math:`T_1, L_1, t_\mathrm{tr}`.
-   This was used in my paper on SN 2016bkv: https://doi.org/10.3847/1538-4357/aac5f6.
- * ``ShockCooling3``, which is the same as ``ShockCooling`` but with :math:`d_L` and :math:`E(B-V)` as free parameters. (Therefore it fits the flux instead of the luminosity.) This was used in my paper on SN 2021yja (submitted).
+ * :class:`.CompanionShocking`, which is the SiFTO Type Ia supernova template [C08]_ plus a shock component from [K10]_, with factors on the r and i SiFTO models and a factor on the U shock component.
+   This was used in my paper on SN 2017cbv [H17]_.
+ * :class:`.CompanionShocking2`, which is the same SiFTO Type Ia supernova template [C08]_ plus a shock component [K10]_, but with time offsets for the U and i SiFTO models instead of the three multiplicative factors.
+   This was used in my paper on SN 2021aefx [H22a]_.
+ * :data:`.ShockCooling`, which is the [SW17]_ model for shock cooling in a core-collapse supernova,
+   formulated in terms of :math:`v_s, M_\mathrm{env}, f_ρ M, R`.
+ * :data:`.ShockCooling2`, which is the same [SW17]_ model but formulated in terms of scaling parameters :math:`T_1, L_1, t_\mathrm{tr}`.
+   This was used in my paper on SN 2016bkv [H18]_.
+ * :data:`.ShockCooling3`, which is the same as :data:`.ShockCooling` but with :math:`d_L` and :math:`E(B-V)` as free parameters. (Therefore it fits the flux instead of the luminosity.) This was used in my paper on SN 2021yja [H22b]_.
 
 **Note on the shock cooling models:**
 There are degeneracies between many of the physical parameters that make them difficult to fit independently.
-This led us to fit develop the ``ShockCooling2`` model just to see if the model could fit the data at all.
-Since it did not fit well, we concluded that the physical parameters we could have obtained by fitting the ``ShockCooling`` model were irrelevant.
-However, in order to measure, for example, the progenitor radius, one must use the ``ShockCooling`` model.
+This led us to fit develop the :data:`.ShockCooling2` model just to see if the model could fit the data at all.
+Since it did not fit well, we concluded that the physical parameters we could have obtained by fitting the :data:`.ShockCooling` model were irrelevant.
+However, in order to measure, for example, the progenitor radius, one must use the :data:`.ShockCooling` model.
 
 
 .. code-block:: python
@@ -183,10 +182,10 @@ However, in order to measure, for example, the progenitor radius, one must use t
     lightcurve_corner(lc_early, ShockCooling2, sampler.flatchain, model_kwargs={'z': redshift})
 
 **Another note on the shock cooling models:**
-The shock cooling models are only valid for temperatures above 0.7 eV = 8120 K (Sapir & Waxman 2017),
+The shock cooling models are only valid for temperatures above 0.7 eV = 8120 K [SW17]_,
 so you should check that you have not included observations where the model goes below that.
 If you have, you should rerun the fit without those points.
-If you used the Rabinak & Waxman option, the model fails even earlier, but you will have to check that manually.
+If you used the [RW11]_ option, the model fails even earlier, but you will have to check that manually.
 
 .. code-block:: python
 
@@ -200,7 +199,7 @@ Note that you can add an :ref:`Intrinsic Scatter` to your model fits as well.
 
 Calibrating Spectra to Photometry
 ---------------------------------
-The ``speccal`` module (somewhat experimental right now) can be used to calibrate spectra to observed photometry.
+The :mod:`.speccal` module (somewhat experimental right now) can be used to calibrate spectra to observed photometry.
 
 .. code-block:: python
 

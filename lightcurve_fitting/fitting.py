@@ -21,11 +21,12 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     lc : lightcurve_fitting.lightcurve.LC
         Table of broadband photometry including columns "MJD", "mag", "dmag", "filt"
     model : lightcurve_fitting.models.Model
-        The model to fit to the light curve. Available models: :class:`models.ShockCooling`,
-        :class:`models.ShockCooling2`, :class:`models.CompanionShocking`
+        The model to fit to the light curve. Available models: :class:`.models.ShockCooling`,
+        :class:`.models.ShockCooling2`, :class:`.models.ShockCooling3`, :class:`.models.CompanionShocking`,
+        :class:`.models.CompanionShocking2`
     priors : list, optional
         Prior probability distributions for each model parameter. Available priors:
-        :func:`models.UniformPrior` (default), :func:`models.LogUniformPrior`, :func:`models.GaussianPrior`
+        :class:`.models.UniformPrior` (default), :class:`.models.LogUniformPrior`, :class:`.models.GaussianPrior`
     p_min, p_max : list, optional
         DEPRECATED: Use `priors` instead
     p_lo : list

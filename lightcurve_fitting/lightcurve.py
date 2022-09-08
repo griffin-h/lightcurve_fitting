@@ -58,7 +58,7 @@ column_names = {
 
 class LC(Table):
     """
-    A broadband light curve, stored as an :class:`astropy.table.Table` (see ``help(Table)`` for more details)
+    A broadband light curve, stored as an :class:`astropy.table.Table`
 
     Attributes
     ----------

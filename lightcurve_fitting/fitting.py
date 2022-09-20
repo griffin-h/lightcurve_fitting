@@ -381,7 +381,13 @@ def format_credible_interval(x, sigfigs=1, percentiles=(15.87, 50., 84.14), axis
     uncertainties = np.diff(quantiles)
     smaller_unc = np.amin(uncertainties, axis=-1)
     log_unc = np.log10(smaller_unc)
-    roundto = sigfigs - np.ceil(log_unc).astype(int)
+    roundto = sigfigs - np.floor(log_unc).astype(int) - 1
+
+    # catch numbers that will have more sigfigs after rounding
+    smaller_unc_round = [np.round(unc, dec) for unc, dec in zip(smaller_unc, roundto)]
+    log_unc_round = np.log10(smaller_unc_round)
+    roundto = sigfigs - np.floor(log_unc_round).astype(int) - 1
+
     quantiles = np.atleast_2d(quantiles)
     uncertainties = np.atleast_2d(uncertainties)
     roundto = np.atleast_1d(roundto)

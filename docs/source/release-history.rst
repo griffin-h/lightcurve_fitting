@@ -11,6 +11,7 @@ Unpublished
 * Raise an error if the initial parameter guesses are outside the prior
 * Add convenience function for preparing spectra to upload to WISeREP
 * Allow use of :meth:`.LC.findPeak` without :class:`.Supernova` object
+* Fix minor bug in rounding to display a given number of significant figures
 
 v0.6.0 (2022-05-04)
 -------------------

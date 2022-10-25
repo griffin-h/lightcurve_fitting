@@ -77,7 +77,7 @@ def plot_chain(chain, labels=None):
     return fig
 
 
-def spectrum_mcmc(spectrum, epoch1, priors, p0, z=0., ebv=0., spectrum_kwargs=None, show=False, outpath='.',
+def spectrum_mcmc(spectrum, epoch1, priors, starting_guesses, z=0., ebv=0., spectrum_kwargs=None, show=False, outpath='.',
                   nwalkers=10, burnin_steps=200, steps=100, save_chains=False, use_sigma=False, sigma_type='relative',
                   labels=None):
     """
@@ -93,8 +93,8 @@ def spectrum_mcmc(spectrum, epoch1, priors, p0, z=0., ebv=0., spectrum_kwargs=No
     priors : list
         Prior probability distributions for each model parameter (and sigma, if used). Available priors:
         :class:`.models.UniformPrior` (default), :class:`.models.LogUniformPrior`, :class:`.models.GaussianPrior`
-    p0 : list, tuple, array-like
-        Initial guesses for each input parameter to ``spectrum``
+    starting_guesses : array-like
+        Initial guesses for each input parameter to ``spectrum``. Must have shape (nwalkers, nparameters).
     z : float, optional
         Redshift between the emission source and the observed filter. Default: 0.
     ebv : float, array-like, optional
@@ -132,9 +132,6 @@ def spectrum_mcmc(spectrum, epoch1, priors, p0, z=0., ebv=0., spectrum_kwargs=No
     filtobj = epoch1['filter'].data
     mjdavg = np.mean(epoch1['MJD'].data)
 
-    if p0 is None:
-        p0 = [10., 10.]
-
     if spectrum_kwargs is None:
         spectrum_kwargs = {}
 
@@ -157,13 +154,7 @@ def spectrum_mcmc(spectrum, epoch1, priors, p0, z=0., ebv=0., spectrum_kwargs=No
         log_likelihood = -0.5 * np.sum(np.log(2 * np.pi * sigma ** 2.) + ((y - y_fit) / sigma) ** 2.)
         return log_prior + log_likelihood
 
-    ndim = 2
-    starting_guesses = np.random.randn(nwalkers, ndim) + p0
-    starting_guesses[starting_guesses <= 0.] = 1.
-    if use_sigma:
-        ndim += 1
-        starting_guesses = np.append(starting_guesses, np.abs(np.random.randn(nwalkers, 1)), axis=1)
-
+    ndim = len(priors)
     sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior)
     pos, _, _ = sampler.run_mcmc(starting_guesses, burnin_steps)
 
@@ -627,11 +618,18 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
         except RuntimeError:  # optimization failed
             temp = radius = dtemp = drad = lum = dlum = L_opt = np.nan
 
+        rng = np.random.default_rng()
+        starting_guesses = rng.normal(nwalkers, 2) + p0
+        starting_guesses[starting_guesses <= 0.] = 1.
+        if use_sigma:
+            starting_guesses = np.append(starting_guesses, np.abs(rng.normal(nwalkers, 1)), axis=1)
+
         # blackbody - MCMC
         try:
             if not do_mcmc:
                 raise ValueError
-            sampler = spectrum_mcmc(planck_fast, epoch1, priors, p0, z=z, spectrum_kwargs={'cutoff_freq': cutoff_freq},
+            spectrum_kwargs = {'cutoff_freq': cutoff_freq}
+            sampler = spectrum_mcmc(planck_fast, epoch1, priors, starting_guesses, z=z, spectrum_kwargs=spectrum_kwargs,
                                     outpath=outpath, nwalkers=nwalkers, burnin_steps=burnin_steps, steps=steps,
                                     show=show, save_chains=save_chains, use_sigma=use_sigma, sigma_type=sigma_type,
                                     labels=['T (kK)', 'R (1000 R$_\\odot$)'])

@@ -79,7 +79,7 @@ def plot_chain(chain, labels=None):
 
 def spectrum_mcmc(spectrum, epoch1, priors, starting_guesses, z=0., ebv=0., spectrum_kwargs=None, show=False, outpath='.',
                   nwalkers=10, burnin_steps=200, steps=100, save_chains=False, use_sigma=False, sigma_type='relative',
-                  labels=None):
+                  labels=None, freq_min=100., freq_max=1000.):
     """
     Fit the given spectral energy distribution to an epoch of photometry using a Markov-chain Monte Carlo routine
 
@@ -121,6 +121,8 @@ def spectrum_mcmc(spectrum, epoch1, priors, starting_guesses, z=0., ebv=0., spec
         If 'absolute', sigma will be in units of the median photometric uncertainty.
     labels : list, optional
         Axis labels for the chain histories and corner plot.
+    freq_min, freq_max : float, optional
+        Minimum and maximum frequencies for the SED panel in the corner plot. Default: (100., 1000.) or observed range.
 
     Returns
     -------
@@ -169,7 +171,7 @@ def spectrum_mcmc(spectrum, epoch1, priors, starting_guesses, z=0., ebv=0., spec
     f4 = corner.corner(sampler.flatchain, labels=labels)
     ax = f4.get_axes()[1]
     ps = sampler.flatchain[np.random.choice(sampler.flatchain.shape[0], 100)].T
-    xfit = np.arange(100., max(1000., min(filtobj).freq_eff.value))
+    xfit = np.arange(min(freq_min, max(filtobj).freq_eff.value), max(freq_max, min(filtobj).freq_eff.value))
     freq = xfit * (1. + z)
     yfit = spectrum(freq, *ps[:-1 if use_sigma else None], **spectrum_kwargs) * extinction_law(freq, ebv)
     plt.sca(ax)

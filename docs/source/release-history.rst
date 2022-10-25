@@ -13,7 +13,8 @@ Unpublished
 * Allow use of :meth:`.LC.findPeak` without :class:`.Supernova` object
 * Fix minor bug in rounding to display a given number of significant figures
 * Minor change to :meth:`.Filter.spectrum` to avoid inadvertently re-sorting transmission tables
-* When calibrating spectra to photometry, assume constant flux in a filter for a configurable amount of time after the last observed point.
+* When calibrating spectra to photometry, assume constant flux in a filter for a configurable amount of time after the last observed point
+* Plot SED over configurable range in :func:`.spectrum_mcmc`
 
 v0.6.0 (2022-05-04)
 -------------------

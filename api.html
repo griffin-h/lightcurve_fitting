@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API Documentation &mdash; lightcurve_fitting 0.6.0 documentation</title>
+  <title>API Documentation &mdash; Light Curve Fitting 0.7.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -31,10 +31,10 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> lightcurve_fitting
+            <a href="index.html" class="icon icon-home"> Light Curve Fitting
           </a>
               <div class="version">
-                0.6.0
+                0.7.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -65,7 +65,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">lightcurve_fitting</a>
+          <a href="index.html">Light Curve Fitting</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -130,57 +130,6 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="lightcurve_fitting.bolometric.blackbody_mcmc">
-<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.bolometric.</span></span><span class="sig-name descname"><span class="pre">blackbody_mcmc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">burnin_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">100.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.01,</span> <span class="pre">1000.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_chains</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'relative'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/bolometric.html#blackbody_mcmc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.bolometric.blackbody_mcmc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit a blackbody spectrum to a spectral energy distribution using a Markov-chain Monte Carlo routine</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>epoch1</strong><span class="classifier">lightcurve_fitting.lightcurve.LC</span></dt><dd><p>A single “epoch” of photometry that defines the observed spectral energy distribution</p>
-</dd>
-<dt><strong>z</strong><span class="classifier">float</span></dt><dd><p>Redshift between the blackbody (rest frame) and the filters (observed frame)</p>
-</dd>
-<dt><strong>p0</strong><span class="classifier">list, tuple, array-like, optional</span></dt><dd><p>Initial guess for [temperature (kK), radius (1000 Rsun)]. Default: <code class="docutils literal notranslate"><span class="pre">[10.,</span> <span class="pre">10.]</span></code></p>
-</dd>
-<dt><strong>show</strong><span class="classifier">bool, optional</span></dt><dd><p>Plot the chain histories, and display all plots at the end of the script. Default: only save the corner plot</p>
-</dd>
-<dt><strong>outpath</strong><span class="classifier">str, optional</span></dt><dd><p>Directory to which to save the corner plots. Default: current directory</p>
-</dd>
-<dt><strong>nwalkers</strong><span class="classifier">int, optional</span></dt><dd><p>Number of walkers (chains) to use for fitting. Default: 10</p>
-</dd>
-<dt><strong>burnin_steps</strong><span class="classifier">int, optional</span></dt><dd><p>Number of MCMC steps before convergence. This part of the history is discarded. Default: 200</p>
-</dd>
-<dt><strong>steps</strong><span class="classifier">int, optional</span></dt><dd><p>Number of MCMC steps after convergence. This part of the history is used to calculate paramers. Default: 100.</p>
-</dd>
-<dt><strong>T_range</strong><span class="classifier">tuple, list, array-like, optional</span></dt><dd><p>Range of allowed temperatures (in kilokelvins) in the prior. Default: <code class="docutils literal notranslate"><span class="pre">(1.,</span> <span class="pre">100.)</span></code></p>
-</dd>
-<dt><strong>R_range</strong><span class="classifier">tuple, list, array-like, optional</span></dt><dd><p>Range of allowed radii (in 1000 solar radii) in the prior. Default: <code class="docutils literal notranslate"><span class="pre">(0.01,</span> <span class="pre">1000.)</span></code></p>
-</dd>
-<dt><strong>cutoff_freq</strong><span class="classifier">float, optional</span></dt><dd><p>Cutoff frequency (in terahertz) for a modified blackbody spectrum (see <a class="reference external" href="https://doi.org/10.3847/1538-4357/aa9334">https://doi.org/10.3847/1538-4357/aa9334</a>)</p>
-</dd>
-<dt><strong>prev_temp</strong><span class="classifier">scipy.stats.gaussian_kde, optional</span></dt><dd><p>Temperature distribution from fitting the previous epoch’s SED. If given, this is used as the prior.</p>
-</dd>
-<dt><strong>save_chains</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, save the MCMC chain histories to the directory <code class="docutils literal notranslate"><span class="pre">outpath</span></code>. Default: only save the corner plot</p>
-</dd>
-<dt><strong>use_sigma</strong><span class="classifier">bool, optional</span></dt><dd><p>Include an intrinsic scatter parameter. Default: False.</p>
-</dd>
-<dt><strong>sigma_type</strong><span class="classifier">str, optional</span></dt><dd><p>If ‘relative’ (default), sigma will be in units of the individual photometric uncertainties.
-If ‘absolute’, sigma will be in units of the median photometric uncertainty.</p>
-</dd>
-<dt><strong>sigma_max</strong><span class="classifier">float, optional</span></dt><dd><p>Maximum allowed intrinsic scatters (in units of the median uncertainty) in the prior. Default: 10.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>sampler</strong><span class="classifier">emcee.EnsembleSampler</span></dt><dd><p>Sampler object containing the results of the MCMC fit</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.bolometric.calc_colors">
 <span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.bolometric.</span></span><span class="sig-name descname"><span class="pre">calc_colors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/bolometric.html#calc_colors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.bolometric.calc_colors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate colors from a spectral energy distribution</p>
@@ -210,14 +159,14 @@ If ‘absolute’, sigma will be in units of the median photometric uncertainty.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.bolometric.calculate_bolometric">
-<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.bolometric.</span></span><span class="sig-name descname"><span class="pre">calculate_bolometric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">burnin_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">100.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.01,</span> <span class="pre">1000.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_table_as</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_nfilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_mcmc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_chains</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">also_group_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/bolometric.html#calculate_bolometric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.bolometric.calculate_bolometric" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.bolometric.</span></span><span class="sig-name descname"><span class="pre">calculate_bolometric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">burnin_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">priors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_table_as</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_nfilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_mcmc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_chains</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'relative'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">also_group_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/bolometric.html#calculate_bolometric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.bolometric.calculate_bolometric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the full bolometric light curve from a table of broadband photometry</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>lc</strong><span class="classifier">lightcurve_fitting.lightcurve.LC</span></dt><dd><p>Table of broadband photometry including columns “MJD”, “mag”, “dmag”, “filt”</p>
 </dd>
-<dt><strong>z</strong><span class="classifier">float</span></dt><dd><p>Redshift between the blackbody (rest frame) and the filters (observed frame)</p>
+<dt><strong>z</strong><span class="classifier">float, optional</span></dt><dd><p>Redshift between the emission source and the observed filter. Default: 0.</p>
 </dd>
 <dt><strong>outpath</strong><span class="classifier">str, optional</span></dt><dd><p>Directory to which to save the corner plots and MCMC chains. Default: current directory</p>
 </dd>
@@ -229,9 +178,9 @@ If ‘absolute’, sigma will be in units of the median photometric uncertainty.
 </dd>
 <dt><strong>steps</strong><span class="classifier">int, optional</span></dt><dd><p>Number of MCMC steps after convergence. This part of the history is used to calculate paramers. Default: 100.</p>
 </dd>
-<dt><strong>T_range</strong><span class="classifier">tuple, list, array-like, optional</span></dt><dd><p>Range of allowed temperatures (in kilokelvins) in the prior. Default: <code class="docutils literal notranslate"><span class="pre">(1.,</span> <span class="pre">100.)</span></code></p>
-</dd>
-<dt><strong>R_range</strong><span class="classifier">tuple, list, array-like, optional</span></dt><dd><p>Range of allowed radii (in 1000 solar radii) in the prior. Default: <code class="docutils literal notranslate"><span class="pre">(0.01,</span> <span class="pre">1000.)</span></code></p>
+<dt><strong>priors</strong><span class="classifier">list, optional</span></dt><dd><p>Prior probability distributions for temperature (in kilokelvins) and radius (in 1000 solar radii). Available
+priors: <a class="reference internal" href="#lightcurve_fitting.models.UniformPrior" title="lightcurve_fitting.models.UniformPrior"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.UniformPrior</span></code></a>, <a class="reference internal" href="#lightcurve_fitting.models.LogUniformPrior" title="lightcurve_fitting.models.LogUniformPrior"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.LogUniformPrior</span></code></a>, <a class="reference internal" href="#lightcurve_fitting.models.GaussianPrior" title="lightcurve_fitting.models.GaussianPrior"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.GaussianPrior</span></code></a>.
+Default: <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">Uniform(1.,</span> <span class="pre">100.)</span></code>, <code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">=</span> <span class="pre">LogUniform(0.01,</span> <span class="pre">1000.)</span></code>, <code class="docutils literal notranslate"><span class="pre">σ</span> <span class="pre">=</span> <span class="pre">Gaussian(0.,</span> <span class="pre">10.,</span> <span class="pre">stddev=1.)</span></code>.</p>
 </dd>
 <dt><strong>save_table_as</strong><span class="classifier">str, optional</span></dt><dd><p>Filename to which to save the output table of blackbody parameters and bolometric luminosities</p>
 </dd>
@@ -249,6 +198,9 @@ more realistic uncertainties.</p>
 <dt><strong>save_chains</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, save the MCMC chain histories to the directory <code class="docutils literal notranslate"><span class="pre">outpath</span></code>. Default: only save the corner plot</p>
 </dd>
 <dt><strong>use_sigma</strong><span class="classifier">bool, optional</span></dt><dd><p>Include an intrinsic scatter parameter in the MCMC fit. Default: False.</p>
+</dd>
+<dt><strong>sigma_type</strong><span class="classifier">str, optional</span></dt><dd><p>If ‘relative’ (default), sigma will be in units of the individual photometric uncertainties.
+If ‘absolute’, sigma will be in units of the median photometric uncertainty.</p>
 </dd>
 <dt><strong>also_group_by</strong><span class="classifier">list, optional</span></dt><dd><p>Group by these columns in addition to epoch</p>
 </dd>
@@ -354,6 +306,28 @@ more realistic uncertainties.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="lightcurve_fitting.bolometric.plot_chain">
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.bolometric.</span></span><span class="sig-name descname"><span class="pre">plot_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/bolometric.html#plot_chain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.bolometric.plot_chain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the chain histories for an MCMC run</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>chain</strong><span class="classifier">array-like</span></dt><dd><p>Array containing the MCMC chain history, e.g., from <code class="xref py py-meth docutils literal notranslate"><span class="pre">emcee.EnsembleSampler.chain()</span></code></p>
+</dd>
+<dt><strong>labels</strong><span class="classifier">iterable, optional</span></dt><dd><p>A list of axis labels for each parameter in the chain</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>fig</strong><span class="classifier">matplotlib.pyplot.Figure</span></dt><dd><p>Figure object containing the chain history plots</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.bolometric.plot_color_curves">
 <span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.bolometric.</span></span><span class="sig-name descname"><span class="pre">plot_color_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'o'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MJD'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/bolometric.html#plot_color_curves"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.bolometric.plot_color_curves" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the color curves calculated by <a class="reference internal" href="#lightcurve_fitting.bolometric.calculate_bolometric" title="lightcurve_fitting.bolometric.calculate_bolometric"><code class="xref py py-func docutils literal notranslate"><span class="pre">calculate_bolometric()</span></code></a>.</p>
@@ -364,7 +338,7 @@ more realistic uncertainties.</p>
 </dd>
 <dt><strong>colors</strong><span class="classifier">list, optional</span></dt><dd><p>List of colors to plot, e.g., <code class="docutils literal notranslate"><span class="pre">['g-r',</span> <span class="pre">'r-i']</span></code>. By default, plot all recognizable colors.</p>
 </dd>
-<dt><strong>fmt</strong><span class="classifier">str, optional</span></dt><dd><p>Format string, passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.errorbar.html#matplotlib.pyplot.errorbar" title="(in Matplotlib v3.5.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.errorbar()</span></code></a></p>
+<dt><strong>fmt</strong><span class="classifier">str, optional</span></dt><dd><p>Format string, passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.errorbar.html#matplotlib.pyplot.errorbar" title="(in Matplotlib v3.6.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.errorbar()</span></code></a></p>
 </dd>
 <dt><strong>limit_length</strong><span class="classifier">float, optional</span></dt><dd><p>Length (in data units) of the upper and lower limit markers</p>
 </dd>
@@ -401,6 +375,102 @@ more realistic uncertainties.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>L_opt</strong><span class="classifier">float, array-like</span></dt><dd><p>Pseudobolometric luminosity in watts</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lightcurve_fitting.bolometric.spectrum_corner">
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.bolometric.</span></span><span class="sig-name descname"><span class="pre">spectrum_corner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_flatchain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrum_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_as</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/bolometric.html#spectrum_corner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.bolometric.spectrum_corner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model SEDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>spectrum</strong><span class="classifier">function</span></dt><dd><p>Function describing the spectrum. The first argument must be frequency in THz, and it must return spectral
+luminosity in watts per hertz. For a blackbody, you can use <a class="reference internal" href="#lightcurve_fitting.models.planck_fast" title="lightcurve_fitting.models.planck_fast"><code class="xref py py-func docutils literal notranslate"><span class="pre">models.planck_fast()</span></code></a>.</p>
+</dd>
+<dt><strong>epoch1</strong><span class="classifier">lightcurve_fitting.lightcurve.LC</span></dt><dd><p>A single “epoch” of photometry that defines the observed spectral energy distribution</p>
+</dd>
+<dt><strong>sampler_flatchain</strong><span class="classifier">array-like</span></dt><dd><p>2D array containing the aggregated MCMC chain histories</p>
+</dd>
+<dt><strong>z</strong><span class="classifier">float, optional</span></dt><dd><p>Redshift between the emission source and the observed filter. Default: 0.</p>
+</dd>
+<dt><strong>ebv</strong><span class="classifier">float, array-like, optional</span></dt><dd><p>Selective extinction <span class="math notranslate nohighlight">\(E(B-V)\)</span> in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with
+<span class="math notranslate nohighlight">\(R_V=3.1\)</span>. Its shape must be broadcastable to any array-like arguments. Default: 0.</p>
+</dd>
+<dt><strong>spectrum_kwargs</strong><span class="classifier">dict, optional</span></dt><dd><p>Keyword arguments to be passed to the <code class="docutils literal notranslate"><span class="pre">spectrum</span></code> function.</p>
+</dd>
+<dt><strong>use_sigma</strong><span class="classifier">bool, optional</span></dt><dd><p>Include an intrinsic scatter parameter. Default: False.</p>
+</dd>
+<dt><strong>labels</strong><span class="classifier">list, optional</span></dt><dd><p>Axis labels for the chain histories and corner plot.</p>
+</dd>
+<dt><strong>freq_min, freq_max</strong><span class="classifier">float, optional</span></dt><dd><p>Minimum and maximum frequencies for the SED panel in the corner plot. Default: (100., 1000.) or observed range.</p>
+</dd>
+<dt><strong>save_plot_as</strong><span class="classifier">str, optional</span></dt><dd><p>Filename to which to save the resulting plot</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>f4</strong><span class="classifier">matplotlib.pyplot.Figure</span></dt><dd><p>Figure containing the corner and SED plots.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lightcurve_fitting.bolometric.spectrum_mcmc">
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.bolometric.</span></span><span class="sig-name descname"><span class="pre">spectrum_mcmc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">priors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">starting_guesses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrum_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">burnin_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_chains</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'relative'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/bolometric.html#spectrum_mcmc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.bolometric.spectrum_mcmc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the given spectral energy distribution to an epoch of photometry using a Markov-chain Monte Carlo routine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>spectrum</strong><span class="classifier">function</span></dt><dd><p>Function describing the spectrum. The first argument must be frequency in THz, and it must return spectral
+luminosity in watts per hertz. For a blackbody, you can use <a class="reference internal" href="#lightcurve_fitting.models.planck_fast" title="lightcurve_fitting.models.planck_fast"><code class="xref py py-func docutils literal notranslate"><span class="pre">models.planck_fast()</span></code></a>.</p>
+</dd>
+<dt><strong>epoch1</strong><span class="classifier">lightcurve_fitting.lightcurve.LC</span></dt><dd><p>A single “epoch” of photometry that defines the observed spectral energy distribution</p>
+</dd>
+<dt><strong>priors</strong><span class="classifier">list</span></dt><dd><p>Prior probability distributions for each model parameter (and sigma, if used). Available priors:
+<a class="reference internal" href="#lightcurve_fitting.models.UniformPrior" title="lightcurve_fitting.models.UniformPrior"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.UniformPrior</span></code></a> (default), <a class="reference internal" href="#lightcurve_fitting.models.LogUniformPrior" title="lightcurve_fitting.models.LogUniformPrior"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.LogUniformPrior</span></code></a>, <a class="reference internal" href="#lightcurve_fitting.models.GaussianPrior" title="lightcurve_fitting.models.GaussianPrior"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.GaussianPrior</span></code></a></p>
+</dd>
+<dt><strong>starting_guesses</strong><span class="classifier">array-like</span></dt><dd><p>Initial guesses for each input parameter to <code class="docutils literal notranslate"><span class="pre">spectrum</span></code>. Must have shape (nwalkers, nparameters).</p>
+</dd>
+<dt><strong>z</strong><span class="classifier">float, optional</span></dt><dd><p>Redshift between the emission source and the observed filter. Default: 0.</p>
+</dd>
+<dt><strong>ebv</strong><span class="classifier">float, array-like, optional</span></dt><dd><p>Selective extinction <span class="math notranslate nohighlight">\(E(B-V)\)</span> in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with
+<span class="math notranslate nohighlight">\(R_V=3.1\)</span>. Its shape must be broadcastable to any array-like arguments. Default: 0.</p>
+</dd>
+<dt><strong>spectrum_kwargs</strong><span class="classifier">dict, optional</span></dt><dd><p>Keyword arguments to be passed to the <code class="docutils literal notranslate"><span class="pre">spectrum</span></code> function.</p>
+</dd>
+<dt><strong>show</strong><span class="classifier">bool, optional</span></dt><dd><p>Plot the chain histories, and display all plots at the end of the script. Default: only save the corner plot</p>
+</dd>
+<dt><strong>outpath</strong><span class="classifier">str, optional</span></dt><dd><p>Directory to which to save the corner plots. Default: current directory</p>
+</dd>
+<dt><strong>nwalkers</strong><span class="classifier">int, optional</span></dt><dd><p>Number of walkers (chains) to use for fitting. Default: 10</p>
+</dd>
+<dt><strong>burnin_steps</strong><span class="classifier">int, optional</span></dt><dd><p>Number of MCMC steps before convergence. This part of the history is discarded. Default: 200</p>
+</dd>
+<dt><strong>steps</strong><span class="classifier">int, optional</span></dt><dd><p>Number of MCMC steps after convergence. This part of the history is used to calculate parameters. Default: 100.</p>
+</dd>
+<dt><strong>save_chains</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, save the MCMC chain histories to the directory <code class="docutils literal notranslate"><span class="pre">outpath</span></code>. Default: only save the corner plot</p>
+</dd>
+<dt><strong>use_sigma</strong><span class="classifier">bool, optional</span></dt><dd><p>Include an intrinsic scatter parameter. Default: False.</p>
+</dd>
+<dt><strong>sigma_type</strong><span class="classifier">str, optional</span></dt><dd><p>If ‘relative’ (default), sigma will be in units of the individual photometric uncertainties.
+If ‘absolute’, sigma will be in units of the median photometric uncertainty.</p>
+</dd>
+<dt><strong>labels</strong><span class="classifier">list, optional</span></dt><dd><p>Axis labels for the chain histories and corner plot.</p>
+</dd>
+<dt><strong>freq_min, freq_max</strong><span class="classifier">float, optional</span></dt><dd><p>Minimum and maximum frequencies for the SED panel in the corner plot. Default: (100., 1000.) or observed range.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>sampler</strong><span class="classifier">emcee.EnsembleSampler</span></dt><dd><p>Sampler object containing the results of the MCMC fit</p>
 </dd>
 </dl>
 </dd>
@@ -520,39 +590,9 @@ given in ångströms.</p>
 </dl>
 </dd>
 </dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="lightcurve_fitting.filters.Filter.blackbody">
-<span class="sig-name descname"><span class="pre">blackbody</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/filters.html#Filter.blackbody"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.filters.Filter.blackbody" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the average Lnu of a blackbody in this filter</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>T</strong><span class="classifier">float or array-like</span></dt><dd><p>Temperature of the blackbody in kilokelvins</p>
-</dd>
-<dt><strong>R</strong><span class="classifier">float or array-like</span></dt><dd><p>Radius of the blackbody in thousands of solar radii</p>
-</dd>
-<dt><strong>z</strong><span class="classifier">float, optional</span></dt><dd><p>Redshift between the blackbody source and the filter</p>
-</dd>
-<dt><strong>cutoff_freq</strong><span class="classifier">float, optional</span></dt><dd><p>Cutoff frequency of the blackbody in terahertz as defined in <a class="reference external" href="https://doi.org/10.3847/1538-4357/aa9334">https://doi.org/10.3847/1538-4357/aa9334</a>.
-Default: unmodified blackbody.</p>
-</dd>
-<dt><strong>ebv</strong><span class="classifier">float, array-like, optional</span></dt><dd><p>Selective extinction E(B-V) in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with R_V=3.1.
-Its shape must be broadcastable to T and R. Default: 0.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>Lnu</strong><span class="classifier">float or array-like</span></dt><dd><p>Average spectral luminosity in the filter in watts per hertz</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lightcurve_fitting.filters.Filter.order">
-<span class="sig-name descname"><span class="pre">order</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['FUV',</span> <span class="pre">'NUV',</span> <span class="pre">'UVW2',</span> <span class="pre">'UVM2',</span> <span class="pre">'UVW1',</span> <span class="pre">'u',</span> <span class="pre">'U_S',</span> <span class="pre">'U',</span> <span class="pre">'B',</span> <span class="pre">'B_S',</span> <span class="pre">'g',</span> <span class="pre">'g-DECam',</span> <span class="pre">'c',</span> <span class="pre">'V',</span> <span class="pre">'V_S',</span> <span class="pre">'Itagaki',</span> <span class="pre">'white',</span> <span class="pre">'unfilt.',</span> <span class="pre">'G',</span> <span class="pre">'Kepler',</span> <span class="pre">'TESS',</span> <span class="pre">'DLT40',</span> <span class="pre">'w',</span> <span class="pre">'o',</span> <span class="pre">'r',</span> <span class="pre">'r-DECam',</span> <span class="pre">'R',</span> <span class="pre">'i',</span> <span class="pre">'i-DECam',</span> <span class="pre">'I',</span> <span class="pre">'zs',</span> <span class="pre">'z',</span> <span class="pre">'z-DECam',</span> <span class="pre">'y',</span> <span class="pre">'y-DECam',</span> <span class="pre">'J',</span> <span class="pre">'H',</span> <span class="pre">'K',</span> <span class="pre">'L',</span> <span class="pre">'unknown']</span></em><a class="headerlink" href="#lightcurve_fitting.filters.Filter.order" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">order</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['FUV',</span> <span class="pre">'NUV',</span> <span class="pre">'UVW2',</span> <span class="pre">'UVM2',</span> <span class="pre">'UVW1',</span> <span class="pre">'u',</span> <span class="pre">'U_S',</span> <span class="pre">'U',</span> <span class="pre">'B',</span> <span class="pre">'B_S',</span> <span class="pre">'g',</span> <span class="pre">'g-DECam',</span> <span class="pre">'c',</span> <span class="pre">'V',</span> <span class="pre">'V_S',</span> <span class="pre">'Itagaki',</span> <span class="pre">'white',</span> <span class="pre">'unfilt.',</span> <span class="pre">'G',</span> <span class="pre">'Kepler',</span> <span class="pre">'TESS',</span> <span class="pre">'DLT40',</span> <span class="pre">'w',</span> <span class="pre">'o',</span> <span class="pre">'r',</span> <span class="pre">'r-DECam',</span> <span class="pre">'R',</span> <span class="pre">'i',</span> <span class="pre">'i-DECam',</span> <span class="pre">'I',</span> <span class="pre">'zs',</span> <span class="pre">'z',</span> <span class="pre">'z-DECam',</span> <span class="pre">'y',</span> <span class="pre">'y-DECam',</span> <span class="pre">'J',</span> <span class="pre">'H',</span> <span class="pre">'K',</span> <span class="pre">'L',</span> <span class="pre">'F070W',</span> <span class="pre">'F090W',</span> <span class="pre">'F115W',</span> <span class="pre">'F150W',</span> <span class="pre">'F200W',</span> <span class="pre">'F277W',</span> <span class="pre">'F356W',</span> <span class="pre">'F444W',</span> <span class="pre">'F560W',</span> <span class="pre">'F770W',</span> <span class="pre">'F1000W',</span> <span class="pre">'F1130W',</span> <span class="pre">'F1280W',</span> <span class="pre">'F1500W',</span> <span class="pre">'F1800W',</span> <span class="pre">'F2100W',</span> <span class="pre">'F2550W',</span> <span class="pre">'unknown']</span></em><a class="headerlink" href="#lightcurve_fitting.filters.Filter.order" title="Permalink to this definition">¶</a></dt>
 <dd><p>The names of recognized filters listed in (approximate) decreasing order of effective frequency</p>
 </dd></dl>
 
@@ -581,14 +621,14 @@ function returns the average Lnu within the overlapping region, i.e., it does no
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>freq</strong><span class="classifier">astropy.units.Quantity</span></dt><dd><p>Frequency of the input spectrum (with units)</p>
+<dt><strong>freq</strong><span class="classifier">float or array-like</span></dt><dd><p>Frequency of the input spectrum in THz</p>
 </dd>
 <dt><strong>lum</strong><span class="classifier">float or array-like</span></dt><dd><p>Spectral luminosity (Lnu) or flux (Fnu) of the input spectrum</p>
 </dd>
-<dt><strong>z</strong><span class="classifier">float, optional</span></dt><dd><p>Redshift between the spectrum and the filter</p>
+<dt><strong>z</strong><span class="classifier">float, optional</span></dt><dd><p>Redshift between the spectrum and the filter. Default: 0.</p>
 </dd>
-<dt><strong>ebv</strong><span class="classifier">float, array-like, optional</span></dt><dd><p>Selective extinction E(B-V) in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with R_V=3.1.
-Its shape must be broadcastable to T and R. Default: 0.</p>
+<dt><strong>ebv</strong><span class="classifier">float, array-like, optional</span></dt><dd><p>Selective extinction <span class="math notranslate nohighlight">\(E(B-V)\)</span> in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with
+<span class="math notranslate nohighlight">\(R_V=3.1\)</span>. Default: 0.</p>
 </dd>
 </dl>
 </dd>
@@ -601,6 +641,56 @@ Its shape must be broadcastable to T and R. Default: 0.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="lightcurve_fitting.filters.Filter.synthesize">
+<span class="sig-name descname"><span class="pre">synthesize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/filters.html#Filter.synthesize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.filters.Filter.synthesize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the average Lnu of the given spectrum in this filter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>spectrum</strong><span class="classifier">function</span></dt><dd><p>Function describing the spectrum. The first argument must be frequency in THz, and it must return spectral
+luminosity in watts per hertz. All arguments are passed to this function except for keywords z and ebv.</p>
+</dd>
+<dt><strong>z</strong><span class="classifier">float, optional</span></dt><dd><p>Redshift between the emission source and the observed filter. Default: 0.</p>
+</dd>
+<dt><strong>ebv</strong><span class="classifier">float, array-like, optional</span></dt><dd><p>Selective extinction <span class="math notranslate nohighlight">\(E(B-V)\)</span> in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with
+<span class="math notranslate nohighlight">\(R_V=3.1\)</span>. Its shape must be broadcastable to any array-like arguments. Default: 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>Lnu</strong><span class="classifier">float or array-like</span></dt><dd><p>Average spectral luminosity in the filter in watts per hertz</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lightcurve_fitting.filters.extinction_law">
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.filters.</span></span><span class="sig-name descname"><span class="pre">extinction_law</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/filters.html#extinction_law"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.filters.extinction_law" title="Permalink to this definition">¶</a></dt>
+<dd><p>A vectorized version of the Fitzpatrick (1999) extinction law from the <code class="docutils literal notranslate"><span class="pre">extinction</span></code> package</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>freq</strong><span class="classifier">array-like</span></dt><dd><p>Frequencies in THz in the frame of the dust</p>
+</dd>
+<dt><strong>ebv</strong><span class="classifier">array-like</span></dt><dd><p>Selective extinction <span class="math notranslate nohighlight">\(E(B-V)\)</span> in magnitudes</p>
+</dd>
+<dt><strong>rv</strong><span class="classifier">float, optional</span></dt><dd><p>Ratio of total to selective extinction <span class="math notranslate nohighlight">\(R_V\)</span>. Default: 3.1.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>extinction</strong><span class="classifier">array-like</span></dt><dd><p>Extinction factor <span class="math notranslate nohighlight">\(10^{A/-2.5}\)</span> at each input wavelength.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -698,10 +788,11 @@ time range of the observed light curve.</p>
 <dt><strong>lc</strong><span class="classifier">lightcurve_fitting.lightcurve.LC</span></dt><dd><p>Table of broadband photometry including columns “MJD”, “mag”, “dmag”, “filt”</p>
 </dd>
 <dt><strong>model</strong><span class="classifier">lightcurve_fitting.models.Model</span></dt><dd><p>The model to fit to the light curve. Available models: <code class="xref py py-class docutils literal notranslate"><span class="pre">models.ShockCooling</span></code>,
-<code class="xref py py-class docutils literal notranslate"><span class="pre">models.ShockCooling2</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">models.CompanionShocking</span></code></p>
+<code class="xref py py-class docutils literal notranslate"><span class="pre">models.ShockCooling2</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">models.ShockCooling3</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">models.CompanionShocking</span></code>,
+<code class="xref py py-class docutils literal notranslate"><span class="pre">models.CompanionShocking2</span></code></p>
 </dd>
 <dt><strong>priors</strong><span class="classifier">list, optional</span></dt><dd><p>Prior probability distributions for each model parameter. Available priors:
-<code class="xref py py-func docutils literal notranslate"><span class="pre">models.UniformPrior()</span></code> (default), <code class="xref py py-func docutils literal notranslate"><span class="pre">models.LogUniformPrior()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">models.GaussianPrior()</span></code></p>
+<a class="reference internal" href="#lightcurve_fitting.models.UniformPrior" title="lightcurve_fitting.models.UniformPrior"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.UniformPrior</span></code></a> (default), <a class="reference internal" href="#lightcurve_fitting.models.LogUniformPrior" title="lightcurve_fitting.models.LogUniformPrior"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.LogUniformPrior</span></code></a>, <a class="reference internal" href="#lightcurve_fitting.models.GaussianPrior" title="lightcurve_fitting.models.GaussianPrior"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.GaussianPrior</span></code></a></p>
 </dd>
 <dt><strong>p_min, p_max</strong><span class="classifier">list, optional</span></dt><dd><p>DEPRECATED: Use <cite>priors</cite> instead</p>
 </dd>
@@ -782,7 +873,7 @@ the model light curve.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="lightcurve_fitting.lightcurve.Arrow">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.lightcurve.</span></span><span class="sig-name descname"><span class="pre">Arrow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#Arrow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.Arrow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://matplotlib.org/stable/api/path_api.html#matplotlib.path.Path" title="(in Matplotlib v3.5.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.path.Path</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://matplotlib.org/stable/api/path_api.html#matplotlib.path.Path" title="(in Matplotlib v3.6.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.path.Path</span></code></a></p>
 <p>An downward-pointing arrow-shaped <code class="docutils literal notranslate"><span class="pre">Path</span></code>, whose head has half-width <code class="docutils literal notranslate"><span class="pre">hx</span></code> and height <code class="docutils literal notranslate"><span class="pre">hy</span></code> (in units of length)</p>
 </dd></dl>
 
@@ -790,7 +881,7 @@ the model light curve.</p>
 <dt class="sig sig-object py" id="lightcurve_fitting.lightcurve.LC">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.lightcurve.</span></span><span class="sig-name descname"><span class="pre">LC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.table.Table</span></code></p>
-<p>A broadband light curve, stored as an <code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code> (see <code class="docutils literal notranslate"><span class="pre">help(Table)</span></code> for more details)</p>
+<p>A broadband light curve, stored as an <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v5.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
 <dd class="field-odd"><dl class="simple">
@@ -984,7 +1075,7 @@ if any. Otherwise do not correct for host galaxy extinction.</p>
 <dt><strong>fillmark</strong><span class="classifier">bool, optional</span></dt><dd><p>Fill each marker with color. Default: True</p>
 </dd>
 <dt><strong>kwargs</strong><span class="classifier">dict, optional</span></dt><dd><p>Keyword arguments matching column names in the light curve are used to specify a subset of points to plot.
-Additional keyword arguments passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html#matplotlib.pyplot.plot" title="(in Matplotlib v3.5.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code></a>.</p>
+Additional keyword arguments passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html#matplotlib.pyplot.plot" title="(in Matplotlib v3.6.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
@@ -2055,7 +2146,7 @@ envelope structure” and <span class="math notranslate nohighlight">\(M\)</span
 <span id="lightcurve-fitting-speccal-module"></span><h2>lightcurve_fitting.speccal module<a class="headerlink" href="#module-lightcurve_fitting.speccal" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.speccal.calibrate_spectra">
-<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.speccal.</span></span><span class="sig-name descname"><span class="pre">calibrate_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtract_percentile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/speccal.html#calibrate_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.speccal.calibrate_spectra" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.speccal.</span></span><span class="sig-name descname"><span class="pre">calibrate_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtract_percentile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_extrapolate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/speccal.html#calibrate_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.speccal.calibrate_spectra" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calibrate a set of spectra to an observed broadband light curve.</p>
 <p>Each calibrated spectrum is saved to a text file that corresponds to the original filename prefixed by <code class="docutils literal notranslate"><span class="pre">photcal_</span></code>.</p>
 <dl class="field-list simple">
@@ -2070,6 +2161,8 @@ envelope structure” and <span class="math notranslate nohighlight">\(M\)</span
 <dt><strong>order</strong><span class="classifier">int, optional</span></dt><dd><p>Polynomial order for the calibration function. Default: 0 (constant factor)</p>
 </dd>
 <dt><strong>subtract_percentile</strong><span class="classifier">float, optional</span></dt><dd><p>Subtract flux corresponding to this percentile of the spectrum before calibration. Default: no subtraction</p>
+</dd>
+<dt><strong>max_extrapolate</strong><span class="classifier">float, optional</span></dt><dd><p>Assume constant flux in a filter for this many days after the last observed point. Default: 1 day.</p>
 </dd>
 <dt><strong>show</strong><span class="classifier">bool, optional</span></dt><dd><p>Plot the observed light curve and the uncalibrated and calibrated spectra, and ask whether to save the results</p>
 </dd>
@@ -2109,6 +2202,27 @@ envelope structure” and <span class="math notranslate nohighlight">\(M\)</span
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="lightcurve_fitting.speccal.create_wiserep_tsv">
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.speccal.</span></span><span class="sig-name descname"><span class="pre">create_wiserep_tsv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specpaths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wiserep_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/speccal.html#create_wiserep_tsv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.speccal.create_wiserep_tsv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares a TSV file for uploading spectra to WISeREP (see <a class="reference external" href="https://www.wiserep.org/content/wiserep-getting-started">https://www.wiserep.org/content/wiserep-getting-started</a>).</p>
+<p>Also copies all the spectrum files to a single directory, and converts any FITS files to ASCII.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>specpaths: list</strong></dt><dd><p>List of paths to the spectrum files. Optionally, data quality can be specified in a tuple, e.g.,
+[(filename1.fits, 3), (filename2.txt, 2), …], where the second element is 1 (low), 2 (medium), or 3 (high).</p>
+</dd>
+<dt><strong>wiserep_dir: str</strong></dt><dd><p>Directory in which to collect the spectra. If it already exists, it will be deleted and remade.
+The TSV file will be saved alongside this directory using the same name but with a ‘.tsv’ extension.</p>
+</dd>
+<dt><strong>verbose: bool, optional</strong></dt><dd><p>If True, print a message when any file is copied or created.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.speccal.readOSCspec">
 <span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.speccal.</span></span><span class="sig-name descname"><span class="pre">readOSCspec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/speccal.html#readOSCspec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.speccal.readOSCspec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read spectra from a JSON file from the Open Supernova Catalog (<a class="reference external" href="https://sne.space">https://sne.space</a>)</p>
@@ -2123,7 +2237,7 @@ envelope structure” and <span class="math notranslate nohighlight">\(M\)</span
 <dd class="field-even"><dl class="simple">
 <dt><strong>filenames</strong><span class="classifier">list</span></dt><dd><p>List of filenames corresponding to each spectrum</p>
 </dd>
-<dt><strong>times</strong><span class="classifier">list</span></dt><dd><p>List of <code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.time.Time</span></code> when each spectrum was observed</p>
+<dt><strong>times</strong><span class="classifier">list</span></dt><dd><p>List of <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.time.Time.html#astropy.time.Time" title="(in Astropy v5.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.time.Time</span></code></a> when each spectrum was observed</p>
 </dd>
 <dt><strong>tel</strong><span class="classifier">list</span></dt><dd><p>List of telescope names (if given) where each spectrum was observed</p>
 </dd>
@@ -2170,7 +2284,7 @@ envelope structure” and <span class="math notranslate nohighlight">\(M\)</span
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.speccal.readspec">
-<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.speccal.</span></span><span class="sig-name descname"><span class="pre">readspec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/speccal.html#readspec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.speccal.readspec" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.speccal.</span></span><span class="sig-name descname"><span class="pre">readspec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/speccal.html#readspec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.speccal.readspec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a spectrum from a FITS or ASCII file and try to identify where and when it was observed</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2178,6 +2292,8 @@ envelope structure” and <span class="math notranslate nohighlight">\(M\)</span
 <dt><strong>f</strong><span class="classifier">str</span></dt><dd><p>Filename from which to read the spectrum</p>
 </dd>
 <dt><strong>verbose</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, print the date and filename of the spectrum</p>
+</dd>
+<dt><strong>return_header</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, return the full header as an additional return value</p>
 </dd>
 </dl>
 </dd>
@@ -2192,6 +2308,8 @@ envelope structure” and <span class="math notranslate nohighlight">\(M\)</span
 <dt><strong>telescope</strong><span class="classifier">str</span></dt><dd><p>Name of the telescope at which the spectrum was observed, if identifiable (otherwise <code class="docutils literal notranslate"><span class="pre">''</span></code>)</p>
 </dd>
 <dt>instrument: str</dt><dd><p>Name of the instrument used to observe the spectrum, if identifiable (otherwise <code class="docutils literal notranslate"><span class="pre">''</span></code>)</p>
+</dd>
+<dt><strong>hdr</strong><span class="classifier">dict-like</span></dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">return_header=True</span></code>, metadata is returned as a FITS header or dictionary (for ASCII files)</p>
 </dd>
 </dl>
 </dd>
@@ -2224,7 +2342,7 @@ envelope structure” and <span class="math notranslate nohighlight">\(M\)</span
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2019, Griffin Hosseinzadeh.</p>
+    <p>&#169; Copyright 2022, Griffin Hosseinzadeh.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

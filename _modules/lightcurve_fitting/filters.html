@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>lightcurve_fitting.filters &mdash; lightcurve_fitting 0.6.0 documentation</title>
+  <title>lightcurve_fitting.filters &mdash; Light Curve Fitting 0.7.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
@@ -27,10 +27,10 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> lightcurve_fitting
+            <a href="../../index.html" class="icon icon-home"> Light Curve Fitting
           </a>
               <div class="version">
-                0.6.0
+                0.7.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -53,7 +53,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">lightcurve_fitting</a>
+          <a href="../../index.html">Light Curve Fitting</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -78,10 +78,33 @@
 <span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
 <span class="kn">import</span> <span class="nn">astropy.constants</span> <span class="k">as</span> <span class="nn">const</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">planck_fast</span>
 <span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_filename</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">total_ordering</span>
-<span class="kn">from</span> <span class="nn">extinction</span> <span class="kn">import</span> <span class="n">fitzpatrick99</span> <span class="k">as</span> <span class="n">extinction_law</span>
+<span class="kn">from</span> <span class="nn">extinction</span> <span class="kn">import</span> <span class="n">fitzpatrick99</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">angstrom</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">THz</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+
+<div class="viewcode-block" id="extinction_law"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.filters.extinction_law">[docs]</a><span class="k">def</span> <span class="nf">extinction_law</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">ebv</span><span class="p">,</span> <span class="n">rv</span><span class="o">=</span><span class="mf">3.1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A vectorized version of the Fitzpatrick (1999) extinction law from the ``extinction`` package</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    freq : array-like</span>
+<span class="sd">        Frequencies in THz in the frame of the dust</span>
+<span class="sd">    ebv : array-like</span>
+<span class="sd">        Selective extinction :math:`E(B-V)` in magnitudes</span>
+<span class="sd">    rv : float, optional</span>
+<span class="sd">        Ratio of total to selective extinction :math:`R_V`. Default: 3.1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    extinction : array-like</span>
+<span class="sd">        Extinction factor :math:`10^{A/-2.5}` at each input wavelength.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">([</span><span class="n">fitzpatrick99</span><span class="p">(</span><span class="n">c</span> <span class="o">/</span> <span class="n">freq</span><span class="p">,</span> <span class="n">rv</span> <span class="o">*</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">ebv</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="mf">10.</span> <span class="o">**</span> <span class="p">(</span><span class="n">A</span> <span class="o">/</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Filter"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.filters.Filter">[docs]</a><span class="nd">@total_ordering</span>
@@ -191,7 +214,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">textcolor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linecolor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">italics</span> <span class="o">=</span> <span class="n">italics</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">=</span> <span class="n">system</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">==</span> <span class="s1">&#39;Johnson&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Johnson&#39;</span><span class="p">,</span> <span class="s1">&#39;JWST MIRI&#39;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mec</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linecolor</span>
@@ -281,33 +304,28 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">dfreq</span> <span class="o">=</span> <span class="o">-</span><span class="n">dfreq</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">freq_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">freq_eff</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="n">freq0</span><span class="p">,</span> <span class="n">freq1</span> <span class="o">-</span> <span class="n">freq_eff</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Filter.blackbody"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.filters.Filter.blackbody">[docs]</a>    <span class="k">def</span> <span class="nf">blackbody</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">ebv</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+<div class="viewcode-block" id="Filter.synthesize"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.filters.Filter.synthesize">[docs]</a>    <span class="k">def</span> <span class="nf">synthesize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">ebv</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the average Lnu of a blackbody in this filter</span>
+<span class="sd">        Returns the average Lnu of the given spectrum in this filter</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        T : float or array-like</span>
-<span class="sd">            Temperature of the blackbody in kilokelvins</span>
-<span class="sd">        R : float or array-like</span>
-<span class="sd">            Radius of the blackbody in thousands of solar radii</span>
+<span class="sd">        spectrum : function</span>
+<span class="sd">            Function describing the spectrum. The first argument must be frequency in THz, and it must return spectral</span>
+<span class="sd">            luminosity in watts per hertz. All arguments are passed to this function except for keywords z and ebv.</span>
 <span class="sd">        z : float, optional</span>
-<span class="sd">            Redshift between the blackbody source and the filter</span>
-<span class="sd">        cutoff_freq : float, optional</span>
-<span class="sd">            Cutoff frequency of the blackbody in terahertz as defined in https://doi.org/10.3847/1538-4357/aa9334.</span>
-<span class="sd">            Default: unmodified blackbody.</span>
+<span class="sd">            Redshift between the emission source and the observed filter. Default: 0.</span>
 <span class="sd">        ebv : float, array-like, optional</span>
-<span class="sd">            Selective extinction E(B-V) in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with R_V=3.1.</span>
-<span class="sd">            Its shape must be broadcastable to T and R. Default: 0.</span>
+<span class="sd">            Selective extinction :math:`E(B-V)` in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with</span>
+<span class="sd">            :math:`R_V=3.1`. Its shape must be broadcastable to any array-like arguments. Default: 0.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        Lnu : float or array-like</span>
 <span class="sd">            Average spectral luminosity in the filter in watts per hertz</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">wl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">angstrom</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span>
-        <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">([</span><span class="n">extinction_law</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span> <span class="mf">3.1</span> <span class="o">*</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">ebv</span><span class="p">)])</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">planck_fast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">z</span><span class="p">),</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="p">)</span> <span class="o">*</span> <span class="mf">10.</span> <span class="o">**</span> <span class="p">(</span><span class="n">A</span> <span class="o">/</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">)</span>
+        <span class="n">freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">spectrum</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">*</span> <span class="n">extinction_law</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">ebv</span><span class="p">)</span>
                         <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T_norm_per_freq&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Filter.spectrum"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.filters.Filter.spectrum">[docs]</a>    <span class="k">def</span> <span class="nf">spectrum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">lum</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">ebv</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
@@ -319,15 +337,15 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        freq : astropy.units.Quantity</span>
-<span class="sd">            Frequency of the input spectrum (with units)</span>
+<span class="sd">        freq : float or array-like</span>
+<span class="sd">            Frequency of the input spectrum in THz</span>
 <span class="sd">        lum : float or array-like</span>
 <span class="sd">            Spectral luminosity (Lnu) or flux (Fnu) of the input spectrum</span>
 <span class="sd">        z : float, optional</span>
-<span class="sd">            Redshift between the spectrum and the filter</span>
+<span class="sd">            Redshift between the spectrum and the filter. Default: 0.</span>
 <span class="sd">        ebv : float, array-like, optional</span>
-<span class="sd">            Selective extinction E(B-V) in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with R_V=3.1.</span>
-<span class="sd">            Its shape must be broadcastable to T and R. Default: 0.</span>
+<span class="sd">            Selective extinction :math:`E(B-V)` in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with</span>
+<span class="sd">            :math:`R_V=3.1`. Default: 0.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -335,15 +353,10 @@
 <span class="sd">            Average spectral luminosity (Lnu) or flux (Fnu) in the filter</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">freq</span> <span class="o">*=</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span>
-        <span class="n">wl</span> <span class="o">=</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">c</span> <span class="o">/</span> <span class="n">freq</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">angstrom</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
-        <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">([</span><span class="n">extinction_law</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span> <span class="mf">3.1</span> <span class="o">*</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">ebv</span><span class="p">)])</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;freq&#39;</span><span class="p">)</span>
-        <span class="n">T_per_freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
-        <span class="n">T_interp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">freq</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">T_per_freq</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
+        <span class="n">T_per_freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">T_interp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">T_per_freq</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">left</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
         <span class="n">T_norm_per_freq</span> <span class="o">=</span> <span class="n">T_interp</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">T_interp</span><span class="p">,</span> <span class="n">freq</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">lum</span> <span class="o">*</span> <span class="mf">10.</span> <span class="o">**</span> <span class="p">(</span><span class="n">A</span> <span class="o">/</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">T_norm_per_freq</span><span class="p">,</span> <span class="n">freq</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">lum</span> <span class="o">*</span> <span class="n">extinction_law</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">ebv</span><span class="p">)</span> <span class="o">*</span> <span class="n">T_norm_per_freq</span><span class="p">,</span> <span class="n">freq</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
@@ -413,6 +426,24 @@
     <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;#888888&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;UKIRT&#39;</span><span class="p">,</span> <span class="mf">1.021e-23</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;Gemini_Flamingos2.H.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
     <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="s1">&#39;Ks&#39;</span><span class="p">],</span> <span class="s1">&#39;#CCCCCC&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;UKIRT&#39;</span><span class="p">,</span> <span class="mf">0.640e-23</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;Gemini_Flamingos2.Ks.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
     <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;UKIRT&#39;</span><span class="p">,</span> <span class="mf">0.285e-23</span><span class="p">),</span>
+    <span class="c1"># JWST</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F070W&#39;</span><span class="p">,</span> <span class="s1">&#39;C7&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST NIRCam&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_NIRCam.F070W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F090W&#39;</span><span class="p">,</span> <span class="s1">&#39;C0&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST NIRCam&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_NIRCam.F090W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F115W&#39;</span><span class="p">,</span> <span class="s1">&#39;C8&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST NIRCam&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_NIRCam.F115W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F150W&#39;</span><span class="p">,</span> <span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST NIRCam&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_NIRCam.F150W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F200W&#39;</span><span class="p">,</span> <span class="s1">&#39;C2&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST NIRCam&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_NIRCam.F200W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F277W&#39;</span><span class="p">,</span> <span class="s1">&#39;C3&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST NIRCam&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_NIRCam.F277W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F356W&#39;</span><span class="p">,</span> <span class="s1">&#39;C4&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST NIRCam&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_NIRCam.F356W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F444W&#39;</span><span class="p">,</span> <span class="s1">&#39;C5&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST NIRCam&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_NIRCam.F444W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F560W&#39;</span><span class="p">,</span> <span class="s1">&#39;C9&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST MIRI&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_MIRI.F560W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F770W&#39;</span><span class="p">,</span> <span class="s1">&#39;C6&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST MIRI&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_MIRI.F770W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F1000W&#39;</span><span class="p">,</span> <span class="s1">&#39;C7&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST MIRI&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_MIRI.F1000W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F1130W&#39;</span><span class="p">,</span> <span class="s1">&#39;C0&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST MIRI&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_MIRI.F1130W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F1280W&#39;</span><span class="p">,</span> <span class="s1">&#39;C8&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST MIRI&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_MIRI.F1280W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F1500W&#39;</span><span class="p">,</span> <span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST MIRI&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_MIRI.F1500W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F1800W&#39;</span><span class="p">,</span> <span class="s1">&#39;C9&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST MIRI&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_MIRI.F1800W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F2100W&#39;</span><span class="p">,</span> <span class="s1">&#39;C2&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST MIRI&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_MIRI.F2100W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">Filter</span><span class="p">(</span><span class="s1">&#39;F2550W&#39;</span><span class="p">,</span> <span class="s1">&#39;C3&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;JWST MIRI&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JWST_MIRI.F2550W.dat&#39;</span><span class="p">,</span> <span class="n">angstrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
     <span class="n">Filter</span><span class="p">([</span><span class="s1">&#39;unknown&#39;</span><span class="p">,</span> <span class="s1">&#39;?&#39;</span><span class="p">],</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">,</span> <span class="n">linecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">italics</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span>
 <span class="n">Filter</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">all_filters</span><span class="p">]</span>
 <span class="n">filtdict</span> <span class="o">=</span> <span class="p">{}</span>
@@ -428,7 +459,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2019, Griffin Hosseinzadeh.</p>
+    <p>&#169; Copyright 2022, Griffin Hosseinzadeh.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

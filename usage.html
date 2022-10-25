@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Usage &mdash; lightcurve_fitting 0.6.0 documentation</title>
+  <title>Usage &mdash; Light Curve Fitting 0.7.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -31,10 +31,10 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> lightcurve_fitting
+            <a href="index.html" class="icon icon-home"> Light Curve Fitting
           </a>
               <div class="version">
-                0.6.0
+                0.7.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -67,7 +67,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">lightcurve_fitting</a>
+          <a href="index.html">Light Curve Fitting</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -89,13 +89,12 @@
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
 <section id="light-curves">
 <h2>Light Curves<a class="headerlink" href="#light-curves" title="Permalink to this headline">¶</a></h2>
-<p>The core of this package is the <code class="docutils literal notranslate"><span class="pre">lightcurve.LC</span></code> object. This is an extension of the Astropy <code class="docutils literal notranslate"><span class="pre">Table</span></code> object, which contains
+<p>The core of this package is the <a class="reference internal" href="api.html#lightcurve_fitting.lightcurve.LC" title="lightcurve_fitting.lightcurve.LC"><code class="xref py py-class docutils literal notranslate"><span class="pre">lightcurve.LC</span></code></a> object. This is an extension of the <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v5.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a> object, which contains
 tabular data, in this case broadband photometric observations. You can read light curve data from a file using the
-standard <code class="docutils literal notranslate"><span class="pre">Table.read()</span></code> method. I’m going to read an example light curve of SN 2016bkv to be used from here on:</p>
+standard <code class="xref py py-meth docutils literal notranslate"><span class="pre">astropy.table.Table.read()</span></code> method. I’m going to read an example light curve of SN 2016bkv to be used from here on:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lightcurve_fitting.lightcurve</span> <span class="kn">import</span> <span class="n">LC</span>
-<span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_filename</span>
 
-<span class="n">filename</span> <span class="o">=</span> <span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;lightcurve_fitting&#39;</span><span class="p">,</span> <span class="s1">&#39;example/SN2016bkv.txt&#39;</span><span class="p">)</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;example/SN2016bkv.txt&#39;</span>
 <span class="n">lc</span> <span class="o">=</span> <span class="n">LC</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span>
 </pre></div>
@@ -107,7 +106,7 @@ standard <code class="docutils literal notranslate"><span class="pre">Table.read
 <li><p>MJD (required): modified Julian date of the observation [mjd, JD, jd (JD/jd are converted)]</p></li>
 <li><p>mag (required): magnitude of the observation [Magnitude, Mag, ab_mag, PSFmag, MAG, omag, magnitude, apparent_mag]</p></li>
 <li><p>dmag (required): uncertainty on the magnitude [Magnitude_Error, magerr, MagErr, mag_err, e_mag, Error, err, PSFerr,
-MAGERR, e_omag, e_magnitude, apparent_mag_err, Mag_Err]</p></li>
+MAGERR, e_omag, e_magnitude, apparent_mag_err, Mag_Err, emag]</p></li>
 <li><p>filt (required): name of the filter [filter, Filter, band, FLT, Band]</p></li>
 <li><p>filter (automatic): the filter object (see <a class="reference internal" href="#filters"><span class="std std-ref">Filters</span></a> below)</p></li>
 <li><p>nondet: True if the magnitude is an upper limit, False otherwise [Is_Limit, UL, l_omag, upper_limit, upperlimit]</p></li>
@@ -121,7 +120,7 @@ MAGERR, e_omag, e_magnitude, apparent_mag_err, Mag_Err]</p></li>
 <li><p>source: the data source, either a telescope/instrument name or a literature reference [Source]</p></li>
 </ul>
 </div></blockquote>
-<p>The <code class="docutils literal notranslate"><span class="pre">LC.meta</span></code> attribute contains information needed to calculate absolute magnitudes and luminosities:</p>
+<p>The <code class="xref py py-attr docutils literal notranslate"><span class="pre">LC.meta</span></code> attribute contains information needed to calculate absolute magnitudes and luminosities:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>dm: the distance modulus</p></li>
@@ -143,7 +142,7 @@ MAGERR, e_omag, e_magnitude, apparent_mag_err, Mag_Err]</p></li>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">LC</span></code> object has several methods for converting between the columns above (see API Documentation)
+<p>The <a class="reference internal" href="api.html#lightcurve_fitting.lightcurve.LC" title="lightcurve_fitting.lightcurve.LC"><code class="xref py py-class docutils literal notranslate"><span class="pre">LC</span></code></a> object has several methods for converting between the columns above,
 as well as a method for plotting the light curve in a single command:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lc</span><span class="o">.</span><span class="n">calcAbsMag</span><span class="p">()</span>
 <span class="n">lc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="s1">&#39;MJD&#39;</span><span class="p">)</span>
@@ -152,13 +151,13 @@ as well as a method for plotting the light curve in a single command:</p>
 </section>
 <section id="filters">
 <h2>Filters<a class="headerlink" href="#filters" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">filters</span></code> submodule defines a <code class="docutils literal notranslate"><span class="pre">Filter</span></code> object that stores information about the broadband filters: transmission
+<p>The <a class="reference internal" href="api.html#module-lightcurve_fitting.filters" title="lightcurve_fitting.filters"><code class="xref py py-mod docutils literal notranslate"><span class="pre">filters</span></code></a> submodule defines a <a class="reference internal" href="api.html#lightcurve_fitting.filters.Filter" title="lightcurve_fitting.filters.Filter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Filter</span></code></a> object that stores information about the broadband filters: transmission
 function, photometric system, and styles for plotting. You mostly won’t have to touch this module, unless you are
 adding new filters.</p>
 </section>
 <section id="bolometric-light-curves">
 <h2>Bolometric Light Curves<a class="headerlink" href="#bolometric-light-curves" title="Permalink to this headline">¶</a></h2>
-<p>You can make a bolometric light curve and color curves from the photometry table with the <code class="docutils literal notranslate"><span class="pre">bolometric</span></code> module.</p>
+<p>You can make a bolometric light curve and color curves from the photometry table with the <a class="reference internal" href="api.html#module-lightcurve_fitting.bolometric" title="lightcurve_fitting.bolometric"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bolometric</span></code></a> module.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lightcurve_fitting.bolometric</span> <span class="kn">import</span> <span class="n">calculate_bolometric</span><span class="p">,</span> <span class="n">plot_bolometric_results</span><span class="p">,</span> <span class="n">plot_color_curves</span>
 
 <span class="n">redshift</span> <span class="o">=</span> <span class="mf">0.002</span>
@@ -169,10 +168,10 @@ adding new filters.</p>
 <span class="n">plot_color_curves</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The light curve is divided into epochs (defined by the <code class="docutils literal notranslate"><span class="pre">bin</span></code> and <code class="docutils literal notranslate"><span class="pre">also_group_by</span></code> arguments to <code class="docutils literal notranslate"><span class="pre">calculate_bolometric</span></code>), and processed four different ways:</p>
+<p>The light curve is divided into epochs (defined by the <code class="docutils literal notranslate"><span class="pre">bin</span></code> and <code class="docutils literal notranslate"><span class="pre">also_group_by</span></code> arguments to <a class="reference internal" href="api.html#lightcurve_fitting.bolometric.calculate_bolometric" title="lightcurve_fitting.bolometric.calculate_bolometric"><code class="xref py py-func docutils literal notranslate"><span class="pre">calculate_bolometric()</span></code></a>), and processed four different ways:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Fitting the Planck function using <code class="docutils literal notranslate"><span class="pre">scipy.curve_fit</span></code>. This is very fast but may not give reliable uncertainties.
+<li><p>Fitting the Planck function using <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="(in SciPy v1.9.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.optimize.curve_fit()</span></code></a>. This is very fast but may not give reliable uncertainties.
 The columns <code class="docutils literal notranslate"><span class="pre">temp</span></code>, <code class="docutils literal notranslate"><span class="pre">radius</span></code>, <code class="docutils literal notranslate"><span class="pre">dtemp</span></code>, and <code class="docutils literal notranslate"><span class="pre">dradius</span></code> come from this fit.</p></li>
 <li><p>The Stefan-Bolzmann law gives the total bolometric luminosity, <code class="docutils literal notranslate"><span class="pre">lum</span></code> and <code class="docutils literal notranslate"><span class="pre">dlum</span></code>.</p></li>
 <li><p>Integrating the Planck function between <span class="math notranslate nohighlight">\(U\)</span> and <span class="math notranslate nohighlight">\(I\)</span> band (observed) gives <code class="docutils literal notranslate"><span class="pre">L_opt</span></code>.</p></li>
@@ -190,8 +189,8 @@ Use this if you do not want to assume the SED is a blackbody. This yields the co
 <p>The MCMC routine saves a corner plot for each fit in the folder you specify (<code class="docutils literal notranslate"><span class="pre">outpath</span></code>).
 I highly recommend looking through these to make sure the fits converged.
 If they didn’t, try adjusting the number of burn-in steps (<code class="docutils literal notranslate"><span class="pre">burnin_steps</span></code>).
-To save the table, give <code class="docutils literal notranslate"><span class="pre">save_table_as='filename.table'</span></code> as an argument to <code class="docutils literal notranslate"><span class="pre">calculate_bolometric</span></code>.
-To save the plot, give <code class="docutils literal notranslate"><span class="pre">save_plot_as='filename.pdf'</span></code> as an argument to <code class="docutils literal notranslate"><span class="pre">plot_bolometric_results</span></code>.</p>
+To save the table, give <code class="docutils literal notranslate"><span class="pre">save_table_as='filename.table'</span></code> as an argument to <a class="reference internal" href="api.html#lightcurve_fitting.bolometric.calculate_bolometric" title="lightcurve_fitting.bolometric.calculate_bolometric"><code class="xref py py-func docutils literal notranslate"><span class="pre">calculate_bolometric()</span></code></a>.
+To save the plot, give <code class="docutils literal notranslate"><span class="pre">save_plot_as='filename.pdf'</span></code> as an argument to <a class="reference internal" href="api.html#lightcurve_fitting.bolometric.plot_bolometric_results" title="lightcurve_fitting.bolometric.plot_bolometric_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">plot_bolometric_results()</span></code></a>.</p>
 <p>Beware of the units I’m using:</p>
 <blockquote>
 <div><ul class="simple">
@@ -200,7 +199,7 @@ To save the plot, give <code class="docutils literal notranslate"><span class="p
 <li><p>Luminosities are in watts (W). <span class="math notranslate nohighlight">\(1\,\mathrm{W} = 10^7\,\mathrm{erg}\,\mathrm{s}^{-1}\)</span></p></li>
 </ul>
 </div></blockquote>
-<p>Optionally, you can calculate colors at each epoch by giving the argument <code class="docutils literal notranslate"><span class="pre">colors</span></code> to <code class="docutils literal notranslate"><span class="pre">calculate_bolometric</span></code>). These get saved in the same output table in four columns per color, e.g., for <span class="math notranslate nohighlight">\(B-V\)</span>:</p>
+<p>Optionally, you can calculate colors at each epoch by giving the argument <code class="docutils literal notranslate"><span class="pre">colors</span></code> to <a class="reference internal" href="api.html#lightcurve_fitting.bolometric.calculate_bolometric" title="lightcurve_fitting.bolometric.calculate_bolometric"><code class="xref py py-func docutils literal notranslate"><span class="pre">calculate_bolometric()</span></code></a>. These get saved in the same output table in four columns per color, e.g., for <span class="math notranslate nohighlight">\(B-V\)</span>:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>the color itself, <code class="docutils literal notranslate"><span class="pre">B-V</span></code>,</p></li>
@@ -222,25 +221,25 @@ To save the plot, give <code class="docutils literal notranslate"><span class="p
 </section>
 <section id="model-fitting">
 <h2>Model Fitting<a class="headerlink" href="#model-fitting" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">models</span></code> and <code class="docutils literal notranslate"><span class="pre">fitting</span></code> submodules allow you to fit analytical models to the observed data. Right now, the only choices are:</p>
+<p>The <a class="reference internal" href="api.html#module-lightcurve_fitting.models" title="lightcurve_fitting.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">models</span></code></a> and <a class="reference internal" href="api.html#module-lightcurve_fitting.fitting" title="lightcurve_fitting.fitting"><code class="xref py py-mod docutils literal notranslate"><span class="pre">fitting</span></code></a> submodules allow you to fit analytical models to the observed data. Right now, the only choices are:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">CompanionShocking</span></code>, which is the SiFTO Type Ia supernova template (Conley et al. <a class="reference external" href="https://doi.org/10.1086/588518">2008</a>) plus a shock component from Kasen (<a class="reference external" href="https://doi.org/10.1088/0004-637X/708/2/1025">2010</a>), with factors on the r and i SiFTO models and a factor on the U shock component.
-This was used in my paper on SN 2017cbv: <a class="reference external" href="https://doi.org/10.3847/2041-8213/aa8402">https://doi.org/10.3847/2041-8213/aa8402</a>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">CompanionShocking2</span></code>, which is the same SiFTO Type Ia supernova template plus a shock component, but with time offsets for the U and i SiFTO models instead of the three multiplicative factors.
-This was used in my paper on SN 2021aefx (submitted).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ShockCooling</span></code>, which is the Sapir &amp; Waxman (<a class="reference external" href="https://doi.org/10.3847/1538-4357/aa64df">2017</a>) model for shock cooling in a core-collapse supernova,
-formulated in terms of <span class="math notranslate nohighlight">\(v_s, M_\mathrm{env}, f_ρ M, R\)</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ShockCooling2</span></code>, which is the same Sapir &amp; Waxman model but formulated in terms of scaling parameters <span class="math notranslate nohighlight">\(T_1, L_1, t_\mathrm{tr}\)</span>.
-This was used in my paper on SN 2016bkv: <a class="reference external" href="https://doi.org/10.3847/1538-4357/aac5f6">https://doi.org/10.3847/1538-4357/aac5f6</a>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ShockCooling3</span></code>, which is the same as <code class="docutils literal notranslate"><span class="pre">ShockCooling</span></code> but with <span class="math notranslate nohighlight">\(d_L\)</span> and <span class="math notranslate nohighlight">\(E(B-V)\)</span> as free parameters. (Therefore it fits the flux instead of the luminosity.) This was used in my paper on SN 2021yja (submitted).</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">CompanionShocking</span></code>, which is the SiFTO Type Ia supernova template <a class="reference internal" href="index.html#c08" id="id1"><span>[C08]</span></a> plus a shock component from <a class="reference internal" href="index.html#k10" id="id2"><span>[K10]</span></a>, with factors on the r and i SiFTO models and a factor on the U shock component.
+This was used in my paper on SN 2017cbv <a class="reference internal" href="index.html#h17" id="id3"><span>[H17]</span></a>.</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">CompanionShocking2</span></code>, which is the same SiFTO Type Ia supernova template <a class="reference internal" href="index.html#c08" id="id4"><span>[C08]</span></a> plus a shock component <a class="reference internal" href="index.html#k10" id="id5"><span>[K10]</span></a>, but with time offsets for the U and i SiFTO models instead of the three multiplicative factors.
+This was used in my paper on SN 2021aefx <a class="reference internal" href="index.html#h22a" id="id6"><span>[H22a]</span></a>.</p></li>
+<li><p><code class="xref py py-data docutils literal notranslate"><span class="pre">ShockCooling</span></code>, which is the <a class="reference internal" href="index.html#sw17" id="id7"><span>[SW17]</span></a> model for shock cooling in a core-collapse supernova,
+formulated in terms of <span class="math notranslate nohighlight">\(v_s, M_\mathrm{env}, f_ρ M, R\)</span>.</p></li>
+<li><p><code class="xref py py-data docutils literal notranslate"><span class="pre">ShockCooling2</span></code>, which is the same <a class="reference internal" href="index.html#sw17" id="id8"><span>[SW17]</span></a> model but formulated in terms of scaling parameters <span class="math notranslate nohighlight">\(T_1, L_1, t_\mathrm{tr}\)</span>.
+This was used in my paper on SN 2016bkv <a class="reference internal" href="index.html#h18" id="id9"><span>[H18]</span></a>.</p></li>
+<li><p><code class="xref py py-data docutils literal notranslate"><span class="pre">ShockCooling3</span></code>, which is the same as <code class="xref py py-data docutils literal notranslate"><span class="pre">ShockCooling</span></code> but with <span class="math notranslate nohighlight">\(d_L\)</span> and <span class="math notranslate nohighlight">\(E(B-V)\)</span> as free parameters. (Therefore it fits the flux instead of the luminosity.) This was used in my paper on SN 2021yja <a class="reference internal" href="index.html#h22b" id="id10"><span>[H22b]</span></a>.</p></li>
 </ul>
 </div></blockquote>
 <p><strong>Note on the shock cooling models:</strong>
 There are degeneracies between many of the physical parameters that make them difficult to fit independently.
-This led us to fit develop the <code class="docutils literal notranslate"><span class="pre">ShockCooling2</span></code> model just to see if the model could fit the data at all.
-Since it did not fit well, we concluded that the physical parameters we could have obtained by fitting the <code class="docutils literal notranslate"><span class="pre">ShockCooling</span></code> model were irrelevant.
-However, in order to measure, for example, the progenitor radius, one must use the <code class="docutils literal notranslate"><span class="pre">ShockCooling</span></code> model.</p>
+This led us to fit develop the <code class="xref py py-data docutils literal notranslate"><span class="pre">ShockCooling2</span></code> model just to see if the model could fit the data at all.
+Since it did not fit well, we concluded that the physical parameters we could have obtained by fitting the <code class="xref py py-data docutils literal notranslate"><span class="pre">ShockCooling</span></code> model were irrelevant.
+However, in order to measure, for example, the progenitor radius, one must use the <code class="xref py py-data docutils literal notranslate"><span class="pre">ShockCooling</span></code> model.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lightcurve_fitting.models</span> <span class="kn">import</span> <span class="n">ShockCooling2</span><span class="p">,</span> <span class="n">UniformPrior</span>
 <span class="kn">from</span> <span class="nn">lightcurve_fitting.fitting</span> <span class="kn">import</span> <span class="n">lightcurve_mcmc</span><span class="p">,</span> <span class="n">lightcurve_corner</span>
 
@@ -266,10 +265,10 @@ However, in order to measure, for example, the progenitor radius, one must use t
 </pre></div>
 </div>
 <p><strong>Another note on the shock cooling models:</strong>
-The shock cooling models are only valid for temperatures above 0.7 eV = 8120 K (Sapir &amp; Waxman 2017),
+The shock cooling models are only valid for temperatures above 0.7 eV = 8120 K <a class="reference internal" href="index.html#sw17" id="id11"><span>[SW17]</span></a>,
 so you should check that you have not included observations where the model goes below that.
 If you have, you should rerun the fit without those points.
-If you used the Rabinak &amp; Waxman option, the model fails even earlier, but you will have to check that manually.</p>
+If you used the <a class="reference internal" href="index.html#rw11" id="id12"><span>[RW11]</span></a> option, the model fails even earlier, but you will have to check that manually.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">p_mean</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">flatchain</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">t_max</span> <span class="o">=</span> <span class="n">ShockCooling2</span><span class="o">.</span><span class="n">t_max</span><span class="p">(</span><span class="n">p_mean</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">t_max</span><span class="p">)</span>
@@ -281,7 +280,7 @@ If you used the Rabinak &amp; Waxman option, the model fails even earlier, but y
 </section>
 <section id="calibrating-spectra-to-photometry">
 <h2>Calibrating Spectra to Photometry<a class="headerlink" href="#calibrating-spectra-to-photometry" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">speccal</span></code> module (somewhat experimental right now) can be used to calibrate spectra to observed photometry.</p>
+<p>The <a class="reference internal" href="api.html#module-lightcurve_fitting.speccal" title="lightcurve_fitting.speccal"><code class="xref py py-mod docutils literal notranslate"><span class="pre">speccal</span></code></a> module (somewhat experimental right now) can be used to calibrate spectra to observed photometry.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lightcurve_fitting.speccal</span> <span class="kn">import</span> <span class="n">calibrate_spectra</span>
 
 <span class="n">spectra_filenames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;blah.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;blah.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;blah.dat&#39;</span><span class="p">]</span>
@@ -308,7 +307,7 @@ I recommend using <code class="docutils literal notranslate"><span class="pre">s
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2019, Griffin Hosseinzadeh.</p>
+    <p>&#169; Copyright 2022, Griffin Hosseinzadeh.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; lightcurve_fitting 0.6.0 documentation</title>
+  <title>Index &mdash; Light Curve Fitting 0.7.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -27,10 +27,10 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> lightcurve_fitting
+            <a href="index.html" class="icon icon-home"> Light Curve Fitting
           </a>
               <div class="version">
-                0.6.0
+                0.7.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -53,7 +53,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">lightcurve_fitting</a>
+          <a href="index.html">Light Curve Fitting</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -77,6 +77,7 @@
  <a href="#A"><strong>A</strong></a>
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
+ | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
@@ -108,13 +109,9 @@
 </li>
       <li><a href="api.html#lightcurve_fitting.lightcurve.binflux">binflux() (in module lightcurve_fitting.lightcurve)</a>
 </li>
-      <li><a href="api.html#lightcurve_fitting.filters.Filter.blackbody">blackbody() (lightcurve_fitting.filters.Filter method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#lightcurve_fitting.bolometric.blackbody_lstsq">blackbody_lstsq() (in module lightcurve_fitting.bolometric)</a>
-</li>
-      <li><a href="api.html#lightcurve_fitting.bolometric.blackbody_mcmc">blackbody_mcmc() (in module lightcurve_fitting.bolometric)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.models.blackbody_to_filters">blackbody_to_filters() (in module lightcurve_fitting.models)</a>
 </li>
@@ -136,10 +133,10 @@
 </li>
       <li><a href="api.html#lightcurve_fitting.lightcurve.LC.calcPhase">calcPhase() (lightcurve_fitting.lightcurve.LC method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#lightcurve_fitting.bolometric.calculate_bolometric">calculate_bolometric() (in module lightcurve_fitting.bolometric)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#lightcurve_fitting.speccal.calibrate_spectra">calibrate_spectra() (in module lightcurve_fitting.speccal)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.models.companion_shocking">companion_shocking() (in module lightcurve_fitting.models)</a>
@@ -151,6 +148,16 @@
       <li><a href="api.html#lightcurve_fitting.models.companion_shocking_temperature_radius">companion_shocking_temperature_radius() (in module lightcurve_fitting.models)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.speccal.convert_spectrum_units">convert_spectrum_units() (in module lightcurve_fitting.speccal)</a>
+</li>
+      <li><a href="api.html#lightcurve_fitting.speccal.create_wiserep_tsv">create_wiserep_tsv() (in module lightcurve_fitting.speccal)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#lightcurve_fitting.filters.extinction_law">extinction_law() (in module lightcurve_fitting.filters)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -323,9 +330,11 @@
 </li>
       <li><a href="api.html#lightcurve_fitting.lightcurve.LC.plot">plot() (lightcurve_fitting.lightcurve.LC method)</a>
 </li>
+      <li><a href="api.html#lightcurve_fitting.bolometric.plot_bolometric_results">plot_bolometric_results() (in module lightcurve_fitting.bolometric)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#lightcurve_fitting.bolometric.plot_bolometric_results">plot_bolometric_results() (in module lightcurve_fitting.bolometric)</a>
+      <li><a href="api.html#lightcurve_fitting.bolometric.plot_chain">plot_chain() (in module lightcurve_fitting.bolometric)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.bolometric.plot_color_curves">plot_color_curves() (in module lightcurve_fitting.bolometric)</a>
 </li>
@@ -369,15 +378,21 @@
 </li>
       <li><a href="api.html#lightcurve_fitting.models.shock_cooling3">shock_cooling3() (in module lightcurve_fitting.models)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#lightcurve_fitting.models.shock_cooling_temperature_radius">shock_cooling_temperature_radius() (in module lightcurve_fitting.models)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#lightcurve_fitting.filters.Filter.spectrum">spectrum() (lightcurve_fitting.filters.Filter method)</a>
+</li>
+      <li><a href="api.html#lightcurve_fitting.bolometric.spectrum_corner">spectrum_corner() (in module lightcurve_fitting.bolometric)</a>
+</li>
+      <li><a href="api.html#lightcurve_fitting.bolometric.spectrum_mcmc">spectrum_mcmc() (in module lightcurve_fitting.bolometric)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.bolometric.stefan_boltzmann">stefan_boltzmann() (in module lightcurve_fitting.bolometric)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.models.stretched_sifto">stretched_sifto() (in module lightcurve_fitting.models)</a>
+</li>
+      <li><a href="api.html#lightcurve_fitting.filters.Filter.synthesize">synthesize() (lightcurve_fitting.filters.Filter method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -435,7 +450,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2019, Griffin Hosseinzadeh.</p>
+    <p>&#169; Copyright 2022, Griffin Hosseinzadeh.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

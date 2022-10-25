@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>lightcurve_fitting.lightcurve &mdash; lightcurve_fitting 0.6.0 documentation</title>
+  <title>lightcurve_fitting.lightcurve &mdash; Light Curve Fitting 0.7.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
@@ -27,10 +27,10 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> lightcurve_fitting
+            <a href="../../index.html" class="icon icon-home"> Light Curve Fitting
           </a>
               <div class="version">
-                0.6.0
+                0.7.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -53,7 +53,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">lightcurve_fitting</a>
+          <a href="../../index.html">Light Curve Fitting</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -115,7 +115,7 @@
     <span class="s1">&#39;Apparent Magnitude&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">,</span> <span class="s1">&#39;Magnitude&#39;</span><span class="p">,</span> <span class="s1">&#39;Mag&#39;</span><span class="p">,</span> <span class="s1">&#39;ab_mag&#39;</span><span class="p">,</span> <span class="s1">&#39;PSFmag&#39;</span><span class="p">,</span> <span class="s1">&#39;MAG&#39;</span><span class="p">,</span> <span class="s1">&#39;omag&#39;</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="s1">&#39;apparent_mag&#39;</span><span class="p">],</span>
     <span class="s1">&#39;Apparent Magnitude Uncertainty&#39;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s1">&#39;dmag&#39;</span><span class="p">,</span> <span class="s1">&#39;Magnitude_Error&#39;</span><span class="p">,</span> <span class="s1">&#39;magerr&#39;</span><span class="p">,</span> <span class="s1">&#39;MagErr&#39;</span><span class="p">,</span> <span class="s1">&#39;mag_err&#39;</span><span class="p">,</span> <span class="s1">&#39;e_mag&#39;</span><span class="p">,</span> <span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="s1">&#39;err&#39;</span><span class="p">,</span> <span class="s1">&#39;PSFerr&#39;</span><span class="p">,</span> <span class="s1">&#39;MAGERR&#39;</span><span class="p">,</span> <span class="s1">&#39;e_omag&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;e_magnitude&#39;</span><span class="p">,</span> <span class="s1">&#39;apparent_mag_err&#39;</span><span class="p">,</span> <span class="s1">&#39;Mag_Err&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;e_magnitude&#39;</span><span class="p">,</span> <span class="s1">&#39;apparent_mag_err&#39;</span><span class="p">,</span> <span class="s1">&#39;Mag_Err&#39;</span><span class="p">,</span> <span class="s1">&#39;emag&#39;</span><span class="p">,</span>
     <span class="p">],</span>
     <span class="s1">&#39;MJD&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">,</span> <span class="s1">&#39;mjd&#39;</span><span class="p">],</span>
     <span class="s1">&#39;JD&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;JD&#39;</span><span class="p">,</span> <span class="s1">&#39;jd&#39;</span><span class="p">],</span>
@@ -126,12 +126,13 @@
     <span class="s1">&#39;Absolute Magnitude&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">],</span>
     <span class="s1">&#39;Luminosity $L_ν$ (W Hz$^{-1}$)&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;lum&#39;</span><span class="p">],</span>
     <span class="s1">&#39;Luminosity Uncertainty&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;dlum&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;Effective Wavelength (nm)&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;wl_eff&#39;</span><span class="p">],</span>  <span class="c1"># calculated from filters; does not need to be in usage.rst</span>
 <span class="p">}</span>
 
 
 <div class="viewcode-block" id="LC"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC">[docs]</a><span class="k">class</span> <span class="nc">LC</span><span class="p">(</span><span class="n">Table</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A broadband light curve, stored as an :class:`astropy.table.Table` (see ``help(Table)`` for more details)</span>
+<span class="sd">    A broadband light curve, stored as an :class:`astropy.table.Table`</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -415,10 +416,13 @@
         <span class="n">peaktable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">**</span><span class="n">criteria</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaktable</span><span class="p">):</span>
             <span class="n">imin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">peaktable</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">peakdate</span> <span class="o">=</span> <span class="n">peaktable</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">][</span><span class="n">imin</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;peakdate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">peaktable</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">][</span><span class="n">imin</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">peakdate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">peakcriteria</span> <span class="o">=</span> <span class="n">criteria</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;peakdate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;redshift&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">z</span>  <span class="c1"># needed for calcPhase</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">peakdate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;peakdate&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sn</span><span class="o">.</span><span class="n">peakcriteria</span> <span class="o">=</span> <span class="n">criteria</span></div>
 
 <div class="viewcode-block" id="LC.calcPhase"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcPhase">[docs]</a>    <span class="k">def</span> <span class="nf">calcPhase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdsp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hours</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -483,6 +487,10 @@
 <span class="sd">            Keyword arguments matching column names in the light curve are used to specify a subset of points to plot.</span>
 <span class="sd">            Additional keyword arguments passed to :func:`matplotlib.pyplot.plot`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">xcol</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;filter&#39;</span><span class="p">):</span>
+            <span class="n">unit</span> <span class="o">=</span> <span class="n">xcol</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">xcol</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">xcol</span> <span class="o">=</span> <span class="s1">&#39;wl_eff&#39;</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">xcol</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">wl_eff</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span> <span class="k">if</span> <span class="n">unit</span> <span class="k">else</span> <span class="n">f</span><span class="o">.</span><span class="n">wl_eff</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]]</span>
         <span class="n">xchoices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="s1">&#39;MJD&#39;</span><span class="p">]</span>
         <span class="k">while</span> <span class="n">xcol</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">xchoices</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span>
@@ -739,7 +747,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2019, Griffin Hosseinzadeh.</p>
+    <p>&#169; Copyright 2022, Griffin Hosseinzadeh.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

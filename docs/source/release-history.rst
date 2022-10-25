@@ -2,8 +2,8 @@
 Release History
 ===============
 
-Unpublished
------------
+v0.7.0 (2022-10-25)
+-------------------
 * Generalize :meth:`Filter.blackbody` to :meth:`.Filter.synthesize` and :func:`blackbody_mcmc` to :func:`.spectrum_mcmc`
 * Allow for arbitrary priors in bolometric light curve fitting (see note at :ref:`v0.5.0 <v050>`)
 * Add ability to plot :class:`.LC` data vs. filter effective wavelength (SED)

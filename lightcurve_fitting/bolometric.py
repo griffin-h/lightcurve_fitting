@@ -169,7 +169,43 @@ def spectrum_mcmc(spectrum, epoch1, priors, starting_guesses, z=0., ebv=0., spec
         plot_chain(sampler.chain, labels)
 
     f4 = corner.corner(sampler.flatchain, labels=labels)
-    ax = f4.get_axes()[1]
+
+    # add tick labels and axis labels to the top right figure so tight_layout works
+    all_axes = np.reshape(f4.get_axes(), (ndim, ndim))
+    top_right = all_axes[0, -1]
+    top_right.set_frame_on(True)
+    top_right.xaxis.set_major_locator(plt.AutoLocator())
+    top_right.xaxis.tick_top()
+    top_right.set_xlabel('Frequency (THz)')
+    top_right.xaxis.set_label_position('top')
+    top_right.yaxis.set_major_locator(plt.AutoLocator())
+    top_right.yaxis.tick_right()
+    top_right.set_ylabel('$L_\\nu$ (W Hz$^{-1}$)')
+    top_right.yaxis.set_label_position('right')
+    f4.tight_layout(h_pad=0.05, w_pad=0.05)
+
+    bottom_left = all_axes[ndim // 2 - 1, (ndim + 1) // 2]
+    if bottom_left is top_right:
+        ax = top_right
+    else:
+        # add a new axis that takes up the entire top right of the figure
+        bbox0 = bottom_left.bbox.transformed(f4.transFigure.inverted())
+        bbox1 = top_right.bbox.transformed(f4.transFigure.inverted())
+        ax = f4.add_axes([bbox0.xmin, bbox0.ymin, bbox1.xmax - bbox0.xmin, bbox1.ymax - bbox0.ymin])
+        ax.xaxis.tick_top()
+        ax.set_xlabel('Frequency (THz)')
+        ax.xaxis.set_label_position('top')
+        ax.yaxis.tick_right()
+        ax.set_ylabel('$L_\\nu$ (W Hz$^{-1}$)')
+        ax.yaxis.set_label_position('right')
+
+        # turn the top right axis back off
+        top_right.set_frame_on(False)
+        top_right.xaxis.set_major_locator(plt.NullLocator())
+        top_right.set_xlabel('')
+        top_right.yaxis.set_major_locator(plt.NullLocator())
+        top_right.set_ylabel('')
+
     ps = sampler.flatchain[np.random.choice(sampler.flatchain.shape[0], 100)].T
     xfit = np.arange(min(freq_min, max(filtobj).freq_eff.value), max(freq_max, min(filtobj).freq_eff.value))
     freq = xfit * (1. + z)
@@ -177,19 +213,9 @@ def spectrum_mcmc(spectrum, epoch1, priors, starting_guesses, z=0., ebv=0., spec
     plt.sca(ax)
     epoch1.plot(xcol='freq', ycol='lum', offset_factor=0.)
     ax.plot(xfit, yfit.T, color='k', alpha=0.05)
-    ax.set_frame_on(True)
-    ax.xaxis.set_major_locator(AutoLocator())
-    ax.xaxis.tick_top()
-    ax.set_xlabel('Frequency (THz)')
-    ax.xaxis.set_label_position('top')
-    ax.yaxis.set_major_locator(AutoLocator())
-    ax.yaxis.tick_right()
-    ax.set_ylabel('$L_\\nu$ (W Hz$^{-1}$)')
-    ax.yaxis.set_label_position('right')
-    f4.tight_layout()
 
     os.makedirs(outpath, exist_ok=True)
-    filename = os.path.join(outpath, f'{mjdavg:.3f}.png')
+    filename = os.path.join(outpath, f'{mjdavg:.3f}.pdf')
     print(filename)
     f4.savefig(filename)
     if save_chains:

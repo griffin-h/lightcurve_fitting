@@ -15,6 +15,7 @@ Unpublished
 * Minor change to :meth:`.Filter.spectrum` to avoid inadvertently re-sorting transmission tables
 * When calibrating spectra to photometry, assume constant flux in a filter for a configurable amount of time after the last observed point
 * Plot SED over configurable range in :func:`.spectrum_mcmc`
+* Reoptimize SED corner plot for any number of parameters, and save as PDF instead of PNG
 
 v0.6.0 (2022-05-04)
 -------------------

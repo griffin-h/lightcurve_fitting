@@ -12,6 +12,7 @@ Unpublished
 * Add convenience function for preparing spectra to upload to WISeREP
 * Allow use of :meth:`.LC.findPeak` without :class:`.Supernova` object
 * Fix minor bug in rounding to display a given number of significant figures
+* Minor change to :meth:`.Filter.spectrum` to avoid inadvertently re-sorting transmission tables
 
 v0.6.0 (2022-05-04)
 -------------------

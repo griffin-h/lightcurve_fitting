@@ -279,9 +279,8 @@ class Filter:
             Average spectral luminosity (Lnu) or flux (Fnu) in the filter
         """
         freq *= (1. + z)
-        self.trans.sort('freq')
         T_per_freq = self.trans['T'].value / self.trans['freq'].value
-        T_interp = np.interp(freq, self.trans['freq'].value, T_per_freq, left=0., right=0.)
+        T_interp = np.interp(freq, self.trans['freq'][::-1].value, T_per_freq[::-1], left=0., right=0.)
         T_norm_per_freq = T_interp / np.trapz(T_interp, freq)
         return np.trapz(lum * extinction_law(freq, ebv) * T_norm_per_freq, freq)
 

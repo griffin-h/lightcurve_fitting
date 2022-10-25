@@ -52,8 +52,34 @@ def pseudo(temp, radius, z, filter0=filtdict['I'], filter1=filtdict['U'], cutoff
     return L_opt
 
 
+def plot_chain(chain, labels=None):
+    """
+    Plot the chain histories for an MCMC run
+
+    Parameters
+    ----------
+    chain : array-like
+        Array containing the MCMC chain history, e.g., from :meth:`emcee.EnsembleSampler.chain`
+    labels : iterable, optional
+        A list of axis labels for each parameter in the chain
+
+    Returns
+    -------
+    fig : matplotlib.pyplot.Figure
+        Figure object containing the chain history plots
+    """
+    ndim = chain.shape[-1]
+    fig, ax = plt.subplots(ndim, figsize=(6., 2. * ndim))
+    for i in range(ndim):
+        ax[i].plot(chain[:, :, i].T, 'k', alpha=0.2)
+        if labels:
+            ax[i].set_ylabel(labels[i])
+    return fig
+
+
 def spectrum_mcmc(spectrum, epoch1, priors, p0, z=0., ebv=0., spectrum_kwargs=None, show=False, outpath='.',
-                  nwalkers=10, burnin_steps=200, steps=100, save_chains=False, use_sigma=False, sigma_type='relative'):
+                  nwalkers=10, burnin_steps=200, steps=100, save_chains=False, use_sigma=False, sigma_type='relative',
+                  labels=None):
     """
     Fit the given spectral energy distribution to an epoch of photometry using a Markov-chain Monte Carlo routine
 
@@ -93,6 +119,8 @@ def spectrum_mcmc(spectrum, epoch1, priors, p0, z=0., ebv=0., spectrum_kwargs=No
     sigma_type : str, optional
         If 'relative' (default), sigma will be in units of the individual photometric uncertainties.
         If 'absolute', sigma will be in units of the median photometric uncertainty.
+    labels : list, optional
+        Axis labels for the chain histories and corner plot.
 
     Returns
     -------
@@ -141,19 +169,12 @@ def spectrum_mcmc(spectrum, epoch1, priors, p0, z=0., ebv=0., spectrum_kwargs=No
 
     # Plotting
     if show:
-        f1, ax2 = plt.subplots(ndim)
-        for i in range(len(ax2)):
-            ax2[i].plot(sampler.chain[:, :, i].T, 'k', alpha=0.2)
+        plot_chain(sampler.chain, labels)
     sampler.reset()
     sampler.run_mcmc(pos, steps)
     if show:
-        f2, ax3 = plt.subplots(ndim)
-        for i in range(len(ax3)):
-            ax3[i].plot(sampler.chain[:, :, i].T, 'k', alpha=0.2)
+        plot_chain(sampler.chain, labels)
 
-    labels = ['T (kK)', 'R (1000 R$_\\odot$)']
-    if use_sigma:
-        labels.append('$\\sigma$')
     f4 = corner.corner(sampler.flatchain, labels=labels)
     ax = f4.get_axes()[1]
     ps = sampler.flatchain[np.random.choice(sampler.flatchain.shape[0], 100)].T
@@ -612,7 +633,8 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
                 raise ValueError
             sampler = spectrum_mcmc(planck_fast, epoch1, priors, p0, z=z, spectrum_kwargs={'cutoff_freq': cutoff_freq},
                                     outpath=outpath, nwalkers=nwalkers, burnin_steps=burnin_steps, steps=steps,
-                                    show=show, save_chains=save_chains, use_sigma=use_sigma, sigma_type=sigma_type)
+                                    show=show, save_chains=save_chains, use_sigma=use_sigma, sigma_type=sigma_type,
+                                    labels=['T (kK)', 'R (1000 R$_\\odot$)'])
             L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq=cutoff_freq)
             (T_mcmc, R_mcmc), (dT0_mcmc, dR0_mcmc), (dT1_mcmc, dR1_mcmc) = median_and_unc(sampler.flatchain[:, :2])
             L_mcmc, dL_mcmc0, dL_mcmc1 = median_and_unc(L_mcmc_opt)

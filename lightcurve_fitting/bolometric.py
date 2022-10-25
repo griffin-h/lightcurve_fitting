@@ -627,7 +627,7 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
             continue
 
         if nfilt > 1:
-            p0 = [10., 10.]
+            p0 = np.array([10., 10.])
         elif sampler is not None:
             priors[0] = gaussian_kde(sampler.flatchain[:, 0]).logpdf
             p0 = np.median(sampler.flatchain, axis=0)
@@ -642,15 +642,17 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
         R_range = (priors[1].p_min, priors[1].p_max)
         try:
             temp, radius, dtemp, drad, lum, dlum, L_opt = blackbody_lstsq(epoch1, z, p0, T_range, R_range, cutoff_freq)
-            p0 = [temp, radius]
+            p0 = np.array([temp, radius])
         except RuntimeError:  # optimization failed
             temp = radius = dtemp = drad = lum = dlum = L_opt = np.nan
 
         rng = np.random.default_rng()
-        starting_guesses = rng.normal(nwalkers, 2) + p0
+        starting_guesses = rng.normal(size=(nwalkers, 2)) + p0
         starting_guesses[starting_guesses <= 0.] = 1.
+        labels = ['T (kK)', 'R (1000 R$_\\odot$)']
         if use_sigma:
-            starting_guesses = np.append(starting_guesses, np.abs(rng.normal(nwalkers, 1)), axis=1)
+            starting_guesses = np.append(starting_guesses, np.abs(rng.normal(size=(nwalkers, 1))), axis=1)
+            labels.append('$\\sigma$')
 
         # blackbody - MCMC
         try:
@@ -660,7 +662,7 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
             sampler = spectrum_mcmc(planck_fast, epoch1, priors, starting_guesses, z=z, spectrum_kwargs=spectrum_kwargs,
                                     outpath=outpath, nwalkers=nwalkers, burnin_steps=burnin_steps, steps=steps,
                                     show=show, save_chains=save_chains, use_sigma=use_sigma, sigma_type=sigma_type,
-                                    labels=['T (kK)', 'R (1000 R$_\\odot$)'])
+                                    labels=labels)
             L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq=cutoff_freq)
             (T_mcmc, R_mcmc), (dT0_mcmc, dR0_mcmc), (dT1_mcmc, dR1_mcmc) = median_and_unc(sampler.flatchain[:, :2])
             L_mcmc, dL_mcmc0, dL_mcmc1 = median_and_unc(L_mcmc_opt)

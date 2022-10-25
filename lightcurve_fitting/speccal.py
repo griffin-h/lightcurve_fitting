@@ -324,7 +324,7 @@ def readspec(f, verbose=False, return_header=False):
         return x, y, date, telescope, instrument
 
 
-def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=None, show=False):
+def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=None, max_extrapolate=1., show=False):
     """
     Calibrate a set of spectra to an observed broadband light curve.
 
@@ -342,6 +342,8 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
         Polynomial order for the calibration function. Default: 0 (constant factor)
     subtract_percentile : float, optional
         Subtract flux corresponding to this percentile of the spectrum before calibration. Default: no subtraction
+    max_extrapolate : float, optional
+        Assume constant flux in a filter for this many days after the last observed point. Default: 1 day.
     show : bool, optional
         Plot the observed light curve and the uncalibrated and calibrated spectra, and ask whether to save the results
     """
@@ -386,7 +388,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
                 print(filt, "and spectrum don't overlap")
                 continue  # filter and spectrum don't overlap
             lc_filt = lc.where(filter=filt, nondet=False)
-            if len(lc_filt) == 0 or mjd - np.max(lc_filt['MJD']) > 1. or mjd < np.min(lc_filt['MJD']):
+            if len(lc_filt) == 0 or mjd - np.max(lc_filt['MJD']) > max_extrapolate or mjd < np.min(lc_filt['MJD']):
                 print(filt, "not observed before and after spectrum")
                 continue
             flux_lc = np.interp(mjd, lc_filt['MJD'], lc_filt['flux'])
@@ -579,8 +581,11 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--filters', nargs='+', help='filters to use for calibration')
     parser.add_argument('-o', '--order', type=int, default=0, help='polynomial order of correction function')
     parser.add_argument('--subtract-percentile', type=float, help='subtract continuum from spectrum before correcting')
+    parser.add_argument('--max-extrapolate', type=float,
+                        help='assume constant flux in a filter for this many days after the last observed point')
     parser.add_argument('--show', action='store_true')
     args = parser.parse_args()
 
     lc = LC.read(args.lc, format=args.format)
-    calibrate_spectra(args.spectra, lc, args.filters, args.order, args.subtract_percentile, args.show)
+    calibrate_spectra(args.spectra, lc, args.filters, args.order, args.subtract_percentile, args.max_extrapolate,
+                      args.show)

@@ -16,6 +16,7 @@ Unpublished
 * When calibrating spectra to photometry, assume constant flux in a filter for a configurable amount of time after the last observed point
 * Plot SED over configurable range in :func:`.spectrum_mcmc`
 * Reoptimize SED corner plot for any number of parameters, and save as PDF instead of PNG
+* Refactor SED corner plots into its own function: :func:`.spectrum_corner`
 
 v0.6.0 (2022-05-04)
 -------------------

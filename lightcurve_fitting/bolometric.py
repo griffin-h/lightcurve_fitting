@@ -168,7 +168,70 @@ def spectrum_mcmc(spectrum, epoch1, priors, starting_guesses, z=0., ebv=0., spec
     if show:
         plot_chain(sampler.chain, labels)
 
-    f4 = corner.corner(sampler.flatchain, labels=labels)
+    os.makedirs(outpath, exist_ok=True)
+    if save_chains:
+        chain_filename = os.path.join(outpath, f'{mjdavg:.3f}.npy')
+        np.save(chain_filename, sampler.flatchain)
+
+    f4 = spectrum_corner(spectrum, epoch1, sampler.flatchain, z, ebv, spectrum_kwargs, use_sigma, labels,
+                         freq_min=freq_min, freq_max=freq_max, save_plot_as=os.path.join(outpath, f'{mjdavg:.3f}.pdf'))
+    if show:
+        plt.show()
+    else:
+        plt.close(f4)
+
+    return sampler
+
+
+def spectrum_corner(spectrum, epoch1, sampler_flatchain, z=0., ebv=0., spectrum_kwargs=None, use_sigma=False,
+                    labels=None, freq_min=100., freq_max=1000., save_plot_as=''):
+    """
+    Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model SEDs.
+
+    Parameters
+    ----------
+    spectrum : function
+        Function describing the spectrum. The first argument must be frequency in THz, and it must return spectral
+        luminosity in watts per hertz. For a blackbody, you can use :func:`.models.planck_fast`.
+    epoch1 : lightcurve_fitting.lightcurve.LC
+        A single "epoch" of photometry that defines the observed spectral energy distribution
+    sampler_flatchain : array-like
+        2D array containing the aggregated MCMC chain histories
+    z : float, optional
+        Redshift between the emission source and the observed filter. Default: 0.
+    ebv : float, array-like, optional
+        Selective extinction :math:`E(B-V)` in magnitudes, evaluated using a Fitzpatrick (1999) extinction law with
+        :math:`R_V=3.1`. Its shape must be broadcastable to any array-like arguments. Default: 0.
+    spectrum_kwargs : dict, optional
+        Keyword arguments to be passed to the ``spectrum`` function.
+    use_sigma : bool, optional
+        Include an intrinsic scatter parameter. Default: False.
+    labels : list, optional
+        Axis labels for the chain histories and corner plot.
+    freq_min, freq_max : float, optional
+        Minimum and maximum frequencies for the SED panel in the corner plot. Default: (100., 1000.) or observed range.
+    save_plot_as : str, optional
+        Filename to which to save the resulting plot
+
+    Returns
+    -------
+    f4 : matplotlib.pyplot.Figure
+        Figure containing the corner and SED plots.
+    """
+
+    ndim = sampler_flatchain.shape[-1]
+    if spectrum_kwargs is None:
+        spectrum_kwargs = {}
+
+    f4 = corner.corner(sampler_flatchain, labels=labels)
+
+    ps = sampler_flatchain[np.random.choice(sampler_flatchain.shape[0], 100)].T
+    xmin = min(freq_min, epoch1['filter'].max().freq_eff.value)
+    xmax = max(freq_max, epoch1['filter'].min().freq_eff.value)
+    xfit = np.arange(xmin, xmax)
+    freq = xfit * (1. + z)
+    yfit = spectrum(freq, *ps[:-1 if use_sigma else None], **spectrum_kwargs) * extinction_law(freq, ebv)
+    yscale = 10. ** np.floor(np.log10(yfit.max()))
 
     # add tick labels and axis labels to the top right figure so tight_layout works
     all_axes = np.reshape(f4.get_axes(), (ndim, ndim))
@@ -180,7 +243,7 @@ def spectrum_mcmc(spectrum, epoch1, priors, starting_guesses, z=0., ebv=0., spec
     top_right.xaxis.set_label_position('top')
     top_right.yaxis.set_major_locator(plt.AutoLocator())
     top_right.yaxis.tick_right()
-    top_right.set_ylabel('$L_\\nu$ (W Hz$^{-1}$)')
+    top_right.set_ylabel(f'Luminosity $L_\\nu$ (10$^{{{np.log10(yscale):.0f}}}$ W Hz$^{{-1}}$)')
     top_right.yaxis.set_label_position('right')
     f4.tight_layout(h_pad=0.05, w_pad=0.05)
 
@@ -196,37 +259,25 @@ def spectrum_mcmc(spectrum, epoch1, priors, starting_guesses, z=0., ebv=0., spec
         ax.set_xlabel('Frequency (THz)')
         ax.xaxis.set_label_position('top')
         ax.yaxis.tick_right()
-        ax.set_ylabel('$L_\\nu$ (W Hz$^{-1}$)')
+        ax.set_ylabel(f'Luminosity $L_\\nu$ (10$^{{{np.log10(yscale):.0f}}}$ W Hz$^{{-1}}$)')
         ax.yaxis.set_label_position('right')
 
-        # turn the top right axis back off
+        # turn the original top right axis back off
         top_right.set_frame_on(False)
         top_right.xaxis.set_major_locator(plt.NullLocator())
         top_right.set_xlabel('')
         top_right.yaxis.set_major_locator(plt.NullLocator())
         top_right.set_ylabel('')
 
-    ps = sampler.flatchain[np.random.choice(sampler.flatchain.shape[0], 100)].T
-    xfit = np.arange(min(freq_min, max(filtobj).freq_eff.value), max(freq_max, min(filtobj).freq_eff.value))
-    freq = xfit * (1. + z)
-    yfit = spectrum(freq, *ps[:-1 if use_sigma else None], **spectrum_kwargs) * extinction_law(freq, ebv)
-    plt.sca(ax)
-    epoch1.plot(xcol='freq', ycol='lum', offset_factor=0.)
-    ax.plot(xfit, yfit.T, color='k', alpha=0.05)
+    for row in epoch1:
+        ax.errorbar(row['freq'], row['lum'] / yscale, row['dlum'] / yscale, marker='o', **row['filter'].plotstyle)
+    ax.plot(xfit, yfit.T / yscale, color='k', alpha=0.05)
 
-    os.makedirs(outpath, exist_ok=True)
-    filename = os.path.join(outpath, f'{mjdavg:.3f}.pdf')
-    print(filename)
-    f4.savefig(filename)
-    if save_chains:
-        chain_filename = os.path.join(outpath, f'{mjdavg:.3f}.npy')
-        np.save(chain_filename, sampler.flatchain)
-    if show:
-        plt.show()
-    else:
-        plt.close(f4)
+    if save_plot_as:
+        f4.savefig(save_plot_as)
+        print('saving figure as ' + save_plot_as)
 
-    return sampler
+    return f4
 
 
 def plot_bolometric_results(t0, save_plot_as=None):

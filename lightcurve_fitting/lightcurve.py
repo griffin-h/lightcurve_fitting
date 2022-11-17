@@ -261,7 +261,7 @@ class LC(Table):
             zp = self.zp
         self['mag'], self['dmag'] = flux2mag(self['flux'], self['dflux'], zp, self.get('nondet'), self.nondetSigmas)
 
-    def calcAbsMag(self, dm=None, extinction=None, hostext=None):
+    def calcAbsMag(self, dm=None, extinction=None, hostext=None, ebv=None, rv=None, host_ebv=None, host_rv=None):
         """
         Calculate the ``'absmag'`` column from the ``'mag'`` column by correcting for distance and extinction
 
@@ -272,10 +272,21 @@ class LC(Table):
             distance.
         extinction : dict, optional
             Milky Way extinction coefficients :math:`A_λ` for each filter. Default: use the extinction of ``self.sn``,
-            if any. Otherwise do not correct for Milky Way extinction.
+            if any.
         hostext : dict, optional
             Host galaxy extinction coefficients :math:`A_λ` for each filter. Default: use the extinction of ``self.sn``,
-            if any. Otherwise do not correct for host galaxy extinction.
+            if any.
+        ebv : float, optional
+            Milky Way selective extinction :math:`E(B-V)`, used if ``extinction`` and ``self.sn`` are not given.
+            Default: 0.
+        host_ebv : float, optional
+            Host galaxy selective extinction :math:`E(B-V)`, used if ``hostext`` and ``self.sn`` are not given.
+            Default: 0.
+        rv : float, optional
+            Ratio of total to selective Milky Way extinction :math:`R_V`, used with the ``ebv`` argument. Default: 3.1.
+        host_rv : float, optional
+            Ratio of total to selective host-galaxy extinction :math:`R_V`, used with the ``host_ebv`` argument.
+             Default: 3.1.
         """
         if dm is not None:
             self.meta['dm'] = dm
@@ -284,19 +295,30 @@ class LC(Table):
         elif 'dm' not in self.meta:
             self.meta['dm'] = 0.
 
+        if ebv is None:
+            ebv = self.meta.get('ebv')
+        if host_ebv is None:
+            host_ebv = self.meta.get('host_ebv')
+        if rv is None:
+            rv = self.meta.get('rv', 3.1)
+        if host_rv is None:
+            host_rv = self.meta.get('host_rv', 3.1)
+
         if extinction is not None:
             self.meta['extinction'] = extinction
         elif self.sn is not None:
             self.meta['extinction'] = self.sn.extinction
         elif 'extinction' not in self.meta:
-            self.meta['extinction'] = {}
+            self.meta['extinction'] = {f: ebv * rv / 3.1 * f.R for f in set(self['filter'])
+                                       if f.R is not None and ebv is not None}
 
         if hostext is not None:
             self.meta['hostext'] = hostext
         elif self.sn is not None:
             self.meta['hostext'] = self.sn.hostext
         elif 'hostext' not in self.meta:
-            self.meta['hostext'] = {}
+            self.meta['hostext'] = {f: host_ebv * host_rv / 3.1 * f.R for f in set(self['filter'])
+                                    if f.R is not None and host_ebv is not None}
 
         self['absmag'] = self['mag'].data - self.meta['dm']
         for filtobj in set(self['filter']):

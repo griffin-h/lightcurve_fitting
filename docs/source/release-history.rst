@@ -2,6 +2,10 @@
 Release History
 ===============
 
+Unreleased
+----------
+* Automatically calculate extinction based on :math:`E(B-V)` and :math:`R_V` if :math:`A_V` are not given.
+
 v0.7.0 (2022-10-25)
 -------------------
 * Generalize :meth:`Filter.blackbody` to :meth:`.Filter.synthesize` and :func:`blackbody_mcmc` to :func:`.spectrum_mcmc`

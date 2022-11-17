@@ -230,6 +230,8 @@ class Filter:
             self.dfreq = -dfreq
             self.freq_range = (freq_eff.value - freq0, freq1 - freq_eff.value)
 
+            self.R = extinction_law(self.freq_eff, 1.)
+
     def synthesize(self, spectrum, *args, z=0., ebv=0., **kwargs):
         """
         Returns the average Lnu of the given spectrum in this filter

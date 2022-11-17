@@ -309,7 +309,7 @@ class LC(Table):
         elif self.sn is not None:
             self.meta['extinction'] = self.sn.extinction
         elif 'extinction' not in self.meta:
-            self.meta['extinction'] = {f: ebv * rv / 3.1 * f.R for f in set(self['filter'])
+            self.meta['extinction'] = {f.name: ebv * rv / 3.1 * f.R for f in set(self['filter'])
                                        if f.R is not None and ebv is not None}
 
         if hostext is not None:

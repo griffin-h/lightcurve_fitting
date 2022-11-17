@@ -3,6 +3,6 @@ numpy
 matplotlib
 emcee >= 3.1.1
 corner
-astropy
+astropy >= 5
 scipy
 extinction

@@ -317,7 +317,7 @@ class LC(Table):
         elif self.sn is not None:
             self.meta['hostext'] = self.sn.hostext
         elif 'hostext' not in self.meta:
-            self.meta['hostext'] = {f: host_ebv * host_rv / 3.1 * f.R for f in set(self['filter'])
+            self.meta['hostext'] = {f.name: host_ebv * host_rv / 3.1 * f.R for f in set(self['filter'])
                                     if f.R is not None and host_ebv is not None}
 
         self['absmag'] = self['mag'].data - self.meta['dm']

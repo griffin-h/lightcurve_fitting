@@ -231,7 +231,7 @@ class Filter:
             self.dfreq = -dfreq
             self.freq_range = (freq_eff.value - freq0, freq1 - freq_eff.value)
 
-            self.R = fitzpatrick99(np.array([self.wl_eff.to(u.angstrom).value]), 1.)
+            self.R = fitzpatrick99(np.array([self.wl_eff.to(u.angstrom).value]), 1.)[0]
 
     def synthesize(self, spectrum, *args, z=0., ebv=0., **kwargs):
         """

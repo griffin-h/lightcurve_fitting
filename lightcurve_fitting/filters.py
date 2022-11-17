@@ -166,6 +166,7 @@ class Filter:
         self.wl_eff = None
         self.dwl = None
         self.wl_range = None
+        self.R = None
 
     def read_curve(self, show=False, force=False):
         """

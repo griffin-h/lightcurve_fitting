@@ -4,6 +4,7 @@ from matplotlib.path import Path
 from astropy.table import Table, vstack, MaskedColumn
 from .filters import filtdict
 import itertools
+from extinction import fitzpatrick99
 from matplotlib.markers import MarkerStyle
 try:
     from config import markers
@@ -309,16 +310,16 @@ class LC(Table):
         elif self.sn is not None:
             self.meta['extinction'] = self.sn.extinction
         elif 'extinction' not in self.meta:
-            self.meta['extinction'] = {f.name: ebv * rv / 3.1 * f.R for f in set(self['filter'])
-                                       if f.R is not None and ebv is not None}
+            self.meta['extinction'] = {f.name: fitzpatrick99(np.array([f.wl_eff.to(u.angstrom).value]), rv*ebv, rv)[0] for f in set(self['filter'])
+                                       if f.wl_eff is not None and ebv is not None}
 
         if hostext is not None:
             self.meta['hostext'] = hostext
         elif self.sn is not None:
             self.meta['hostext'] = self.sn.hostext
         elif 'hostext' not in self.meta:
-            self.meta['hostext'] = {f.name: host_ebv * host_rv / 3.1 * f.R for f in set(self['filter'])
-                                    if f.R is not None and host_ebv is not None}
+            self.meta['hostext'] = {f.name: fitzpatrick99(np.array([f.wl_eff.to(u.angstrom).value]), host_rv*host_ebv, host_rv)[0] for f in set(self['filter'])
+                                       if f.wl_eff is not None and host_ebv is not None}
 
         self['absmag'] = self['mag'].data - self.meta['dm']
         for filtobj in set(self['filter']):

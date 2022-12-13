@@ -540,6 +540,16 @@ class LC(Table):
             t.filters_to_objects()
         return t
 
+    @classmethod
+    def from_table(cls, t, fill_values=None):
+        if fill_values is None:
+            fill_values = [('--', '0'), ('', '0')]
+        t = t.filled(fill_values)
+        t.normalize_column_names()
+        if 'filt' in t.colnames:
+            t.filters_to_objects()
+        return t
+
 
 def flux2mag(flux, dflux=np.array(np.nan), zp=0., nondet=None, nondetSigmas=3.):
     """

@@ -544,7 +544,8 @@ class LC(Table):
     def from_table(cls, t, fill_values=None):
         if fill_values is None:
             fill_values = [('--', '0'), ('', '0')]
-        t = t.filled(fill_values)
+        t.fill_values = fill_values
+        t = t.filled()
         t.normalize_column_names()
         if 'filt' in t.colnames:
             t.filters_to_objects()

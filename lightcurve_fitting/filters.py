@@ -29,7 +29,7 @@ def extinction_law(freq, ebv, rv=3.1):
     extinction : array-like
         Extinction factor :math:`10^{A/-2.5}` at each input wavelength.
     """
-    A = np.squeeze([fitzpatrick99(c / freq, rv * e) for e in np.atleast_1d(ebv)])
+    A = np.squeeze([fitzpatrick99(c / freq, rv * e, rv) for e in np.atleast_1d(ebv)])
     return 10. ** (A / -2.5)
 
 

@@ -6,6 +6,7 @@ Unreleased
 ----------
 * Require Astropy version 5 (there were already features that required this)
 * Automatically calculate extinction based on :math:`E(B-V)` and :math:`R_V` if :math:`A_V` are not given
+* Bug fix in :class:`.ShockCooling3` when :math:`R_V \ne 3.1`
 
 v0.7.0 (2022-10-25)
 -------------------

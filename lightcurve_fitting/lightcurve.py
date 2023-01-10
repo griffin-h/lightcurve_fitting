@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
 from astropy.table import Table, vstack, MaskedColumn
+from astropy.cosmology import Planck18
 from .filters import filtdict
 import itertools
 from matplotlib.markers import MarkerStyle
@@ -258,15 +259,16 @@ class LC(Table):
             zp = self.zp
         self['mag'], self['dmag'] = flux2mag(self['flux'], self['dflux'], zp, self.get('nondet'), self.nondetSigmas)
 
-    def calcAbsMag(self, dm=None, extinction=None, hostext=None, ebv=None, rv=None, host_ebv=None, host_rv=None):
+    def calcAbsMag(self, dm=None, extinction=None, hostext=None, ebv=None, rv=None, host_ebv=None, host_rv=None,
+                   z=None):
         """
         Calculate the ``'absmag'`` column from the ``'mag'`` column by correcting for distance and extinction
 
         Parameters
         ----------
         dm : float, optional
-            Distance modulus. Default: use the distance modulus of ``self.sn``, if any. Otherwise do not correct for
-            distance.
+            Distance modulus. Default: use the distance modulus of ``self.sn``, if any. Otherwise, use the redshift, if
+            given. If no distance modulus or redshift is given, do not correct for distance.
         extinction : dict, optional
             Milky Way extinction coefficients :math:`A_λ` for each filter. Default: use the extinction of ``self.sn``,
             if any.
@@ -284,11 +286,24 @@ class LC(Table):
         host_rv : float, optional
             Ratio of total to selective host-galaxy extinction :math:`R_V`, used with the ``host_ebv`` argument.
              Default: 3.1.
+        z : float, optional
+            Redshift of the host galaxy. Used to redshift the filters for host galaxy extinction. If no distance
+            modulus is given, a redshift-dependent distance is calculated using the Planck18 cosmology. Default: 0.
         """
+        if z is not None:
+            self.meta['z'] = z
+        elif self.sn is not None:
+            self.meta['z'] = self.sn.z
+        elif 'z' not in self.meta:
+            self.meta['z'] = 0.
+
         if dm is not None:
             self.meta['dm'] = dm
         elif self.sn is not None:
             self.meta['dm'] = self.sn.dm
+        elif self.meta.get('z'):
+            self.meta['dm'] = Planck18.distmod(self.meta['z']).value
+            print('using a redshift-dependent distance modulus')
         elif 'dm' not in self.meta:
             self.meta['dm'] = 0.
 
@@ -314,7 +329,7 @@ class LC(Table):
         elif self.sn is not None:
             self.meta['hostext'] = self.sn.hostext
         elif 'hostext' not in self.meta:
-            self.meta['hostext'] = {f.name: f.extinction(host_ebv, host_rv)
+            self.meta['hostext'] = {f.name: f.extinction(host_ebv, host_rv, self.meta.get('z', 0.))
                                     for f in set(self['filter']) if f.wl_eff is not None and host_ebv is not None}
 
         self['absmag'] = self['mag'].data - self.meta['dm']

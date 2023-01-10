@@ -166,7 +166,6 @@ class Filter:
         self._wl_eff = None
         self._dwl = None
         self._wl_range = None
-        self.R = None
 
     def read_curve(self, show=False, force=False):
         """
@@ -232,8 +231,6 @@ class Filter:
             self._dfreq = -dfreq
             self._freq_range = (freq_eff.value - freq0, freq1 - freq_eff.value)
 
-            self.R = fitzpatrick99(np.array([self.wl_eff.to(u.angstrom).value]), 1.)[0]
-
     @property
     def trans(self):
         self.read_curve()
@@ -268,6 +265,27 @@ class Filter:
     def freq_range(self):
         self.read_curve()
         return self._freq_range
+
+    def extinction(self, ebv, rv=3.1, z=0.):
+        """
+        Extinction :math:`A_\lambda` at the effective wavelength of this filter
+
+        Parameters
+        ----------
+        ebv : array-like
+            Selective extinction :math:`E(B-V)` in magnitudes
+        rv : float, optional
+            Ratio of total to selective extinction :math:`R_V`. Default: 3.1.
+        z : float, optional
+            Redshift between the dust and the observed filter. Default: 0 (appropriate for Milky Way extinction).
+
+        Returns
+        -------
+        extinction : float
+            Extinction at the effective wavelength of this filter in magnitudes
+        """
+        if self.wl_eff is not None:
+            return fitzpatrick99(np.array([self.wl_eff.to(u.angstrom).value / (1. + z)]), ebv * rv, rv)[0]
 
     def synthesize(self, spectrum, *args, z=0., ebv=0., **kwargs):
         """

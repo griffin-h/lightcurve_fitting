@@ -354,7 +354,6 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
     filts = set(lc['filter'])
 
     for filt in filts:
-        filt.read_curve()
         filt.trans.sort('freq')
 
     plt.ion()

@@ -159,13 +159,13 @@ class Filter:
         else:
             self.filename = ''
         self.angstrom = angstrom
-        self.trans = None
-        self.freq_eff = None
-        self.dfreq = None
-        self.freq_range = None
-        self.wl_eff = None
-        self.dwl = None
-        self.wl_range = None
+        self._trans = None
+        self._freq_eff = None
+        self._dfreq = None
+        self._freq_range = None
+        self._wl_eff = None
+        self._dwl = None
+        self._wl_range = None
         self.R = None
 
     def read_curve(self, show=False, force=False):
@@ -179,59 +179,95 @@ class Filter:
         force : bool, optional
             If True, reread the transmission function from ``self.filename`` even if is already stored in ``self.trans``
         """
-        if (self.trans is None or force) and self.filename:
+        if (self._trans is None or force) and self.filename:
             i = Filter.order.index(self.name) / float(len(Filter.order))
-            self.trans = Table.read(self.filename, format='ascii', names=('wl', 'T'))
+            trans = Table.read(self.filename, format='ascii', names=('wl', 'T'))
             if self.angstrom:
-                self.trans['wl'] = self.trans['wl'] / 10.
-            self.trans['wl'].unit = u.nm
-            self.trans.sort('wl')
-            self.trans['T'] /= np.max(self.trans['T'])
-            self.trans['freq'] = (const.c / self.trans['wl']).to(u.THz)
+                trans['wl'] = trans['wl'] / 10.
+            trans['wl'].unit = u.nm
+            trans.sort('wl')
+            trans['T'] /= np.max(trans['T'])
+            trans['freq'] = (const.c / trans['wl']).to(u.THz)
 
-            dwl = np.trapz(self.trans['T'].quantity, self.trans['wl'].quantity)
-            wl_eff = np.trapz(self.trans['T'].quantity * self.trans['wl'].quantity, self.trans['wl'].quantity) / dwl
-            left = self.trans[(self.trans['wl'] < wl_eff.value) & (self.trans['T'] >= 0.1) * (self.trans['T'] <= 0.9)]
+            dwl = np.trapz(trans['T'].quantity, trans['wl'].quantity)
+            wl_eff = np.trapz(trans['T'].quantity * trans['wl'].quantity, trans['wl'].quantity) / dwl
+            left = trans[(trans['wl'] < wl_eff.value) & (trans['T'] >= 0.1) * (trans['T'] <= 0.9)]
             left.sort('T')
             wl0 = np.interp(0.5, left['T'], left['wl'])
-            right = self.trans[(self.trans['wl'] > wl_eff.value) & (self.trans['T'] >= 0.1) * (self.trans['T'] <= 0.9)]
+            right = trans[(trans['wl'] > wl_eff.value) & (trans['T'] >= 0.1) * (trans['T'] <= 0.9)]
             right.sort('T')
             wl1 = np.interp(0.5, right['T'], right['wl'])
             if show:
                 plt.figure(1)
                 ax1 = plt.gca()
-                ax1.plot(self.trans['wl'], self.trans['T'], self.color if self.color != 'w' else 'k',
+                ax1.plot(trans['wl'], trans['T'], self.color if self.color != 'w' else 'k',
                          label=self.system + ' ' + self.name)
                 ax1.errorbar(wl_eff.value, i, xerr=[[wl_eff.value - wl0], [wl1 - wl_eff.value]], marker='o',
                              **self.plotstyle)
                 ax1.set_xlabel('Wavelength (nm)')
                 ax1.set_ylabel('Transmission')
 
-            dfreq = np.trapz(self.trans['T'].quantity, self.trans['freq'].quantity)
-            freq_eff = np.trapz(self.trans['T'].quantity * self.trans['freq'].quantity,
-                                self.trans['freq'].quantity) / dfreq
+            dfreq = np.trapz(trans['T'].quantity, trans['freq'].quantity)
+            freq_eff = np.trapz(trans['T'].quantity * trans['freq'].quantity,
+                                trans['freq'].quantity) / dfreq
             freq0 = np.interp(0.5, right['T'], right['freq'])
             freq1 = np.interp(0.5, left['T'], left['freq'])
-            T_per_freq = self.trans['T'].quantity / self.trans['freq'].quantity
-            self.trans['T_norm_per_freq'] = (T_per_freq / np.trapz(T_per_freq, self.trans['freq'].quantity))
+            T_per_freq = trans['T'].quantity / trans['freq'].quantity
+            trans['T_norm_per_freq'] = (T_per_freq / np.trapz(T_per_freq, trans['freq'].quantity))
             if show:
                 plt.figure(2)
                 ax2 = plt.gca()
-                ax2.plot(self.trans['freq'], self.trans['T'], self.color if self.color != 'w' else 'k',
+                ax2.plot(trans['freq'], trans['T'], self.color if self.color != 'w' else 'k',
                          label=self.system + ' ' + self.name)
                 ax2.errorbar(freq_eff.value, i, xerr=[[freq_eff.value - freq0], [freq1 - freq_eff.value]], marker='o',
                              **self.plotstyle)
                 ax2.set_xlabel('Frequency (THz)')
                 ax2.set_ylabel('Transmission')
 
-            self.wl_eff = wl_eff
-            self.dwl = dwl
-            self.wl_range = (wl_eff.value - wl0, wl1 - wl_eff.value)
-            self.freq_eff = freq_eff
-            self.dfreq = -dfreq
-            self.freq_range = (freq_eff.value - freq0, freq1 - freq_eff.value)
+            self._trans = trans
+            self._wl_eff = wl_eff
+            self._dwl = dwl
+            self._wl_range = (wl_eff.value - wl0, wl1 - wl_eff.value)
+            self._freq_eff = freq_eff
+            self._dfreq = -dfreq
+            self._freq_range = (freq_eff.value - freq0, freq1 - freq_eff.value)
 
             self.R = fitzpatrick99(np.array([self.wl_eff.to(u.angstrom).value]), 1.)[0]
+
+    @property
+    def trans(self):
+        self.read_curve()
+        return self._trans
+
+    @property
+    def wl_eff(self):
+        self.read_curve()
+        return self._wl_eff
+
+    @property
+    def dwl(self):
+        self.read_curve()
+        return self._dwl
+
+    @property
+    def wl_range(self):
+        self.read_curve()
+        return self._wl_range
+
+    @property
+    def freq_eff(self):
+        self.read_curve()
+        return self._freq_eff
+
+    @property
+    def dfreq(self):
+        self.read_curve()
+        return self._dfreq
+
+    @property
+    def freq_range(self):
+        self.read_curve()
+        return self._freq_range
 
     def synthesize(self, spectrum, *args, z=0., ebv=0., **kwargs):
         """

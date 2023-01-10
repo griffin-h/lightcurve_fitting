@@ -1,4 +1,4 @@
-from .filters import all_filters, filtdict, extinction_law
+from .filters import filtdict, extinction_law
 from .models import planck_fast, UniformPrior, LogUniformPrior, GaussianPrior
 from .lightcurve import LC
 
@@ -7,7 +7,6 @@ from astropy import units as u
 
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.ticker import AutoLocator
 from scipy.optimize import curve_fit, OptimizeWarning
 from scipy.stats import gaussian_kde
 import emcee
@@ -15,9 +14,6 @@ import corner
 import os
 from pkg_resources import resource_filename
 import warnings
-
-for filt in all_filters:
-    filt.read_curve()
 
 plt.style.use(resource_filename('lightcurve_fitting', 'serif.mplstyle'))
 

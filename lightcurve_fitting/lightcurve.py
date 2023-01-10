@@ -145,7 +145,7 @@ class LC(Table):
             self.remove_column('nondet')
             self['nondet'] = nondet
 
-    def filters_to_objects(self, read_curve=True):
+    def filters_to_objects(self):
         """
         Parse the ``'filt'`` column into :class:`filters.Filter` objects and store in the ``'filter'`` column
 
@@ -167,9 +167,6 @@ class LC(Table):
         if is_swift.any():
             for filt, swiftfilt in zip('UBV', 'sbv'):
                 self['filter'][is_swift & (self['filt'] == filt)] = filtdict[swiftfilt]
-        if read_curve:
-            for filt in np.unique(self['filter']):
-                filt.read_curve()
 
     @property
     def zp(self):

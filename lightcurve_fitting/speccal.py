@@ -2,7 +2,6 @@
 
 import numpy as np
 from .lightcurve import LC
-from .filters import filtdict
 from astropy import constants as const, units as u
 from astropy.io import fits, ascii
 from astropy.wcs import WCS
@@ -348,7 +347,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
         Plot the observed light curve and the uncalibrated and calibrated spectra, and ask whether to save the results
     """
     if filters is not None:
-        lc = lc.where(filter=[filtdict[f] for f in filters])
+        lc = lc.where(filter=filters)
     lc.calcFlux()
     lc.sort('MJD')
     filts = set(lc['filter'])

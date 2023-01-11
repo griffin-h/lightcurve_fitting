@@ -65,9 +65,21 @@ as well as a method for plotting the light curve in a single command:
 
 Filters
 -------
-The :mod:`.filters` submodule defines a :class:`.Filter` object that stores information about the broadband filters: transmission
-function, photometric system, and styles for plotting. You mostly won't have to touch this module, unless you are
-adding new filters.
+The :mod:`.filters` submodule defines a :class:`.Filter` object that stores information about the broadband filters: transmission function, photometric system, and styles for plotting.
+You mostly won't have to touch this module, unless you are adding or modifying filters.
+
+The ``'filter'`` column in a :class:`.LC` object contains :class:`.Filter` objects, rather than strings.
+However, you can use filter names directly in most places, including the :meth:`.LC.where` method, and they will be parsed into :class:`.Filter` objects.
+For example, ``lc.where(filter='r')`` will return photometry points in bands labeled both 'r' and 'rp' in your input file.
+
+If you ever need direct access to the :class:`.Filter` objects by name, you can use the filter lookup dictionary.
+
+.. code-block:: python
+
+    from lightcurve_fitting.filters import filtdict
+
+    g = filtdict['g']
+    print(g)
 
 Bolometric Light Curves
 -----------------------

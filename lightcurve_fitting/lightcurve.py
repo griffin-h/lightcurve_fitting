@@ -36,7 +36,7 @@ itercolors = itertools.cycle(plt.rcParams['axes.prop_cycle'].by_key()['color'])
 
 # if you edit this list, also add the new names to usage.rst
 column_names = {
-    'Filter': ['filt', 'filter', 'Filter', 'band', 'FLT', 'Band'],
+    'Filter': ['filter', 'filt', 'Filter', 'band', 'FLT', 'Band'],
     'Telescope': ['telescope', 'Telescope', 'Tel', 'tel+inst'],
     'Source': ['source', 'Source'],
     'Apparent Magnitude': ['mag', 'Magnitude', 'Mag', 'ab_mag', 'PSFmag', 'MAG', 'omag', 'magnitude', 'apparent_mag'],
@@ -68,13 +68,16 @@ class LC(Table):
     nondetSigmas : float
         Significance level implied by nondetections in the light curve. Default: 3σ
     groupby : set
-        Column names to group by when binning the light curve. Default: ``{'filt', 'filter', 'source'}``
+        Column names to group by when binning the light curve. Default: ``{'filter', 'source'}``
     """
     def __init__(self, *args, **kwargs):
         Table.__init__(self, *args, **kwargs)
+        self.normalize_column_names()
+        if 'filter' in self.colnames and self['filter'].dtype != object:
+            self.filters_to_objects()
         self.sn = None
         self.nondetSigmas = 3.
-        self.groupby = {'filt', 'filter', 'source'}
+        self.groupby = {'filter', 'source'}
         self.markers = markers.copy()
 
     def where(self, **kwargs):
@@ -143,15 +146,14 @@ class LC(Table):
             if isinstance(self['nondet'], MaskedColumn):
                 self['nondet'] = self['nondet'].filled()
             nondet = (self['nondet'] == 'True') | (self['nondet'] == 'T') | (self['nondet'] == '>')
-            self.remove_column('nondet')
-            self['nondet'] = nondet
+            self.replace_column('nondet', nondet)
 
     def filters_to_objects(self):
         """
-        Parse the ``'filt'`` column into :class:`filters.Filter` objects and store in the ``'filter'`` column
+        Parse the ``'filter'`` column into :class:`filters.Filter` objects
         """
-        self['filter'] = [filtdict['?'] if np.ma.is_masked(f) or str(f) not in filtdict else filtdict[str(f)]
-                          for f in self['filt']]
+        filters = np.array([filtdict['?'] if np.ma.is_masked(f) or str(f) not in filtdict else filtdict[str(f)]
+                            for f in self['filter']])
         is_swift = np.zeros(len(self), bool)
         if 'telescope' in self.colnames:
             is_swift |= self['telescope'] == 'Swift'
@@ -162,7 +164,8 @@ class LC(Table):
             is_swift |= self['source'] == 'SOUSA'
         if is_swift.any():
             for filt, swiftfilt in zip('UBV', 'sbv'):
-                self['filter'][is_swift & (self['filt'] == filt)] = filtdict[swiftfilt]
+                filters[is_swift & (self['filter'] == filt)] = filtdict[swiftfilt]
+        self.replace_column('filter', filters)
 
     @property
     def zp(self):
@@ -197,7 +200,7 @@ class LC(Table):
         delta : float, optional
             Bin size, in days. Default: 0.3 days
         groupby : set, optional
-            Column names to group by before binning. Default: ``{'filt', 'filter', 'source'}``
+            Column names to group by before binning. Default: ``{'filter', 'source'}``
 
         Returns
         -------
@@ -564,9 +567,6 @@ class LC(Table):
         if fill_values is None:
             fill_values = [('--', '0'), ('', '0')]
         t = super(LC, cls).read(filepath, format=format, fill_values=fill_values, **kwargs)
-        t.normalize_column_names()
-        if 'filt' in t.colnames:
-            t.filters_to_objects()
         return t
 
 

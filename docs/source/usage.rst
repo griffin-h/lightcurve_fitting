@@ -23,8 +23,7 @@ The following column names are used by the package, although the light curve can
  * mag (required): magnitude of the observation [Magnitude, Mag, ab_mag, PSFmag, MAG, omag, magnitude, apparent_mag]
  * dmag (required): uncertainty on the magnitude [Magnitude_Error, magerr, MagErr, mag_err, e_mag, Error, err, PSFerr,
    MAGERR, e_omag, e_magnitude, apparent_mag_err, Mag_Err, emag]
- * filt (required): name of the filter [filter, Filter, band, FLT, Band]
- * filter (automatic): the filter object (see :ref:`Filters` below)
+ * filter (required): name of the filter [filter, filt Filter, band, FLT, Band] (see :ref:`Filters` below)
  * nondet: True if the magnitude is an upper limit, False otherwise [Is_Limit, UL, l_omag, upper_limit, upperlimit]
  * flux: the spectral flux density (:math:`F_ν`, arbitrary units) of the observation [FLUXCAL]
  * dflux: uncertainty on the flux [FLUXCALERR]

@@ -6,8 +6,9 @@ Unreleased
 ----------
 * Require Astropy version 5 (there were already features that required this)
 * Automatically calculate extinction based on :math:`E(B-V)` and :math:`R_V` if :math:`A_V` are not given
+* Automatically parse filters even when :class:`.LC` is initialized without reading (removes need for separate "filt" column)
 * Bug fix in :class:`.ShockCooling3` when :math:`R_V \ne 3.1`
-* Read the filter curves on the fly when accessing :class:`Filter` properties ``trans``, ``wl_eff``, ``dwl``, ``wl_range``, ``freq_eff``, ``dfreq``, or ``freq_range``
+* Read the filter curves on the fly when accessing :class:`.Filter` properties ``trans``, ``wl_eff``, ``dwl``, ``wl_range``, ``freq_eff``, ``dfreq``, or ``freq_range``
 
 v0.7.0 (2022-10-25)
 -------------------

@@ -19,7 +19,7 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     Parameters
     ----------
     lc : lightcurve_fitting.lightcurve.LC
-        Table of broadband photometry including columns "MJD", "mag", "dmag", "filt"
+        Table of broadband photometry including columns "MJD", "mag", "dmag", "filter"
     model : lightcurve_fitting.models.Model
         The model to fit to the light curve. Available models: :class:`.models.ShockCooling`,
         :class:`.models.ShockCooling2`, :class:`.models.ShockCooling3`, :class:`.models.CompanionShocking`,
@@ -191,7 +191,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
     Parameters
     ----------
     lc : lightcurve_fitting.lightcurve.LC
-        Table of broadband photometry including columns "MJD", "mag", "dmag", "filt"
+        Table of broadband photometry including columns "MJD", "mag", "dmag", "filter"
     model : lightcurve_fitting.models.Model
         The model that was fit to the light curve.
     sampler_flatchain : array-like
@@ -278,7 +278,7 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
     Parameters
     ----------
     lc : lightcurve_fitting.lightcurve.LC
-        Table of broadband photometry including columns "MJD", "mag", "dmag", "filt"
+        Table of broadband photometry including columns "MJD", "mag", "dmag", "filter"
     model : lightcurve_fitting.models.Model
         The model that was fit to the light curve.
     sampler_flatchain : array-like

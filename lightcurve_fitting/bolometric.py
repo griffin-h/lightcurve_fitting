@@ -582,7 +582,7 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
     Parameters
     ----------
     lc : lightcurve_fitting.lightcurve.LC
-        Table of broadband photometry including columns "MJD", "mag", "dmag", "filt"
+        Table of broadband photometry including columns "MJD", "mag", "dmag", "filter"
     z : float, optional
         Redshift between the emission source and the observed filter. Default: 0.
     outpath : str, optional

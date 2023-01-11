@@ -573,7 +573,7 @@ def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Calibrate spectra of a supernova to photometry.')
     parser.add_argument('spectra', nargs='+', help='filenames of spectra')
-    parser.add_argument('--lc', help='filename of photometry table (must have columns "MJD", "filt", "mag"/"flux", and'
+    parser.add_argument('--lc', help='filename of photometry table (must have columns "MJD", "filter", "mag"/"flux", and'
                                      '"dmag"/"dflux")')
     parser.add_argument('--lc-format', default='ascii',
                         help='format of photometry table (passed to :func:`astropy.table.Table.read`)')

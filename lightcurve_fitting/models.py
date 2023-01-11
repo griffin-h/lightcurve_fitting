@@ -285,7 +285,7 @@ def shock_cooling3(t_in, f, v_s, M_env, f_rho_M, R, dist, ebv=0., t_exp=0., kapp
     R : float, array-like
         The progenitor radius in :math:`10^{13}` cm
     dist : float, array-like
-        The luminosity distance to the supernova in Mpc
+        The luminosity distance in Mpc
     ebv : float, array-like
         The reddening :math:`E(B-V)` to apply to the blackbody spectrum before integration
     t_exp : float, array-like
@@ -472,19 +472,19 @@ sifto = Table.read(sifto_filename, format='ascii')
 sifto['x'] = sifto['r']  # assume DLT40 = r for now
 
 
-def scale_sifto(sn_lc):
+def scale_sifto(lc):
     """
-    Scale the SiFTO model to match your supernova's luminosity and colors
+    Scale the SiFTO model to match the observed peak luminosity and colors
 
     Parameters
     ----------
-    sn_lc : lightcurve_fitting.lightcurve.LC
-        Your supernova's light curve
+    lc : lightcurve_fitting.lightcurve.LC
+        The observed light curve
     """
-    for filt in set(sn_lc['filter']):
+    for filt in set(lc['filter']):
         if filt.char not in sifto.colnames:
             raise Exception('No SiFTO template for filter ' + filt.char)
-        lc_filt = sn_lc.where(filter=filt)
+        lc_filt = lc.where(filter=filt)
         sifto[filt.char] *= np.max(lc_filt['lum']) / np.max(sifto[filt.char])
 
 

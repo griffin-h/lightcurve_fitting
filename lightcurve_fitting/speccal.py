@@ -145,7 +145,7 @@ def convert_spectrum_units(wl, flux, hdr, default_bunit='erg / (Angstrom cm2 s)'
 
 def readOSCspec(filepath):
     """
-    Read spectra from a JSON file from the Open Supernova Catalog (https://sne.space)
+    Read spectra from a JSON file in the Open Astronomy Catalog schema (https://github.com/astrocatalogs/schema)
 
     Parameters
     ----------
@@ -571,7 +571,7 @@ def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Calibrate spectra of a supernova to photometry.')
+    parser = argparse.ArgumentParser(description='Calibrate spectra to photometry.')
     parser.add_argument('spectra', nargs='+', help='filenames of spectra')
     parser.add_argument('--lc', help='filename of photometry table (must have columns "MJD", "filter", "mag"/"flux", and'
                                      '"dmag"/"dflux")')

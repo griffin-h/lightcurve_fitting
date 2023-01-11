@@ -63,19 +63,18 @@ class LC(Table):
 
     Attributes
     ----------
-    sn : object
-        Astronomical transient with which this light curve is associated
     nondetSigmas : float
         Significance level implied by nondetections in the light curve. Default: 3σ
     groupby : set
         Column names to group by when binning the light curve. Default: ``{'filter', 'source'}``
+    markers : dict
+        Mapping of some light curve property (default: ``'source'`` or ``'telescope'``) to marker shapes
     """
     def __init__(self, *args, **kwargs):
         Table.__init__(self, *args, **kwargs)
         self.normalize_column_names()
         if 'filter' in self.colnames and self['filter'].dtype != object:
             self.filters_to_objects()
-        self.sn = None
         self.nondetSigmas = 3.
         self.groupby = {'filter', 'source'}
         self.markers = markers.copy()
@@ -121,8 +120,6 @@ class LC(Table):
                     use1 = self[col] == val
             use &= use1
         selected = self[use]
-        selected.sn = self.sn
-        selected.meta = self.meta
         selected.markers = self.markers
         return selected
 
@@ -222,7 +219,6 @@ class LC(Table):
                 binned[key] = k[key]
             subtabs.append(binned)
         lc = vstack(subtabs)
-        lc.sn = self.sn
         lc.meta = self.meta
         return lc
 
@@ -258,49 +254,41 @@ class LC(Table):
         self['mag'], self['dmag'] = flux2mag(self['flux'], self['dflux'], zp, self.get('nondet'), self.nondetSigmas)
 
     def calcAbsMag(self, dm=None, extinction=None, hostext=None, ebv=None, rv=None, host_ebv=None, host_rv=None,
-                   z=None):
+                   redshift=None):
         """
         Calculate the ``'absmag'`` column from the ``'mag'`` column by correcting for distance and extinction
 
         Parameters
         ----------
         dm : float, optional
-            Distance modulus. Default: use the distance modulus of ``self.sn``, if any. Otherwise, use the redshift, if
-            given. If no distance modulus or redshift is given, do not correct for distance.
+            Distance modulus. Default: calculate from ``redshift``.
         extinction : dict, optional
-            Milky Way extinction coefficients :math:`A_λ` for each filter. Default: use the extinction of ``self.sn``,
-            if any.
+            Milky Way extinction coefficients :math:`A_λ` for each filter. Default: calculate from ``ebv`` and ``rv``.
         hostext : dict, optional
-            Host galaxy extinction coefficients :math:`A_λ` for each filter. Default: use the extinction of ``self.sn``,
-            if any.
+            Host galaxy extinction coefficients :math:`A_λ` for each filter. Default: calculate from ``host_ebv`` and
+            ``host_rv``.
         ebv : float, optional
-            Milky Way selective extinction :math:`E(B-V)`, used if ``extinction`` and ``self.sn`` are not given.
-            Default: 0.
+            Milky Way selective extinction :math:`E(B-V)`, used if ``extinction`` is not given. Default: 0.
         host_ebv : float, optional
-            Host galaxy selective extinction :math:`E(B-V)`, used if ``hostext`` and ``self.sn`` are not given.
-            Default: 0.
+            Host galaxy selective extinction :math:`E(B-V)`, used if ``hostext`` is not given. Default: 0.
         rv : float, optional
             Ratio of total to selective Milky Way extinction :math:`R_V`, used with the ``ebv`` argument. Default: 3.1.
         host_rv : float, optional
             Ratio of total to selective host-galaxy extinction :math:`R_V`, used with the ``host_ebv`` argument.
-             Default: 3.1.
-        z : float, optional
+            Default: 3.1.
+        redshift : float, optional
             Redshift of the host galaxy. Used to redshift the filters for host galaxy extinction. If no distance
             modulus is given, a redshift-dependent distance is calculated using the Planck18 cosmology. Default: 0.
         """
-        if z is not None:
-            self.meta['z'] = z
-        elif self.sn is not None:
-            self.meta['z'] = self.sn.z
-        elif 'z' not in self.meta:
-            self.meta['z'] = 0.
+        if redshift is not None:
+            self.meta['redshift'] = redshift
+        elif 'redshift' not in self.meta:
+            self.meta['redshift'] = 0.
 
         if dm is not None:
             self.meta['dm'] = dm
-        elif self.sn is not None:
-            self.meta['dm'] = self.sn.dm
-        elif 'dm' not in self.meta and self.meta.get('z'):
-            self.meta['dm'] = Planck18.distmod(self.meta['z']).value
+        elif 'dm' not in self.meta and self.meta.get('redshift'):
+            self.meta['dm'] = Planck18.distmod(self.meta['redshift']).value
             print('using a redshift-dependent distance modulus')
         elif 'dm' not in self.meta:
             self.meta['dm'] = 0.
@@ -316,16 +304,12 @@ class LC(Table):
 
         if extinction is not None:
             self.meta['extinction'] = extinction
-        elif self.sn is not None:
-            self.meta['extinction'] = self.sn.extinction
         elif 'extinction' not in self.meta:
             self.meta['extinction'] = {f.name: f.extinction(ebv, rv)
                                        for f in set(self['filter']) if f.wl_eff is not None and ebv is not None}
 
         if hostext is not None:
             self.meta['hostext'] = hostext
-        elif self.sn is not None:
-            self.meta['hostext'] = self.sn.hostext
         elif 'hostext' not in self.meta:
             self.meta['hostext'] = {f.name: f.extinction(host_ebv, host_rv, self.meta.get('z', 0.))
                                     for f in set(self['filter']) if f.wl_eff is not None and host_ebv is not None}
@@ -361,13 +345,13 @@ class LC(Table):
 
     def findPeak(self, **criteria):
         """
-        Find the peak of the light curve and store it in ``self.sn.peakdate``
+        Find the peak of the light curve and store it in ``.meta['peakdate']``
 
         Parameters
         ----------
         criteria : dict, optional
             Use only a subset of the light curve matching some criteria when calculating the peak date (stored in
-            ``self.sn.peakcriteria``
+            ``.meta['peakcriteria']``)
         """
         if 'nondet' in self.colnames:
             criteria['nondet'] = False
@@ -375,37 +359,34 @@ class LC(Table):
         if len(peaktable):
             imin = np.argmin(peaktable['mag'])
             self.meta['peakdate'] = peaktable['MJD'][imin]
+            self.meta['peakcriteria'] = criteria
         else:
-            self.meta['peakdate'] = np.nan
-        if self.sn is not None:
-            self.meta['redshift'] = self.sn.z  # needed for calcPhase
-            self.sn.peakdate = self.meta['peakdate']
-            self.sn.peakcriteria = criteria
+            print(f'no data match these criteria: {criteria}')
 
     def calcPhase(self, rdsp=False, hours=False):
         """
-        Calculate the rest-frame ``'phase'`` column from the ``'MJD'`` column and ``self.sn.refmjd`` and ``self.sn.z``
+        Calculate the rest-frame ``'phase'`` column from ``'MJD'``, ``.meta['refmjd']``, and ``.meta['redshift']``
 
         Parameters
         ----------
         rdsp : bool, optional
             Define phase as rest-frame days since peak, rather than rest-frame days since explosion
+        hours : bool, optional
+            Give the phase in rest-frame hours instead of rest-frame days
         """
-        if 'refmjd' not in self.meta and self.sn is not None:
-            if rdsp and self.sn.peakdate is None:
-                raise Exception('must run sn.findPeak() first')
+        if 'refmjd' not in self.meta:
+            if rdsp and self.meta.get('peakdate') is None:
+                raise Exception('must run lc.findPeak() first')
             elif rdsp:
-                self.sn.refmjd = self.sn.peakdate
-            elif self.sn.explosion is not None:
-                self.sn.refmjd = self.sn.explosion
+                self.meta['refmjd'] = self.meta['peakdate']
+            elif self.meta.get('explosion') is not None:
+                self.meta['refmjd'] = self.meta['explosion']
             else:
                 if 'nondet' in self.colnames:
                     detections = self.where(nondet=False)
                 else:
                     detections = self
-                self.sn.refmjd = np.min(detections['MJD'].data)
-            self.meta['refmjd'] = self.sn.refmjd
-            self.meta['redshift'] = self.sn.z
+                self.meta['refmjd'] = np.min(detections['MJD'].data)
         self['phase'] = (self['MJD'].data - self.meta['refmjd']) / (1 + self.meta['redshift'])
         if 'dMJD0' in self.colnames:
             self['dphase0'] = self['dMJD0'] / (1. + self.meta['redshift'])
@@ -485,25 +466,21 @@ class LC(Table):
             keys = plottable.groups.keys
         else:
             keys = [Table()]
-        if self.sn is None:
-            linestyle = plot_kwargs.pop('linestyle') if 'linestyle' in plot_kwargs else None
-            linewidth = plot_kwargs.pop('linewidth') if 'linewidth' in plot_kwargs else None
-        else:
-            linestyle = self.sn.linestyle
-            linewidth = self.sn.linewidth
+        linestyle = plot_kwargs.pop('linestyle', plot_kwargs.pop('ls', self.meta.get('linestyle', self.meta.get('ls'))))
+        linewidth = plot_kwargs.pop('linewidth', plot_kwargs.pop('lw', self.meta.get('linewidth', self.meta.get('lw'))))
         for g, k in zip(plottable.groups, keys):
             filt = g['filter'][0]
             if color == 'filter':
                 col = filt.color
                 mec = 'k' if filt.system == 'Johnson' else filt.linecolor
-            elif color == 'name':
-                col = self.sn.plotcolor
+            elif color == 'name' and 'plotcolor' in self.meta:
+                col = self.meta['plotcolor']
                 mec = col if col not in ['w', '#FFFFFF'] else 'k'
             else:
                 col = mec = next(itercolors)
             mfc = col if fillmark else 'none'
-            if marker == 'name':
-                mark = self.sn.marker
+            if marker == 'name' and 'marker' in self.meta:
+                mark = self.meta['marker']
             elif marker in plottable.keys():
                 if g[marker][0] not in self.markers:
                     for nextmarker in othermarkers:
@@ -529,9 +506,15 @@ class LC(Table):
             x = g[xcol].data
             y = g[ycol].data - filt.offset * offset_factor
             if normalize and ycol == 'mag':
-                y -= self.sn.peakmag
+                if 'peakmag' in self.meta:
+                    y -= self.meta['peakmag']
+                else:
+                    print("must set .meta['peakmag'] to use normalize")
             elif normalize and ycol == 'absmag':
-                y -= self.sn.peakabsmag
+                if 'peakabsmag' in self.meta:
+                    y -= self.meta['peakmag']
+                else:
+                    print("must set .meta['peakabsmag'] to use normalize")
             if 'mag' in ycol and 'nondet' in g.keys() and marker:  # don't plot if no markers used
                 plt.plot(x[g['nondet']], y[g['nondet']], marker=arrow, linestyle='none', ms=25, mec=mec, **plot_kwargs)
             if 'filter' in k.colnames:

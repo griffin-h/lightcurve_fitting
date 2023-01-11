@@ -9,6 +9,7 @@ Unreleased
 * Automatically parse filters even when :class:`.LC` is initialized without reading (removes need for separate "filt" column)
 * Bug fix in :class:`.ShockCooling3` when :math:`R_V \ne 3.1`
 * Read the filter curves on the fly when accessing :class:`.Filter` properties ``trans``, ``wl_eff``, ``dwl``, ``wl_range``, ``freq_eff``, ``dfreq``, or ``freq_range``
+* Finish removing deprecated way of storing supernova properties in :class:`Supernova` object
 
 v0.7.0 (2022-10-25)
 -------------------
@@ -18,7 +19,7 @@ v0.7.0 (2022-10-25)
 * Add JWST filters
 * Raise an error if the initial parameter guesses are outside the prior
 * Add convenience function for preparing spectra to upload to WISeREP
-* Allow use of :meth:`.LC.findPeak` without :class:`.Supernova` object
+* Allow use of :meth:`.LC.findPeak` without :class:`Supernova` object
 * Fix minor bug in rounding to display a given number of significant figures
 * Minor change to :meth:`.Filter.spectrum` to avoid inadvertently re-sorting transmission tables
 * When calibrating spectra to photometry, assume constant flux in a filter for a configurable amount of time after the last observed point

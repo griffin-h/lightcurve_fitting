@@ -149,11 +149,6 @@ class LC(Table):
     def filters_to_objects(self):
         """
         Parse the ``'filt'`` column into :class:`filters.Filter` objects and store in the ``'filter'`` column
-
-        Parameters
-        ----------
-        read_curve : bool, optional
-            Read in the transmission function for each filter encountered (default)
         """
         self['filter'] = [filtdict['?'] if np.ma.is_masked(f) or str(f) not in filtdict else filtdict[str(f)]
                           for f in self['filt']]
@@ -301,7 +296,7 @@ class LC(Table):
             self.meta['dm'] = dm
         elif self.sn is not None:
             self.meta['dm'] = self.sn.dm
-        elif self.meta.get('z'):
+        elif 'dm' not in self.meta and self.meta.get('z'):
             self.meta['dm'] = Planck18.distmod(self.meta['z']).value
             print('using a redshift-dependent distance modulus')
         elif 'dm' not in self.meta:

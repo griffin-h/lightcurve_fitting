@@ -405,7 +405,7 @@ class LC(Table):
                 self['dphase1'] *= 24.
 
     def plot(self, xcol='phase', ycol='absmag', offset_factor=1., color='filter', marker=None, use_lines=False,
-             normalize=False, fillmark=True, **kwargs):
+             normalize=False, fillmark=True, mjd_axis=True, appmag_axis=True, **kwargs):
         """
         Plot the light curve, with nondetections marked with a downward-pointing arrow
 
@@ -427,6 +427,10 @@ class LC(Table):
             Normalize all light curves to peak at 0. Default: False
         fillmark : bool, optional
             Fill each marker with color. Default: True
+        mjd_axis : bool, optional
+            Plot MJD on the upper x-axis. Must have ``.meta['redshift']`` and ``.meta['refmjd']``. Default: True.
+        appmag_axis : bool, optional
+            Plot extinction-corrected apparent magnitude on the right y-axis. Must have ``.meta['dm']``. Default: True.
         kwargs : dict, optional
             Keyword arguments matching column names in the light curve are used to specify a subset of points to plot.
             Additional keyword arguments passed to :func:`matplotlib.pyplot.plot`.
@@ -549,6 +553,21 @@ class LC(Table):
                 plt.xlabel(axlabel)
             elif ycol in keys:
                 plt.ylabel(axlabel)
+        mjd_axis = mjd_axis and xcol == 'phase' and 'redshift' in self.meta and 'refmjd' in self.meta
+        appmag_axis = appmag_axis and ycol == 'absmag' and 'dm' in self.meta
+        if mjd_axis or appmag_axis:
+            top, right = aux_axes(self._phase2mjd if mjd_axis else None, self._abs2app if appmag_axis else None)
+            if mjd_axis:
+                top.xaxis.get_major_formatter().set_useOffset(False)
+                top.set_xlabel('MJD')
+            if appmag_axis:
+                right.set_ylabel('Apparent Magnitude')
+
+    def _phase2mjd(self, phase, hours=False):
+        return phase * (1. + self.meta['redshift']) / (24. if hours else 1.) + self.meta['refmjd']
+
+    def _abs2app(self, absmag):
+        return absmag + self.meta['dm']  # extinction-corrected apparent magnitude
 
     @classmethod
     def read(cls, filepath, format='ascii', fill_values=None, **kwargs):
@@ -556,6 +575,53 @@ class LC(Table):
             fill_values = [('--', '0'), ('', '0')]
         t = super(LC, cls).read(filepath, format=format, fill_values=fill_values, **kwargs)
         return t
+
+
+def aux_axes(xfunc=None, yfunc=None, ax0=None, xfunc_args=None, yfunc_args=None):
+    """
+    Add auxiliary axes to a plot that are linear transformations of the existing axes
+
+    Parameters
+    ----------
+    xfunc : function, optional
+        Function that transforms the lower x-axis to the upper x-axis. Default: do not add an upper x-axis.
+    yfunc : function, optional
+        Function that transforms the left y-axis to the right y-axis. Default: do not add a right y-axis.
+    ax0 : matplotlib.pyplot.Axes, optional
+        Existing axes object. Default: use the current Axes.
+    xfunc_args, yfunc_args : dict, optional
+        Keyword arguments for ``xfunc`` and ``yfunc``, respectively
+
+    Returns
+    -------
+    top : matplotlib.pyplot.Axes
+        The upper x-axis, if any. Otherwise, None.
+    right : matplotlib.pyplot.Axes
+        The right y-axis, if any. Otherwise, None.
+    """
+    if xfunc_args is None:
+        xfunc_args = {}
+    if yfunc_args is None:
+        yfunc_args = {}
+    if not ax0:
+        ax0 = plt.gca()
+    lims = np.array(ax0.axis())
+    if xfunc is not None:
+        ax0.xaxis.tick_bottom()
+        lims[:2] = xfunc(lims[:2], **xfunc_args)
+        top = ax0.twiny()
+        top.axis(lims)
+    else:
+        top = ax0
+    if yfunc is not None:
+        ax0.yaxis.tick_left()
+        lims[2:] = yfunc(lims[2:], **yfunc_args)
+        right = top.twinx()
+        right.axis(lims)
+    else:
+        right = None
+    plt.sca(ax0)
+    return top, right
 
 
 def flux2mag(flux, dflux=np.array(np.nan), zp=0., nondet=None, nondetSigmas=3.):

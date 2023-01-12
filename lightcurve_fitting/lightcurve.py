@@ -659,7 +659,7 @@ def aux_axes(xfunc=None, yfunc=None, ax0=None, xfunc_args=None, yfunc_args=None)
     return top, right
 
 
-def custom_legend(ax, handles, labels, **kwargs):
+def custom_legend(ax, handles, labels, top_axis=True, **kwargs):
     """
     Add a legend to the axes with options for ``loc='above'``, ``loc='above left'``, and ``loc='above right'``
 
@@ -671,6 +671,8 @@ def custom_legend(ax, handles, labels, **kwargs):
         A list of Artists (lines, patches) to be added to the legend
     labels : list of str
         A list of labels to show next to the handles
+    top_axis : bool, optional
+        For legends above the top of the plot, add extra padding to the upper x-axis labels. Default: True.
     kwargs
         Keyword arguments to be passed to :func:`matplotlib.pyplot.legend`
 
@@ -680,22 +682,26 @@ def custom_legend(ax, handles, labels, **kwargs):
         The Legend object
     """
     loc = kwargs.pop('loc', None)
+    bbox_to_anchor = kwargs.pop('bbox_to_anchor', None)
+    if top_axis:
+        top_of_axis = 1.15
+    else:
+        top_of_axis = 1.
     if loc is None or loc.lower() == 'none':
         return
     elif loc == 'above':
         loc = 'lower center'
-        bbox_to_anchor = (0.5, 1.15)
+        bbox_to_anchor = (0.5, top_of_axis)
     elif loc == 'above left':
         loc = 'lower left'
-        bbox_to_anchor = (0., 1.15)
+        bbox_to_anchor = (0., top_of_axis)
     elif loc == 'above right':
         loc = 'lower right'
-        bbox_to_anchor = (1., 1.15)
-    else:
-        bbox_to_anchor = kwargs.pop('bbox_to_anchor', None)
+        bbox_to_anchor = (1., top_of_axis)
     lgd = ax.legend(handles, labels, loc=loc, bbox_to_anchor=bbox_to_anchor, **kwargs)
     plt.tight_layout()  # adjusts the top of the axes to make room for 'above' legends
     return lgd
+
 
 def filter_legend(filts, offset_factor=1.):
     """

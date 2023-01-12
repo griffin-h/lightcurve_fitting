@@ -6,6 +6,7 @@ from astropy.cosmology import Planck18
 from .filters import filtdict
 import itertools
 from matplotlib.markers import MarkerStyle
+from matplotlib.patches import Patch
 try:
     from config import markers
 except ModuleNotFoundError:
@@ -405,7 +406,8 @@ class LC(Table):
                 self['dphase1'] *= 24.
 
     def plot(self, xcol='phase', ycol='absmag', offset_factor=1., color='filter', marker=None, use_lines=False,
-             normalize=False, fillmark=True, mjd_axis=True, appmag_axis=True, **kwargs):
+             normalize=False, fillmark=True, mjd_axis=True, appmag_axis=True, loc_mark='upper left',
+             loc_filt='upper right', ncol_mark=1, lgd_filters=None, **kwargs):
         """
         Plot the light curve, with nondetections marked with a downward-pointing arrow
 
@@ -431,7 +433,18 @@ class LC(Table):
             Plot MJD on the upper x-axis. Must have ``.meta['redshift']`` and ``.meta['refmjd']``. Default: True.
         appmag_axis : bool, optional
             Plot extinction-corrected apparent magnitude on the right y-axis. Must have ``.meta['dm']``. Default: True.
-        kwargs : dict, optional
+        loc_mark, loc_filt : str, optional
+            Location for the marker and filter legends, respectively. Set to 'none' to omit them. Three new options are
+            available: 'above', 'above left', and 'above right'. ``mjd_axis`` and/or ``appmag_axis`` must be used to
+            add these legends. Otherwise run ``plt.legend()`` after plotting for a single simple legend. Defaults:
+             'upper left' and 'upper right', respectively.
+        ncol_mark : int, optional
+            Number of columns in the marker legend. Default: 1.
+        lgd_filters : list, array-like, optional
+            Customize the arrangement of filters in the legend by providing a list of filters for each column. ``None``
+            can be used to leave a blank space in the column. Only filters given here will be used. The default
+            arrangement shows all filters arranged by ``.system`` (columns) and ``.offset`` (rows).
+        kwargs
             Keyword arguments matching column names in the light curve are used to specify a subset of points to plot.
             Additional keyword arguments passed to :func:`matplotlib.pyplot.plot`.
         """
@@ -545,14 +558,21 @@ class LC(Table):
             else:
                 plt.plot(x, y, color=col, mfc=mfc, mec=mec, marker=mark, label=label, linestyle=linestyle,
                          linewidth=linewidth, **plot_kwargs)
+
+        # format axes
         ymin, ymax = plt.ylim()
         if 'mag' in ycol and ymax > ymin:
             plt.ylim(ymax, ymin)
+        lgd_title = None
         for axlabel, keys in column_names.items():
             if xcol in keys:
                 plt.xlabel(axlabel)
             elif ycol in keys:
                 plt.ylabel(axlabel)
+            elif marker in keys:
+                lgd_title = axlabel
+
+        # add auxiliary axes
         mjd_axis = mjd_axis and xcol == 'phase' and 'redshift' in self.meta and 'refmjd' in self.meta
         appmag_axis = appmag_axis and ycol == 'absmag' and 'dm' in self.meta
         if mjd_axis or appmag_axis:
@@ -562,6 +582,21 @@ class LC(Table):
                 top.set_xlabel('MJD')
             if appmag_axis:
                 right.set_ylabel('Apparent Magnitude')
+
+        # add legends
+            if marker in self.colnames:
+                labels = sorted(set(self[marker]))
+                lines = [plt.Line2D([], [], mec='k', mfc='none', marker=self.markers[label], linestyle='none')
+                         for label in labels]
+                custom_legend(top, lines, labels, ncol=ncol_mark, loc=loc_mark, title=lgd_title, frameon=True)
+
+            if color == 'filter':
+                if lgd_filters is None:
+                    lgd_filters = set(self['filter'])
+                lines, labels, ncol = filter_legend(lgd_filters, offset_factor)
+                custom_legend(right, lines, labels, loc=loc_filt, ncol=ncol, title='Filter', frameon=True)
+
+        plt.tight_layout()
 
     def _phase2mjd(self, phase, hours=False):
         return phase * (1. + self.meta['redshift']) / (24. if hours else 1.) + self.meta['refmjd']
@@ -622,6 +657,136 @@ def aux_axes(xfunc=None, yfunc=None, ax0=None, xfunc_args=None, yfunc_args=None)
         right = None
     plt.sca(ax0)
     return top, right
+
+
+def custom_legend(ax, handles, labels, **kwargs):
+    """
+    Add a legend to the axes with options for ``loc='above'``, ``loc='above left'``, and ``loc='above right'``
+
+    Parameters
+    ----------
+    ax : matplotlib.pyplot.Axes, matplotlib.pyplot.Figure
+        Axes or Figure object to which to add the legend
+    handles : list of matplotlib.pyplot.Artist
+        A list of Artists (lines, patches) to be added to the legend
+    labels : list of str
+        A list of labels to show next to the handles
+    kwargs
+        Keyword arguments to be passed to :func:`matplotlib.pyplot.legend`
+
+    Returns
+    -------
+    lgd : matplotlib.legend.Legend
+        The Legend object
+    """
+    loc = kwargs.pop('loc', None)
+    if loc is None or loc.lower() == 'none':
+        return
+    elif loc == 'above':
+        loc = 'lower center'
+        bbox_to_anchor = (0.5, 1.15)
+    elif loc == 'above left':
+        loc = 'lower left'
+        bbox_to_anchor = (0., 1.15)
+    elif loc == 'above right':
+        loc = 'lower right'
+        bbox_to_anchor = (1., 1.15)
+    else:
+        bbox_to_anchor = kwargs.pop('bbox_to_anchor', None)
+    lgd = ax.legend(handles, labels, loc=loc, bbox_to_anchor=bbox_to_anchor, **kwargs)
+    plt.tight_layout()  # adjusts the top of the axes to make room for 'above' legends
+    return lgd
+
+def filter_legend(filts, offset_factor=1.):
+    """
+    Creates dummy artists and labels for the filter legend using the filter properties
+
+    Parameters
+    ----------
+    filts : set, list, array-like
+        If a list or array of strings, the arrangement of filters in the legend, with columns in the first dimension and
+        rows in the second. If a set of :class:`.Filter` objects, they will first be arranged using :func:`.filtsetup`.
+    offset_factor : float, optional
+        Increase or decrease the filter offsets by a constant factor. Default: 1.
+
+    Returns
+    -------
+    lines : list of matplotlib.pyplot.Artist
+        A list of Artists (lines, patches) to be added to the legend
+    labels : list of str
+        A list of labels to show next to the handles
+    ncol : int
+        Number of columns needed for the filter legend
+    """
+    lines = []
+    labels = []
+    if isinstance(filts, set):
+        filts = filtsetup(filts)
+    else:
+        filts = np.vectorize(filtdict.get)(filts)
+    for filt in filts.flatten():
+        if filt is None:
+            labels.append('')
+            lines.append(Patch(color='none', ec='none'))
+        else:
+            col = filt.color
+            ec = filt.mec
+            off = filt.offset * offset_factor
+            if not filt.italics:
+                labels.append(filt.name)
+            elif offset_factor:
+                labels.append('${}{:+g}$'.format(filt.name, -off))
+            else:
+                labels.append('${}$'.format(filt.name))
+            lines.append(Patch(fc=col, ec=ec))
+    return lines, labels, filts.shape[0]
+
+
+def filtsetup(filts):
+    """
+    Arrange filters in a grid according to their system (columns) and offset (rows)
+
+    Parameters
+    ----------
+    filts : set
+        A set of :class:`.Filter` objects to be arranged
+
+    Returns
+    -------
+    lgnd : numpy.array
+        A 2D array of :class:`.Filter` objects
+    """
+    sysrows = dict()
+    for filt in filts:
+        if filt.system in sysrows:
+            sysrows[filt.system].add(filt.offset)
+        else:
+            sysrows[filt.system] = {filt.offset}
+    syscols = dict()
+    rowcols = []
+    for sys in list(sysrows.keys()):
+        for i, rows in enumerate(rowcols):
+            if not rows & sysrows[sys]:
+                syscols[sys] = i
+                rows |= sysrows[sys]
+                break
+        else:
+            syscols[sys] = len(rowcols)
+            rowcols.append(sysrows[sys])
+    offs = sorted({filt.offset for filt in filts}, reverse=True)
+    lgnd = np.tile(None, (len(rowcols), len(offs)))
+    for filt in filts:
+        if lgnd[syscols[filt.system], offs.index(filt.offset)] is None:
+            lgnd[syscols[filt.system], offs.index(filt.offset)] = filt
+        else:
+            offind = offs.index(filt.offset) + 1
+            offs.insert(offind, filt.offset)
+            newrow = np.tile(None, lgnd.shape[0])
+            newrow[syscols[filt.system]] = filt
+            lgnd = np.insert(lgnd, offind, newrow, 1)
+    while lgnd[0, 0] is None:
+        lgnd = np.roll(lgnd, 1, axis=0)
+    return lgnd
 
 
 def flux2mag(flux, dflux=np.array(np.nan), zp=0., nondet=None, nondetSigmas=3.):

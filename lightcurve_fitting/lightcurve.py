@@ -481,7 +481,7 @@ class LC(Table):
             filt = g['filter'][0]
             if color == 'filter':
                 col = filt.color
-                mec = 'k' if filt.system == 'Johnson' else filt.linecolor
+                mec = filt.mec
             elif color == 'name' and 'plotcolor' in self.meta:
                 col = self.meta['plotcolor']
                 mec = col if col not in ['w', '#FFFFFF'] else 'k'

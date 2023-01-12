@@ -47,8 +47,7 @@ class Filter:
     offset : float, optional
         When plotting, offset photometry in this filter by this amount (in magnitudes if plotting magnitudes)
     system : str, optional
-        Photometric system. If one of ``['Gunn', 'ATLAS', 'Gaia', 'MOSFiT']``, magnitudes are assumed to be AB.
-        If ``'Johnson'``, plot markers with a black edge. Otherwise, ignored except for grouping filters in legends.
+        Photometric system. Only used for grouping filters in legends.
     fnu : float, optional
         Zero-point flux for magnitudes in this filter, in W/(m^2 Hz). If ``fnu = None`` and ``system in ['Gunn',
         'ATLAS', 'Gaia', 'MOSFiT']``, assume the AB zero point. Otherwise if ``fnu = None``, converting to flux will raise
@@ -62,6 +61,8 @@ class Filter:
         The line color used when plotting photometry in this filter. Default: same as ``color``.
     textcolor : str, tuple, optional
         The color used when printing the name of this filter. Default: same as ``linecolor``.
+    mec : str, tuple, optional
+        The marker edge color used when plotting photometry in this filter. Default: same as ``linecolor``.
     italics : bool, optional
         Italicize the filter name when used with LaTeX. Default: True.
 
@@ -76,7 +77,7 @@ class Filter:
     color : str, tuple
         The color used when plotting photometry in this filter
     linecolor : str, tuple
-        The line color used when plotting photometry in this filter
+        The line and marker edge color used when plotting photometry in this filter
     textcolor : str, tuple
         The color used when printing the name of this filter
     italics : bool
@@ -114,7 +115,7 @@ class Filter:
     """The names of recognized filters listed in (approximate) decreasing order of effective frequency"""
 
     def __init__(self, names, color='k', offset=0, system=None, fnu=3.631e-23, filename='', angstrom=False,
-                 linecolor=None, textcolor=None, italics=True):
+                 linecolor=None, textcolor=None, mec=None, italics=True):
         if type(names) == list:
             self.name = names[0]
             self.names = names
@@ -138,12 +139,11 @@ class Filter:
             self.textcolor = textcolor
         else:
             self.textcolor = self.linecolor
-        self.italics = italics
-        self.system = system
-        if self.system in ['Johnson', 'JWST MIRI']:
-            self.mec = 'k'
+        if mec:
+            self.mec = mec
         else:
             self.mec = self.linecolor
+        self.italics = italics
         self.offset = offset
         self.system = system
         self.plotstyle = {'color': self.linecolor, 'mfc': self.color, 'mec': self.mec}
@@ -199,8 +199,7 @@ class Filter:
             if show:
                 plt.figure(1)
                 ax1 = plt.gca()
-                ax1.plot(trans['wl'], trans['T'], self.color if self.color != 'w' else 'k',
-                         label=self.system + ' ' + self.name)
+                ax1.plot(trans['wl'], trans['T'], self.linecolor, label=self.name)
                 ax1.errorbar(wl_eff.value, i, xerr=[[wl_eff.value - wl0], [wl1 - wl_eff.value]], marker='o',
                              **self.plotstyle)
                 ax1.set_xlabel('Wavelength (nm)')
@@ -216,8 +215,7 @@ class Filter:
             if show:
                 plt.figure(2)
                 ax2 = plt.gca()
-                ax2.plot(trans['freq'], trans['T'], self.color if self.color != 'w' else 'k',
-                         label=self.system + ' ' + self.name)
+                ax2.plot(trans['freq'], trans['T'], self.linecolor, self.name)
                 ax2.errorbar(freq_eff.value, i, xerr=[[freq_eff.value - freq0], [freq1 - freq_eff.value]], marker='o',
                              **self.plotstyle)
                 ax2.set_xlabel('Frequency (THz)')
@@ -376,13 +374,13 @@ all_filters = [
     Filter(['UVW1', 'uvw1', 'W1', '1', 'uw1'], '#7F00FF', 4, 'Swift', 9.036e-24, 'Swift_UVOT.UVW1.dat', angstrom=True),
     Filter(['u', "u'", 'up'], '#4700CC', 3, 'Gunn', filename='SLOAN_SDSS.u.dat', angstrom=True),  # brightened from '#080017'
     Filter(['U_S', 's', 'us'], '#230047', 3, 'Swift', 1.419e-23, filename='Swift_UVOT.U.dat', angstrom=True),
-    Filter('U', '#3C0072', 3, 'Johnson', 1.790e-23, filename='Generic_Johnson.U.dat', angstrom=True),
-    Filter('B', '#0057FF', 2, 'Johnson', 4.063e-23, filename='Generic_Johnson.B.dat', angstrom=True),
+    Filter('U', '#3C0072', 3, 'Johnson', 1.790e-23, filename='Generic_Johnson.U.dat', angstrom=True, mec='k'),
+    Filter('B', '#0057FF', 2, 'Johnson', 4.063e-23, filename='Generic_Johnson.B.dat', angstrom=True, mec='k'),
     Filter(['B_S', 'b', 'bs'], '#4B00FF', 2, 'Swift', 4.093e-23, filename='Swift_UVOT.B.dat', angstrom=True),
     Filter(['g', "g'", 'gp', 'F475W'], '#00CCFF', 1, 'Gunn', filename='SLOAN_SDSS.g.dat', angstrom=True),
     Filter('g-DECam', '#00CCFF', 1, 'DECam', filename='CTIO_DECam.g.dat', angstrom=True),
     Filter(['c', 'cyan'], 'c', 1, 'ATLAS', filename='ATLAS_cyan.txt'),
-    Filter('V', '#79FF00', 1, 'Johnson', 3.636e-23, filename='Generic_Johnson.V.dat', angstrom=True, textcolor='#46CC00'),
+    Filter('V', '#79FF00', 1, 'Johnson', 3.636e-23, filename='Generic_Johnson.V.dat', angstrom=True, mec='k', textcolor='#46CC00'),
     Filter(['V_S', 'v', 'vs'], '#00FF30', 1, 'Swift', 3.664e-23, filename='Swift_UVOT.V.dat', angstrom=True),
     Filter('Itagaki', 'w', 0, 'Itagaki', filename='KAF-1001E.asci', linecolor='k', italics=False),
     Filter('white', 'w', 0, 'MOSFiT', filename='white.txt', linecolor='k', italics=False),
@@ -396,10 +394,10 @@ all_filters = [
     Filter(['o', 'orange'], 'orange', 0, 'ATLAS', filename='ATLAS_orange.txt'),
     Filter(['r', "r'", 'rp', 'F625W'], '#FF7D00', 0, 'Gunn', filename='SLOAN_SDSS.r.dat', angstrom=True),
     Filter('r-DECam', '#FF7D00', 0, 'DECam', filename='CTIO_DECam.r.dat', angstrom=True),
-    Filter(['R', 'Rc', 'R_s'], '#FF7000', 0, 'Johnson', 3.064e-23, filename='Generic_Cousins.R.dat', angstrom=True),  # '#CC5900'
+    Filter(['R', 'Rc', 'R_s'], '#FF7000', 0, 'Johnson', 3.064e-23, filename='Generic_Cousins.R.dat', mec='k', angstrom=True),  # '#CC5900'
     Filter(['i', "i'", 'ip', 'F775W'], '#90002C', -1, 'Gunn', filename='SLOAN_SDSS.i.dat', angstrom=True),
     Filter('i-DECam', '#90002C', -1, 'DECam', filename='CTIO_DECam.i.dat', angstrom=True),
-    Filter(['I', 'Ic'], '#66000B', -1, 'Johnson', 2.416e-23, filename='Generic_Cousins.I.dat', angstrom=True),  # brightened from '#1C0003'
+    Filter(['I', 'Ic'], '#66000B', -1, 'Johnson', 2.416e-23, filename='Generic_Cousins.I.dat', mec='k', angstrom=True),  # brightened from '#1C0003'
     Filter('zs', '#000000', -2, 'Gunn', filename='PAN-STARRS_PS1.z.dat', angstrom=True),
     Filter(['z', "z'", 'zp'], '#000000', -2, 'Gunn', filename='SLOAN_SDSS.z.dat', angstrom=True),
     Filter('z-DECam', '#000000', -2, 'DECam', filename='CTIO_DECam.z.dat', angstrom=True),
@@ -418,15 +416,15 @@ all_filters = [
     Filter('F277W', 'C3', 0, 'JWST NIRCam', filename='JWST_NIRCam.F277W.dat', angstrom=True, italics=False),
     Filter('F356W', 'C4', 0, 'JWST NIRCam', filename='JWST_NIRCam.F356W.dat', angstrom=True, italics=False),
     Filter('F444W', 'C5', 0, 'JWST NIRCam', filename='JWST_NIRCam.F444W.dat', angstrom=True, italics=False),
-    Filter('F560W', 'C9', 0, 'JWST MIRI', filename='JWST_MIRI.F560W.dat', angstrom=True, italics=False),
-    Filter('F770W', 'C6', 0, 'JWST MIRI', filename='JWST_MIRI.F770W.dat', angstrom=True, italics=False),
-    Filter('F1000W', 'C7', 0, 'JWST MIRI', filename='JWST_MIRI.F1000W.dat', angstrom=True, italics=False),
-    Filter('F1130W', 'C0', 0, 'JWST MIRI', filename='JWST_MIRI.F1130W.dat', angstrom=True, italics=False),
-    Filter('F1280W', 'C8', 0, 'JWST MIRI', filename='JWST_MIRI.F1280W.dat', angstrom=True, italics=False),
-    Filter('F1500W', 'C1', 0, 'JWST MIRI', filename='JWST_MIRI.F1500W.dat', angstrom=True, italics=False),
-    Filter('F1800W', 'C9', 0, 'JWST MIRI', filename='JWST_MIRI.F1800W.dat', angstrom=True, italics=False),
-    Filter('F2100W', 'C2', 0, 'JWST MIRI', filename='JWST_MIRI.F2100W.dat', angstrom=True, italics=False),
-    Filter('F2550W', 'C3', 0, 'JWST MIRI', filename='JWST_MIRI.F2550W.dat', angstrom=True, italics=False),
+    Filter('F560W', 'C9', 0, 'JWST MIRI', filename='JWST_MIRI.F560W.dat', angstrom=True, mec='k', italics=False),
+    Filter('F770W', 'C6', 0, 'JWST MIRI', filename='JWST_MIRI.F770W.dat', angstrom=True, mec='k', italics=False),
+    Filter('F1000W', 'C7', 0, 'JWST MIRI', filename='JWST_MIRI.F1000W.dat', angstrom=True, mec='k', italics=False),
+    Filter('F1130W', 'C0', 0, 'JWST MIRI', filename='JWST_MIRI.F1130W.dat', angstrom=True, mec='k', italics=False),
+    Filter('F1280W', 'C8', 0, 'JWST MIRI', filename='JWST_MIRI.F1280W.dat', angstrom=True, mec='k', italics=False),
+    Filter('F1500W', 'C1', 0, 'JWST MIRI', filename='JWST_MIRI.F1500W.dat', angstrom=True, mec='k', italics=False),
+    Filter('F1800W', 'C9', 0, 'JWST MIRI', filename='JWST_MIRI.F1800W.dat', angstrom=True, mec='k', italics=False),
+    Filter('F2100W', 'C2', 0, 'JWST MIRI', filename='JWST_MIRI.F2100W.dat', angstrom=True, mec='k', italics=False),
+    Filter('F2550W', 'C3', 0, 'JWST MIRI', filename='JWST_MIRI.F2550W.dat', angstrom=True, mec='k', italics=False),
     Filter(['unknown', '?'], 'w', 0, 'unknown', linecolor='k', italics=False)]
 Filter.order = [f.name for f in all_filters]
 filtdict = {}

@@ -611,6 +611,12 @@ class LC(Table):
         t = super(LC, cls).read(filepath, format=format, fill_values=fill_values, **kwargs)
         return t
 
+    def write(self, *args, **kwargs):
+        # Filter is not serializable, so produce a copy of the LC object with 'filter' as a string
+        out = Table(self)
+        out.replace_column('filter', self['filter'].astype(str))
+        out.write(*args, **kwargs)
+
 
 def aux_axes(xfunc=None, yfunc=None, ax0=None, xfunc_args=None, yfunc_args=None):
     """

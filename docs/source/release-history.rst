@@ -12,6 +12,7 @@ Unreleased
 * Bug fix in :class:`.ShockCooling3` when :math:`R_V \ne 3.1`
 * Read the filter curves on the fly when accessing :class:`.Filter` properties ``trans``, ``wl_eff``, ``dwl``, ``wl_range``, ``freq_eff``, ``dfreq``, or ``freq_range``
 * Finish removing deprecated way of storing supernova properties in :class:`Supernova` object
+* Allow :class:`.LC` to be written as ECSV, FITS, and HDF5 files by converting :class:`.Filter` to strings
 
 v0.7.0 (2022-10-25)
 -------------------

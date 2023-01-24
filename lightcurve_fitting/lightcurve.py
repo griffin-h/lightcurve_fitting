@@ -406,8 +406,8 @@ class LC(Table):
                 self['dphase1'] *= 24.
 
     def plot(self, xcol='phase', ycol='absmag', offset_factor=1., color='filter', marker=None, use_lines=False,
-             normalize=False, fillmark=True, mjd_axis=True, appmag_axis=True, loc_mark='upper left',
-             loc_filt='upper right', ncol_mark=1, lgd_filters=None, **kwargs):
+             normalize=False, fillmark=True, mjd_axis=True, appmag_axis=True, loc_mark=None, loc_filt=None, ncol_mark=1,
+             lgd_filters=None, **kwargs):
         """
         Plot the light curve, with nondetections marked with a downward-pointing arrow
 
@@ -436,8 +436,8 @@ class LC(Table):
         loc_mark, loc_filt : str, optional
             Location for the marker and filter legends, respectively. Set to 'none' to omit them. Three new options are
             available: 'above', 'above left', and 'above right'. ``mjd_axis`` and/or ``appmag_axis`` must be used to
-            add these legends. Otherwise run ``plt.legend()`` after plotting for a single simple legend. Defaults:
-             'upper left' and 'upper right', respectively.
+            add these legends. Otherwise run ``plt.legend()`` after plotting for a single simple legend. Default: no
+            legend.
         ncol_mark : int, optional
             Number of columns in the marker legend. Default: 1.
         lgd_filters : list, array-like, optional

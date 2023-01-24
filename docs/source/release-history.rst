@@ -9,6 +9,7 @@ Unreleased
 * Automatically parse filters even when :class:`.LC` is initialized without reading (removes need for separate "filt" column)
 * Parse filters in :meth:`.LC.where` (removes need for user to access ``filtdict``)
 * Add options to add auxiliary axes and fancy legends to light curve plots
+* Avoid warnings/NaN when models are evaluated at negative phases
 * Bug fix in :class:`.ShockCooling3` when :math:`R_V \ne 3.1`
 * Read the filter curves on the fly when accessing :class:`.Filter` properties ``trans``, ``wl_eff``, ``dwl``, ``wl_range``, ``freq_eff``, ``dfreq``, or ``freq_range``
 * Finish removing deprecated way of storing supernova properties in :class:`Supernova` object

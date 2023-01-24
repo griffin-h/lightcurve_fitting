@@ -37,6 +37,15 @@ def format_unit(unit):
     return unit_str.format(value=value, unit=unit)
 
 
+def power(base, exp):
+    """Power function that returns zero for any nonpositive base"""
+    broadcast = np.broadcast(base, exp)
+    zeros = np.zeros(broadcast.shape, float)
+    positive = base > 0.
+    power = np.power(base, exp, out=zeros, where=positive)
+    return power
+
+
 class Model:
     """
     An analytical model, defined by a function and its parameters
@@ -147,14 +156,14 @@ def shock_cooling_temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp=0., kap
         a = 0.
         Tph_to_Tcol = 1.2
 
-    t = t_in.reshape(-1, 1) - t_exp
-    L_RW = L_0 * (t ** 2 * v_s / (f_rho_M * kappa)) ** -epsilon_2 * v_s ** 2 * R / kappa
+    t = np.reshape(t_in, (-1, 1)) - t_exp
+    L_RW = L_0 * power(t ** 2 * v_s / (f_rho_M * kappa), -epsilon_2) * v_s ** 2 * R / kappa
     t_tr = 19.5 * (kappa * M_env / v_s) ** 0.5
-    L = L_RW * A * np.exp(-(a * t / t_tr) ** alpha)
-    T_ph = T_0 * (t ** 2 * v_s ** 2 / (f_rho_M * kappa)) ** epsilon_1 * kappa ** -0.25 * t ** -0.5 * R ** 0.25
+    L = L_RW * A * np.exp(-power(a * t / t_tr, alpha))
+    T_ph = T_0 * power(t ** 2 * v_s ** 2 / (f_rho_M * kappa), epsilon_1) * kappa ** -0.25 * power(t, -0.5) * R ** 0.25
     T_col = T_ph * Tph_to_Tcol
     T_K = np.squeeze(T_col) / k_B
-    R_bb = c3 * np.squeeze(L) ** 0.5 * T_K ** -2
+    R_bb = c3 * np.squeeze(L) ** 0.5 * power(T_K, -2.)
     return T_K, R_bb
 
 
@@ -404,14 +413,14 @@ def shock_cooling2(t_in, f, T_1, L_1, t_tr, t_exp=0., n=1.5, RW=False, z=0.):
     if RW:
         a = 0.
 
-    t = t_in.reshape(-1, 1) - t_exp
+    t = np.reshape(t_in, (-1, 1)) - t_exp
 
     epsilon_T = 2 * epsilon_1 - 0.5
     epsilon_L = -2 * epsilon_2
 
-    T_K = np.squeeze(T_1 * t ** epsilon_T)
-    L = np.squeeze(L_1 * np.exp(-(a * t / t_tr) ** alpha) * t ** epsilon_L) * 1e42
-    R_bb = c3 * L ** 0.5 * T_K ** -2
+    T_K = np.squeeze(T_1 * power(t, epsilon_T))
+    L = np.squeeze(L_1 * np.exp(-power(a * t / t_tr, alpha)) * power(t, epsilon_L)) * 1e42
+    R_bb = c3 * L ** 0.5 * power(T_K, -2.)
 
     y_fit = blackbody_to_filters(f, T_K, R_bb, z)
 
@@ -519,9 +528,9 @@ def companion_shocking_temperature_radius(t_in, t_exp, a13, Mc_v9_7, kappa=1.):
     R_kasen : array-like
         The model blackbody radii in units of 1000 solar radii
     """
-    t_wrt_exp = t_in.reshape(-1, 1) - t_exp
-    T_kasen = np.squeeze(25. * (a13 ** 36 * Mc_v9_7 * kappa ** -35 * t_wrt_exp ** -74) ** (1 / 144.))  # kK
-    R_kasen = np.squeeze(2.7 * (kappa * Mc_v9_7 * t_wrt_exp ** 7) ** (1 / 9.))  # kiloRsun
+    t = np.reshape(t_in, (-1, 1)) - t_exp
+    T_kasen = np.squeeze(25. * power(a13 ** 36. * Mc_v9_7 * kappa ** -35. * power(t, -74.), 1. / 144.))  # kK
+    R_kasen = np.squeeze(2.7 * power(kappa * Mc_v9_7 * t ** 7., 1. / 9.))  # kiloRsun
     return T_kasen, R_kasen
 
 
@@ -590,7 +599,7 @@ def stretched_sifto(t_in, f, t_peak, stretch, dtU=None, dti=None):
         The filtered model light curves
     """
     dt_peak = {'U': np.zeros_like(stretch) if dtU is None else dtU, 'i': np.zeros_like(stretch) if dti is None else dti}
-    t_wrt_peak = np.squeeze(t_in.reshape(-1, 1) - t_peak)
+    t_wrt_peak = np.squeeze(np.reshape(t_in, (-1, 1)) - t_peak)
     if t_wrt_peak.ndim <= 1 and len(t_wrt_peak) == len(f):  # pointwise
         Lnu_sifto = np.array([np.interp(t - dt_peak.get(filt.char, 0.), sifto['Epoch'] * stretch, sifto[filt.char])
                               for t, filt in zip(t_wrt_peak, f)])
@@ -841,7 +850,7 @@ def planck_fast(nu, T, R, cutoff_freq=np.inf):
         The spectral luminosity density (:math:`L_ν`) of the source in watts per hertz
     """
     return c2 * np.squeeze(np.multiply.outer(R ** 2, nu ** 3 * np.minimum(1., cutoff_freq / nu))
-                           / (np.exp(c1 * np.multiply.outer(T ** -1, nu)) - 1))
+                           * power(np.exp(c1 * np.multiply.outer(power(T, -1.), nu)) - 1., -1.))
 
 
 def blackbody_to_filters(filters, T, R, z=0., cutoff_freq=np.inf, ebv=0.):

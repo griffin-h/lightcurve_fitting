@@ -34,26 +34,19 @@ The following column names are used by the package, although the light curve can
  * telescope: the name of the telescope/instrument where this observation was carried out [Telescope, Tel, tel+inst]
  * source: the data source, either a telescope/instrument name or a literature reference [Source]
 
-The :attr:`LC.meta` attribute contains information needed to calculate absolute magnitudes and luminosities:
+The :attr:`LC.meta` attribute contains information needed to calculate absolute magnitudes, luminosities, and rest-frame phases:
 
  * dm: the distance modulus
- * extinction: a dictionary containing Milky Way extinction corrections for each filter
- * hostext: a dictionary containing host galaxy extinction corrections for each filter
+ * ebv: the selective extinction due to dust in the Milky Way
+ * host_ebv: the selective extinction due to dust in the host galaxy (applied at the target redshift)
+ * redshift: the redshift (also used to calculate distance if the distance modulus is not given)
 
 .. code-block:: python
 
     lc.meta['dm'] = 30.79
-    lc.meta['extinction'] = {
-     'U': 0.069,
-     'B': 0.061,
-     'g': 0.055,
-     'V': 0.045,
-     '0': 0.035,
-     'r': 0.038,
-     'R': 0.035,
-     'i': 0.028,
-     'I': 0.025,
-    }
+    lc.meta['ebv'] = 0.016
+    lc.meta['host_ebv'] = 0.
+    lc.meta['redshift'] = 0.002
 
 The :class:`.LC` object has several methods for converting between the columns above,
 as well as a method for plotting the light curve in a single command:
@@ -61,7 +54,8 @@ as well as a method for plotting the light curve in a single command:
 .. code-block:: python
 
     lc.calcAbsMag()
-    lc.plot(xcol='MJD')
+    lc.calcPhase()
+    lc.plot()
 
 Filters
 -------

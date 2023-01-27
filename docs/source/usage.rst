@@ -83,9 +83,7 @@ You can make a bolometric light curve and color curves from the photometry table
 
     from lightcurve_fitting.bolometric import calculate_bolometric, plot_bolometric_results, plot_color_curves
 
-    redshift = 0.002
-    outpath = '/Users/griffin/Desktop/SN2016bkv_bolometric'
-    t = calculate_bolometric(lc, redshift, outpath, colors=['B-V', 'g-r', 'r-i'])
+    t = calculate_bolometric(lc, outpath='./SN2016bkv_bolometric', colors=['B-V', 'g-r', 'r-i'])
     print(t)
     plot_bolometric_results(t)
     plot_color_curves(t)

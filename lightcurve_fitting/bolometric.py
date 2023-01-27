@@ -584,7 +584,7 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
     lc : lightcurve_fitting.lightcurve.LC
         Table of broadband photometry including columns "MJD", "mag", "dmag", "filter"
     z : float, optional
-        Redshift between the emission source and the observed filter. Default: 0.
+        DEPRECATED: Include the redshift in `lc.meta['redshift']` instead.
     outpath : str, optional
         Directory to which to save the corner plots and MCMC chains. Default: current directory
     res : float, optional
@@ -627,6 +627,9 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
     t0 : lightcurve_fitting.lightcurve.LC
         Table containing the blackbody parameters, bolometric luminosities, and (optionally) colors
     """
+    if z:
+        warnings.warn('The z keyword is deprecated. Include the reshift in `lc.meta["redshift"]` instead.')
+    z = lc.meta.get('redshift', z)
 
     if colors is None:
         colors = []

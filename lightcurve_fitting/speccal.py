@@ -345,6 +345,11 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
         Assume constant flux in a filter for this many days after the last observed point. Default: 1 day.
     show : bool, optional
         Plot the observed light curve and the uncalibrated and calibrated spectra, and ask whether to save the results
+
+    Returns
+    -------
+    fig : matplotlib.pyplot.Figure
+        If `show=True`, the Figure object is returned
     """
     if filters is not None:
         lc = lc.where(filter=filters)
@@ -426,6 +431,8 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
             filename_out = os.path.join(path_in, 'photcal_' + filename_in).replace('.fits', '.txt')
             np.savetxt(filename_out, data_out, fmt='%.1f %.2e')
             print(filename_out)
+    if show:
+        return fig
 
 
 def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False):

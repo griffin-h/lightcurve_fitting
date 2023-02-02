@@ -17,6 +17,7 @@ Unreleased
 * Allow :class:`.LC` to be written as ECSV, FITS, and HDF5 files by converting :class:`.Filter` to strings
 * Add a few more JWST filters
 * Return the figure object in :func:`.calibrate_spectra`
+* Fix bug in :func:`.calibrate_spectra` that reverses the correction when warping
 
 v0.7.0 (2022-10-25)
 -------------------

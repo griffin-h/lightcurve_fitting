@@ -414,7 +414,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
             corr = np.polyval(p, nu) * scale
             print(spec, scale, p[:-1])
         else:
-            corr = scale
+            corr = np.array([scale])
             print(spec, scale)
         if show:
             ax2.plot(nu, Fnu * scale, label='rescaled')
@@ -426,7 +426,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
             plt.pause(0.1)
             ans = input('accept this scale? [Y/n] ')
         if not show or ans.lower() != 'n':
-            data_out = np.array([wl[good], flux[good] * corr]).T
+            data_out = np.array([wl[good], flux[good] * corr[::-1]]).T
             path_in, filename_in = os.path.split(spec)
             filename_out = os.path.join(path_in, 'photcal_' + filename_in).replace('.fits', '.txt')
             np.savetxt(filename_out, data_out, fmt='%.1f %.2e')

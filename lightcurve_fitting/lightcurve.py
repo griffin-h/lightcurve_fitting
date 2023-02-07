@@ -614,7 +614,8 @@ class LC(Table):
     def write(self, *args, **kwargs):
         # Filter is not serializable, so produce a copy of the LC object with 'filter' as a string
         out = Table(self)
-        out.replace_column('filter', self['filter'].astype(str))
+        if 'filter' in out.colnames:
+            out.replace_column('filter', self['filter'].astype(str))
         out.write(*args, **kwargs)
 
 

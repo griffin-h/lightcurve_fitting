@@ -47,575 +47,422 @@ def power(base, exp):
 
 
 class Model:
+    """An analytical model, defined by a function and its parameters"""
+
+    input_names = []
+    """A list of the parameter names"""
+
+    units = []
+    """A list of the units for each parameter"""
+
+    output_quantity = 'lum'
+    """Quantity output by the model: 'lum' or 'flux'"""
+
+    @property
+    def nparams(self):
+        """The number of parameters in the model"""
+        return len(self.input_names)
+
+    @property
+    def axis_labels(self):
+        """Axis labels for each paramter (including name and unit)"""
+        return ['${}$ ({})'.format(var, format_unit(unit))
+                if unit is not u.dimensionless_unscaled else '${}$'.format(var)
+                for var, unit in zip(self.input_names, self.units)]
+
+    def __init__(self, lc=None, redshift=0.):
+        if redshift:
+            self.z = redshift
+        elif lc is not None and 'redshift' in lc.meta:
+            self.z = lc.meta['redshift']
+        else:
+            self.z = 0.
+
+    def __call__(self, *args, **kwargs):
+        self.evaluate(*args, **kwargs)
+
+    @abstractmethod
+    def evaluate(self, *args, **kwargs):
+        return NotImplemented
+
+
+class BaseShockCooling(Model):
     """
-    An analytical model, defined by a function and its parameters
+    The shock cooling model of Sapir & Waxman (https://doi.org/10.3847/1538-4357/aa64df).
+
+    :math:`T(t) = \\frac{T_\\mathrm{col}}{T_\\mathrm{ph}} T_0 \\left(\\frac{v_s^2 t^2}{f_ρ M κ}\\right)^{ε_1}
+    \\frac{R^{1/4}}{κ^{1/4}} t^{-1/2}` (Eq. 23)
+
+    :math:`L(t) = A \\exp\\left[-\\left(\\frac{a t}{t_\\mathrm{tr}}\\right)^α\\right]
+    L_0 \\left(\\frac{v_s t^2}{f_ρ M κ}\\right)^{-ε_2} \\frac{v_s^2 R}{κ}` (Eq. 18-19)
+
+    :math:`t_\\mathrm{tr} = (19.5\\,\\mathrm{d}) \\left(\\frac{κ * M_\\mathrm{env}}{v_s} \\right)^{1/2}` (Eq. 20)
 
     Parameters
     ----------
-    func : function
-        A function that defines the analytical model
-    input_names : iterable
-        A list of parameter names
-    units : iterable
-        A list of units (:class:`astropy.unit.Unit`) for each parameter
+    lc : lightcurve_fitting.lightcurve.LC, optional
+        The light curve to which the model will be fit. Only used to get the redshift if `redshift` is not given.
+    redshift : float, optional
+        The redshift between blackbody source and the observed filters. Default: 0.
+    n : float, optional
+        The polytropic index of the progenitor. Must be either 1.5 (default) or 3.
+    RW : bool, optional
+        Reduce the model to the simpler form of Rabinak & Waxman (https://doi.org/10.1088/0004-637X/728/1/63).
+        Default: False.
 
     Attributes
     ----------
-    func : function
-        The function that defines the analytical model
-    input_names : iterable
-        A list of the parameter names
-    units : iterable
-        A list of the units for each parameter
-    nparams : int
-        The number of parameters in the model
-    axis_labels : list
-        Axis labels for each paramter (including name and unit)
-    output_quantity : str, optional
-        Quantity output by the model: 'lum' (default) or 'flux'
-    """
-    def __init__(self, func, input_names, units, output_quantity='lum'):
-        self.func = func
-        self.input_names = input_names
-        self.units = units
-        self.nparams = len(input_names)
-        self.axis_labels = ['${}$ ({})'.format(var, format_unit(unit))
-                            if unit is not u.dimensionless_unscaled else '${}$'.format(var)
-                            for var, unit in zip(input_names, units)]
-        self.output_quantity = output_quantity
-
-    def __call__(self, *args, **kwargs):
-        return self.func(*args[:self.nparams+2], **kwargs)  # +2 for times and filters
-
-
-def shock_cooling_temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW=False):
-    """
-    The shock cooling model of Sapir & Waxman (https://doi.org/10.3847/1538-4357/aa64df).
-
-    This version of the model is written in terms of physical parameters :math:`v_s, M_\\mathrm{env}, f_ρ M, R`:
-
-    :math:`T(t) = \\frac{T_\\mathrm{col}}{T_\\mathrm{ph}} T_0 \\left(\\frac{v_s^2 t^2}{f_ρ M κ}\\right)^{ε_1}
-    \\frac{R^{1/4}}{κ^{1/4}} t^{-1/2}` (Eq. 23)
-
-    :math:`L(t) = A \\exp\\left[-\\left(\\frac{a t}{t_\\mathrm{tr}}\\right)^α\\right]
-    L_0 \\left(\\frac{v_s t^2}{f_ρ M κ}\\right)^{-ε_2} \\frac{v_s^2 R}{κ}` (Eq. 18-19)
-
-    :math:`t_\\mathrm{tr} = (19.5\\,\\mathrm{d}) \\left(\\frac{κ * M_\\mathrm{env}}{v_s} \\right)^{1/2}` (Eq. 20)
-
-    Parameters
-    ----------
-    t_in : float, array-like
-        Time in days
-    v_s : float, array-like
-        The shock speed in :math:`10^{8.5}` cm/s
-    M_env : float, array-like
-        The envelope mass in solar masses
-    f_rho_M : float, array-like
-        The product :math:`f_ρ M`, where ":math:`f_ρ` is a numerical factor of order unity that depends on the inner
-        envelope structure" and :math:`M` is the ejecta mass in solar masses
-    R : float, array-like
-        The progenitor radius in :math:`10^{13}` cm
-    t_exp : float, array-like
-        The explosion epoch
-    kappa : float, array-like
-        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
-    n : float, array-like
-        The polytropic index of the progenitor. Must be either 1.5 or 3.
-    RW : bool, optional
-        Reduce the model to the simpler form of Rabinak & Waxman (https://doi.org/10.1088/0004-637X/728/1/63)
-
-    Returns
-    -------
-    T_K : array-like
-        The model blackbody temperatures in units of kilokelvins
-    R_bb : array-like
-        The model blackbody radii in units of 1000 solar radii
-    """
-    if n == 1.5:
-        A = 0.94
-        a = 1.67
-        alpha = 0.8
-        epsilon_1 = 0.027
-        epsilon_2 = 0.086
-        L_0 = 2.0e42
-        T_0 = 1.61
-        Tph_to_Tcol = 1.1
-    elif n == 3.:
-        A = 0.79
-        a = 4.57
-        alpha = 0.73
-        epsilon_1 = 0.016
-        epsilon_2 = 0.175
-        L_0 = 2.1e42
-        T_0 = 1.69
-        Tph_to_Tcol = 1.0
-    else:
-        raise ValueError('n can only be 1.5 or 3')
-
-    if RW:
-        a = 0.
-        Tph_to_Tcol = 1.2
-
-    t = np.reshape(t_in, (-1, 1)) - t_exp
-    L_RW = L_0 * power(t ** 2 * v_s / (f_rho_M * kappa), -epsilon_2) * v_s ** 2 * R / kappa
-    t_tr = 19.5 * (kappa * M_env / v_s) ** 0.5
-    L = L_RW * A * np.exp(-power(a * t / t_tr, alpha))
-    T_ph = T_0 * power(t ** 2 * v_s ** 2 / (f_rho_M * kappa), epsilon_1) * kappa ** -0.25 * power(t, -0.5) * R ** 0.25
-    T_col = T_ph * Tph_to_Tcol
-    T_K = np.squeeze(T_col) / k_B
-    R_bb = c3 * np.squeeze(L) ** 0.5 * power(T_K, -2.)
-    return T_K, R_bb
-
-
-def shock_cooling(t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1., n=1.5, RW=False, z=0.):
-    """
-    The shock cooling model of Sapir & Waxman (https://doi.org/10.3847/1538-4357/aa64df).
-
-    This version of the model is written in terms of physical parameters :math:`v_s, M_\\mathrm{env}, f_ρ M, R`:
-
-    :math:`T(t) = \\frac{T_\\mathrm{col}}{T_\\mathrm{ph}} T_0 \\left(\\frac{v_s^2 t^2}{f_ρ M κ}\\right)^{ε_1}
-    \\frac{R^{1/4}}{κ^{1/4}} t^{-1/2}` (Eq. 23)
-
-    :math:`L(t) = A \\exp\\left[-\\left(\\frac{a t}{t_\\mathrm{tr}}\\right)^α\\right]
-    L_0 \\left(\\frac{v_s t^2}{f_ρ M κ}\\right)^{-ε_2} \\frac{v_s^2 R}{κ}` (Eq. 18-19)
-
-    :math:`t_\\mathrm{tr} = (19.5\\,\\mathrm{d}) \\left(\\frac{κ * M_\\mathrm{env}}{v_s} \\right)^{1/2}` (Eq. 20)
-
-    Parameters
-    ----------
-    t_in : float, array-like
-        Time in days
-    f : lightcurve_fitting.filter.Filter, array-like
-        Filters for which to calculate the model
-    v_s : float, array-like
-        The shock speed in :math:`10^{8.5}` cm/s
-    M_env : float, array-like
-        The envelope mass in solar masses
-    f_rho_M : float, array-like
-        The product :math:`f_ρ M`, where ":math:`f_ρ` is a numerical factor of order unity that depends on the inner
-        envelope structure" and :math:`M` is the ejecta mass in solar masses
-    R : float, array-like
-        The progenitor radius in :math:`10^{13}` cm
-    t_exp : float, array-like
-        The explosion epoch
-    kappa : float, array-like
-        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
-    n : float, array-like
-        The polytropic index of the progenitor. Must be either 1.5 or 3.
-    RW : bool, optional
-        Reduce the model to the simpler form of Rabinak & Waxman (https://doi.org/10.1088/0004-637X/728/1/63)
-    z : float, optional
+    z : float
         The redshift between blackbody source and the observed filters
-
-    Returns
-    -------
-    y_fit : array-like
-        The filtered model light curves
+    n : float
+        The polytropic index of the progenitor
+    A : float
+        Coefficient on the luminosity suppression factor (Eq. 19)
+    a : float
+        Coefficient on the transparency timescale (Eq. 19)
+    alpha : float
+        Exponent on the transparency timescale (Eq. 19)
+    epsilon_1 : float
+        Exponent in the temperature expression (Eq. 23)
+    epsilon_2 : float
+        Exponent in the luminosity expression (Eq. 18)
+    L_0 : float
+        Coefficient on the luminosity expression in erg/s (Eq. 18)
+    T_0 : float
+        Coefficient on the temperature expression in eV (Eq. 23)
+    Tph_to_Tcol : float
+        Ratio of the color temperature to the photospheric temperature
+    epsilon_T : float
+        Exponent on time in the temperature expression
+    epsilon_L : float
+        Exponent on time in the luminosity expression
+    RW : bool
+        Reduce the model to the simpler form of Rabinak & Waxman (https://doi.org/10.1088/0004-637X/728/1/63)
     """
-    T_K, R_bb = shock_cooling_temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp, kappa, n, RW)
-    y_fit = blackbody_to_filters(f, T_K, R_bb, z)
-    return y_fit
+    def __init__(self, lc=None, redshift=0., n=1.5, RW=False):
+        super().__init__(lc, redshift=redshift)
+
+        if n == 1.5:
+            self.n = 1.5
+            self.A = 0.94
+            self.a = 1.67
+            self.alpha = 0.8
+            self.epsilon_1 = 0.027
+            self.epsilon_2 = 0.086
+            self.L_0 = 2.0e42
+            self.T_0 = 1.61
+            self.Tph_to_Tcol = 1.1
+        elif n == 3.:
+            self.n = 3.
+            self.A = 0.79
+            self.a = 4.57
+            self.alpha = 0.73
+            self.epsilon_1 = 0.016
+            self.epsilon_2 = 0.175
+            self.L_0 = 2.1e42
+            self.T_0 = 1.69
+            self.Tph_to_Tcol = 1.0
+        else:
+            raise ValueError('n can only be 1.5 or 3')
+
+        self.epsilon_T = 2 * self.epsilon_1 - 0.5
+        self.epsilon_L = -2 * self.epsilon_2
+
+        if RW:
+            self.RW = True
+            self.a = 0.
+            self.Tph_to_Tcol = 1.2
+        else:
+            self.RW = False
+
+    def __repr__(self):
+        return f'<{self.__class__.__name__}: z={self.z:.3f}, n={self.n:.1f}, RW={self.RW}>'
+
+    def temperature_radius(self, t_in, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1.):
+        """
+        Evaluate the color temperature and photospheric radius as a function of time for a set of parameters
+
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days
+        v_s : float, array-like
+            The shock speed in :math:`10^{8.5}` cm/s
+        M_env : float, array-like
+            The envelope mass in solar masses
+        f_rho_M : float, array-like
+            The product :math:`f_ρ M`, where :math:`f_ρ` is a numerical factor of order unity that depends on the inner
+            envelope structure and :math:`M` is the ejecta mass in solar masses
+        R : float, array-like
+            The progenitor radius in :math:`10^{13}` cm
+        t_exp : float, array-like
+            The explosion epoch
+        kappa : float, array-like
+            The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
+
+        Returns
+        -------
+        T_K : array-like
+            The model blackbody temperatures in units of kilokelvins
+        R_bb : array-like
+            The model blackbody radii in units of 1000 solar radii
+        """
+        t = np.reshape(t_in, (-1, 1)) - t_exp
+        L_RW = self.L_0 * power(t ** 2 * v_s / (f_rho_M * kappa), -self.epsilon_2) * v_s ** 2 * R / kappa
+        t_tr = 19.5 * (kappa * M_env / v_s) ** 0.5
+        L = L_RW * self.A * np.exp(-power(self.a * t / t_tr, self.alpha))
+        T_ph = self.T_0 * power(t ** 2 * v_s ** 2 / (f_rho_M * kappa), self.epsilon_1) \
+               * kappa ** -0.25 * power(t, -0.5) * R ** 0.25
+        T_col = T_ph * self.Tph_to_Tcol
+        T_K = np.squeeze(T_col) / k_B
+        R_bb = c3 * np.squeeze(L) ** 0.5 * power(T_K, -2.)
+        return T_K, R_bb
+
+    @abstractmethod
+    def evaluate(self, *args, **kwargs):
+        return NotImplemented
+
+    @staticmethod
+    def t_min(p, kappa=1.):
+        """
+        The minimum time at which the model is valid
+
+        :math:`t_\\mathrm{min} = (0.2\\,\\mathrm{d}) \\frac{R}{v_s}
+        \\max\\left[0.5, \\frac{R^{0.4}}{(f_ρ M κ)^{0.2} v_s^{-0.7}}\\right] + t_\\mathrm{exp}` (Eq. 17)
+        """
+        v_s = p[0]
+        f_rho_M = p[2]
+        R = p[3]
+        t_exp = p[4] if len(p) > 4 else 0.
+        return 0.2 * R / v_s * np.maximum(0.5, R ** 0.4 * (f_rho_M * kappa) ** -0.2 * v_s ** -0.7) + t_exp
+
+    @staticmethod
+    def t_max(p, kappa=1.):
+        """
+        The maximum time at which the model is valid
+
+        :math:`t_\\mathrm{max} = (7.4\\,\\mathrm{d}) \\left(\\frac{R}{κ}\\right)^{0.55} + t_\\mathrm{exp}` (Eq. 24)
+        """
+        R = p[3]
+        t_exp = p[4] if len(p) > 4 else 0.
+        return 7.4 * (R / kappa) ** 0.55 + t_exp
 
 
-def t_min(p, kappa=1.):
-    """
-    The minimum validity time for the :func:`shock_cooling` model
-
-    :math:`t_\\mathrm{min} = (0.2\\,\\mathrm{d}) \\frac{R}{v_s}
-    \\max\\left[0.5, \\frac{R^{0.4}}{(f_ρ M κ)^{0.2} v_s^{-0.7}}\\right] + t_\\mathrm{exp}` (Eq. 17)
-    """
-    v_s = p[0]
-    f_rho_M = p[2]
-    R = p[3]
-    t_exp = p[4] if len(p) > 4 else 0.
-    return 0.2 * R / v_s * np.maximum(0.5, R ** 0.4 * (f_rho_M * kappa) ** -0.2 * v_s ** -0.7) + t_exp
-
-
-def t_max(p, kappa=1.):
-    """
-    The maximum validity time for the :func:`shock_cooling` model
-
-    :math:`t_\\mathrm{max} = (7.4\\,\\mathrm{d}) \\left(\\frac{R}{κ}\\right)^{0.55} + t_\\mathrm{exp}` (Eq. 24)
-    """
-    R = p[3]
-    t_exp = p[4] if len(p) > 4 else 0.
-    return 7.4 * (R / kappa) ** 0.55 + t_exp
-
-
-ShockCooling = Model(shock_cooling,
-                     [
-                         'v_\\mathrm{s*}',
-                         'M_\\mathrm{env}',
-                         'f_\\rho M',
-                         'R',
-                         't_0'
-                     ],
-                     [
-                         10. ** 8.5 * u.cm / u.s,
-                         u.Msun,
-                         u.Msun,
-                         1e13 * u.cm,
-                         u.d
-                     ]
-                     )
-ShockCooling.t_min = t_min
-ShockCooling.t_max = t_max
-
-
-def shock_cooling3(t_in, f, v_s, M_env, f_rho_M, R, dist, ebv=0., t_exp=0., kappa=1., n=1.5, RW=False, z=0.):
+class ShockCooling(BaseShockCooling):
     """
     The shock cooling model of Sapir & Waxman (https://doi.org/10.3847/1538-4357/aa64df).
 
-    This version of the model is written in terms of physical parameters :math:`v_s, M_\\mathrm{env}, f_ρ M, R`:
-
-    :math:`T(t) = \\frac{T_\\mathrm{col}}{T_\\mathrm{ph}} T_0 \\left(\\frac{v_s^2 t^2}{f_ρ M κ}\\right)^{ε_1}
-    \\frac{R^{1/4}}{κ^{1/4}} t^{-1/2}` (Eq. 23)
-
-    :math:`L(t) = A \\exp\\left[-\\left(\\frac{a t}{t_\\mathrm{tr}}\\right)^α\\right]
-    L_0 \\left(\\frac{v_s t^2}{f_ρ M κ}\\right)^{-ε_2} \\frac{v_s^2 R}{κ}` (Eq. 18-19)
-
-    :math:`t_\\mathrm{tr} = (19.5\\,\\mathrm{d}) \\left(\\frac{κ * M_\\mathrm{env}}{v_s} \\right)^{1/2}` (Eq. 20)
-
-    This is the same as :func:`shock_cooling` but with distance and reddening as free parameters.
-
-    Parameters
-    ----------
-    t_in : float, array-like
-        Time in days
-    f : lightcurve_fitting.filter.Filter, array-like
-        Filters for which to calculate the model
-    v_s : float, array-like
-        The shock speed in :math:`10^{8.5}` cm/s
-    M_env : float, array-like
-        The envelope mass in solar masses
-    f_rho_M : float, array-like
-        The product :math:`f_ρ M`, where ":math:`f_ρ` is a numerical factor of order unity that depends on the inner
-        envelope structure" and :math:`M` is the ejecta mass in solar masses
-    R : float, array-like
-        The progenitor radius in :math:`10^{13}` cm
-    dist : float, array-like
-        The luminosity distance in Mpc
-    ebv : float, array-like
-        The reddening :math:`E(B-V)` to apply to the blackbody spectrum before integration
-    t_exp : float, array-like
-        The explosion epoch
-    kappa : float, array-like
-        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
-    n : float, array-like
-        The polytropic index of the progenitor. Must be either 1.5 or 3.
-    RW : bool, optional
-        Reduce the model to the simpler form of Rabinak & Waxman (https://doi.org/10.1088/0004-637X/728/1/63)
-    z : float, optional
-        The redshift between blackbody source and the observed filters
-
-    Returns
-    -------
-    y_fit : array-like
-        The filtered model light curves
+    This version of the model is written in terms of physical parameters :math:`v_s, M_\\mathrm{env}, f_ρ M, R`.
     """
-    T_K, R_bb = shock_cooling_temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp, kappa, n, RW)
-    lum = blackbody_to_filters(f, T_K, R_bb, z, ebv=ebv)
-    flux = c4 * lum / dist ** 2.
-    return flux
+    input_names = [
+        'v_\\mathrm{s*}',
+        'M_\\mathrm{env}',
+        'f_\\rho M',
+        'R',
+        't_0'
+    ]
+    units = [
+        10. ** 8.5 * u.cm / u.s,
+        u.Msun,
+        u.Msun,
+        1e13 * u.cm,
+        u.d
+    ]
+
+    def evaluate(self, t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1.):
+        """
+        Evaluate this model at a range of times and filters
+
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days
+        f : lightcurve_fitting.filter.Filter, array-like
+            Filters for which to calculate the model
+        v_s : float, array-like
+            The shock speed in :math:`10^{8.5}` cm/s
+        M_env : float, array-like
+            The envelope mass in solar masses
+        f_rho_M : float, array-like
+            The product :math:`f_ρ M`, where ":math:`f_ρ` is a numerical factor of order unity that depends on the inner
+            envelope structure" and :math:`M` is the ejecta mass in solar masses
+        R : float, array-like
+            The progenitor radius in :math:`10^{13}` cm
+        t_exp : float, array-like, optional
+            The explosion epoch. Default: 0.
+        kappa : float, array-like, optional
+            The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g). Default: 1.
+
+        Returns
+        -------
+        y_fit : array-like
+            The filtered model light curves
+        """
+        T_K, R_bb = self.temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp, kappa)
+        y_fit = blackbody_to_filters(f, T_K, R_bb, self.z)
+        return y_fit
 
 
-def t_min3(p, kappa=1.):
-    """
-    The minimum validity time for the :func:`shock_cooling` model
-
-    :math:`t_\\mathrm{min} = (0.2\\,\\mathrm{d}) \\frac{R}{v_s}
-    \\max\\left[0.5, \\frac{R^{0.4}}{(f_ρ M κ)^{0.2} v_s^{-0.7}}\\right] + t_\\mathrm{exp}` (Eq. 17)
-    """
-    return t_min([p[0], p[1], p[2], p[3], p[6] if len(p) > 6 else 0.], kappa)
-
-
-def t_max3(p, kappa=1.):
-    """
-    The maximum validity time for the :func:`shock_cooling` model
-
-    :math:`t_\\mathrm{max} = (7.4\\,\\mathrm{d}) \\left(\\frac{R}{κ}\\right)^{0.55} + t_\\mathrm{exp}` (Eq. 24)
-    """
-    return t_max([p[0], p[1], p[2], p[3], p[6] if len(p) > 6 else 0.], kappa)
-
-
-ShockCooling3 = Model(shock_cooling3,
-                      [
-                          'v_\\mathrm{s*}',
-                          'M_\\mathrm{env}',
-                          'f_\\rho M',
-                          'R',
-                          'd_L',
-                          'E(B-V)',
-                          't_0',
-                      ],
-                      [
-                          10. ** 8.5 * u.cm / u.s,
-                          u.Msun,
-                          u.Msun,
-                          1e13 * u.cm,
-                          u.Mpc,
-                          u.mag,
-                          u.d,
-                      ],
-                      output_quantity='flux')
-ShockCooling3.t_min = t_min3
-ShockCooling3.t_max = t_max3
-
-
-def shock_cooling2(t_in, f, T_1, L_1, t_tr, t_exp=0., n=1.5, RW=False, z=0.):
+class ShockCooling2(BaseShockCooling):
     """
     The shock cooling model of Sapir & Waxman (https://doi.org/10.3847/1538-4357/aa64df).
 
     This version of the model is written in terms of scaling parameters :math:`T_1, L_1, t_\\mathrm{tr}`:
 
-    :math:`T(t) = T_1 t^{2 ε_1 - 0.5}` and
-    :math:`L(t) = L_1 \\exp\\left[-\\left(\\frac{a t}{t_\\mathrm{tr}}\\right)^α\\right] t^{-2 ε_2}`
-
-    Parameters
-    ----------
-    t_in : float, array-like
-        Time in days
-    f : lightcurve_fitting.filter.Filter, array-like
-        Filters for which to calculate the model
-    T_1 : float, array-like
-        The blackbody temperature 1 day after explosion in kilokelvins
-    L_1 : float, array-like
-        The approximate blackbody luminosity 1 day after explosion in :math:`10^{42}` erg/s
-    t_tr : float, array-like
-        The time at which the envelope becomes transparent in rest-frame days
-    t_exp : float, array-like
-        The explosion epoch
-    n : float, array-like
-        The polytropic index of the progenitor. Must be either 1.5 or 3.
-    RW : bool, optional
-        Reduce the model to the simpler form of Rabinak & Waxman (https://doi.org/10.1088/0004-637X/728/1/63)
-    z : float, optional
-        The redshift between blackbody source and the observed filters
-
-    Returns
-    -------
-    y_fit : array-like
-        The filtered model light curves
+    :math:`T(t) = T_1 t^{ε_T}` and
+    :math:`L(t) = L_1 t^{ε_L} \\exp\\left[-\\left(\\frac{a t}{t_\\mathrm{tr}}\\right)^α\\right]`
     """
-    if n == 1.5:
-        a = 1.67
-        alpha = 0.8
-        epsilon_1 = 0.027
-        epsilon_2 = 0.086
-    elif n == 3.:
-        a = 4.57
-        alpha = 0.73
-        epsilon_1 = 0.016
-        epsilon_2 = 0.175
-    else:
-        raise ValueError('n can only be 1.5 or 3')
+    input_names = [
+        'T_1',
+        'L_1',
+        't_\\mathrm{tr}',
+        't_0'
+    ]
+    units = [
+        u.kK,
+        1e42 * u.erg / u.s,
+        u.d,
+        u.d
+    ]
 
-    if RW:
-        a = 0.
+    def evaluate(self, t_in, f, T_1, L_1, t_tr, t_exp=0.):
+        """
+        Evaluate this model at a range of times and filters
 
-    t = np.reshape(t_in, (-1, 1)) - t_exp
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days
+        f : lightcurve_fitting.filter.Filter, array-like
+            Filters for which to calculate the model
+        T_1 : float, array-like
+            The blackbody temperature 1 day after explosion in kilokelvins
+        L_1 : float, array-like
+            The approximate blackbody luminosity 1 day after explosion in :math:`10^{42}` erg/s
+        t_tr : float, array-like
+            The time at which the envelope becomes transparent in rest-frame days
+        t_exp : float, array-like
+            The explosion epoch
 
-    epsilon_T = 2 * epsilon_1 - 0.5
-    epsilon_L = -2 * epsilon_2
+        Returns
+        -------
+        y_fit : array-like
+            The filtered model light curves
+        """
 
-    T_K = np.squeeze(T_1 * power(t, epsilon_T))
-    L = np.squeeze(L_1 * np.exp(-power(a * t / t_tr, alpha)) * power(t, epsilon_L)) * 1e42
-    R_bb = c3 * L ** 0.5 * power(T_K, -2.)
+        t = np.reshape(t_in, (-1, 1)) - t_exp
 
-    y_fit = blackbody_to_filters(f, T_K, R_bb, z)
+        T_K = np.squeeze(T_1 * power(t, self.epsilon_T))
+        L = np.squeeze(L_1 * np.exp(-power(self.a * t / t_tr, self.alpha)) * power(t, self.epsilon_L)) * 1e42
+        R_bb = c3 * L ** 0.5 * power(T_K, -2.)
 
-    return y_fit
+        y_fit = blackbody_to_filters(f, T_K, R_bb, self.z)
+
+        return y_fit
+
+    @staticmethod
+    def t_min(p, kappa=1.):
+        """
+        The minimum time at which the model is valid
+
+        This expression cannot be translated to the parameters of :class:`ShockCooling2`
+        """
+        return NotImplemented
+
+    def t_max(self, p, kappa=1.):
+        """
+        The maximum time at which the model is valid
+
+        :math:`t_\\mathrm{max} = \\left(\\frac{8.12\\,\\mathrm{kK}}{T_1}\\right)^{1/(2 ε_1 - 0.5)} + t_\\mathrm{exp}`
+        """
+        T_1 = p[0]
+        t_exp = p[3] if len(p) > 3 else 0.
+        return (8.12 / T_1) ** (self.epsilon_T ** -1) + t_exp
 
 
-def t_min2(*args):
+class ShockCooling3(BaseShockCooling):
     """
-    The maximum validity time for the :func:`shock_cooling2` model
+    The shock cooling model of Sapir & Waxman (https://doi.org/10.3847/1538-4357/aa64df).
 
-    Raises
-    ------
-    NotImplementedError
+    This version of the model is written in terms of physical parameters :math:`v_s, M_\\mathrm{env}, f_ρ M, R` and
+    includes distance :math:`d_L` and reddening :math:`E(B-V)` as free parameters.
     """
-    raise NotImplementedError('t_min cannot be translated to these parameters')
+    input_names = [
+        'v_\\mathrm{s*}',
+        'M_\\mathrm{env}',
+        'f_\\rho M',
+        'R',
+        'd_L',
+        'E(B-V)',
+        't_0',
+    ]
+    units = [
+        10. ** 8.5 * u.cm / u.s,
+        u.Msun,
+        u.Msun,
+        1e13 * u.cm,
+        u.Mpc,
+        u.mag,
+        u.d,
+    ]
+    output_quantity = 'flux'
 
+    def evaluate(self, t_in, f, v_s, M_env, f_rho_M, R, dist, ebv=0., t_exp=0., kappa=1.):
+        """
+        Evaluate this model at a range of times and filters
 
-def t_max2(p, n=1.5):
-    """
-    The maximum validity time for the :func:`shock_cooling2` model
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days
+        f : lightcurve_fitting.filter.Filter, array-like
+            Filters for which to calculate the model
+        v_s : float, array-like
+            The shock speed in :math:`10^{8.5}` cm/s
+        M_env : float, array-like
+            The envelope mass in solar masses
+        f_rho_M : float, array-like
+            The product :math:`f_ρ M`, where ":math:`f_ρ` is a numerical factor of order unity that depends on the inner
+            envelope structure" and :math:`M` is the ejecta mass in solar masses
+        R : float, array-like
+            The progenitor radius in :math:`10^{13}` cm
+        dist : float, array-like
+            The luminosity distance in Mpc
+        ebv : float, array-like, optional
+            The reddening :math:`E(B-V)` to apply to the blackbody spectrum before integration. Default: 0.
+        t_exp : float, array-like, optional
+            The explosion epoch. Default: 0.
+        kappa : float, array-like, optional
+            The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g). Default: 1.
 
-    :math:`t_\\mathrm{max} = \\left(\\frac{8.12\\,\\mathrm{kK}}{T_1}\\right)^{1/(2 ε_1 - 0.5)} + t_\\mathrm{exp}`
-    """
-    T_1 = p[0]
-    t_exp = p[3] if len(p) > 3 else 0.
+        Returns
+        -------
+        y_fit : array-like
+            The filtered model light curves
+        """
+        T_K, R_bb = self.temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp, kappa)
+        lum = blackbody_to_filters(f, T_K, R_bb, self.z, ebv=ebv)
+        flux = c4 * lum / dist ** 2.
+        return flux
 
-    if n == 1.5:
-        epsilon_1 = 0.027
-    elif n == 3.:
-        epsilon_1 = 0.016
-    else:
-        raise ValueError('n can only be 1.5 or 3')
+    @staticmethod
+    def t_min(p, kappa=1.):
+        return super().t_min([p[0], p[1], p[2], p[3], p[6] if len(p) > 6 else 0.], kappa=kappa)
 
-    epsilon_T = 2 * epsilon_1 - 0.5
+    @staticmethod
+    def t_max(p, kappa=1.):
+        return super().t_max([p[0], p[1], p[2], p[3], p[6] if len(p) > 6 else 0.], kappa=kappa)
 
-    return (8.12 / T_1) ** (epsilon_T ** -1) + t_exp
-
-
-ShockCooling2 = Model(shock_cooling2,
-                      [
-                          'T_1',
-                          'L_1',
-                          't_\\mathrm{tr}',
-                          't_0'
-                      ],
-                      [
-                          u.kK,
-                          1e42 * u.erg / u.s,
-                          u.d,
-                          u.d
-                      ]
-                      )
-ShockCooling2.t_min = t_min2
-ShockCooling2.t_max = t_max2
 
 sifto_filename = resource_filename('lightcurve_fitting', 'models/sifto.dat')
 sifto = Table.read(sifto_filename, format='ascii')
 sifto['x'] = sifto['r']  # assume DLT40 = r for now
+M_chandra = u.def_unit('M_chandra', 1.4 * u.Msun, format={'latex': 'M_\\mathrm{Ch}'})
 
 
-def scale_sifto(lc):
+class BaseCompanionShocking(Model):
     """
-    Scale the SiFTO model to match the observed peak luminosity and colors
-
-    Parameters
-    ----------
-    lc : lightcurve_fitting.lightcurve.LC
-        The observed light curve
-    """
-    for filt in set(lc['filter']):
-        if filt.char not in sifto.colnames:
-            raise Exception('No SiFTO template for filter ' + filt.char)
-        lc_filt = lc.where(filter=filt)
-        sifto[filt.char] *= np.max(lc_filt['lum']) / np.max(sifto[filt.char])
-
-
-def companion_shocking_temperature_radius(t_in, t_exp, a13, Mc_v9_7, kappa=1.):
-    """
-    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025)
-
-    As written by Hosseinzadeh et al. (https://doi.org/10.3847/2041-8213/aa8402), the shock component is defined by:
-
-    :math:`R_\\mathrm{phot}(t) = (2700\\,R_\\odot) (M_c v_9^7)^{1/9} κ^{1/9} t^{7/9}` (Eq. 1)
-
-    :math:`T_\\mathrm{eff}(t) = (25\\,\\mathrm{kK}) a_{13}^{1/4} (M_c v_9^7)^{1/144} κ^{-35/144} t^{37/72}` (Eq. 2)
-
-    Parameters
-    ----------
-    t_in : float, array-like
-        Time in days
-    t_exp : float, array-like
-        The explosion epoch
-    a13 : float, array-like
-        The binary separation in :math:`10^{13}` cm
-    Mc_v9_7 : float, array-like
-        The product :math:`M_c v_9^7`, where :math:`M_c` is the ejecta mass in Chandrasekhar masses and :math:`v_9` is
-        the ejecta velocity in units of :math:`10^9` cm/s
-    kappa : float, array-like
-        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
-
-    Returns
-    -------
-    T_kasen : array-like
-        The model blackbody temperatures in units of kilokelvins
-    R_kasen : array-like
-        The model blackbody radii in units of 1000 solar radii
-    """
-    t = np.reshape(t_in, (-1, 1)) - t_exp
-    T_kasen = np.squeeze(25. * power(a13 ** 36. * Mc_v9_7 * kappa ** -35. * power(t, -74.), 1. / 144.))  # kK
-    R_kasen = np.squeeze(2.7 * power(kappa * Mc_v9_7 * t ** 7., 1. / 9.))  # kiloRsun
-    return T_kasen, R_kasen
-
-
-def companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, kappa=1., z=0., cutoff_freq=np.inf):
-    """
-    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025)
-
-    As written by Hosseinzadeh et al. (https://doi.org/10.3847/2041-8213/aa8402), the shock component is defined by:
-
-    :math:`R_\\mathrm{phot}(t) = (2700\\,R_\\odot) (M_c v_9^7)^{1/9} κ^{1/9} t^{7/9}` (Eq. 1)
-
-    :math:`T_\\mathrm{eff}(t) = (25\\,\\mathrm{kK}) a_{13}^{1/4} (M_c v_9^7)^{1/144} κ^{-35/144} t^{37/72}` (Eq. 2)
-
-    Parameters
-    ----------
-    t_in : float, array-like
-        Time in days
-    f : lightcurve_fitting.filter.Filter, array-like
-        Filters for which to calculate the model
-    t_exp : float, array-like
-        The explosion epoch
-    a13 : float, array-like
-        The binary separation in :math:`10^{13}` cm
-    Mc_v9_7 : float, array-like
-        The product :math:`M_c v_9^7`, where :math:`M_c` is the ejecta mass in Chandrasekhar masses and :math:`v_9` is
-        the ejecta velocity in units of :math:`10^9` cm/s
-    kappa : float, array-like
-        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
-    z : float, optional
-        The redshift between blackbody source and the observed filters
-    cutoff_freq : float, optional
-        Cutoff frequency (in terahertz) for a modified blackbody spectrum (see https://doi.org/10.3847/1538-4357/aa9334)
-
-    Returns
-    -------
-    y_fit : array-like
-        The filtered model light curves
-    """
-    T_kasen, R_kasen = companion_shocking_temperature_radius(t_in, t_exp, a13, Mc_v9_7, kappa)
-    Lnu_kasen = blackbody_to_filters(f, T_kasen, R_kasen, z, cutoff_freq)
-    return Lnu_kasen
-
-
-def stretched_sifto(t_in, f, t_peak, stretch, dtU=None, dti=None):
-    """
-    The SiFTO SN Ia model (https://doi.org/10.1086/588518), offset and stretched by the input parameters
-
-    The SiFTO model is currently only available in the UBVgri filters. We assume DLT40 can be modeled as r.
-
-    Parameters
-    ----------
-    t_in : float, array-like
-        Time in days
-    f : lightcurve_fitting.filter.Filter, array-like
-        Filters for which to calculate the model
-    t_peak : float, array-like
-        The epoch of maximum light for the SiFTO model
-    stretch : float, array-like
-        The stretch for the SiFTO model
-    dtU, dti : float, array-like
-        Time offsets for the U- and i-band models relative to the other bands
-
-    Returns
-    -------
-    y_fit : array-like
-        The filtered model light curves
-    """
-    dt_peak = {'U': np.zeros_like(stretch) if dtU is None else dtU, 'i': np.zeros_like(stretch) if dti is None else dti}
-    t_wrt_peak = np.squeeze(np.reshape(t_in, (-1, 1)) - t_peak)
-    if t_wrt_peak.ndim <= 1 and len(t_wrt_peak) == len(f):  # pointwise
-        Lnu_sifto = np.array([np.interp(t - dt_peak.get(filt.char, 0.), sifto['Epoch'] * stretch, sifto[filt.char])
-                              for t, filt in zip(t_wrt_peak, f)])
-    elif t_wrt_peak.ndim <= 1:
-        Lnu_sifto = np.array([np.interp(t_wrt_peak - dt_peak.get(filt.char, 0.), sifto['Epoch'] * stretch, sifto[filt.char])
-                              for filt in f])
-    else:
-        Lnu_sifto = np.array([np.array([np.interp(t - dt, sifto['Epoch'] * s, sifto[filt.char])
-                                        for t, s, dt in zip(t_wrt_peak.T, stretch, dt_peak.get(filt.char, np.zeros_like(stretch)))]).T
-                              for filt in f])
-    return Lnu_sifto
-
-
-def companion_shocking_plus_sifto(t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, rr=1., ri=1., rU=1., kappa=1., z=0.):
-    """
-    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model
+    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model.
 
     As written by Hosseinzadeh et al. (https://doi.org/10.3847/2041-8213/aa8402), the shock component is defined by:
 
@@ -624,150 +471,273 @@ def companion_shocking_plus_sifto(t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch,
     :math:`T_\\mathrm{eff}(t) = (25\\,\\mathrm{kK}) a_{13}^{1/4} (M_c v_9^7)^{1/144} κ^{-35/144} t^{37/72}` (Eq. 2)
 
     The SiFTO model (https://doi.org/10.1086/588518) is currently only available in the UBVgri filters.
+
+    Parameters
+    ----------
+    lc : lightcurve_fitting.lightcurve.LC, optional
+        The light curve to which the model will be fit. Only used for `lc.meta['redshift']` if `z` is not given.
+    redshift : float, optional
+        The redshift between blackbody source and the observed filters. Default: 0.
+
+    Attributes
+    ----------
+    z : float
+        The redshift between blackbody source and the observed filters
+    sifto : astropy.table.Table
+        A copy of the SiFTO model scaled to match the observed peak luminosity in each filter
+
+    """
+    def __init__(self, lc, redshift=0.):
+        super().__init__(lc, redshift=redshift)
+
+        self.sifto = sifto.copy()
+        for filt in set(lc['filter']):
+            if filt.char not in self.sifto.colnames:
+                raise Exception('No SiFTO template for filter ' + filt.char)
+            lc_filt = lc.where(filter=filt)
+            self.sifto[filt.char] *= np.max(lc_filt['lum']) / np.max(self.sifto[filt.char])
+
+    def __repr__(self):
+        return f'<{self.__class__.__name__}: z={self.z:.3f}>'
+
+    @abstractmethod
+    def evaluate(self, *args, **kwargs):
+        return NotImplemented
+
+    @staticmethod
+    def temperature_radius(t_in, t_exp, a13, Mc_v9_7, kappa=1.):
+        """
+        Evaluate the color temperature and photospheric radius of the shock component as a function of time
+
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days
+        t_exp : float, array-like
+            The explosion epoch
+        a13 : float, array-like
+            The binary separation in :math:`10^{13}` cm
+        Mc_v9_7 : float, array-like
+            The product :math:`M_c v_9^7`, where :math:`M_c` is the ejecta mass in Chandrasekhar masses and :math:`v_9`
+            is the ejecta velocity in units of :math:`10^9` cm/s
+        kappa : float, array-like
+            The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
+
+        Returns
+        -------
+        T_kasen : array-like
+            The model blackbody temperatures in units of kilokelvins
+        R_kasen : array-like
+            The model blackbody radii in units of 1000 solar radii
+        """
+        t = np.reshape(t_in, (-1, 1)) - t_exp
+        T_kasen = np.squeeze(25. * power(a13 ** 36. * Mc_v9_7 * kappa ** -35. * power(t, -74.), 1. / 144.))  # kK
+        R_kasen = np.squeeze(2.7 * power(kappa * Mc_v9_7 * t ** 7., 1. / 9.))  # kiloRsun
+        return T_kasen, R_kasen
+
+    def companion_shocking(self, t_in, f, t_exp, a13, Mc_v9_7, kappa=1.):
+        """
+        Evaluate the shock component only at a range of times and filters
+
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days
+        f : lightcurve_fitting.filter.Filter, array-like
+            Filters for which to calculate the model
+        t_exp : float, array-like
+            The explosion epoch
+        a13 : float, array-like
+            The binary separation in :math:`10^{13}` cm
+        Mc_v9_7 : float, array-like
+            The product :math:`M_c v_9^7`, where :math:`M_c` is the ejecta mass in Chandrasekhar masses and :math:`v_9` is
+            the ejecta velocity in units of :math:`10^9` cm/s
+        kappa : float, array-like
+            The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
+
+        Returns
+        -------
+        y_fit : array-like
+            The filtered model light curves
+        """
+        T_kasen, R_kasen = self.temperature_radius(t_in, t_exp, a13, Mc_v9_7, kappa)
+        Lnu_kasen = blackbody_to_filters(f, T_kasen, R_kasen, self.z)
+        return Lnu_kasen
+
+    def stretched_sifto(self, t_in, f, t_peak, stretch, dtU=None, dti=None):
+        """
+        The SiFTO SN Ia model (https://doi.org/10.1086/588518), offset and stretched by the input parameters
+
+        The SiFTO model is currently only available in the UBVgri filters. We assume DLT40 can be modeled as r.
+
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days
+        f : lightcurve_fitting.filter.Filter, array-like
+            Filters for which to calculate the model
+        t_peak : float, array-like
+            The epoch of maximum light for the SiFTO model
+        stretch : float, array-like
+            The stretch for the SiFTO model
+        dtU, dti : float, array-like
+            Time offsets for the U- and i-band models relative to the other bands
+
+        Returns
+        -------
+        y_fit : array-like
+            The filtered model light curves
+        """
+        dt_peak = {'U': np.zeros_like(stretch) if dtU is None else dtU, 'i': np.zeros_like(stretch) if dti is None else dti}
+        t_wrt_peak = np.squeeze(np.reshape(t_in, (-1, 1)) - t_peak)
+        if t_wrt_peak.ndim <= 1 and len(t_wrt_peak) == len(f):  # pointwise
+            Lnu_sifto = np.array([np.interp(t - dt_peak.get(filt.char, 0.),
+                                            self.sifto['Epoch'] * stretch, self.sifto[filt.char])
+                                  for t, filt in zip(t_wrt_peak, f)])
+        elif t_wrt_peak.ndim <= 1:
+            Lnu_sifto = np.array([np.interp(t_wrt_peak - dt_peak.get(filt.char, 0.),
+                                            self.sifto['Epoch'] * stretch, self.sifto[filt.char])
+                                  for filt in f])
+        else:
+            Lnu_sifto = np.array([np.array([np.interp(t - dt, self.sifto['Epoch'] * s, self.sifto[filt.char])
+                                            for t, s, dt in zip(t_wrt_peak.T, stretch, dt_peak.get(filt.char, np.zeros_like(stretch)))]).T
+                                  for filt in f])
+        return Lnu_sifto
+
+
+class CompanionShocking(BaseCompanionShocking):
+    """
+    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model.
 
     This version of the model includes factors on the r and i SiFTO models, and a factor on the U shock component.
-
-    Parameters
-    ----------
-    t_in : float, array-like
-        Time in days
-    f : lightcurve_fitting.filter.Filter, array-like
-        Filters for which to calculate the model
-    t_exp : float, array-like
-        The explosion epoch
-    a13 : float, array-like
-        The binary separation in :math:`10^{13}` cm
-    Mc_v9_7 : float, array-like
-        The product :math:`M_c v_9^7`, where :math:`M_c` is the ejecta mass in Chandrasekhar masses and :math:`v_9` is
-        the ejecta velocity in units of :math:`10^9` cm/s
-    t_peak : float, array-like
-        The epoch of maximum light for the SiFTO model
-    stretch : float, array-like
-        The stretch for the SiFTO model
-    rr : float, array-like
-        A scale factor for the r-band SiFTO model
-    ri : float, array-like
-        A scale factor for the i-band SiFTO model
-    rU : float, aray-like
-        A scale factor for the U-band of the shock component
-    kappa : float, array-like
-        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
-    z : float, optional
-        The redshift between blackbody source and the observed filters
-
-    Returns
-    -------
-    y_fit : array-like
-        The filtered model light curves
     """
-    Lnu_kasen = companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, kappa, z)
-    Lnu_sifto = stretched_sifto(t_in, f, t_peak, stretch)
+    input_names = [
+        't_0',
+        'a',
+        'M v^7',
+        't_\\mathrm{max}',
+        's',
+        'r_r',
+        'r_i',
+        'r_U'
+    ]
+    units = [
+        u.d,
+        10. ** 13. * u.cm,
+        M_chandra * (1e9 * u.cm / u.s) ** 7,
+        u.d,
+        u.dimensionless_unscaled,
+        u.dimensionless_unscaled,
+        u.dimensionless_unscaled,
+        u.dimensionless_unscaled
+    ]
 
-    sifto_factors = {'r': rr, 'i': ri}
-    kasen_factors = {'U': rU}
-    y_fit = np.array([L1 * kasen_factors.get(filt.char, 1.) + L2 * sifto_factors.get(filt.char, 1.)
-                      for L1, L2, filt in zip(Lnu_kasen, Lnu_sifto, f)])
+    def evaluate(self, t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, rr=1., ri=1., rU=1., kappa=1.):
+        """
+        Evaluate this model at a range of times and filters
 
-    return y_fit
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days
+        f : lightcurve_fitting.filter.Filter, array-like
+            Filters for which to calculate the model
+        t_exp : float, array-like
+            The explosion epoch
+        a13 : float, array-like
+            The binary separation in :math:`10^{13}` cm
+        Mc_v9_7 : float, array-like
+            The product :math:`M_c v_9^7`, where :math:`M_c` is the ejecta mass in Chandrasekhar masses and :math:`v_9` is
+            the ejecta velocity in units of :math:`10^9` cm/s
+        t_peak : float, array-like
+            The epoch of maximum light for the SiFTO model
+        stretch : float, array-like
+            The stretch for the SiFTO model
+        rr : float, array-like
+            A scale factor for the r-band SiFTO model
+        ri : float, array-like
+            A scale factor for the i-band SiFTO model
+        rU : float, aray-like
+            A scale factor for the U-band of the shock component
+        kappa : float, array-like
+            The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
+
+        Returns
+        -------
+        y_fit : array-like
+            The filtered model light curves
+        """
+        Lnu_kasen = self.companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, kappa)
+        Lnu_sifto = self.stretched_sifto(t_in, f, t_peak, stretch)
+
+        sifto_factors = {'r': rr, 'i': ri}
+        kasen_factors = {'U': rU}
+        y_fit = np.array([L1 * kasen_factors.get(filt.char, 1.) + L2 * sifto_factors.get(filt.char, 1.)
+                          for L1, L2, filt in zip(Lnu_kasen, Lnu_sifto, f)])
+
+        return y_fit
 
 
-M_chandra = u.def_unit('M_chandra', 1.4 * u.Msun, format={'latex': 'M_\\mathrm{Ch}'})
-CompanionShocking = Model(companion_shocking_plus_sifto,
-                          [
-                              't_0',
-                              'a',
-                              'M v^7',
-                              't_\\mathrm{max}',
-                              's',
-                              'r_r',
-                              'r_i',
-                              'r_U'
-                          ],
-                          [
-                              u.d,
-                              10. ** 13. * u.cm,
-                              M_chandra * (1e9 * u.cm / u.s) ** 7,
-                              u.d,
-                              u.dimensionless_unscaled,
-                              u.dimensionless_unscaled,
-                              u.dimensionless_unscaled,
-                              u.dimensionless_unscaled
-                          ]
-                          )
-
-
-def companion_shocking_plus_sifto2(t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, dtU=0., dti=0., kappa=1., z=0.):
+class CompanionShocking2(BaseCompanionShocking):
     """
-    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model
-
-    As written by Hosseinzadeh et al. (https://doi.org/10.3847/2041-8213/aa8402), the shock component is defined by:
-
-    :math:`R_\\mathrm{phot}(t) = (2700\\,R_\\odot) (M_c v_9^7)^{1/9} κ^{1/9} t^{7/9}` (Eq. 1)
-
-    :math:`T_\\mathrm{eff}(t) = (25\\,\\mathrm{kK}) a_{13}^{1/4} (M_c v_9^7)^{1/144} κ^{-35/144} t^{37/72}` (Eq. 2)
-
-    The SiFTO model (https://doi.org/10.1086/588518) is currently only available in the UBVgri filters.
+    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model.
 
     This version of the model includes time offsets for the U and i SiFTO models.
-
-    Parameters
-    ----------
-    t_in : float, array-like
-        Time in days
-    f : lightcurve_fitting.filter.Filter, array-like
-        Filters for which to calculate the model
-    t_exp : float, array-like
-        The explosion epoch
-    a13 : float, array-like
-        The binary separation in :math:`10^{13}` cm
-    Mc_v9_7 : float, array-like
-        The product :math:`M_c v_9^7`, where :math:`M_c` is the ejecta mass in Chandrasekhar masses and :math:`v_9` is
-        the ejecta velocity in units of :math:`10^9` cm/s
-    t_peak : float, array-like
-        The epoch of maximum light for the SiFTO model
-    stretch : float, array-like
-        The stretch for the SiFTO model
-    dtU, dti : float, array-like
-        Time offsets for the U- and i-band SiFTO models relative to the other bands
-    kappa : float, array-like
-        The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
-    z : float, optional
-        The redshift between blackbody source and the observed filters
-
-    Returns
-    -------
-    y_fit : array-like
-        The filtered model light curves
     """
-    Lnu_kasen = companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, kappa, z)
-    Lnu_sifto = stretched_sifto(t_in, f, t_peak, stretch, dtU, dti)
+    input_names = [
+        't_0',
+        'a',
+        'M v^7',
+        't_\\mathrm{max}',
+        's',
+        '\\Delta t_U',
+        '\\Delta t_i',
+    ]
+    units = [
+        u.d,
+        10. ** 13. * u.cm,
+        M_chandra * (1e9 * u.cm / u.s) ** 7,
+        u.d,
+        u.dimensionless_unscaled,
+        u.d,
+        u.d,
+    ]
 
-    kasen_factors = {'U': 1.}
-    y_fit = np.array([L1 * kasen_factors.get(filt.char, 1.) + L2 for L1, L2, filt in zip(Lnu_kasen, Lnu_sifto, f)])
+    def evaluate(self, t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, dtU=0., dti=0., kappa=1.):
+        """
+        Evaluate this model at a range of times and filters
 
-    return y_fit
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days
+        f : lightcurve_fitting.filter.Filter, array-like
+            Filters for which to calculate the model
+        t_exp : float, array-like
+            The explosion epoch
+        a13 : float, array-like
+            The binary separation in :math:`10^{13}` cm
+        Mc_v9_7 : float, array-like
+            The product :math:`M_c v_9^7`, where :math:`M_c` is the ejecta mass in Chandrasekhar masses and :math:`v_9` is
+            the ejecta velocity in units of :math:`10^9` cm/s
+        t_peak : float, array-like
+            The epoch of maximum light for the SiFTO model
+        stretch : float, array-like
+            The stretch for the SiFTO model
+        dtU, dti : float, array-like
+            Time offsets for the U- and i-band SiFTO models relative to the other bands
+        kappa : float, array-like
+            The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
 
-
-CompanionShocking2 = Model(companion_shocking_plus_sifto2,
-                          [
-                              't_0',
-                              'a',
-                              'M v^7',
-                              't_\\mathrm{max}',
-                              's',
-                              '\\Delta t_U',
-                              '\\Delta t_i',
-                          ],
-                          [
-                              u.d,
-                              10. ** 13. * u.cm,
-                              M_chandra * (1e9 * u.cm / u.s) ** 7,
-                              u.d,
-                              u.dimensionless_unscaled,
-                              u.d,
-                              u.d,
-                          ]
-                          )
+        Returns
+        -------
+        y_fit : array-like
+            The filtered model light curves
+        """
+        Lnu_kasen = self.companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, kappa)
+        Lnu_sifto = self.stretched_sifto(t_in, f, t_peak, stretch, dtU, dti)
+        y_fit = Lnu_kasen + Lnu_sifto
+        return y_fit
 
 
 class Prior:
@@ -882,7 +852,7 @@ def blackbody_to_filters(filters, T, R, z=0., cutoff_freq=np.inf, ebv=0.):
     R = np.array(R)
     if T.shape != R.shape:
         raise Exception('T & R must have the same shape')
-    np.broadcast(T, ebv)  # check if T and ebv are brodcastable, otherwise raise a ValueError
+    np.broadcast(T, ebv)  # check if T and ebv are broadcastable, otherwise raise a ValueError
     if T.ndim == 1 and len(T) == len(filters):  # pointwise
         y_fit = np.array([f.synthesize(planck_fast, t, r, cutoff_freq, z=z, ebv=ebv) for f, t, r in zip(filters, T, R)])
     else:

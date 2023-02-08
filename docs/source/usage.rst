@@ -140,17 +140,18 @@ For bolometric light curve fitting, you can also set a maximum for this intrinsi
 
 Model Fitting
 -------------
-The :mod:`.models` and :mod:`.fitting` submodules allow you to fit analytical models to the observed data. Right now, the only choices are:
+The :mod:`.models` and :mod:`.fitting` submodules allow you to fit analytical models to the observed data.
+Right now, there are two classes of models: :class:`.BaseCompanionShocking`, which is the SiFTO Type Ia supernova template [C08]_ plus a shock component from [K10]_, and :class:`.BaseShockCooling`, which is the [SW17]_ model for shock cooling in a core-collapse supernova.
+The variations on these classes are as follows:
 
- * :class:`.CompanionShocking`, which is the SiFTO Type Ia supernova template [C08]_ plus a shock component from [K10]_, with factors on the r and i SiFTO models and a factor on the U shock component.
+ * :class:`.CompanionShocking` uses factors on the r and i SiFTO models and a factor on the U shock component.
    This was used in my paper on SN 2017cbv [H17]_.
- * :class:`.CompanionShocking2`, which is the same SiFTO Type Ia supernova template [C08]_ plus a shock component [K10]_, but with time offsets for the U and i SiFTO models instead of the three multiplicative factors.
+ * :class:`.CompanionShocking2` uses time offsets for the U and i SiFTO models.
    This was used in my paper on SN 2021aefx [H22a]_.
- * :data:`.ShockCooling`, which is the [SW17]_ model for shock cooling in a core-collapse supernova,
-   formulated in terms of :math:`v_s, M_\mathrm{env}, f_ρ M, R`.
- * :data:`.ShockCooling2`, which is the same [SW17]_ model but formulated in terms of scaling parameters :math:`T_1, L_1, t_\mathrm{tr}`.
+ * :class:`.ShockCooling` is formulated in terms of physical parameters :math:`v_s, M_\mathrm{env}, f_ρ M, R`.
+ * :class:`.ShockCooling2` is formulated in terms of scaling parameters :math:`T_1, L_1, t_\mathrm{tr}`.
    This was used in my paper on SN 2016bkv [H18]_.
- * :data:`.ShockCooling3`, which is the same as :data:`.ShockCooling` but with :math:`d_L` and :math:`E(B-V)` as free parameters. (Therefore it fits the flux instead of the luminosity.) This was used in my paper on SN 2021yja [H22b]_.
+ * :class:`.ShockCooling3` is the same as :class:`.ShockCooling` but with :math:`d_L` and :math:`E(B-V)` as free parameters. (Therefore it fits the flux instead of the luminosity.) This was used in my paper on SN 2021yja [H22b]_.
 
 **Note on the shock cooling models:**
 There are degeneracies between many of the physical parameters that make them difficult to fit independently.
@@ -177,12 +178,15 @@ However, in order to measure, for example, the progenitor radius, one must use t
     p_lo = [20., 2., 20., 57468.5]
     p_up = [50., 5., 50., 57468.7]
 
-    redshift = 0.002
+    # Initialize the model
+    model = ShockCooling2(lc_early)
 
-    sampler = fitting.lightcurve_mcmc(lc_early, ShockCooling2, model_kwargs={'z': redshift},
-                                      priors=priors, p_lo=p_lo, p_up=p_up,
-                                      nwalkers=10, nsteps=100, nsteps_burnin=100, show=True)
-    lightcurve_corner(lc_early, ShockCooling2, sampler.flatchain, model_kwargs={'z': redshift})
+    # Run the fit
+    sampler = lightcurve_mcmc(lc_early, model, priors=priors, p_lo=p_lo, p_up=p_up,
+                              nwalkers=10, nsteps=100, nsteps_burnin=100, show=True)
+
+    # Plot the results
+    fig, ax_corner, ax_model = lightcurve_corner(lc_early, model, sampler.flatchain)
 
 **Another note on the shock cooling models:**
 The shock cooling models are only valid for temperatures above 0.7 eV = 8120 K [SW17]_,
@@ -193,12 +197,19 @@ If you used the [RW11]_ option, the model fails even earlier, but you will have 
 .. code-block:: python
 
     p_mean = sampler.flatchain.mean(axis=0)
-    t_max = ShockCooling2.t_max(p_mean)
+    t_max = model.t_max(p_mean)
     print(t_max)
     if lc_early['MJD'].max() > t_max:
         print('Warning: your model is not valid for all your observations')
 
 Note that you can add an :ref:`Intrinsic Scatter` to your model fits as well.
+
+Defining New Models (Advanced)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+If you want to define a new model, all you need to do is subclass the :class:`.Model` class.
+Implement the model in the :meth:`.Model.evaluate` method, which takes an array of times and an array of filters as the first two arguments, followed by the physical parameters of the model.
+If there are keyword arguments (parameters that are *not* fit for) that need to be specified, you may have to override the :meth:`.Model.__init__` method.
+You must also provide ``input_names`` and ``units`` as class variables.
 
 Calibrating Spectra to Photometry
 ---------------------------------

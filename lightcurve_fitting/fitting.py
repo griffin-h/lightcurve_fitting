@@ -3,11 +3,12 @@ import matplotlib.pyplot as plt
 import astropy.units as u
 import emcee
 import corner
-from .models import CompanionShocking, CompanionShocking2, scale_sifto, UniformPrior
+from .models import UniformPrior
 from pkg_resources import resource_filename
 import warnings
 
 PRIOR_WARNING = 'The p_max/p_min keywords are deprecated. Use the priors keyword instead.'
+MODEL_KWARGS_WARNING = 'The model_kwargs keyword is deprecated. These are now included in the model intialization.'
 
 
 def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p_up=None,
@@ -40,7 +41,7 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     nsteps_burnin : int, optional
         Number of steps (iterations) for the MCMC routine during burn-in. Default: 1000
     model_kwargs : dict, optional
-        Keyword arguments to be passed to the model
+        DEPRECATED: Keyword arguments are now included in the model initialization
     show : bool, optional
         If True, plot and display the chain histories
     save_plot_as : str, optional
@@ -59,8 +60,8 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
         EnsembleSampler object containing the results of the fit
     """
 
-    if model_kwargs is None:
-        model_kwargs = {}
+    if model_kwargs is not None:
+        raise Exception(MODEL_KWARGS_WARNING)
 
     if model.output_quantity == 'flux':
         lc.calcFlux()
@@ -72,9 +73,6 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     t = lc['MJD'].data
     y = lc[model.output_quantity].data
     dy = lc['d'+model.output_quantity].data
-
-    if model in [CompanionShocking, CompanionShocking2]:
-        scale_sifto(lc)
 
     if use_sigma:
         model.axis_labels.append('$\\sigma$')
@@ -135,7 +133,7 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
             log_prior += prior(p_i)
         if np.isinf(log_prior):
             return log_prior
-        y_fit = model(t, f, *p, **model_kwargs)
+        y_fit = model(t, f, *p)
         sigma = np.sqrt(dy ** 2. + (p[-1] * sigma_units) ** 2.) if use_sigma else dy
         log_likelihood = -0.5 * np.sum(np.log(2 * np.pi * sigma ** 2.) + ((y - y_fit) / sigma) ** 2.)
         return log_prior + log_likelihood
@@ -197,7 +195,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
     sampler_flatchain : array-like
         2D array containing the aggregated MCMC chain histories
     model_kwargs : dict, optional
-        Keyword arguments to be passed to the model
+        DEPRECATED: Keyword arguments are now included in the model initialization
     num_models_to_plot : int, optional
         Number of model realizations to plot in the light curve inset. Default: 100
     lcaxis_posn : tuple, optional
@@ -229,8 +227,8 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
     ax : matplotlib.pyplot.Axes
         Axes object for the light curve inset
     """
-    if model_kwargs is None:
-        model_kwargs = {}
+    if model_kwargs is not None:
+        raise Exception(MODEL_KWARGS_WARNING)
     if ycol is None:
         ycol = model.output_quantity
     plt.style.use(resource_filename('lightcurve_fitting', 'serif.mplstyle'))
@@ -284,7 +282,7 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
     sampler_flatchain : array-like
         2D array containing the aggregated MCMC chain histories
     model_kwargs : dict, optional
-        Keyword arguments to be passed to the model
+        DEPRECATED: Keyword arguments are now included in the model initialization.
     num_models_to_plot : int, optional
         Number of model realizations to plot in the light curve inset. Default: 100
     filter_spacing : float, optional
@@ -303,6 +301,8 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
         Reference time on the horizontal axis of the light curve inset. Default: determined by the starting time of
         the model light curve.
     """
+    if model_kwargs is not None:
+        raise Exception(MODEL_KWARGS_WARNING)
     if ax is None:
         ax = plt.axes()
 
@@ -315,7 +315,7 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
         tmax = np.max(lc['MJD'])
     xfit = np.arange(tmin, tmax, 0.1)
     ufilts = np.unique(lc['filter'])
-    y_fit = model(xfit, ufilts, *ps, **model_kwargs)
+    y_fit = model(xfit, ufilts, *ps)
 
     if mjd_offset is None:
         mjd_offset = np.floor(tmin)

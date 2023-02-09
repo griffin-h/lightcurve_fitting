@@ -490,6 +490,12 @@ class BaseCompanionShocking(Model):
     def __init__(self, lc, redshift=0.):
         super().__init__(lc, redshift=redshift)
 
+        # make sure input light curve has luminosities
+        if 'lum' not in lc.colnames:
+            if 'absmag' not in lc.colnames:
+                lc.calcAbsMag()
+            lc.calcLum()
+
         self.sifto = sifto.copy()
         for filt in set(lc['filter']):
             if filt.char not in self.sifto.colnames:

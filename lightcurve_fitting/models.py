@@ -79,7 +79,7 @@ class Model:
             self.z = 0.
 
     def __call__(self, *args, **kwargs):
-        self.evaluate(*args, **kwargs)
+        return self.evaluate(*args, **kwargs)
 
     @abstractmethod
     def evaluate(self, *args, **kwargs):

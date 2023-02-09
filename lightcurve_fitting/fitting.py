@@ -74,10 +74,11 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     y = lc[model.output_quantity].data
     dy = lc['d'+model.output_quantity].data
 
-    if use_sigma:
-        model.axis_labels.append('$\\sigma$')
+    if use_sigma and model.input_names[-1] != '\\sigma':
+        model.input_names.append('\\sigma')
+        model.units.append(u.dimensionless_unscaled)
 
-    ndim = model.nparams + use_sigma
+    ndim = model.nparams
 
     # DEPRECATED
     if p_min is None:

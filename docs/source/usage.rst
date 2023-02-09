@@ -148,6 +148,7 @@ The variations on these classes are as follows:
    This was used in my paper on SN 2017cbv [H17]_.
  * :class:`.CompanionShocking2` uses time offsets for the U and i SiFTO models.
    This was used in my paper on SN 2021aefx [H22a]_.
+ * :class:`.CompanionShocking3` is the same as :class:`.CompanionShocking2` but includes viewing angle dependence.
  * :class:`.ShockCooling` is formulated in terms of physical parameters :math:`v_s, M_\mathrm{env}, f_ρ M, R`.
  * :class:`.ShockCooling2` is formulated in terms of scaling parameters :math:`T_1, L_1, t_\mathrm{tr}`.
    This was used in my paper on SN 2016bkv [H18]_.

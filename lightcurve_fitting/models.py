@@ -746,6 +746,76 @@ class CompanionShocking2(BaseCompanionShocking):
         return y_fit
 
 
+class CompanionShocking3(BaseCompanionShocking):
+    """
+    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model.
+
+    This version of the model includes time offsets for the U and i SiFTO models, as well as the viewing angle
+    dependence parametrized by Brown et al. (https://doi.org/10.1088/0004-637X/749/1/18).
+    """
+    input_names = [
+        't_0',
+        'a',
+        'M v^7',
+        't_\\mathrm{max}',
+        's',
+        '\\Delta t_U',
+        '\\Delta t_i',
+        '\\theta'
+    ]
+    units = [
+        u.d,
+        10. ** 13. * u.cm,
+        M_chandra * (1e9 * u.cm / u.s) ** 7,
+        u.d,
+        u.dimensionless_unscaled,
+        u.d,
+        u.d,
+        u.deg,
+    ]
+
+    def evaluate(self, t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, dtU=0., dti=0., theta=0., kappa=1.):
+        """
+        Evaluate this model at a range of times and filters
+
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days
+        f : lightcurve_fitting.filter.Filter, array-like
+            Filters for which to calculate the model
+        t_exp : float, array-like
+            The explosion epoch
+        a13 : float, array-like
+            The binary separation in :math:`10^{13}` cm
+        Mc_v9_7 : float, array-like
+            The product :math:`M_c v_9^7`, where :math:`M_c` is the ejecta mass in Chandrasekhar masses and :math:`v_9` is
+            the ejecta velocity in units of :math:`10^9` cm/s
+        t_peak : float, array-like
+            The epoch of maximum light for the SiFTO model
+        stretch : float, array-like
+            The stretch for the SiFTO model
+        dtU, dti : float, array-like
+            Time offsets for the U- and i-band SiFTO models relative to the other bands
+        theta : float, array-like
+            The angle between the binary axis and the line to the observer in degrees. 0° means the binary companion
+            is along the line of sight.
+        kappa : float, array-like
+            The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
+
+        Returns
+        -------
+        y_fit : array-like
+            The filtered model light curves
+        """
+        Lnu_kasen = self.companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, kappa)
+        Lnu_sifto = self.stretched_sifto(t_in, f, t_peak, stretch, dtU, dti)
+        theta_rad = np.deg2rad(theta)
+        fractional_flux = (0.5 * np.cos(theta_rad) + 0.5) * (0.14 * theta_rad ** 2. - 0.4 * theta_rad + 1.)
+        y_fit = Lnu_kasen * fractional_flux + Lnu_sifto
+        return y_fit
+
+
 class Prior:
     __metaclass__ = ABCMeta
 

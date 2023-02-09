@@ -24,7 +24,7 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
     model : lightcurve_fitting.models.Model
         The model to fit to the light curve. Available models: :class:`.models.ShockCooling`,
         :class:`.models.ShockCooling2`, :class:`.models.ShockCooling3`, :class:`.models.CompanionShocking`,
-        :class:`.models.CompanionShocking2`
+        :class:`.models.CompanionShocking2`, :class:`.models.CompanionShocking3`
     priors : list, optional
         Prior probability distributions for each model parameter. Available priors:
         :class:`.models.UniformPrior` (default), :class:`.models.LogUniformPrior`, :class:`.models.GaussianPrior`

@@ -6,7 +6,8 @@ Unreleased
 ----------
 This release includes a major refactor of the :mod:`models` module. Models now require initialization with the :class:`.LC` object to be fit. Updated examples are given in the documentation and the Jupyter notebook. This alleviates the need for model keyword arguments, which are now deprecated. (A warning will be issued if the user tries to supply a ``model_kwargs`` argument.) This also allows for much easier specification of new models by subclassing the existing models.
 
-* Add :class:`.ShockCooling3` model, which includes viewing angle dependence
+* Add :class:`.CompanionShocking3` model, which includes viewing angle dependence
+* Added :meth:`.BaseCompanionShocking.t_min` and :meth:`.BaseCompanionShocking.t_max` to indicate when the SiFTO model is computed
 * Require Astropy version 5 (there were already features that required this)
 * Automatically calculate extinction based on :math:`E(B-V)` and :math:`R_V` if :math:`A_V` are not given
 * Automatically parse filters even when :class:`.LC` is initialized without reading (removes need for separate "filt" column)

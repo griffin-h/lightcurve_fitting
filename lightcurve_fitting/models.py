@@ -610,6 +610,24 @@ class BaseCompanionShocking(Model):
                                   for filt in f])
         return Lnu_sifto
 
+    @staticmethod
+    def t_min(p):
+        """
+        The minimum time at which the model is valid
+
+        This is the first epoch at which the stretched SiFTO model is computed
+        """
+        return p[3] + p[4] * sifto['Epoch'].min()
+
+    @staticmethod
+    def t_max(p):
+        """
+        The maximum time at which the model is valid
+
+        This is the last epoch at which the stretched SiFTO model is computed
+        """
+        return p[3] + p[4] * sifto['Epoch'].max()
+
 
 class CompanionShocking(BaseCompanionShocking):
     """

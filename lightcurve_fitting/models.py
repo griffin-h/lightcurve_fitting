@@ -784,25 +784,23 @@ class CompanionShocking3(BaseCompanionShocking):
     input_names = [
         't_0',
         'a',
-        'M v^7',
+        '\\theta',
         't_\\mathrm{max}',
         's',
         '\\Delta t_U',
         '\\Delta t_i',
-        '\\theta'
     ]
     units = [
         u.d,
         10. ** 13. * u.cm,
-        M_chandra * (1e9 * u.cm / u.s) ** 7,
+        u.deg,
         u.d,
         u.dimensionless_unscaled,
         u.d,
         u.d,
-        u.deg,
     ]
 
-    def evaluate(self, t_in, f, t_exp, a13, Mc_v9_7, t_peak, stretch, dtU=0., dti=0., theta=0., kappa=1.):
+    def evaluate(self, t_in, f, t_exp, a13, theta, t_peak, stretch, dtU, dti, kappa=1.):
         """
         Evaluate this model at a range of times and filters
 
@@ -816,18 +814,15 @@ class CompanionShocking3(BaseCompanionShocking):
             The explosion epoch
         a13 : float, array-like
             The binary separation in :math:`10^{13}` cm
-        Mc_v9_7 : float, array-like
-            The product :math:`M_c v_9^7`, where :math:`M_c` is the ejecta mass in Chandrasekhar masses and :math:`v_9` is
-            the ejecta velocity in units of :math:`10^9` cm/s
+        theta : float, array-like
+            The angle between the binary axis and the line to the observer in degrees. 0° means the binary companion
+            is along the line of sight.
         t_peak : float, array-like
             The epoch of maximum light for the SiFTO model
         stretch : float, array-like
             The stretch for the SiFTO model
         dtU, dti : float, array-like
             Time offsets for the U- and i-band SiFTO models relative to the other bands
-        theta : float, array-like
-            The angle between the binary axis and the line to the observer in degrees. 0° means the binary companion
-            is along the line of sight.
         kappa : float, array-like
             The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
 
@@ -836,7 +831,7 @@ class CompanionShocking3(BaseCompanionShocking):
         y_fit : array-like
             The filtered model light curves
         """
-        Lnu_kasen = self.companion_shocking(t_in, f, t_exp, a13, Mc_v9_7, kappa)
+        Lnu_kasen = self.companion_shocking(t_in, f, t_exp, a13, 1., kappa)
         Lnu_sifto = self.stretched_sifto(t_in, f, t_peak, stretch, dtU, dti)
         theta_rad = np.deg2rad(theta)
         fractional_flux = (0.5 * np.cos(theta_rad) + 0.5) * (0.14 * theta_rad ** 2. - 0.4 * theta_rad + 1.)

@@ -236,15 +236,16 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
     plt.style.use(resource_filename('lightcurve_fitting', 'serif.mplstyle'))
 
     sampler_flatchain_corner = sampler_flatchain.copy()
+    axis_labels_corner = model.axis_labels
     if 't_0' in model.input_names:
         i_t0 = model.input_names.index('t_0')
         if t0_offset is None:
             t0_offset = np.floor(sampler_flatchain_corner[:, i_t0].min())
         if t0_offset != 0.:
             sampler_flatchain_corner[:, i_t0] -= t0_offset
-            model.axis_labels[i_t0] = '$t_0 - {:.0f}$ (d)'.format(t0_offset)
+            axis_labels_corner[i_t0] = '$t_0 - {:.0f}$ (d)'.format(t0_offset)
 
-    fig = corner.corner(sampler_flatchain_corner, labels=model.axis_labels, label_kwargs={'size': textsize})
+    fig = corner.corner(sampler_flatchain_corner, labels=axis_labels_corner, label_kwargs={'size': textsize})
     corner_axes = np.array(fig.get_axes()).reshape(sampler_flatchain.shape[-1], sampler_flatchain.shape[-1])
     for i in range(sampler_flatchain.shape[-1]):
         corner_axes[i, 0].tick_params(labelsize=textsize)

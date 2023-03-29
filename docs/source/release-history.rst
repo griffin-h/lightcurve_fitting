@@ -22,6 +22,7 @@ This release includes a major refactor of the :mod:`models` module. Models now r
 * Add a few more JWST filters
 * Return the figure object in :func:`.calibrate_spectra`
 * Fix bug in :func:`.calibrate_spectra` that reverses the correction when warping
+* Plot arrows for nondetections in :func:`.lightcurve_corner` plot
 
 v0.7.0 (2022-10-25)
 -------------------

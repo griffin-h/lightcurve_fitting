@@ -4,6 +4,7 @@ import astropy.units as u
 import emcee
 import corner
 from .models import UniformPrior
+from .lightcurve import arrow
 from pkg_resources import resource_filename
 import warnings
 
@@ -342,6 +343,10 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
     for filt, yfit in zip(ufilts, y_fit):
         offset += filter_spacing
         lc_filt = lc.where(filter=filt)
+        if 'mag' in ycol and 'nondet' in lc.colnames:
+            lc_nondet = lc_filt.where(nondet=True)
+            plt.plot(lc_nondet['MJD'] - mjd_offset, lc_nondet[ycol] + offset,
+                     ls='none', marker=arrow, ms=25, **filt.plotstyle)
         ax.errorbar(lc_filt['MJD'] - mjd_offset, lc_filt[ycol] / yscale + offset, lc_filt[dycol] / yscale,
                     ls='none', marker='o', **filt.plotstyle)
         ax.plot(xfit - mjd_offset, yfit / yscale + offset, color=filt.linecolor, alpha=0.05)

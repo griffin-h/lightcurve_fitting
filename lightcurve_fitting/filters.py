@@ -372,12 +372,12 @@ all_filters = [
     Filter(['UVW2', 'uvw2', 'W2', '2', 'uw2'], '#FF007F', 8, 'Swift', 7.379e-24, 'Swift_UVOT.UVW2.dat', angstrom=True),
     Filter(['UVM2', 'uvm2', 'M2', 'M', 'um2'], 'm', 8, 'Swift', 7.656e-24, 'Swift_UVOT.UVM2.dat', angstrom=True),
     Filter(['UVW1', 'uvw1', 'W1', '1', 'uw1'], '#7F00FF', 4, 'Swift', 9.036e-24, 'Swift_UVOT.UVW1.dat', angstrom=True),
-    Filter(['u', "u'", 'up'], '#4700CC', 3, 'Gunn', filename='SLOAN_SDSS.u.dat', angstrom=True),  # brightened from '#080017'
+    Filter(['u', "u'", 'up', 'uprime'], '#4700CC', 3, 'Gunn', filename='SLOAN_SDSS.u.dat', angstrom=True),  # brightened from '#080017'
     Filter(['U_S', 's', 'us'], '#230047', 3, 'Swift', 1.419e-23, filename='Swift_UVOT.U.dat', angstrom=True),
     Filter('U', '#3C0072', 3, 'Johnson', 1.790e-23, filename='Generic_Johnson.U.dat', angstrom=True, mec='k'),
     Filter('B', '#0057FF', 2, 'Johnson', 4.063e-23, filename='Generic_Johnson.B.dat', angstrom=True, mec='k'),
     Filter(['B_S', 'b', 'bs'], '#4B00FF', 2, 'Swift', 4.093e-23, filename='Swift_UVOT.B.dat', angstrom=True),
-    Filter(['g', "g'", 'gp', 'F475W'], '#00CCFF', 1, 'Gunn', filename='SLOAN_SDSS.g.dat', angstrom=True),
+    Filter(['g', "g'", 'gp', 'gprime', 'F475W'], '#00CCFF', 1, 'Gunn', filename='SLOAN_SDSS.g.dat', angstrom=True),
     Filter('g-DECam', '#00CCFF', 1, 'DECam', filename='CTIO_DECam.g.dat', angstrom=True),
     Filter(['c', 'cyan'], 'c', 1, 'ATLAS', filename='ATLAS_cyan.txt'),
     Filter('V', '#79FF00', 1, 'Johnson', 3.636e-23, filename='Generic_Johnson.V.dat', angstrom=True, mec='k', textcolor='#46CC00'),
@@ -392,14 +392,14 @@ all_filters = [
     Filter('DLT40', 'w', 0, 'DLT40', filename='QE_E2V_MBBBUV_Broadband.csv', linecolor='k', italics=False),
     Filter('w', 'w', 0, 'Gunn', filename='PAN-STARRS_PS1.w.dat', angstrom=True, linecolor='k'),
     Filter(['o', 'orange'], 'orange', 0, 'ATLAS', filename='ATLAS_orange.txt'),
-    Filter(['r', "r'", 'rp', 'F625W'], '#FF7D00', 0, 'Gunn', filename='SLOAN_SDSS.r.dat', angstrom=True),
+    Filter(['r', "r'", 'rp', 'rprime', 'F625W'], '#FF7D00', 0, 'Gunn', filename='SLOAN_SDSS.r.dat', angstrom=True),
     Filter('r-DECam', '#FF7D00', 0, 'DECam', filename='CTIO_DECam.r.dat', angstrom=True),
     Filter(['R', 'Rc', 'R_s'], '#FF7000', 0, 'Johnson', 3.064e-23, filename='Generic_Cousins.R.dat', mec='k', angstrom=True),  # '#CC5900'
-    Filter(['i', "i'", 'ip', 'F775W'], '#90002C', -1, 'Gunn', filename='SLOAN_SDSS.i.dat', angstrom=True),
+    Filter(['i', "i'", 'ip', 'iprime', 'F775W'], '#90002C', -1, 'Gunn', filename='SLOAN_SDSS.i.dat', angstrom=True),
     Filter('i-DECam', '#90002C', -1, 'DECam', filename='CTIO_DECam.i.dat', angstrom=True),
     Filter(['I', 'Ic'], '#66000B', -1, 'Johnson', 2.416e-23, filename='Generic_Cousins.I.dat', mec='k', angstrom=True),  # brightened from '#1C0003'
     Filter('zs', '#000000', -2, 'Gunn', filename='PAN-STARRS_PS1.z.dat', angstrom=True),
-    Filter(['z', "z'", 'zp'], '#000000', -2, 'Gunn', filename='SLOAN_SDSS.z.dat', angstrom=True),
+    Filter(['z', "z'", 'zp', 'zprime'], '#000000', -2, 'Gunn', filename='SLOAN_SDSS.z.dat', angstrom=True),
     Filter('z-DECam', '#000000', -2, 'DECam', filename='CTIO_DECam.z.dat', angstrom=True),
     Filter('y', 'y', -3, 'Gunn', filename='PAN-STARRS_PS1.y.dat', angstrom=True),
     Filter('y-DECam', 'y', -3, 'DECam', filename='CTIO_DECam.Y.dat', angstrom=True),

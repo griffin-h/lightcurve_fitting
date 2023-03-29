@@ -4,6 +4,7 @@ import astropy.units as u
 from astropy.table import Table
 from pkg_resources import resource_filename
 from abc import ABCMeta, abstractmethod
+from .filters import filtdict
 
 k_B = const.k_B.to("eV / kK").value
 c3 = (4. * np.pi * const.sigma_sb.to("erg s-1 Rsun-2 kK-4").value) ** -0.5 / 1000.  # Rsun --> kiloRsun
@@ -455,8 +456,7 @@ class ShockCooling3(BaseShockCooling):
 
 
 sifto_filename = resource_filename('lightcurve_fitting', 'models/sifto.dat')
-sifto = Table.read(sifto_filename, format='ascii')
-sifto['x'] = sifto['r']  # assume DLT40 = r for now
+sifto = Table.read(sifto_filename, format='ascii')[3:]  # the first three points are ~0
 M_chandra = u.def_unit('M_chandra', 1.4 * u.Msun, format={'latex': 'M_\\mathrm{Ch}'})
 
 
@@ -496,12 +496,18 @@ class BaseCompanionShocking(Model):
                 lc.calcAbsMag()
             lc.calcLum()
 
-        self.sifto = sifto.copy()
+        self.sifto = {}
         for filt in set(lc['filter']):
-            if filt.char not in self.sifto.colnames:
-                raise Exception('No SiFTO template for filter ' + filt.char)
-            lc_filt = lc.where(filter=filt)
-            self.sifto[filt.char] *= np.max(lc_filt['lum']) / np.max(self.sifto[filt.char])
+            if filt.char in sifto.colnames:
+                lc_filt = lc.where(filter=filt)
+                sifto_scaled = sifto[filt.char] * np.max(lc_filt['lum']) / np.max(sifto[filt.char])
+                self.sifto[filt] = CubicSpline(sifto['Epoch'], sifto_scaled, extrapolate=False)
+            elif filt.name not in ['DLT40', 'unfilt.']:
+                raise Exception('No SiFTO template for filter ' + filt.name)
+
+        # assume unfiltered = r for now
+        self.sifto[filtdict['DLT40']] = self.sifto[filtdict['r']]
+        self.sifto[filtdict['unfilt.']] = self.sifto[filtdict['r']]
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: z={self.z:.3f}>'
@@ -574,7 +580,8 @@ class BaseCompanionShocking(Model):
         """
         The SiFTO SN Ia model (https://doi.org/10.1086/588518), offset and stretched by the input parameters
 
-        The SiFTO model is currently only available in the UBVgri filters. We assume DLT40 can be modeled as r.
+        The SiFTO model is currently only available in the UBVgri filters. We assume unfiltered photometry can be
+        modeled as r.
 
         Parameters
         ----------

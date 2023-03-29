@@ -23,6 +23,7 @@ This release includes a major refactor of the :mod:`models` module. Models now r
 * Return the figure object in :func:`.calibrate_spectra`
 * Fix bug in :func:`.calibrate_spectra` that reverses the correction when warping
 * Plot arrows for nondetections in :func:`.lightcurve_corner` plot
+* Better matching of filters to SiFTO template (not just by name)
 
 v0.7.0 (2022-10-25)
 -------------------

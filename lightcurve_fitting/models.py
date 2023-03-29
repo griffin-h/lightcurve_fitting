@@ -4,6 +4,7 @@ import astropy.units as u
 from astropy.table import Table
 from pkg_resources import resource_filename
 from abc import ABCMeta, abstractmethod
+from scipy.interpolate import CubicSpline
 from .filters import filtdict
 
 k_B = const.k_B.to("eV / kK").value
@@ -601,20 +602,22 @@ class BaseCompanionShocking(Model):
         y_fit : array-like
             The filtered model light curves
         """
-        dt_peak = {'U': np.zeros_like(stretch) if dtU is None else dtU, 'i': np.zeros_like(stretch) if dti is None else dti}
+        dt_peak = {}
+        if dtU is not None:
+            dt_peak[filtdict['U']] = dtU
+        if dti is not None:
+            dt_peak[filtdict['i']] = dti
         t_wrt_peak = np.squeeze(np.reshape(t_in, (-1, 1)) - t_peak)
         if t_wrt_peak.ndim <= 1 and len(t_wrt_peak) == len(f):  # pointwise
-            Lnu_sifto = np.array([np.interp(t - dt_peak.get(filt.char, 0.),
-                                            self.sifto['Epoch'] * stretch, self.sifto[filt.char])
+            Lnu_sifto = np.array([self.sifto[filt]((t - dt_peak.get(filt, 0.)) / stretch)
                                   for t, filt in zip(t_wrt_peak, f)])
         elif t_wrt_peak.ndim <= 1:
-            Lnu_sifto = np.array([np.interp(t_wrt_peak - dt_peak.get(filt.char, 0.),
-                                            self.sifto['Epoch'] * stretch, self.sifto[filt.char])
-                                  for filt in f])
+            Lnu_sifto = np.array([self.sifto[filt]((t_wrt_peak - dt_peak.get(filt, 0.)) / stretch) for filt in f])
         else:
-            Lnu_sifto = np.array([np.array([np.interp(t - dt, self.sifto['Epoch'] * s, self.sifto[filt.char])
-                                            for t, s, dt in zip(t_wrt_peak.T, stretch, dt_peak.get(filt.char, np.zeros_like(stretch)))]).T
+            Lnu_sifto = np.array([np.transpose([self.sifto[filt]((t - dt) / s) for t, dt, s in
+                                                zip(t_wrt_peak.T, dt_peak.get(filt, np.zeros_like(stretch)), stretch)])
                                   for filt in f])
+        Lnu_sifto[np.isnan(Lnu_sifto)] = 0.  # extrapolate all filters as zero
         return Lnu_sifto
 
     @staticmethod

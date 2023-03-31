@@ -490,6 +490,7 @@ class LC(Table):
             keys = [Table()]
         linestyle = plot_kwargs.pop('linestyle', plot_kwargs.pop('ls', self.meta.get('linestyle', self.meta.get('ls'))))
         linewidth = plot_kwargs.pop('linewidth', plot_kwargs.pop('lw', self.meta.get('linewidth', self.meta.get('lw'))))
+        ms = plot_kwargs.pop('markersize', plot_kwargs.pop('ms', plt.rcParams['lines.markersize']))
         for g, k in zip(plottable.groups, keys):
             filt = g['filter'][0]
             if color == 'filter':
@@ -538,7 +539,8 @@ class LC(Table):
                 else:
                     print("must set .meta['peakabsmag'] to use normalize")
             if 'mag' in ycol and 'nondet' in g.keys() and marker:  # don't plot if no markers used
-                plt.plot(x[g['nondet']], y[g['nondet']], marker=arrow, linestyle='none', ms=25, mec=mec, **plot_kwargs)
+                plt.plot(x[g['nondet']], y[g['nondet']], marker=arrow, linestyle='none', ms=ms / 6. * 25., mec=mec,
+                         **plot_kwargs)
             if 'filter' in k.colnames:
                 if len(filt.name) >= 4 and not filt.offset:
                     k['filter'] = filt.name
@@ -548,15 +550,15 @@ class LC(Table):
                     k['filter'] = '${}$'.format(filt.name)
             label = ' '.join([str(kv) for kv in k.values()])
             if not use_lines:
-                plt.errorbar(x, y, yerr, color=mec, mfc=mfc, mec=mec, marker=mark, linestyle='none', label=label,
+                plt.errorbar(x, y, yerr, color=mec, mfc=mfc, mec=mec, ms=ms, marker=mark, linestyle='none', label=label,
                              **plot_kwargs)
             elif 'mag' in ycol and 'nondet' in g.colnames:
-                plt.plot(x[~g['nondet']], y[~g['nondet']], color=col, mfc=mfc, mec=mec, marker=mark, label=label,
+                plt.plot(x[~g['nondet']], y[~g['nondet']], color=col, mfc=mfc, mec=mec, ms=ms, marker=mark, label=label,
                          linestyle=linestyle, linewidth=linewidth, **plot_kwargs)
-                plt.plot(x[g['nondet']], y[g['nondet']], color=mec, mfc=mfc, mec=mec, marker=mark, linestyle='none',
-                         **plot_kwargs)
+                plt.plot(x[g['nondet']], y[g['nondet']], color=mec, mfc=mfc, mec=mec, ms=ms, marker=mark,
+                         linestyle='none', **plot_kwargs)
             else:
-                plt.plot(x, y, color=col, mfc=mfc, mec=mec, marker=mark, label=label, linestyle=linestyle,
+                plt.plot(x, y, color=col, mfc=mfc, mec=mec, ms=ms, marker=mark, label=label, linestyle=linestyle,
                          linewidth=linewidth, **plot_kwargs)
 
         # format axes
@@ -586,7 +588,7 @@ class LC(Table):
         # add legends
             if marker in self.colnames:
                 labels = sorted(set(self[marker]))
-                lines = [plt.Line2D([], [], mec='k', mfc='none', marker=self.markers[label], linestyle='none')
+                lines = [plt.Line2D([], [], mec='k', mfc='none', ms=ms, marker=self.markers[label], linestyle='none')
                          for label in labels]
                 custom_legend(top, lines, labels, ncol=ncol_mark, loc=loc_mark, title=lgd_title, frameon=True)
 

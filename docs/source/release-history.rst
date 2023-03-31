@@ -26,6 +26,7 @@ This release includes a major refactor of the :mod:`models` module. Models now r
 * Better matching of filters to SiFTO template (not just by name)
 * Interpolate SiFTO with a cubic spline instead of a line
 * Recognize uprime, gprime, rprime, iprime, and zprime as filter names
+* Allow adjustments to marker size
 
 v0.7.0 (2022-10-25)
 -------------------

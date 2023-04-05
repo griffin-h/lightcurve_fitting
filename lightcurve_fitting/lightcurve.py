@@ -836,7 +836,7 @@ def flux2mag(flux, dflux=np.array(np.nan), zp=0., nondet=None, nondetSigmas=3.):
     if nondet is not None:
         flux[nondet] = nondetSigmas * dflux[nondet]
         dflux[nondet] = np.nan
-    mag = -2.5 * np.log10(flux) + zp
+    mag = -2.5 * np.log10(flux, out=np.full_like(flux, -np.inf), where=flux > 0.) + zp
     dmag = 2.5 * dflux / (flux * np.log(10))
     return mag, dmag
 

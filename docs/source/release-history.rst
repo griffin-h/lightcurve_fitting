@@ -27,6 +27,7 @@ This release includes a major refactor of the :mod:`models` module. Models now r
 * Interpolate SiFTO with a cubic spline instead of a line
 * Recognize uprime, gprime, rprime, iprime, and zprime as filter names
 * Allow adjustments to marker size
+* Prevent log(0) warning from :func:`lightcurve_model_plot`
 
 v0.7.0 (2022-10-25)
 -------------------

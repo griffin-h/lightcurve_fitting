@@ -342,7 +342,7 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
         dycol = 'dmag'
         yscale = 1.
         ylabel = 'Absolute Magnitude + Offset'
-        y_fit = [[[filt.M0]] for filt in ufilts] - 2.5 * np.log10(y_fit)
+        y_fit, _ = flux2mag(y_fit, zp=[[[filt.M0]] for filt in ufilts])
         ax.invert_yaxis()
     elif ycol == 'flux':
         dycol = 'dflux'

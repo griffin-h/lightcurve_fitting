@@ -189,7 +189,7 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
 def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
                       num_models_to_plot=100, lcaxis_posn=(0.7, 0.55, 0.2, 0.4),
                       filter_spacing=1., tmin=None, tmax=None, t0_offset=None, save_plot_as='', ycol=None,
-                      textsize='medium', param_textsize='large', use_sigma=False):
+                      textsize='medium', param_textsize='large', use_sigma=False, xscale='linear'):
     """
     Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model light curves.
 
@@ -226,6 +226,8 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         Font size for the parameter text. Default: 'large'
     use_sigma : bool, optional
         If True, treat the last parameter as an intrinsic scatter parameter that does not get passed to the model
+    xscale : str, optional
+        Scale for the x-axis of the model plot. Choices: "linear" (default) or "log".
 
     Returns
     -------
@@ -267,7 +269,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
 
     ax = fig.add_axes(lcaxis_posn)
     lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs, num_models_to_plot, filter_spacing,
-                          tmin, tmax, ycol, textsize, ax, use_sigma=use_sigma)
+                          tmin, tmax, ycol, textsize, ax, use_sigma=use_sigma, xscale=xscale)
 
     paramtexts = format_credible_interval(sampler_flatchain, varnames=model.input_names, units=model.units)
     fig.text(0.45, 0.95, '\n'.join(paramtexts), va='top', ha='center', fontdict={'size': param_textsize})
@@ -279,7 +281,8 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
 
 
 def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_models_to_plot=100, filter_spacing=1.,
-                          tmin=None, tmax=None, ycol=None, textsize='medium', ax=None, mjd_offset=None, use_sigma=False):
+                          tmin=None, tmax=None, ycol=None, textsize='medium', ax=None, mjd_offset=None, use_sigma=False,
+                          xscale='linear'):
     """
     Plot the observed and model light curves.
 
@@ -312,6 +315,8 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
         the model light curve.
     use_sigma : bool, optional
         If True, treat the last parameter as an intrinsic scatter parameter that does not get passed to the model
+    xscale : str, optional
+        Scale for the x-axis. Choices: "linear" (default) or "log".
     """
     if model_kwargs is not None:
         raise Exception(MODEL_KWARGS_WARNING)
@@ -325,7 +330,7 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
         tmin = np.min(lc['MJD'])
     if tmax is None:
         tmax = np.max(lc['MJD'])
-    xfit = np.arange(tmin, tmax, 0.1)
+    xfit = np.geomspace(tmin, tmax, 1000) if xscale == 'log' else np.linsapce(tmin, tmax, 1000)
     ufilts = np.unique(lc['filter'])
     if use_sigma:
         y_fit = model(xfit, ufilts, *ps[:-1])
@@ -365,7 +370,12 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
     else:
         raise ValueError(f'ycol="{ycol}" is not recognized. Use "lum", "absmag", "flux".')
 
-    lc = lc.copy()
+    if xscale == 'log':
+        ax.set_xscale('log')
+        ax.xaxis.set_major_formatter(plt.ScalarFormatter())
+        lc = lc.where(MJD_min=mjd_offset)
+    else:
+        lc = lc.copy()
     lc['MJD'] -= mjd_offset
     lc[ycol] /= yscale
     lc[dycol] /= yscale

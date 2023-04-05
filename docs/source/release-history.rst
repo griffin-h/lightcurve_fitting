@@ -22,7 +22,7 @@ This release includes a major refactor of the :mod:`models` module. Models now r
 * Add a few more JWST filters
 * Return the figure object in :func:`.calibrate_spectra`
 * Fix bug in :func:`.calibrate_spectra` that reverses the correction when warping
-* Plot arrows for nondetections in :func:`.lightcurve_corner` plot
+* Reimplement :func:`.lightcurve_model_plot` using :meth:`.LC.plot` to get markers, nondetections, offsets, etc.
 * Better matching of filters to SiFTO template (not just by name)
 * Interpolate SiFTO with a cubic spline instead of a line
 * Recognize uprime, gprime, rprime, iprime, and zprime as filter names

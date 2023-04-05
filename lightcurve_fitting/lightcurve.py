@@ -407,7 +407,7 @@ class LC(Table):
 
     def plot(self, xcol='phase', ycol='absmag', offset_factor=1., color='filter', marker=None, use_lines=False,
              normalize=False, fillmark=True, mjd_axis=True, appmag_axis=True, loc_mark=None, loc_filt=None, ncol_mark=1,
-             lgd_filters=None, **kwargs):
+             lgd_filters=None, tight_layout=True, **kwargs):
         """
         Plot the light curve, with nondetections marked with a downward-pointing arrow
 
@@ -444,6 +444,8 @@ class LC(Table):
             Customize the arrangement of filters in the legend by providing a list of filters for each column. ``None``
             can be used to leave a blank space in the column. Only filters given here will be used. The default
             arrangement shows all filters arranged by ``.system`` (columns) and ``.offset`` (rows).
+        tight_layout : bool, optional
+            Adjust the figure margins to look beautiful. Default: True.
         kwargs
             Keyword arguments matching column names in the light curve are used to specify a subset of points to plot.
             Additional keyword arguments passed to :func:`matplotlib.pyplot.plot`.
@@ -598,7 +600,8 @@ class LC(Table):
                 lines, labels, ncol = filter_legend(lgd_filters, offset_factor)
                 custom_legend(right, lines, labels, loc=loc_filt, ncol=ncol, title='Filter', frameon=True)
 
-        plt.tight_layout()
+        if tight_layout:
+            plt.tight_layout()
 
     def _phase2mjd(self, phase, hours=False):
         return phase * (1. + self.meta['redshift']) / (24. if hours else 1.) + self.meta['refmjd']
@@ -737,7 +740,7 @@ def filter_legend(filts, offset_factor=1.):
     labels = []
     if isinstance(filts, set):
         filts = filtsetup(filts)
-    else:
+    elif isinstance(filts[0], str):
         filts = np.vectorize(filtdict.get)(filts)
     for filt in filts.flatten():
         if filt is None:

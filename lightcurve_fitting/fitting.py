@@ -4,7 +4,7 @@ import astropy.units as u
 import emcee
 import corner
 from .models import UniformPrior
-from .lightcurve import arrow
+from .lightcurve import filter_legend, flux2mag
 from pkg_resources import resource_filename
 import warnings
 
@@ -183,7 +183,7 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
 
 def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
                       num_models_to_plot=100, lcaxis_posn=(0.7, 0.55, 0.2, 0.4),
-                      filter_spacing=0.5, tmin=None, tmax=None, t0_offset=None, save_plot_as='', ycol=None,
+                      filter_spacing=1., tmin=None, tmax=None, t0_offset=None, save_plot_as='', ycol=None,
                       textsize='medium', param_textsize='large'):
     """
     Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model light curves.
@@ -204,7 +204,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         Light curve inset position and size specification in figure units: (left, bottom, width, height)
     filter_spacing : float, optional
         Spacing between filters in the light curve inset, in units determined by the order of magnitude of the
-        luminosities. Default: 0.5
+        luminosities. Default: 1.
     tmin, tmax : float, optional
         Starting and ending times for which to plot the models in the light curve inset. Default: determined by the
         time range of the observed light curve.
@@ -271,7 +271,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
     return fig, corner_axes, ax
 
 
-def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_models_to_plot=100, filter_spacing=0.5,
+def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_models_to_plot=100, filter_spacing=1.,
                           tmin=None, tmax=None, ycol=None, textsize='medium', ax=None, mjd_offset=None):
     """
     Plot the observed and model light curves.
@@ -290,7 +290,7 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
         Number of model realizations to plot in the light curve inset. Default: 100
     filter_spacing : float, optional
         Spacing between filters in the light curve inset, in units determined by the order of magnitude of the
-        luminosities. Default: 0.5
+        luminosities. Default: 1.
     tmin, tmax : float, optional
         Starting and ending times for which to plot the models in the light curve inset. Default: determined by the
         time range of the observed light curve.
@@ -340,18 +340,17 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
             np.log10(yscale) + 7)  # W --> erg / s
     else:
         raise ValueError(f'ycol="{ycol}" is not recognized. Use "lum", "absmag", "flux".')
-    offset = -len(ufilts) // 2 * filter_spacing
-    for filt, yfit in zip(ufilts, y_fit):
-        offset += filter_spacing
-        lc_filt = lc.where(filter=filt)
-        if 'mag' in ycol and 'nondet' in lc.colnames:
-            lc_nondet = lc_filt.where(nondet=True)
-            plt.plot(lc_nondet['MJD'] - mjd_offset, lc_nondet[ycol] + offset,
-                     ls='none', marker=arrow, ms=25, **filt.plotstyle)
-        ax.errorbar(lc_filt['MJD'] - mjd_offset, lc_filt[ycol] / yscale + offset, lc_filt[dycol] / yscale,
-                    ls='none', marker='o', **filt.plotstyle)
+
+    lc = lc.copy()
+    lc['MJD'] -= mjd_offset
+    lc[ycol] /= yscale
+    lc[dycol] /= yscale
+    lc.plot(xcol='MJD', ycol=ycol, offset_factor=filter_spacing, appmag_axis=False, tight_layout=False)
+    plt.autoscale(False)
+    _, labels, _ = filter_legend(np.array(ufilts), filter_spacing)
+    for yfit, filt, txt in zip(y_fit, ufilts, labels):
+        offset = -filt.offset * filter_spacing
         ax.plot(xfit - mjd_offset, yfit / yscale + offset, color=filt.linecolor, alpha=0.05)
-        txt = f'${filt.name}{offset:+g}$' if filt.italics else rf'$\mathrm{{{filt.name}}}{offset:+g}$'
         ax.text(1.03, yfit[-1, 0] / yscale + offset, txt, color=filt.textcolor, fontdict={'size': textsize},
                 ha='left', va='center', transform=ax.get_yaxis_transform())
     ax.set_xlabel('MJD $-$ {:f}'.format(mjd_offset).rstrip('0').rstrip('.'), size=textsize)

@@ -323,6 +323,8 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
     """
     if model_kwargs is not None:
         raise Exception(MODEL_KWARGS_WARNING)
+    if ycol is None:
+        ycol = model.output_quantity
     if ax is None:
         ax = plt.axes()
 

@@ -135,8 +135,12 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
             log_prior += prior(p_i)
         if np.isinf(log_prior):
             return log_prior
-        y_fit = model(t, f, *p)
-        sigma = np.sqrt(dy ** 2. + (p[-1] * sigma_units) ** 2.) if use_sigma else dy
+        if use_sigma:
+            y_fit = model(t, f, *p[:-1])
+            sigma = np.sqrt(dy ** 2. + (p[-1] * sigma_units) ** 2.)
+        else:
+            y_fit = model(t, f, *p)
+            sigma = dy
         log_likelihood = -0.5 * np.sum(np.log(2 * np.pi * sigma ** 2.) + ((y - y_fit) / sigma) ** 2.)
         return log_prior + log_likelihood
 
@@ -184,7 +188,7 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
 def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
                       num_models_to_plot=100, lcaxis_posn=(0.7, 0.55, 0.2, 0.4),
                       filter_spacing=1., tmin=None, tmax=None, t0_offset=None, save_plot_as='', ycol=None,
-                      textsize='medium', param_textsize='large'):
+                      textsize='medium', param_textsize='large', use_sigma=False):
     """
     Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model light curves.
 
@@ -219,6 +223,8 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         Font size for the x- and y-axis labels, as well as the tick labels. Default: 'medium'
     param_textsize : str, optional
         Font size for the parameter text. Default: 'large'
+    use_sigma : bool, optional
+        If True, treat the last parameter as an intrinsic scatter parameter that does not get passed to the model
 
     Returns
     -------
@@ -260,7 +266,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
 
     ax = fig.add_axes(lcaxis_posn)
     lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs, num_models_to_plot, filter_spacing,
-                          tmin, tmax, ycol, textsize, ax)
+                          tmin, tmax, ycol, textsize, ax, use_sigma=use_sigma)
 
     paramtexts = format_credible_interval(sampler_flatchain, varnames=model.input_names, units=model.units)
     fig.text(0.45, 0.95, '\n'.join(paramtexts), va='top', ha='center', fontdict={'size': param_textsize})
@@ -272,7 +278,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
 
 
 def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_models_to_plot=100, filter_spacing=1.,
-                          tmin=None, tmax=None, ycol=None, textsize='medium', ax=None, mjd_offset=None):
+                          tmin=None, tmax=None, ycol=None, textsize='medium', ax=None, mjd_offset=None, use_sigma=False):
     """
     Plot the observed and model light curves.
 
@@ -303,6 +309,8 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
     mjd_offset : float, optional
         Reference time on the horizontal axis of the light curve inset. Default: determined by the starting time of
         the model light curve.
+    use_sigma : bool, optional
+        If True, treat the last parameter as an intrinsic scatter parameter that does not get passed to the model
     """
     if model_kwargs is not None:
         raise Exception(MODEL_KWARGS_WARNING)
@@ -318,7 +326,10 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
         tmax = np.max(lc['MJD'])
     xfit = np.arange(tmin, tmax, 0.1)
     ufilts = np.unique(lc['filter'])
-    y_fit = model(xfit, ufilts, *ps)
+    if use_sigma:
+        y_fit = model(xfit, ufilts, *ps[:-1])
+    else:
+        y_fit = model(xfit, ufilts, *ps)
 
     if mjd_offset is None:
         mjd_offset = np.floor(tmin)

@@ -335,7 +335,7 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
         tmin = np.min(lc['MJD'])
     if tmax is None:
         tmax = np.max(lc['MJD'])
-    xfit = np.geomspace(tmin, tmax, 1000) if xscale == 'log' else np.linsapce(tmin, tmax, 1000)
+    xfit = np.geomspace(tmin, tmax, 1000) if xscale == 'log' else np.linspace(tmin, tmax, 1000)
     ufilts = np.unique(lc['filter'])
     if use_sigma:
         y_fit = model(xfit, ufilts, *ps[:-1])

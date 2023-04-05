@@ -246,13 +246,16 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
 
     sampler_flatchain_corner = sampler_flatchain.copy()
     axis_labels_corner = model.axis_labels
-    if 't_0' in model.input_names:
-        i_t0 = model.input_names.index('t_0')
-        if t0_offset is None:
-            t0_offset = np.floor(sampler_flatchain_corner[:, i_t0].min())
-        if t0_offset != 0.:
-            sampler_flatchain_corner[:, i_t0] -= t0_offset
-            axis_labels_corner[i_t0] = '$t_0 - {:.0f}$ (d)'.format(t0_offset)
+    for var in ['t_0', 't_\\mathrm{max}']:
+        if var in model.input_names:
+            i_t0 = model.input_names.index(var)
+            if t0_offset is None:
+                mjd_offset = np.floor(sampler_flatchain_corner[:, i_t0].min())
+            else:
+                mjd_offset = t0_offset
+            if mjd_offset != 0.:
+                sampler_flatchain_corner[:, i_t0] -= mjd_offset
+                axis_labels_corner[i_t0] = f'${var} - {mjd_offset:.0f}$ (d)'
 
     fig = corner.corner(sampler_flatchain_corner, labels=axis_labels_corner, label_kwargs={'size': textsize})
     corner_axes = np.array(fig.get_axes()).reshape(sampler_flatchain.shape[-1], sampler_flatchain.shape[-1])

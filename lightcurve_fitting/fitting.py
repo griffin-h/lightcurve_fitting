@@ -3,8 +3,9 @@ import matplotlib.pyplot as plt
 import astropy.units as u
 import emcee
 import corner
-from .models import UniformPrior
+from .models import UniformPrior, CompanionShocking, BaseCompanionShocking
 from .lightcurve import filter_legend, flux2mag
+from .filters import filtdict
 from pkg_resources import resource_filename
 import warnings
 
@@ -331,6 +332,16 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
     else:
         y_fit = model(xfit, ufilts, *ps)
 
+    # for CompanionShocking, add SiFTO model as dashed lines
+    if isinstance(model, CompanionShocking):
+        y_fit1 = model.stretched_sifto(xfit, ufilts, *ps[3:5])
+        y_fit1[ufilts == filtdict['r']] *= ps[5]
+        y_fit1[ufilts == filtdict['i']] *= ps[6]
+    elif isinstance(model, BaseCompanionShocking):
+        y_fit1 = model.stretched_sifto(xfit, ufilts, *ps[3:7])
+    else:
+        y_fit1 = [None] * len(ufilts)
+
     if mjd_offset is None:
         mjd_offset = np.floor(tmin)
     if ycol == 'lum':
@@ -343,6 +354,8 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
         yscale = 1.
         ylabel = 'Absolute Magnitude + Offset'
         y_fit, _ = flux2mag(y_fit, zp=[[[filt.M0]] for filt in ufilts])
+        if y_fit1[0] is not None:
+            y_fit1, _ = flux2mag(y_fit1, zp=[[[filt.M0]] for filt in ufilts])
         ax.invert_yaxis()
     elif ycol == 'flux':
         dycol = 'dflux'
@@ -359,9 +372,11 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
     lc.plot(xcol='MJD', ycol=ycol, offset_factor=filter_spacing, appmag_axis=False, tight_layout=False)
     plt.autoscale(False)
     _, labels, _ = filter_legend(np.array(ufilts), filter_spacing)
-    for yfit, filt, txt in zip(y_fit, ufilts, labels):
+    for yfit, yfit1, filt, txt in zip(y_fit, y_fit1, ufilts, labels):
         offset = -filt.offset * filter_spacing
         ax.plot(xfit - mjd_offset, yfit / yscale + offset, color=filt.linecolor, alpha=0.05)
+        if yfit1 is not None:
+            ax.plot(xfit - mjd_offset, np.median(yfit1, axis=1) / yscale + offset, color=filt.linecolor, ls='--')
         ax.text(1.03, yfit[-1, 0] / yscale + offset, txt, color=filt.textcolor, fontdict={'size': textsize},
                 ha='left', va='center', transform=ax.get_yaxis_transform())
     ax.set_xlabel('MJD $-$ {:f}'.format(mjd_offset).rstrip('0').rstrip('.'), size=textsize)

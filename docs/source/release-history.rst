@@ -28,6 +28,7 @@ This release includes a major refactor of the :mod:`models` module. Models now r
 * Recognize uprime, gprime, rprime, iprime, and zprime as filter names
 * Allow adjustments to marker size
 * Prevent log(0) warning from :func:`lightcurve_model_plot`
+* Automatically plot SiFTO model in dashed lines on :func:`lightcurve_model_plot`
 
 v0.7.0 (2022-10-25)
 -------------------

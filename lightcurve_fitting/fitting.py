@@ -377,7 +377,7 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
 
     if xscale == 'log':
         ax.set_xscale('log')
-        ax.xaxis.set_major_formatter(plt.ScalarFormatter())
+        ax.xaxis.set_major_formatter(plt.FormatStrFormatter('%g'))
         lc = lc.where(MJD_min=mjd_offset)
     else:
         lc = lc.copy()

@@ -96,7 +96,7 @@ class LC(Table):
         """
         use = np.tile(True, len(self))
         for col, val in kwargs.items():
-            if col == 'filter':  # allow constraints like filter='r' so the user does not need to use filtdict
+            if col.startswith('filter'):  # allow constraints like filter='r' so the user does not need to use filtdict
                 if isinstance(val, str):
                     val = filtdict[val]
                 elif isinstance(val, list):

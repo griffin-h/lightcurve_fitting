@@ -190,11 +190,11 @@ class Filter:
 
             dwl = np.trapz(trans['T'].quantity, trans['wl'].quantity)
             wl_eff = np.trapz(trans['T'].quantity * trans['wl'].quantity, trans['wl'].quantity) / dwl
-            left = trans[(trans['wl'] < wl_eff.value) & (trans['T'] >= 0.1) * (trans['T'] <= 0.9)]
-            left.sort('T')
+            wl0_guess = trans[trans['T'] > 0.5]['wl'].min()
+            left = trans[(trans['wl'] <= wl0_guess) & (trans['T'] >= 0.1)]
             wl0 = np.interp(0.5, left['T'], left['wl'])
-            right = trans[(trans['wl'] > wl_eff.value) & (trans['T'] >= 0.1) * (trans['T'] <= 0.9)]
-            right.sort('T')
+            wl1_guess = trans[trans['T'] > 0.5]['wl'].max()
+            right = trans[(trans['wl'] >= wl1_guess) & (trans['T'] >= 0.1)][::-1]  # must be increasing
             wl1 = np.interp(0.5, right['T'], right['wl'])
             if show:
                 plt.figure(1)
@@ -215,7 +215,7 @@ class Filter:
             if show:
                 plt.figure(2)
                 ax2 = plt.gca()
-                ax2.plot(trans['freq'], trans['T'], self.linecolor, self.name)
+                ax2.plot(trans['freq'], trans['T'], self.linecolor, label=self.name)
                 ax2.errorbar(freq_eff.value, i, xerr=[[freq_eff.value - freq0], [freq1 - freq_eff.value]], marker='o',
                              **self.plotstyle)
                 ax2.set_xlabel('Frequency (THz)')

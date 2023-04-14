@@ -543,17 +543,19 @@ class BaseCompanionShocking(Model):
             lc.calcLum()
 
         self.sifto = {}
+        dlt40 = filtdict['DLT40']
+        unfilt = filtdict['unfilt.']
         for filt in set(lc['filter']):
-            if filt.char in sifto.colnames:
+            if filt.char in sifto.colnames or filt == dlt40:
+                char = 'r' if filt == dlt40 else filt.char
                 lc_filt = lc.where(filter=filt)
-                sifto_scaled = sifto[filt.char] * np.max(lc_filt['lum']) / np.max(sifto[filt.char])
+                sifto_scaled = sifto[char] * np.max(lc_filt['lum']) / np.max(sifto[char])
                 self.sifto[filt] = CubicSpline(sifto['Epoch'], sifto_scaled, extrapolate=False)
-            elif filt.name not in ['DLT40', 'unfilt.']:
+            elif filt != unfilt:
                 raise Exception('No SiFTO template for filter ' + filt.name)
 
-        # assume unfiltered = r for now
-        self.sifto[filtdict['DLT40']] = self.sifto[filtdict['r']]
-        self.sifto[filtdict['unfilt.']] = self.sifto[filtdict['r']]
+        # assume unfiltered = DLT40 for now
+        self.sifto[unfilt] = self.sifto[dlt40]
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: z={self.z:.3f}>'

@@ -71,11 +71,6 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
         lc.calcAbsMag()
         lc.calcLum()
 
-    f = lc['filter'].data
-    t = lc['MJD'].data
-    y = lc[model.output_quantity].data
-    dy = lc['d'+model.output_quantity].data
-
     if use_sigma and model.input_names[-1] != '\\sigma':
         model.input_names.append('\\sigma')
         model.units.append(u.dimensionless_unscaled)
@@ -123,26 +118,13 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
         if p1 > prior.p_max:
             raise Exception(f'starting guess for {param} (p_up = {p1}) is outside prior (p_max = {prior.p_max})')
 
-    if sigma_type == 'relative':
-        sigma_units = dy
-    elif sigma_type == 'absolute':
-        sigma_units = np.median(dy)
-    else:
-        raise Exception('sigma_type must either be "relative" or "absolute"')
-
     def log_posterior(p):
         log_prior = 0.
         for prior, p_i in zip(priors, p):
             log_prior += prior(p_i)
         if np.isinf(log_prior):
             return log_prior
-        if use_sigma:
-            y_fit = model(t, f, *p[:-1])
-            sigma = np.sqrt(dy ** 2. + (p[-1] * sigma_units) ** 2.)
-        else:
-            y_fit = model(t, f, *p)
-            sigma = dy
-        log_likelihood = -0.5 * np.sum(np.log(2 * np.pi * sigma ** 2.) + ((y - y_fit) / sigma) ** 2.)
+        log_likelihood = model.log_likelihood(lc, p, use_sigma=use_sigma, sigma_type=sigma_type)
         return log_prior + log_likelihood
 
     sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior)

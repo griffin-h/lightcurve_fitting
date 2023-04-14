@@ -87,6 +87,51 @@ class Model:
     def evaluate(self, *args, **kwargs):
         return NotImplemented
 
+    def log_likelihood(self, lc, p, use_sigma=False, sigma_type='relative'):
+        """
+        The log of the likelihood function of the model given data contained in `lc` and parameters contained in `p`
+
+        Parameters
+        ----------
+        lc : lightcurve_fitting.lightcurve.LC
+            Table of broadband photometry including columns "MJD", "mag", "dmag", "filter"
+        p : array-like
+            Model parameters for which to calculate the likelihood. The first dimension should have the same length as
+            the number of parameters, or one more if sigma is used.
+        use_sigma : bool, optional
+            If True, treat the last parameter as an intrinsic scatter parameter that does not get passed to the model
+        sigma_type : str, optional
+            If 'relative' (default), sigma will be in units of the individual photometric uncertainties.
+            If 'absolute', sigma will be in units of the median photometric uncertainty.
+
+        Returns
+        -------
+        log_likelihood : float, array-like
+            The natural log of the likelihood function. If `p` is 1D, `log_likelihood` is a float. Otherwise, its shape
+            is determined by the remaining dimensions of `p`.
+        """
+        f = lc['filter'].data
+        t = lc['MJD'].data
+        y = lc[self.output_quantity].data
+        dy = lc['d' + self.output_quantity].data
+
+        if sigma_type == 'relative':
+            sigma_units = dy
+        elif sigma_type == 'absolute':
+            sigma_units = np.median(dy)
+        else:
+            raise Exception('sigma_type must either be "relative" or "absolute"')
+
+        if use_sigma:
+            y_fit = self(t, f, *p[:-1])
+            sigma = np.sqrt(dy ** 2. + (p[-1] * sigma_units) ** 2.)
+        else:
+            y_fit = self(t, f, *p)
+            sigma = dy
+
+        log_likelihood = -0.5 * np.sum(np.log(2 * np.pi * sigma ** 2.) + ((y - y_fit) / sigma) ** 2.)
+        return log_likelihood
+
 
 class BaseShockCooling(Model):
     """

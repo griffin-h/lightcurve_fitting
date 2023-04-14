@@ -32,6 +32,7 @@ This release includes a major refactor of the :mod:`models` module. Models now r
 * Add option for logarithmic x-axis in :func:`lightcurve_model_plot`
 * Add offset to peak time (in addition to explosion time) in :func:`lightcurve_corner`
 * Fix bug in :meth:`.Filter.wl_range` and :meth:`.Filter.freq_range` when filter curve has non-smooth features
+* Move likelihood function to be a method: :meth:`.Model.log_likelihood`
 
 v0.7.0 (2022-10-25)
 -------------------

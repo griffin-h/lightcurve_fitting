@@ -69,7 +69,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Light Curve Fitting'
-copyright = '2022, Griffin Hosseinzadeh'
+copyright = '2023, Griffin Hosseinzadeh'
 author = 'Griffin Hosseinzadeh'
 
 # The version info for the project you're documenting, acts as replacement for

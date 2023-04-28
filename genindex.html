@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; Light Curve Fitting 0.7.0 documentation</title>
+  <title>Index &mdash; Light Curve Fitting 0.8.0.post1+ge77e541 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -27,14 +27,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Light Curve Fitting
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Light Curve Fitting
           </a>
               <div class="version">
-                0.7.0
+                0.8.0.post1+ge77e541
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,8 +64,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Index</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Index</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -77,6 +81,7 @@
  <a href="#A"><strong>A</strong></a>
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
@@ -100,17 +105,27 @@
       <li><a href="api.html#lightcurve_fitting.lightcurve.Arrow">Arrow (class in lightcurve_fitting.lightcurve)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#lightcurve_fitting.lightcurve.aux_axes">aux_axes() (in module lightcurve_fitting.lightcurve)</a>
+</li>
+      <li><a href="api.html#lightcurve_fitting.models.Model.axis_labels">axis_labels (lightcurve_fitting.models.Model property)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#lightcurve_fitting.lightcurve.LC.bin">bin() (lightcurve_fitting.lightcurve.LC method)</a>
+      <li><a href="api.html#lightcurve_fitting.models.BaseCompanionShocking">BaseCompanionShocking (class in lightcurve_fitting.models)</a>
 </li>
-      <li><a href="api.html#lightcurve_fitting.lightcurve.binflux">binflux() (in module lightcurve_fitting.lightcurve)</a>
+      <li><a href="api.html#lightcurve_fitting.models.BaseShockCooling">BaseShockCooling (class in lightcurve_fitting.models)</a>
+</li>
+      <li><a href="api.html#lightcurve_fitting.lightcurve.LC.bin">bin() (lightcurve_fitting.lightcurve.LC method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#lightcurve_fitting.lightcurve.binflux">binflux() (in module lightcurve_fitting.lightcurve)</a>
+</li>
       <li><a href="api.html#lightcurve_fitting.bolometric.blackbody_lstsq">blackbody_lstsq() (in module lightcurve_fitting.bolometric)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.models.blackbody_to_filters">blackbody_to_filters() (in module lightcurve_fitting.models)</a>
@@ -139,17 +154,31 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#lightcurve_fitting.speccal.calibrate_spectra">calibrate_spectra() (in module lightcurve_fitting.speccal)</a>
 </li>
-      <li><a href="api.html#lightcurve_fitting.models.companion_shocking">companion_shocking() (in module lightcurve_fitting.models)</a>
+      <li><a href="api.html#lightcurve_fitting.models.BaseCompanionShocking.companion_shocking">companion_shocking() (lightcurve_fitting.models.BaseCompanionShocking method)</a>
 </li>
-      <li><a href="api.html#lightcurve_fitting.models.companion_shocking_plus_sifto">companion_shocking_plus_sifto() (in module lightcurve_fitting.models)</a>
+      <li><a href="api.html#lightcurve_fitting.models.CompanionShocking">CompanionShocking (class in lightcurve_fitting.models)</a>
 </li>
-      <li><a href="api.html#lightcurve_fitting.models.companion_shocking_plus_sifto2">companion_shocking_plus_sifto2() (in module lightcurve_fitting.models)</a>
+      <li><a href="api.html#lightcurve_fitting.models.CompanionShocking2">CompanionShocking2 (class in lightcurve_fitting.models)</a>
 </li>
-      <li><a href="api.html#lightcurve_fitting.models.companion_shocking_temperature_radius">companion_shocking_temperature_radius() (in module lightcurve_fitting.models)</a>
+      <li><a href="api.html#lightcurve_fitting.models.CompanionShocking3">CompanionShocking3 (class in lightcurve_fitting.models)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.speccal.convert_spectrum_units">convert_spectrum_units() (in module lightcurve_fitting.speccal)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.speccal.create_wiserep_tsv">create_wiserep_tsv() (in module lightcurve_fitting.speccal)</a>
+</li>
+      <li><a href="api.html#lightcurve_fitting.lightcurve.custom_legend">custom_legend() (in module lightcurve_fitting.lightcurve)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#lightcurve_fitting.filters.Filter.dfreq">dfreq (lightcurve_fitting.filters.Filter property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#lightcurve_fitting.filters.Filter.dwl">dwl (lightcurve_fitting.filters.Filter property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -157,6 +186,30 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#lightcurve_fitting.models.BaseCompanionShocking.evaluate">evaluate() (lightcurve_fitting.models.BaseCompanionShocking method)</a>
+
+      <ul>
+        <li><a href="api.html#lightcurve_fitting.models.BaseShockCooling.evaluate">(lightcurve_fitting.models.BaseShockCooling method)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.CompanionShocking.evaluate">(lightcurve_fitting.models.CompanionShocking method)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.CompanionShocking2.evaluate">(lightcurve_fitting.models.CompanionShocking2 method)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.CompanionShocking3.evaluate">(lightcurve_fitting.models.CompanionShocking3 method)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.Model.evaluate">(lightcurve_fitting.models.Model method)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.ShockCooling.evaluate">(lightcurve_fitting.models.ShockCooling method)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.ShockCooling2.evaluate">(lightcurve_fitting.models.ShockCooling2 method)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.ShockCooling3.evaluate">(lightcurve_fitting.models.ShockCooling3 method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#lightcurve_fitting.filters.Filter.extinction">extinction() (lightcurve_fitting.filters.Filter method)</a>
+</li>
       <li><a href="api.html#lightcurve_fitting.filters.extinction_law">extinction_law() (in module lightcurve_fitting.filters)</a>
 </li>
   </ul></td>
@@ -167,7 +220,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#lightcurve_fitting.filters.Filter">Filter (class in lightcurve_fitting.filters)</a>
 </li>
+      <li><a href="api.html#lightcurve_fitting.lightcurve.filter_legend">filter_legend() (in module lightcurve_fitting.lightcurve)</a>
+</li>
       <li><a href="api.html#lightcurve_fitting.lightcurve.LC.filters_to_objects">filters_to_objects() (lightcurve_fitting.lightcurve.LC method)</a>
+</li>
+      <li><a href="api.html#lightcurve_fitting.lightcurve.filtsetup">filtsetup() (in module lightcurve_fitting.lightcurve)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.lightcurve.LC.findNondet">findNondet() (lightcurve_fitting.lightcurve.LC method)</a>
 </li>
@@ -180,6 +237,10 @@
       <li><a href="api.html#lightcurve_fitting.fitting.format_credible_interval">format_credible_interval() (in module lightcurve_fitting.fitting)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.models.format_unit">format_unit() (in module lightcurve_fitting.models)</a>
+</li>
+      <li><a href="api.html#lightcurve_fitting.filters.Filter.freq_eff">freq_eff (lightcurve_fitting.filters.Filter property)</a>
+</li>
+      <li><a href="api.html#lightcurve_fitting.filters.Filter.freq_range">freq_range (lightcurve_fitting.filters.Filter property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -200,6 +261,24 @@
 
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#lightcurve_fitting.models.CompanionShocking.input_names">input_names (lightcurve_fitting.models.CompanionShocking attribute)</a>
+
+      <ul>
+        <li><a href="api.html#lightcurve_fitting.models.CompanionShocking2.input_names">(lightcurve_fitting.models.CompanionShocking2 attribute)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.CompanionShocking3.input_names">(lightcurve_fitting.models.CompanionShocking3 attribute)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.Model.input_names">(lightcurve_fitting.models.Model attribute)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.ShockCooling.input_names">(lightcurve_fitting.models.ShockCooling attribute)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.ShockCooling2.input_names">(lightcurve_fitting.models.ShockCooling2 attribute)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.ShockCooling3.input_names">(lightcurve_fitting.models.ShockCooling3 attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#lightcurve_fitting.bolometric.integrate_sed">integrate_sed() (in module lightcurve_fitting.bolometric)</a>
 </li>
@@ -241,8 +320,6 @@
         <li><a href="api.html#module-lightcurve_fitting.lightcurve">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     lightcurve_fitting.models
 
@@ -250,6 +327,8 @@
         <li><a href="api.html#module-lightcurve_fitting.models">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     lightcurve_fitting.speccal
 
@@ -260,6 +339,8 @@
       <li><a href="api.html#lightcurve_fitting.fitting.lightcurve_mcmc">lightcurve_mcmc() (in module lightcurve_fitting.fitting)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.fitting.lightcurve_model_plot">lightcurve_model_plot() (in module lightcurve_fitting.fitting)</a>
+</li>
+      <li><a href="api.html#lightcurve_fitting.models.Model.log_likelihood">log_likelihood() (lightcurve_fitting.models.Model method)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.models.GaussianPrior.logp">logp() (lightcurve_fitting.models.GaussianPrior method)</a>
 
@@ -311,6 +392,10 @@
       <li><a href="api.html#lightcurve_fitting.lightcurve.LC.normalize_column_names">normalize_column_names() (lightcurve_fitting.lightcurve.LC method)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#lightcurve_fitting.models.Model.nparams">nparams (lightcurve_fitting.models.Model property)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="O">O</h2>
@@ -318,6 +403,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#lightcurve_fitting.filters.Filter.order">order (lightcurve_fitting.filters.Filter attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#lightcurve_fitting.models.Model.output_quantity">output_quantity (lightcurve_fitting.models.Model attribute)</a>
+
+      <ul>
+        <li><a href="api.html#lightcurve_fitting.models.ShockCooling3.output_quantity">(lightcurve_fitting.models.ShockCooling3 attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -337,6 +430,8 @@
       <li><a href="api.html#lightcurve_fitting.bolometric.plot_chain">plot_chain() (in module lightcurve_fitting.bolometric)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.bolometric.plot_color_curves">plot_color_curves() (in module lightcurve_fitting.bolometric)</a>
+</li>
+      <li><a href="api.html#lightcurve_fitting.models.power">power() (in module lightcurve_fitting.models)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.models.Prior">Prior (class in lightcurve_fitting.models)</a>
 </li>
@@ -370,27 +465,23 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#lightcurve_fitting.models.scale_sifto">scale_sifto() (in module lightcurve_fitting.models)</a>
+      <li><a href="api.html#lightcurve_fitting.models.ShockCooling">ShockCooling (class in lightcurve_fitting.models)</a>
 </li>
-      <li><a href="api.html#lightcurve_fitting.models.shock_cooling">shock_cooling() (in module lightcurve_fitting.models)</a>
+      <li><a href="api.html#lightcurve_fitting.models.ShockCooling2">ShockCooling2 (class in lightcurve_fitting.models)</a>
 </li>
-      <li><a href="api.html#lightcurve_fitting.models.shock_cooling2">shock_cooling2() (in module lightcurve_fitting.models)</a>
+      <li><a href="api.html#lightcurve_fitting.models.ShockCooling3">ShockCooling3 (class in lightcurve_fitting.models)</a>
 </li>
-      <li><a href="api.html#lightcurve_fitting.models.shock_cooling3">shock_cooling3() (in module lightcurve_fitting.models)</a>
-</li>
-      <li><a href="api.html#lightcurve_fitting.models.shock_cooling_temperature_radius">shock_cooling_temperature_radius() (in module lightcurve_fitting.models)</a>
+      <li><a href="api.html#lightcurve_fitting.filters.Filter.spectrum">spectrum() (lightcurve_fitting.filters.Filter method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#lightcurve_fitting.filters.Filter.spectrum">spectrum() (lightcurve_fitting.filters.Filter method)</a>
-</li>
       <li><a href="api.html#lightcurve_fitting.bolometric.spectrum_corner">spectrum_corner() (in module lightcurve_fitting.bolometric)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.bolometric.spectrum_mcmc">spectrum_mcmc() (in module lightcurve_fitting.bolometric)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.bolometric.stefan_boltzmann">stefan_boltzmann() (in module lightcurve_fitting.bolometric)</a>
 </li>
-      <li><a href="api.html#lightcurve_fitting.models.stretched_sifto">stretched_sifto() (in module lightcurve_fitting.models)</a>
+      <li><a href="api.html#lightcurve_fitting.models.BaseCompanionShocking.stretched_sifto">stretched_sifto() (lightcurve_fitting.models.BaseCompanionShocking method)</a>
 </li>
       <li><a href="api.html#lightcurve_fitting.filters.Filter.synthesize">synthesize() (lightcurve_fitting.filters.Filter method)</a>
 </li>
@@ -400,19 +491,35 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#lightcurve_fitting.models.t_max">t_max() (in module lightcurve_fitting.models)</a>
+      <li><a href="api.html#lightcurve_fitting.models.BaseCompanionShocking.t_max">t_max() (lightcurve_fitting.models.BaseCompanionShocking static method)</a>
+
+      <ul>
+        <li><a href="api.html#lightcurve_fitting.models.BaseShockCooling.t_max">(lightcurve_fitting.models.BaseShockCooling static method)</a>
 </li>
-      <li><a href="api.html#lightcurve_fitting.models.t_max2">t_max2() (in module lightcurve_fitting.models)</a>
+        <li><a href="api.html#lightcurve_fitting.models.ShockCooling2.t_max">(lightcurve_fitting.models.ShockCooling2 method)</a>
 </li>
-      <li><a href="api.html#lightcurve_fitting.models.t_max3">t_max3() (in module lightcurve_fitting.models)</a>
+        <li><a href="api.html#lightcurve_fitting.models.ShockCooling3.t_max">(lightcurve_fitting.models.ShockCooling3 static method)</a>
 </li>
+      </ul></li>
+      <li><a href="api.html#lightcurve_fitting.models.BaseCompanionShocking.t_min">t_min() (lightcurve_fitting.models.BaseCompanionShocking static method)</a>
+
+      <ul>
+        <li><a href="api.html#lightcurve_fitting.models.BaseShockCooling.t_min">(lightcurve_fitting.models.BaseShockCooling static method)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.ShockCooling2.t_min">(lightcurve_fitting.models.ShockCooling2 static method)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.ShockCooling3.t_min">(lightcurve_fitting.models.ShockCooling3 static method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#lightcurve_fitting.models.t_min">t_min() (in module lightcurve_fitting.models)</a>
+      <li><a href="api.html#lightcurve_fitting.models.BaseCompanionShocking.temperature_radius">temperature_radius() (lightcurve_fitting.models.BaseCompanionShocking static method)</a>
+
+      <ul>
+        <li><a href="api.html#lightcurve_fitting.models.BaseShockCooling.temperature_radius">(lightcurve_fitting.models.BaseShockCooling method)</a>
 </li>
-      <li><a href="api.html#lightcurve_fitting.models.t_min2">t_min2() (in module lightcurve_fitting.models)</a>
-</li>
-      <li><a href="api.html#lightcurve_fitting.models.t_min3">t_min3() (in module lightcurve_fitting.models)</a>
+      </ul></li>
+      <li><a href="api.html#lightcurve_fitting.filters.Filter.trans">trans (lightcurve_fitting.filters.Filter property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -422,6 +529,22 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#lightcurve_fitting.models.UniformPrior">UniformPrior (class in lightcurve_fitting.models)</a>
 </li>
+      <li><a href="api.html#lightcurve_fitting.models.CompanionShocking.units">units (lightcurve_fitting.models.CompanionShocking attribute)</a>
+
+      <ul>
+        <li><a href="api.html#lightcurve_fitting.models.CompanionShocking2.units">(lightcurve_fitting.models.CompanionShocking2 attribute)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.CompanionShocking3.units">(lightcurve_fitting.models.CompanionShocking3 attribute)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.Model.units">(lightcurve_fitting.models.Model attribute)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.ShockCooling.units">(lightcurve_fitting.models.ShockCooling attribute)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.ShockCooling2.units">(lightcurve_fitting.models.ShockCooling2 attribute)</a>
+</li>
+        <li><a href="api.html#lightcurve_fitting.models.ShockCooling3.units">(lightcurve_fitting.models.ShockCooling3 attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -429,6 +552,14 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#lightcurve_fitting.lightcurve.LC.where">where() (lightcurve_fitting.lightcurve.LC method)</a>
+</li>
+      <li><a href="api.html#lightcurve_fitting.filters.Filter.wl_eff">wl_eff (lightcurve_fitting.filters.Filter property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#lightcurve_fitting.filters.Filter.wl_range">wl_range (lightcurve_fitting.filters.Filter property)</a>
+</li>
+      <li><a href="api.html#lightcurve_fitting.lightcurve.LC.write">write() (lightcurve_fitting.lightcurve.LC method)</a>
 </li>
   </ul></td>
 </tr></table>

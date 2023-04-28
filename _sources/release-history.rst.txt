@@ -2,6 +2,38 @@
 Release History
 ===============
 
+v0.8.0 (2023-04-27)
+-------------------
+This release includes a major refactor of the :mod:`models` module. Models now require initialization with the :class:`.LC` object to be fit. Updated examples are given in the documentation and the Jupyter notebook. This alleviates the need for model keyword arguments, which are now deprecated. (A warning will be issued if the user tries to supply a ``model_kwargs`` argument.) This also allows for much easier specification of new models by subclassing the existing models.
+
+* Add :class:`.CompanionShocking3` model, which includes viewing angle dependence
+* Added :meth:`.BaseCompanionShocking.t_min` and :meth:`.BaseCompanionShocking.t_max` to indicate when the SiFTO model is computed
+* Require Astropy version 5 (there were already features that required this)
+* Automatically calculate extinction based on :math:`E(B-V)` and :math:`R_V` if :math:`A_V` are not given
+* Automatically parse filters even when :class:`.LC` is initialized without reading (removes need for separate "filt" column)
+* Parse filters in :meth:`.LC.where` (removes need for user to access ``filtdict``)
+* Add options to add auxiliary axes and fancy legends to light curve plots
+* Avoid warnings/NaN when models are evaluated at negative phases
+* Update :func:`.calculate_bolometric` to use redshift from :class:`.LC` object. A deprecation warning is issued if the ``z`` parameter is used, although it will still work for now.
+* Bug fix in :class:`.ShockCooling3` when :math:`R_V \ne 3.1`
+* Read the filter curves on the fly when accessing :class:`.Filter` properties ``trans``, ``wl_eff``, ``dwl``, ``wl_range``, ``freq_eff``, ``dfreq``, or ``freq_range``
+* Finish removing deprecated way of storing supernova properties in :class:`Supernova` object
+* Allow :class:`.LC` to be written as ECSV, FITS, and HDF5 files by converting :class:`.Filter` to strings
+* Add a few more JWST filters
+* Return the figure object in :func:`.calibrate_spectra`
+* Fix bug in :func:`.calibrate_spectra` that reverses the correction when warping
+* Reimplement :func:`.lightcurve_model_plot` using :meth:`.LC.plot` to get markers, nondetections, offsets, etc.
+* Better matching of filters to SiFTO template (not just by name)
+* Interpolate SiFTO with a cubic spline instead of a line
+* Recognize uprime, gprime, rprime, iprime, and zprime as filter names
+* Allow adjustments to marker size
+* Prevent log(0) warning from :func:`lightcurve_model_plot`
+* Automatically plot SiFTO model in dashed lines on :func:`lightcurve_model_plot`
+* Add option for logarithmic x-axis in :func:`lightcurve_model_plot`
+* Add offset to peak time (in addition to explosion time) in :func:`lightcurve_corner`
+* Fix bug in :meth:`.Filter.wl_range` and :meth:`.Filter.freq_range` when filter curve has non-smooth features
+* Move likelihood function to be a method: :meth:`.Model.log_likelihood`
+
 v0.7.0 (2022-10-25)
 -------------------
 * Generalize :meth:`Filter.blackbody` to :meth:`.Filter.synthesize` and :func:`blackbody_mcmc` to :func:`.spectrum_mcmc`
@@ -10,7 +42,7 @@ v0.7.0 (2022-10-25)
 * Add JWST filters
 * Raise an error if the initial parameter guesses are outside the prior
 * Add convenience function for preparing spectra to upload to WISeREP
-* Allow use of :meth:`.LC.findPeak` without :class:`.Supernova` object
+* Allow use of :meth:`.LC.findPeak` without :class:`Supernova` object
 * Fix minor bug in rounding to display a given number of significant figures
 * Minor change to :meth:`.Filter.spectrum` to avoid inadvertently re-sorting transmission tables
 * When calibrating spectra to photometry, assume constant flux in a filter for a configurable amount of time after the last observed point

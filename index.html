@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Light Curve Fitting Documentation &mdash; Light Curve Fitting 0.7.0 documentation</title>
+  <title>Light Curve Fitting Documentation &mdash; Light Curve Fitting 0.8.0.post1+ge77e541 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -29,14 +29,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="#" class="icon icon-home"> Light Curve Fitting
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Light Curve Fitting
           </a>
               <div class="version">
-                0.7.0
+                0.8.0.post1+ge77e541
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -62,8 +66,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
-      <li>Light Curve Fitting Documentation</li>
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Light Curve Fitting Documentation</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -74,7 +78,7 @@
            <div itemprop="articleBody">
              
   <section id="light-curve-fitting-documentation">
-<h1>Light Curve Fitting Documentation<a class="headerlink" href="#light-curve-fitting-documentation" title="Permalink to this headline">¶</a></h1>
+<h1>Light Curve Fitting Documentation<a class="headerlink" href="#light-curve-fitting-documentation" title="Permalink to this heading">¶</a></h1>
 <p>This package contains tools to fit analytical models to multiband light curves of astronomical transients.
 If you use this code in a publication, please <strong>cite the original papers</strong> whose models you used (see <a class="reference internal" href="#references"><span class="std std-ref">References</span></a>), as well as my Zenodo repository.</p>
 <a class="reference external image-reference" href="https://doi.org/10.5281/zenodo.2639463"><img alt="https://zenodo.org/badge/DOI/10.5281/zenodo.2639463.svg" src="https://zenodo.org/badge/DOI/10.5281/zenodo.2639463.svg" /></a>
@@ -99,6 +103,7 @@ If you use this code in a publication, please <strong>cite the original papers</
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="release-history.html">Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release-history.html#v0-8-0-2023-04-27">v0.8.0 (2023-04-27)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="release-history.html#v0-7-0-2022-10-25">v0.7.0 (2022-10-25)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="release-history.html#v0-6-0-2022-05-04">v0.6.0 (2022-05-04)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="release-history.html#v0-5-0-2022-03-16">v0.5.0 (2022-03-16)</a></li>
@@ -112,33 +117,41 @@ If you use this code in a publication, please <strong>cite the original papers</
 </ul>
 </div>
 <section id="references">
-<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
-<dl class="citation">
-<dt class="label" id="c08"><span class="brackets">C08</span></dt>
-<dd><p>Conley et al. 2008, ApJ, 681, 482, doi:<a class="reference external" href="https://doi.org/10.1086/588518">10.1086/588518</a></p>
-</dd>
-<dt class="label" id="h17"><span class="brackets">H17</span></dt>
-<dd><p>Hosseinzadeh et al. 2017, ApJL, 845, L11, doi:<a class="reference external" href="https://doi.org/10.3847/2041-8213/aa8402">10.3847/2041-8213/aa8402</a></p>
-</dd>
-<dt class="label" id="h18"><span class="brackets">H18</span></dt>
-<dd><p>Hosseinzadeh et al. 2018, ApJ, 861, 63, doi:<a class="reference external" href="https://doi.org/10.3847/1538-4357/aac5f6">10.3847/1538-4357/aac5f6</a></p>
-</dd>
-<dt class="label" id="h22a"><span class="brackets">H22a</span></dt>
-<dd><p>Hosseinzadeh et al. 2022a, ApJL, 933, L45, doi:<a class="reference external" href="https://doi.org/10.3847/2041-8213/ac7cef">10.3847/2041-8213/ac7cef</a></p>
-</dd>
-<dt class="label" id="h22b"><span class="brackets">H22b</span></dt>
-<dd><p>Hosseinzadeh et al. 2022b, ApJ, 935, 31, doi:<a class="reference external" href="https://doi.org/10.3847/1538-4357/ac75f0">10.3847/1538-4357/ac75f0</a></p>
-</dd>
-<dt class="label" id="k10"><span class="brackets">K10</span></dt>
-<dd><p>Kasen 2010, ApJ, 708, 1025, doi:<a class="reference external" href="https://doi.org/10.1088/0004-637X/708/2/1025">10.1088/0004-637X/708/2/1025</a></p>
-</dd>
-<dt class="label" id="rw11"><span class="brackets">RW11</span></dt>
-<dd><p>Rabinak &amp; Waxman 2011, ApJ, 728, 63, doi:<a class="reference external" href="https://doi.org/10.1088/0004-637X/728/1/63">10.1088/0004-637X/728/1/63</a></p>
-</dd>
-<dt class="label" id="sw17"><span class="brackets">SW17</span></dt>
-<dd><p>Sapir &amp; Waxman 2017, ApJ, 838, 130, doi:<a class="reference external" href="https://doi.org/10.3847/1538-4357/aa64df">10.3847/1538-4357/aa64df</a></p>
-</dd>
-</dl>
+<h2>References<a class="headerlink" href="#references" title="Permalink to this heading">¶</a></h2>
+<div role="list" class="citation-list">
+<div class="citation" id="c08" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>C08<span class="fn-bracket">]</span></span>
+<p>Conley et al. 2008, ApJ, 681, 482, doi:<a class="reference external" href="https://doi.org/10.1086/588518">10.1086/588518</a></p>
+</div>
+<div class="citation" id="h17" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>H17<span class="fn-bracket">]</span></span>
+<p>Hosseinzadeh et al. 2017, ApJL, 845, L11, doi:<a class="reference external" href="https://doi.org/10.3847/2041-8213/aa8402">10.3847/2041-8213/aa8402</a></p>
+</div>
+<div class="citation" id="h18" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>H18<span class="fn-bracket">]</span></span>
+<p>Hosseinzadeh et al. 2018, ApJ, 861, 63, doi:<a class="reference external" href="https://doi.org/10.3847/1538-4357/aac5f6">10.3847/1538-4357/aac5f6</a></p>
+</div>
+<div class="citation" id="h22a" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>H22a<span class="fn-bracket">]</span></span>
+<p>Hosseinzadeh et al. 2022a, ApJL, 933, L45, doi:<a class="reference external" href="https://doi.org/10.3847/2041-8213/ac7cef">10.3847/2041-8213/ac7cef</a></p>
+</div>
+<div class="citation" id="h22b" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>H22b<span class="fn-bracket">]</span></span>
+<p>Hosseinzadeh et al. 2022b, ApJ, 935, 31, doi:<a class="reference external" href="https://doi.org/10.3847/1538-4357/ac75f0">10.3847/1538-4357/ac75f0</a></p>
+</div>
+<div class="citation" id="k10" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>K10<span class="fn-bracket">]</span></span>
+<p>Kasen 2010, ApJ, 708, 1025, doi:<a class="reference external" href="https://doi.org/10.1088/0004-637X/708/2/1025">10.1088/0004-637X/708/2/1025</a></p>
+</div>
+<div class="citation" id="rw11" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>RW11<span class="fn-bracket">]</span></span>
+<p>Rabinak &amp; Waxman 2011, ApJ, 728, 63, doi:<a class="reference external" href="https://doi.org/10.1088/0004-637X/728/1/63">10.1088/0004-637X/728/1/63</a></p>
+</div>
+<div class="citation" id="sw17" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>SW17<span class="fn-bracket">]</span></span>
+<p>Sapir &amp; Waxman 2017, ApJ, 838, 130, doi:<a class="reference external" href="https://doi.org/10.3847/1538-4357/aa64df">10.3847/1538-4357/aa64df</a></p>
+</div>
+</div>
 </section>
 </section>
 

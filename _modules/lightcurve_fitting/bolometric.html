@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>lightcurve_fitting.bolometric &mdash; Light Curve Fitting 0.7.0 documentation</title>
+  <title>lightcurve_fitting.bolometric &mdash; Light Curve Fitting 0.8.0.post1+ge77e541 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
         <script src="../../_static/clipboard.min.js"></script>
         <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -27,14 +27,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> Light Curve Fitting
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Light Curve Fitting
           </a>
               <div class="version">
-                0.7.0
+                0.8.0.post1+ge77e541
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,9 +64,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>lightcurve_fitting.bolometric</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">lightcurve_fitting.bolometric</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -72,7 +76,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for lightcurve_fitting.bolometric</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">.filters</span> <span class="kn">import</span> <span class="n">all_filters</span><span class="p">,</span> <span class="n">filtdict</span><span class="p">,</span> <span class="n">extinction_law</span>
+<span></span><span class="kn">from</span> <span class="nn">.filters</span> <span class="kn">import</span> <span class="n">filtdict</span><span class="p">,</span> <span class="n">extinction_law</span>
 <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">planck_fast</span><span class="p">,</span> <span class="n">UniformPrior</span><span class="p">,</span> <span class="n">LogUniformPrior</span><span class="p">,</span> <span class="n">GaussianPrior</span>
 <span class="kn">from</span> <span class="nn">.lightcurve</span> <span class="kn">import</span> <span class="n">LC</span>
 
@@ -81,7 +85,6 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">AutoLocator</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span><span class="p">,</span> <span class="n">OptimizeWarning</span>
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gaussian_kde</span>
 <span class="kn">import</span> <span class="nn">emcee</span>
@@ -90,14 +93,11 @@
 <span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_filename</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
-<span class="k">for</span> <span class="n">filt</span> <span class="ow">in</span> <span class="n">all_filters</span><span class="p">:</span>
-    <span class="n">filt</span><span class="o">.</span><span class="n">read_curve</span><span class="p">()</span>
-
 <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;lightcurve_fitting&#39;</span><span class="p">,</span> <span class="s1">&#39;serif.mplstyle&#39;</span><span class="p">))</span>
 
 
 <div class="viewcode-block" id="pseudo"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.pseudo">[docs]</a><span class="k">def</span> <span class="nf">pseudo</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">filter0</span><span class="o">=</span><span class="n">filtdict</span><span class="p">[</span><span class="s1">&#39;I&#39;</span><span class="p">],</span> <span class="n">filter1</span><span class="o">=</span><span class="n">filtdict</span><span class="p">[</span><span class="s1">&#39;U&#39;</span><span class="p">],</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Integrate a blackbody spectrum between two broadband filters to produce a pseudobolometric luminosity</span>
 
 <span class="sd">    Parameters</span>
@@ -127,7 +127,7 @@
 
 
 <div class="viewcode-block" id="plot_chain"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.plot_chain">[docs]</a><span class="k">def</span> <span class="nf">plot_chain</span><span class="p">(</span><span class="n">chain</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the chain histories for an MCMC run</span>
 
 <span class="sd">    Parameters</span>
@@ -154,7 +154,7 @@
 <div class="viewcode-block" id="spectrum_mcmc"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.spectrum_mcmc">[docs]</a><span class="k">def</span> <span class="nf">spectrum_mcmc</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">epoch1</span><span class="p">,</span> <span class="n">priors</span><span class="p">,</span> <span class="n">starting_guesses</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">ebv</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">spectrum_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outpath</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span>
                   <span class="n">nwalkers</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">burnin_steps</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">save_chains</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_sigma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sigma_type</span><span class="o">=</span><span class="s1">&#39;relative&#39;</span><span class="p">,</span>
                   <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">freq_min</span><span class="o">=</span><span class="mf">100.</span><span class="p">,</span> <span class="n">freq_max</span><span class="o">=</span><span class="mf">1000.</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fit the given spectral energy distribution to an epoch of photometry using a Markov-chain Monte Carlo routine</span>
 
 <span class="sd">    Parameters</span>
@@ -259,7 +259,7 @@
 
 <div class="viewcode-block" id="spectrum_corner"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.spectrum_corner">[docs]</a><span class="k">def</span> <span class="nf">spectrum_corner</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">epoch1</span><span class="p">,</span> <span class="n">sampler_flatchain</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">ebv</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">spectrum_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_sigma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                     <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">freq_min</span><span class="o">=</span><span class="mf">100.</span><span class="p">,</span> <span class="n">freq_max</span><span class="o">=</span><span class="mf">1000.</span><span class="p">,</span> <span class="n">save_plot_as</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model SEDs.</span>
 
 <span class="sd">    Parameters</span>
@@ -355,7 +355,7 @@
 
 
 <div class="viewcode-block" id="plot_bolometric_results"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.plot_bolometric_results">[docs]</a><span class="k">def</span> <span class="nf">plot_bolometric_results</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">save_plot_as</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the parameters and bolometric light curves that result from fitting the spectral energy distribution</span>
 
 <span class="sd">    Parameters</span>
@@ -399,7 +399,7 @@
 
 
 <div class="viewcode-block" id="group_by_epoch"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.group_by_epoch">[docs]</a><span class="k">def</span> <span class="nf">group_by_epoch</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">also_group_by</span><span class="o">=</span><span class="p">()):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Group a light curve into epochs that will be treated as single spectral energy distributions.</span>
 
 <span class="sd">    Parameters</span>
@@ -429,7 +429,7 @@
 
 
 <div class="viewcode-block" id="stefan_boltzmann"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.stefan_boltzmann">[docs]</a><span class="k">def</span> <span class="nf">stefan_boltzmann</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">dtemp</span><span class="p">,</span> <span class="n">drad</span><span class="p">,</span> <span class="n">covTR</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate blackbody luminosity and associated uncertainty using the Stefan-Boltzmann law</span>
 
 <span class="sd">    Parameters</span>
@@ -460,7 +460,7 @@
 
 
 <div class="viewcode-block" id="median_and_unc"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.median_and_unc">[docs]</a><span class="k">def</span> <span class="nf">median_and_unc</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">perc_contained</span><span class="o">=</span><span class="mf">68.</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the equal-tailed credible interval, centered on the median, for a sample of data</span>
 
 <span class="sd">    Parameters</span>
@@ -487,7 +487,7 @@
 
 
 <div class="viewcode-block" id="blackbody_lstsq"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.blackbody_lstsq">[docs]</a><span class="k">def</span> <span class="nf">blackbody_lstsq</span><span class="p">(</span><span class="n">epoch1</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T_range</span><span class="o">=</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">),</span> <span class="n">R_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">1000.</span><span class="p">),</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fit a blackbody spectrum to a spectral energy distribution using :math:`χ^2` minimization</span>
 
 <span class="sd">    Parameters</span>
@@ -541,7 +541,7 @@
 
 
 <div class="viewcode-block" id="integrate_sed"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.integrate_sed">[docs]</a><span class="k">def</span> <span class="nf">integrate_sed</span><span class="p">(</span><span class="n">epoch1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Directly integrate a spectral energy distribution using the trapezoidal rule</span>
 
 <span class="sd">    Parameters</span>
@@ -564,7 +564,7 @@
 
 
 <div class="viewcode-block" id="calc_colors"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.calc_colors">[docs]</a><span class="k">def</span> <span class="nf">calc_colors</span><span class="p">(</span><span class="n">epoch1</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate colors from a spectral energy distribution</span>
 
 <span class="sd">    Parameters</span>
@@ -612,7 +612,7 @@
 
 
 <div class="viewcode-block" id="plot_color_curves"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.plot_color_curves">[docs]</a><span class="k">def</span> <span class="nf">plot_color_curves</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">limit_length</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s1">&#39;MJD&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the color curves calculated by :func:`.calculate_bolometric`.</span>
 
 <span class="sd">    Parameters</span>
@@ -654,15 +654,15 @@
 <div class="viewcode-block" id="calculate_bolometric"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.bolometric.calculate_bolometric">[docs]</a><span class="k">def</span> <span class="nf">calculate_bolometric</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">outpath</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">nwalkers</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">burnin_steps</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">priors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                          <span class="n">save_table_as</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_nfilt</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">do_mcmc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                          <span class="n">save_chains</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_sigma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sigma_type</span><span class="o">=</span><span class="s1">&#39;relative&#39;</span><span class="p">,</span> <span class="n">also_group_by</span><span class="o">=</span><span class="p">()):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the full bolometric light curve from a table of broadband photometry</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    lc : lightcurve_fitting.lightcurve.LC</span>
-<span class="sd">        Table of broadband photometry including columns &quot;MJD&quot;, &quot;mag&quot;, &quot;dmag&quot;, &quot;filt&quot;</span>
+<span class="sd">        Table of broadband photometry including columns &quot;MJD&quot;, &quot;mag&quot;, &quot;dmag&quot;, &quot;filter&quot;</span>
 <span class="sd">    z : float, optional</span>
-<span class="sd">        Redshift between the emission source and the observed filter. Default: 0.</span>
+<span class="sd">        DEPRECATED: Include the redshift in `lc.meta[&#39;redshift&#39;]` instead.</span>
 <span class="sd">    outpath : str, optional</span>
 <span class="sd">        Directory to which to save the corner plots and MCMC chains. Default: current directory</span>
 <span class="sd">    res : float, optional</span>
@@ -705,6 +705,9 @@
 <span class="sd">    t0 : lightcurve_fitting.lightcurve.LC</span>
 <span class="sd">        Table containing the blackbody parameters, bolometric luminosities, and (optionally) colors</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">z</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;The z keyword is deprecated. Include the reshift in `lc.meta[&quot;redshift&quot;]` instead.&#39;</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;redshift&#39;</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
@@ -733,7 +736,6 @@
     <span class="n">sampler</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">lc</span> <span class="o">=</span> <span class="n">lc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">lc</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lc</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.</span><span class="p">)]</span>
     <span class="k">for</span> <span class="n">epoch1</span> <span class="ow">in</span> <span class="n">group_by_epoch</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">also_group_by</span><span class="p">):</span>
-        <span class="n">epoch1</span><span class="o">.</span><span class="n">sn</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">sn</span>
         <span class="n">epoch1</span><span class="o">.</span><span class="n">calcFlux</span><span class="p">()</span>
         <span class="n">epoch1</span> <span class="o">=</span> <span class="n">epoch1</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">delta</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
         <span class="n">epoch1</span><span class="o">.</span><span class="n">calcMag</span><span class="p">()</span>

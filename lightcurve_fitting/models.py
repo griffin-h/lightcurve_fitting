@@ -80,6 +80,9 @@ class Model:
         else:
             self.z = 0.
 
+    def __repr__(self):
+        return f'<{self.__class__.__name__}: z={self.z:.3f}>'
+
     def __call__(self, *args, **kwargs):
         return self.evaluate(*args, **kwargs)
 
@@ -196,8 +199,8 @@ class BaseShockCooling(Model):
             self.alpha = 0.8
             self.epsilon_1 = 0.027
             self.epsilon_2 = 0.086
-            self.L_0 = 2.0e42
-            self.T_0 = 1.61
+            self.L_0 = 2.0e42  # erg / s
+            self.T_0 = 1.61  # eV
             self.Tph_to_Tcol = 1.1
         elif n == 3.:
             self.n = 3.
@@ -206,8 +209,8 @@ class BaseShockCooling(Model):
             self.alpha = 0.73
             self.epsilon_1 = 0.016
             self.epsilon_2 = 0.175
-            self.L_0 = 2.1e42
-            self.T_0 = 1.69
+            self.L_0 = 2.1e42  # erg / s
+            self.T_0 = 1.69  # eV
             self.Tph_to_Tcol = 1.0
         else:
             raise ValueError('n can only be 1.5 or 3')
@@ -499,6 +502,135 @@ class ShockCooling3(BaseShockCooling):
     @staticmethod
     def t_max(p, kappa=1.):
         return super().t_max([p[0], p[1], p[2], p[3], p[6] if len(p) > 6 else 0.], kappa=kappa)
+
+
+class ShockCooling4(Model):
+    """
+    The shock cooling model of Morag, Sapir, & Waxman (https://doi.org/10.1093/mnras/stad899).
+
+    TODO: write the equations
+
+    Parameters
+    ----------
+    lc : lightcurve_fitting.lightcurve.LC, optional
+        The light curve to which the model will be fit. Only used to get the redshift if `redshift` is not given.
+    redshift : float, optional
+        The redshift between blackbody source and the observed filters. Default: 0.
+
+    Attributes
+    ----------
+    z : float
+        The redshift between blackbody source and the observed filters
+    n : float
+        The polytropic index of the progenitor
+    A : float
+        Coefficient on the luminosity suppression factor (Eq. A1)
+    a : float
+        Coefficient on the transparency timescale (Eq. A1)
+    alpha : float
+        Exponent on the transparency timescale (Eq. A1)
+    L_br_0 : float
+        Coefficient on the luminosity expression in erg/s (Eq. A6)
+    T_col_br_0 : float
+        Coefficient on the temperature expression in eV (Eq. A7)
+    t_min_0 : float
+        Coefficient on the minimum validity time in days (Eq. A3)
+    t_br_0 : float
+        Coefficient on the :math:`\\tilde{t}` timescale in days (Eq. A5)
+    t_07eV_0 : float
+        Coefficient on the time at which the ejecta reach 0.7 eV in days (Eq. A8)
+    t_tr_0 : float
+        Coefficient on the transparency timescale in days (Eq. A9)
+    """
+    input_names = [
+        'v_\\mathrm{s*}',
+        'M_\\mathrm{env}',
+        'f_\\rho M',
+        'R',
+        't_0',
+    ]
+    units = [
+        10. ** 8.5 * u.cm / u.s,
+        u.Msun,
+        u.Msun,
+        1e13 * u.cm,
+        u.d,
+    ]
+
+    def __init__(self, lc=None, redshift=0.):
+        super().__init__(lc, redshift=redshift)
+
+        self.A = 0.9
+        self.a = 0.2
+        self.alpha = 0.5
+        self.L_br_0 = 3.69e42  # erg / s
+        self.T_col_br_0 = 8.19  # eV
+        self.t_min_0 = 0.012  # d (17 min)
+        self.t_br_0 = 0.036  # d (0.86 h)
+        self.t_07eV_0 = 6.86  # d
+        self.t_tr_0 = 19.5  # d
+
+    def temperature_radius(self, t_in, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1.):
+        t_br = self.t_br_0 * R ** 1.26 * v_s ** -1.13 * f_rho_M ** -0.13  # Eq. A5
+        L_br = self.L_br_0 * R ** 0.78 * v_s ** 2.11 * f_rho_M ** 0.11 * kappa ** -0.89  # Eq. A6
+        T_col_br = self.T_col_br_0 * R ** -0.32 * v_s ** 0.58 ** f_rho_M ** 0.03 * kappa ** -0.22  # Eq. A7
+        t_tr = self.t_tr_0 ** np.sqrt(kappa * M_env / v_s)  # Eq. A9
+
+        t = np.reshape(t_in, (-1, 1)) - t_exp
+        ttilde = t / t_br
+        L = L_br * (power(ttilde, -4. / 3.)
+                    + self.A * np.exp(-power(self.a * t / t_tr, self.alpha)) * power(ttilde, -0.17))  # Eq. A1
+        T_col = T_col_br * np.minimum(0.97 * power(ttilde, -1. / 3.), power(ttilde, -0.45))  # Eq. A2
+
+        T_K = np.squeeze(T_col) / k_B
+        R_bb = c3 * np.squeeze(L) ** 0.5 * power(T_K, -2.)
+        return T_K, R_bb
+
+    def evaluate(self, t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1.):
+        """
+        Evaluate this model at a range of times and filters
+
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days
+        f : lightcurve_fitting.filter.Filter, array-like
+            Filters for which to calculate the model
+        v_s : float, array-like
+            The shock speed in :math:`10^{8.5}` cm/s
+        M_env : float, array-like
+            The envelope mass in solar masses
+        f_rho_M : float, array-like
+            The product :math:`f_ρ M`, where ":math:`f_ρ` is a numerical factor of order unity that depends on the inner
+            envelope structure" and :math:`M` is the ejecta mass in solar masses
+        R : float, array-like
+            The progenitor radius in :math:`10^{13}` cm
+        t_exp : float, array-like, optional
+            The explosion epoch. Default: 0.
+        kappa : float, array-like, optional
+            The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g). Default: 1.
+
+        Returns
+        -------
+        y_fit : array-like
+            The filtered model light curves
+        """
+        T_K, R_bb = self.temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp, kappa)
+        lum_blackbody = blackbody_to_filters(f, T_K, R_bb, self.z)
+        lum_suppressed = blackbody_to_filters(f, 0.74 * T_K, 0.74 ** -2. * R_bb, self.z)
+        lum = np.minimum(lum_blackbody, lum_suppressed)  # Eq. A4
+        return lum
+
+    def t_min(self, p, kappa=1.):
+        R = p[3]
+        t_exp = p[4] if len(p) > 4 else 0.
+        return self.t_min_0 * R + t_exp  # Eq. A3
+
+    def t_max(self, p, kappa=1.):
+        v_s, M_env, f_rho_M, R, t_exp, *_ = p
+        t_07eV = self.t_07eV_0 * R ** 0.56 * v_s ** 0.16 * kappa ** -0.61 * f_rho_M ** -0.06  # Eq. A8
+        t_tr = self.t_tr_0 ** np.sqrt(kappa * M_env / v_s)  # Eq. A9
+        return np.minimum(t_07eV, t_tr / self.a) + t_exp  # Eq. A3
 
 
 sifto_filename = resource_filename('lightcurve_fitting', 'models/sifto.dat')

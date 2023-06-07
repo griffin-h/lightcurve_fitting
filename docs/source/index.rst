@@ -28,6 +28,9 @@ References
 .. [H18] Hosseinzadeh et al. 2018, ApJ, 861, 63, doi:`10.3847/1538-4357/aac5f6 <https://doi.org/10.3847/1538-4357/aac5f6>`_
 .. [H22a] Hosseinzadeh et al. 2022a, ApJL, 933, L45, doi:`10.3847/2041-8213/ac7cef <https://doi.org/10.3847/2041-8213/ac7cef>`_
 .. [H22b] Hosseinzadeh et al. 2022b, ApJ, 935, 31, doi:`10.3847/1538-4357/ac75f0 <https://doi.org/10.3847/1538-4357/ac75f0>`_
+.. [H23a] Hosseinzadeh et al. 2023a, arXiv:`2305.03071 <https://arxiv.org/abs/2305.03071>`_
+.. [H23b] Hosseinzadeh et al. 2023b, in preparation
 .. [K10] Kasen 2010, ApJ, 708, 1025, doi:`10.1088/0004-637X/708/2/1025 <https://doi.org/10.1088/0004-637X/708/2/1025>`_
 .. [RW11] Rabinak & Waxman 2011, ApJ, 728, 63, doi:`10.1088/0004-637X/728/1/63 <https://doi.org/10.1088/0004-637X/728/1/63>`_
 .. [SW17] Sapir & Waxman 2017, ApJ, 838, 130, doi:`10.3847/1538-4357/aa64df <https://doi.org/10.3847/1538-4357/aa64df>`_
+.. [MSW23] Morag, Sapir, & Waxman 2023, MNRAS, 522, 2764, doi:`10.1093/mnras/stad899 <https://doi.org/10.1093/mnras/stad899>`_

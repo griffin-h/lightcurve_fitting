@@ -2,6 +2,10 @@
 Release History
 ===============
 
+Unreleased
+----------
+* Add :class:`.ShockCooling4` model from [MSW23]_
+
 v0.8.0 (2023-04-27)
 -------------------
 This release includes a major refactor of the :mod:`models` module. Models now require initialization with the :class:`.LC` object to be fit. Updated examples are given in the documentation and the Jupyter notebook. This alleviates the need for model keyword arguments, which are now deprecated. (A warning will be issued if the user tries to supply a ``model_kwargs`` argument.) This also allows for much easier specification of new models by subclassing the existing models.

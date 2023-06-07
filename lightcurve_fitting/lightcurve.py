@@ -7,6 +7,7 @@ from .filters import filtdict
 import itertools
 from matplotlib.markers import MarkerStyle
 from matplotlib.patches import Patch
+from functools import partial
 try:
     from config import markers
 except ModuleNotFoundError:
@@ -407,7 +408,7 @@ class LC(Table):
 
     def plot(self, xcol='phase', ycol='absmag', offset_factor=1., color='filter', marker=None, use_lines=False,
              normalize=False, fillmark=True, mjd_axis=True, appmag_axis=True, loc_mark=None, loc_filt=None, ncol_mark=1,
-             lgd_filters=None, tight_layout=True, **kwargs):
+             lgd_filters=None, tight_layout=True, phase_hours=False, return_axes=False, **kwargs):
         """
         Plot the light curve, with nondetections marked with a downward-pointing arrow
 
@@ -570,6 +571,8 @@ class LC(Table):
         lgd_title = None
         for axlabel, keys in column_names.items():
             if xcol in keys:
+                if xcol == 'phase' and phase_hours:
+                    axlabel = axlabel.replace('days', 'hours')
                 plt.xlabel(axlabel)
             elif ycol in keys:
                 plt.ylabel(axlabel)
@@ -580,7 +583,8 @@ class LC(Table):
         mjd_axis = mjd_axis and xcol == 'phase' and 'redshift' in self.meta and 'refmjd' in self.meta
         appmag_axis = appmag_axis and ycol == 'absmag' and 'dm' in self.meta
         if mjd_axis or appmag_axis:
-            top, right = aux_axes(self._phase2mjd if mjd_axis else None, self._abs2app if appmag_axis else None)
+            xfunc = partial(self._phase2mjd, hours=phase_hours)
+            top, right = aux_axes(xfunc if mjd_axis else None, self._abs2app if appmag_axis else None)
             if mjd_axis:
                 top.xaxis.get_major_formatter().set_useOffset(False)
                 top.set_xlabel('MJD')
@@ -602,6 +606,9 @@ class LC(Table):
 
         if tight_layout:
             plt.tight_layout()
+
+        if return_axes and (mjd_axis or appmag_axis):
+            return top, right
 
     def _phase2mjd(self, phase, hours=False):
         return phase * (1. + self.meta['redshift']) / (24. if hours else 1.) + self.meta['refmjd']

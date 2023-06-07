@@ -5,6 +5,7 @@ Release History
 Unreleased
 ----------
 * Add :class:`.ShockCooling4` model from [MSW23]_
+* Add options to :func:`.lightcurve_corner` and :func:`.lightcurve_model_plot`
 
 v0.8.0 (2023-04-27)
 -------------------

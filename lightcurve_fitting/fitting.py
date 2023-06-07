@@ -171,7 +171,8 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
 def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
                       num_models_to_plot=100, lcaxis_posn=(0.7, 0.55, 0.2, 0.4),
                       filter_spacing=1., tmin=None, tmax=None, t0_offset=None, save_plot_as='', ycol=None,
-                      textsize='medium', param_textsize='large', use_sigma=False, xscale='linear'):
+                      textsize='medium', param_textsize='large', mjd_offset=None, use_sigma=False, xscale='linear',
+                      filters_to_model=None):
     """
     Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model light curves.
 
@@ -225,19 +226,21 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
     if ycol is None:
         ycol = model.output_quantity
     plt.style.use(resource_filename('lightcurve_fitting', 'serif.mplstyle'))
+    if use_sigma and model.input_names[-1] != '\\sigma':
+        model.input_names.append('\\sigma')
+        model.units.append(u.dimensionless_unscaled)
 
     sampler_flatchain_corner = sampler_flatchain.copy()
     axis_labels_corner = model.axis_labels
     for var in ['t_0', 't_\\mathrm{max}']:
         if var in model.input_names:
             i_t0 = model.input_names.index(var)
-            if t0_offset is None:
-                mjd_offset = np.floor(sampler_flatchain_corner[:, i_t0].min())
-            else:
-                mjd_offset = t0_offset
+            if mjd_offset is None:
+                mjd_offset = t0_offset or np.floor(sampler_flatchain_corner[:, i_t0].min())
             if mjd_offset != 0.:
                 sampler_flatchain_corner[:, i_t0] -= mjd_offset
-                axis_labels_corner[i_t0] = f'${var} - {mjd_offset:.0f}$ (d)'
+                mjd_offset_formatted = '{:f}'.format(mjd_offset).rstrip('0').rstrip('.')
+                axis_labels_corner[i_t0] = f'${var} - {mjd_offset_formatted}$ (d)'
 
     fig = corner.corner(sampler_flatchain_corner, labels=axis_labels_corner, label_kwargs={'size': textsize})
     corner_axes = np.array(fig.get_axes()).reshape(sampler_flatchain.shape[-1], sampler_flatchain.shape[-1])
@@ -254,7 +257,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
 
     ax = fig.add_axes(lcaxis_posn)
     lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs, num_models_to_plot, filter_spacing,
-                          tmin, tmax, ycol, textsize, ax, use_sigma=use_sigma, xscale=xscale)
+                          tmin, tmax, ycol, textsize, ax, mjd_offset, use_sigma, xscale, filters_to_model)
 
     paramtexts = format_credible_interval(sampler_flatchain, varnames=model.input_names, units=model.units)
     fig.text(0.45, 0.95, '\n'.join(paramtexts), va='top', ha='center', fontdict={'size': param_textsize})
@@ -267,7 +270,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
 
 def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_models_to_plot=100, filter_spacing=1.,
                           tmin=None, tmax=None, ycol=None, textsize='medium', ax=None, mjd_offset=None, use_sigma=False,
-                          xscale='linear'):
+                          xscale='linear', filters_to_model=None):
     """
     Plot the observed and model light curves.
 
@@ -309,6 +312,9 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
         ycol = model.output_quantity
     if ax is None:
         ax = plt.axes()
+    if use_sigma and model.input_names[-1] != '\\sigma':
+        model.input_names.append('\\sigma')
+        model.units.append(u.dimensionless_unscaled)
 
     choices = np.random.choice(sampler_flatchain.shape[0], num_models_to_plot)
     ps = sampler_flatchain[choices].T
@@ -318,7 +324,10 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
     if tmax is None:
         tmax = np.max(lc['MJD'])
     xfit = np.geomspace(tmin, tmax, 1000) if xscale == 'log' else np.linspace(tmin, tmax, 1000)
-    ufilts = np.unique(lc['filter'])
+    if filters_to_model is None:
+        ufilts = np.unique(lc['filter'])
+    else:
+        ufilts = np.array([filtdict[f] for f in filters_to_model])
     if use_sigma:
         y_fit = model(xfit, ufilts, *ps[:-1])
     else:

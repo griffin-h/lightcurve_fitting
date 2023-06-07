@@ -80,6 +80,7 @@ class LC(Table):
         self.nondetSigmas = 3.
         self.groupby = {'filter', 'source'}
         self.markers = markers.copy()
+        self.colors = {}
 
     def where(self, **kwargs):
         """
@@ -502,8 +503,12 @@ class LC(Table):
             elif color == 'name' and 'plotcolor' in self.meta:
                 col = self.meta['plotcolor']
                 mec = col if col not in ['w', '#FFFFFF'] else 'k'
+            elif g[color][0] in self.colors:
+                col = self.colors[g[color][0]]
+                mec = col if col not in ['w', '#FFFFFF'] else 'k'
             else:
                 col = mec = next(itercolors)
+            self.colors[g[color][0]] = col
             mfc = col if fillmark else 'none'
             if marker == 'name' and 'marker' in self.meta:
                 mark = self.meta['marker']
@@ -593,9 +598,16 @@ class LC(Table):
 
         # add legends
             if marker in self.colnames:
-                labels = sorted(set(self[marker]))
-                lines = [plt.Line2D([], [], mec='k', mfc='none', ms=ms, marker=self.markers[label], linestyle='none')
-                         for label in labels]
+                labels = sorted(set(self[marker]), key=lambda s: s.lower())
+                lines = []
+                for label in labels:
+                    if marker == color:
+                        mec = mfc = self.colors[label]
+                    else:
+                        mec = 'k'
+                        mfc = 'none'
+                    line = plt.Line2D([], [], mec=mec, mfc=mfc, ms=ms, marker=self.markers[label], linestyle='none')
+                    lines.append(line)
                 custom_legend(top, lines, labels, ncol=ncol_mark, loc=loc_mark, title=lgd_title, frameon=True)
 
             if color == 'filter':
@@ -747,7 +759,7 @@ def filter_legend(filts, offset_factor=1.):
     labels = []
     if isinstance(filts, set):
         filts = filtsetup(filts)
-    elif isinstance(filts[0], str):
+    elif isinstance(filts[0], str) or (isinstance(filts[0], list) and isinstance(filts[0][0], str)):
         filts = np.vectorize(filtdict.get)(filts)
     for filt in filts.flatten():
         if filt is None:

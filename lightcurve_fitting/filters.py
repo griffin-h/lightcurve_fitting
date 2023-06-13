@@ -384,7 +384,7 @@ all_filters = [
     Filter(['V_S', 'v', 'vs'], '#00FF30', 1, 'Swift', 3.664e-23, filename='Swift_UVOT.V.dat', angstrom=True),
     Filter('Itagaki', 'w', 0, 'Itagaki', filename='KAF-1001E.asci', linecolor='k', italics=False),
     Filter('white', 'w', 0, 'MOSFiT', filename='white.txt', linecolor='k', italics=False),
-    Filter(['unfilt.', '0', 'C', 'clear', 'pseudobolometric', 'griz'], 'w', 0, 'MOSFiT',
+    Filter(['unfilt.', '0', 'C', 'clear', 'pseudobolometric', 'griz', 'RGB', 'LGRB'], 'w', 0, 'MOSFiT',
            filename='pseudobolometric.txt', linecolor='k', italics=False),
     Filter('G', 'w', 0, 'Gaia', filename='GAIA_GAIA0.G.dat', angstrom=True, linecolor='k'),
     Filter('Kepler', 'r', 0, 'Kepler', filename='Kepler_Kepler.K.dat', angstrom=True, italics=False),

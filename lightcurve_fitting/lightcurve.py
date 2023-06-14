@@ -157,7 +157,8 @@ class LC(Table):
         """
         Parse the ``'filter'`` column into :class:`filters.Filter` objects
         """
-        filters = np.array([filtdict['0'] if np.ma.is_masked(f) else filtdict.get(str(f), '?') for f in self['filter']])
+        filters = np.array([filtdict['0'] if np.ma.is_masked(f) else filtdict.get(str(f), filtdict['?'])
+                            for f in self['filter']])
         is_swift = np.zeros(len(self), bool)
         if 'telescope' in self.colnames:
             is_swift |= self['telescope'] == 'Swift'

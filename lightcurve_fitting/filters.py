@@ -398,7 +398,7 @@ all_filters = [
     Filter(['i', "i'", 'ip', 'iprime', 'F775W'], '#90002C', -1, 'Gunn', filename='SLOAN_SDSS.i.dat', angstrom=True),
     Filter('i-DECam', '#90002C', -1, 'DECam', filename='CTIO_DECam.i.dat', angstrom=True),
     Filter(['I', 'Ic'], '#66000B', -1, 'Johnson', 2.416e-23, filename='Generic_Cousins.I.dat', mec='k', angstrom=True),  # brightened from '#1C0003'
-    Filter('zs', '#000000', -2, 'Gunn', filename='PAN-STARRS_PS1.z.dat', angstrom=True),
+    Filter(['z_s', 'zs'], '#000000', -2, 'Gunn', filename='PAN-STARRS_PS1.z.dat', angstrom=True),
     Filter(['z', "z'", 'zp', 'zprime'], '#000000', -2, 'Gunn', filename='SLOAN_SDSS.z.dat', angstrom=True),
     Filter('z-DECam', '#000000', -2, 'DECam', filename='CTIO_DECam.z.dat', angstrom=True),
     Filter('y', 'y', -3, 'Gunn', filename='PAN-STARRS_PS1.y.dat', angstrom=True),

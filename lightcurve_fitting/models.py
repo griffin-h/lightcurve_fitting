@@ -561,7 +561,7 @@ class ShockCooling4(Model):
         super().__init__(lc, redshift=redshift)
 
         self.A = 0.9
-        self.a = 0.2
+        self.a = 2.
         self.alpha = 0.5
         self.L_br_0 = 3.69e42  # erg / s
         self.T_col_br_0 = 8.19  # eV
@@ -574,7 +574,7 @@ class ShockCooling4(Model):
         t_br = self.t_br_0 * R ** 1.26 * v_s ** -1.13 * f_rho_M ** -0.13  # Eq. A5
         L_br = self.L_br_0 * R ** 0.78 * v_s ** 2.11 * f_rho_M ** 0.11 * kappa ** -0.89  # Eq. A6
         T_col_br = self.T_col_br_0 * R ** -0.32 * v_s ** 0.58 ** f_rho_M ** 0.03 * kappa ** -0.22  # Eq. A7
-        t_tr = self.t_tr_0 ** np.sqrt(kappa * M_env / v_s)  # Eq. A9
+        t_tr = self.t_tr_0 * np.sqrt(kappa * M_env / v_s)  # Eq. A9
 
         t = np.reshape(t_in, (-1, 1)) - t_exp
         ttilde = t / t_br

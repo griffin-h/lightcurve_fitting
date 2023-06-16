@@ -5,7 +5,8 @@ Release History
 Unreleased
 ----------
 * Add :class:`.ShockCooling4` model from [MSW23]_
-* Add options to :func:`.lightcurve_corner` and :func:`.lightcurve_model_plot`
+* Add ``filters_to_model`` option to :func:`.lightcurve_corner` and :func:`.lightcurve_model_plot`
+* Propagate ``t0_offset`` option from :func:`.lightcurve_corner` to ``mjd_offset`` option of :func:`.lightcurve_model_plot`
 
 v0.8.0 (2023-04-27)
 -------------------

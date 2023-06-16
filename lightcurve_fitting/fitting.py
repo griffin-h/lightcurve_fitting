@@ -171,7 +171,7 @@ def lightcurve_mcmc(lc, model, priors=None, p_min=None, p_max=None, p_lo=None, p
 def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
                       num_models_to_plot=100, lcaxis_posn=(0.7, 0.55, 0.2, 0.4),
                       filter_spacing=1., tmin=None, tmax=None, t0_offset=None, save_plot_as='', ycol=None,
-                      textsize='medium', param_textsize='large', mjd_offset=None, use_sigma=False, xscale='linear',
+                      textsize='medium', param_textsize='large', use_sigma=False, xscale='linear',
                       filters_to_model=None):
     """
     Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model light curves.
@@ -197,8 +197,8 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         Starting and ending times for which to plot the models in the light curve inset. Default: determined by the
         time range of the observed light curve.
     t0_offset : float, optional
-        Reference time for the explosion time in the corner plot. Default: the earliest explosion time in
-        `sampler_flatchain`, rounded down.
+        Reference time for the explosion time in the corner plot and the horizontal axis of the light curve inset.
+         Default: the earliest explosion time in `sampler_flatchain`, rounded down.
     save_plot_as : str, optional
         Filename to which to save the resulting plot
     ycol : str, optional
@@ -211,6 +211,8 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         If True, treat the last parameter as an intrinsic scatter parameter that does not get passed to the model
     xscale : str, optional
         Scale for the x-axis of the model plot. Choices: "linear" (default) or "log".
+    filters_to_model : list, set, optional
+        (Unique) list of filters for which to calculate the model light curves. Default: all filters in `lc`.
 
     Returns
     -------
@@ -235,12 +237,12 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
     for var in ['t_0', 't_\\mathrm{max}']:
         if var in model.input_names:
             i_t0 = model.input_names.index(var)
-            if mjd_offset is None:
-                mjd_offset = t0_offset or np.floor(sampler_flatchain_corner[:, i_t0].min())
-            if mjd_offset != 0.:
-                sampler_flatchain_corner[:, i_t0] -= mjd_offset
-                mjd_offset_formatted = '{:f}'.format(mjd_offset).rstrip('0').rstrip('.')
-                axis_labels_corner[i_t0] = f'${var} - {mjd_offset_formatted}$ (d)'
+            if t0_offset is None:
+                t0_offset = np.floor(sampler_flatchain_corner[:, i_t0].min())
+            if t0_offset != 0.:
+                sampler_flatchain_corner[:, i_t0] -= t0_offset
+                t0_offset_formatted = '{:f}'.format(t0_offset).rstrip('0').rstrip('.')
+                axis_labels_corner[i_t0] = f'${var} - {t0_offset_formatted}$ (d)'
 
     fig = corner.corner(sampler_flatchain_corner, labels=axis_labels_corner, label_kwargs={'size': textsize})
     corner_axes = np.array(fig.get_axes()).reshape(sampler_flatchain.shape[-1], sampler_flatchain.shape[-1])
@@ -257,7 +259,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
 
     ax = fig.add_axes(lcaxis_posn)
     lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs, num_models_to_plot, filter_spacing,
-                          tmin, tmax, ycol, textsize, ax, mjd_offset, use_sigma, xscale, filters_to_model)
+                          tmin, tmax, ycol, textsize, ax, t0_offset, use_sigma, xscale, filters_to_model)
 
     paramtexts = format_credible_interval(sampler_flatchain, varnames=model.input_names, units=model.units)
     fig.text(0.45, 0.95, '\n'.join(paramtexts), va='top', ha='center', fontdict={'size': param_textsize})
@@ -305,6 +307,8 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
         If True, treat the last parameter as an intrinsic scatter parameter that does not get passed to the model
     xscale : str, optional
         Scale for the x-axis. Choices: "linear" (default) or "log".
+    filters_to_model : list, set, optional
+        (Unique) list of filters for which to calculate the model light curves. Default: all filters in `lc`.
     """
     if model_kwargs is not None:
         raise Exception(MODEL_KWARGS_WARNING)

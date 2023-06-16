@@ -448,9 +448,20 @@ class LC(Table):
             arrangement shows all filters arranged by ``.system`` (columns) and ``.offset`` (rows).
         tight_layout : bool, optional
             Adjust the figure margins to look beautiful. Default: True.
+        phase_hours : bool, optional
+            Plot the phase in units of rest-frame hours instead of rest-frame days. Default: False.
+        return_axes : bool, optional
+            Return the newly created axes if ``mjd_axis=True`` or ``appmag_axis=True``. Default: False.
         kwargs
             Keyword arguments matching column names in the light curve are used to specify a subset of points to plot.
             Additional keyword arguments passed to :func:`matplotlib.pyplot.plot`.
+
+        Returns
+        -------
+        top : matplotlib.pyplot.Axes, optional
+            The upper x-axis, if ``mjd_axis=True`` and ``return_axes=True``. Otherwise, None.
+        right : matplotlib.pyplot.Axes, optional
+            The right y-axis, if ``appmag_axis=True`` and ``return_axes=True``. Otherwise, None.
         """
         if xcol.startswith('filter'):
             unit = xcol.split(':')[-1] if ':' in xcol else None

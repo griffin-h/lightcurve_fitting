@@ -22,7 +22,7 @@ The following column names are used by the package, although the light curve can
  * MJD (required): modified Julian date of the observation [mjd, JD, jd (JD/jd are converted)]
  * mag (required): magnitude of the observation [Magnitude, Mag, ab_mag, PSFmag, MAG, omag, magnitude, apparent_mag]
  * dmag (required): uncertainty on the magnitude [Magnitude_Error, magerr, MagErr, mag_err, e_mag, Error, err, PSFerr,
-   MAGERR, e_omag, e_magnitude, apparent_mag_err, Mag_Err, emag]
+   MAGERR, e_omag, e_magnitude, apparent_mag_err, Mag_Err, emag, error]
  * filter (required): name of the filter [filter, filt Filter, band, FLT, Band] (see :ref:`Filters` below)
  * nondet: True if the magnitude is an upper limit, False otherwise [Is_Limit, UL, l_omag, upper_limit, upperlimit]
  * flux: the spectral flux density (:math:`F_ν`, arbitrary units) of the observation [FLUXCAL]
@@ -141,7 +141,7 @@ For bolometric light curve fitting, you can also set a maximum for this intrinsi
 Model Fitting
 -------------
 The :mod:`.models` and :mod:`.fitting` submodules allow you to fit analytical models to the observed data.
-Right now, there are two classes of models: :class:`.BaseCompanionShocking`, which is the SiFTO Type Ia supernova template [C08]_ plus a shock component from [K10]_, and :class:`.BaseShockCooling`, which is the [SW17]_ model for shock cooling in a core-collapse supernova.
+Right now, there are three classes of models: :class:`.BaseCompanionShocking`, which is the SiFTO Type Ia supernova template [C08]_ plus a shock component from [K10]_; :class:`.BaseShockCooling`, which is the [SW17]_ model for shock cooling in a core-collapse supernova; and :class:`.ShockCooling4`, which is the updated shock cooling model of [MSW23]_.
 The variations on these classes are as follows:
 
  * :class:`.CompanionShocking` uses factors on the r and i SiFTO models and a factor on the U shock component.
@@ -149,10 +149,14 @@ The variations on these classes are as follows:
  * :class:`.CompanionShocking2` uses time offsets for the U and i SiFTO models.
    This was used in my paper on SN 2021aefx [H22a]_.
  * :class:`.CompanionShocking3` is the same as :class:`.CompanionShocking2` but includes viewing angle dependence.
+   This was used in my paper on SN 2023bee [H23a]_.
  * :class:`.ShockCooling` is formulated in terms of physical parameters :math:`v_s, M_\mathrm{env}, f_ρ M, R`.
  * :class:`.ShockCooling2` is formulated in terms of scaling parameters :math:`T_1, L_1, t_\mathrm{tr}`.
    This was used in my paper on SN 2016bkv [H18]_.
- * :class:`.ShockCooling3` is the same as :class:`.ShockCooling` but with :math:`d_L` and :math:`E(B-V)` as free parameters. (Therefore it fits the flux instead of the luminosity.) This was used in my paper on SN 2021yja [H22b]_.
+ * :class:`.ShockCooling3` is the same as :class:`.ShockCooling` but with :math:`d_L` and :math:`E(B-V)` as free parameters. (Therefore it fits the flux instead of the luminosity.)
+   This was used in my paper on SN 2021yja [H22b]_.
+ * :class:`.ShockCooling4` is the updated shock cooling model of [MSW23]_.
+   This was used in my paper on SN 2023ixf [H23b]_.
 
 **Note on the shock cooling models:**
 There are degeneracies between many of the physical parameters that make them difficult to fit independently.

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API Documentation &mdash; Light Curve Fitting 0.8.1 documentation</title>
+  <title>API Documentation &mdash; Light Curve Fitting 0.9.0.post1+ge65e9ae documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -38,7 +38,7 @@
             Light Curve Fitting
           </a>
               <div class="version">
-                0.8.1
+                0.9.0.post1+ge65e9ae
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -202,6 +202,15 @@
 <li class="toctree-l4"><a class="reference internal" href="#lightcurve_fitting.models.ShockCooling3.t_max"><code class="docutils literal notranslate"><span class="pre">ShockCooling3.t_max()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#lightcurve_fitting.models.ShockCooling3.t_min"><code class="docutils literal notranslate"><span class="pre">ShockCooling3.t_min()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#lightcurve_fitting.models.ShockCooling3.units"><code class="docutils literal notranslate"><span class="pre">ShockCooling3.units</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#lightcurve_fitting.models.ShockCooling4"><code class="docutils literal notranslate"><span class="pre">ShockCooling4</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#lightcurve_fitting.models.ShockCooling4.evaluate"><code class="docutils literal notranslate"><span class="pre">ShockCooling4.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lightcurve_fitting.models.ShockCooling4.input_names"><code class="docutils literal notranslate"><span class="pre">ShockCooling4.input_names</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lightcurve_fitting.models.ShockCooling4.t_max"><code class="docutils literal notranslate"><span class="pre">ShockCooling4.t_max()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lightcurve_fitting.models.ShockCooling4.t_min"><code class="docutils literal notranslate"><span class="pre">ShockCooling4.t_min()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lightcurve_fitting.models.ShockCooling4.temperature_radius"><code class="docutils literal notranslate"><span class="pre">ShockCooling4.temperature_radius()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lightcurve_fitting.models.ShockCooling4.units"><code class="docutils literal notranslate"><span class="pre">ShockCooling4.units</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#lightcurve_fitting.models.UniformPrior"><code class="docutils literal notranslate"><span class="pre">UniformPrior</span></code></a><ul>
@@ -809,7 +818,7 @@ given in ångströms.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lightcurve_fitting.filters.Filter.order">
-<span class="sig-name descname"><span class="pre">order</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['FUV',</span> <span class="pre">'NUV',</span> <span class="pre">'UVW2',</span> <span class="pre">'UVM2',</span> <span class="pre">'UVW1',</span> <span class="pre">'u',</span> <span class="pre">'U_S',</span> <span class="pre">'U',</span> <span class="pre">'B',</span> <span class="pre">'B_S',</span> <span class="pre">'g',</span> <span class="pre">'g-DECam',</span> <span class="pre">'c',</span> <span class="pre">'V',</span> <span class="pre">'V_S',</span> <span class="pre">'Itagaki',</span> <span class="pre">'white',</span> <span class="pre">'unfilt.',</span> <span class="pre">'G',</span> <span class="pre">'Kepler',</span> <span class="pre">'TESS',</span> <span class="pre">'DLT40',</span> <span class="pre">'w',</span> <span class="pre">'o',</span> <span class="pre">'r',</span> <span class="pre">'r-DECam',</span> <span class="pre">'R',</span> <span class="pre">'i',</span> <span class="pre">'i-DECam',</span> <span class="pre">'I',</span> <span class="pre">'zs',</span> <span class="pre">'z',</span> <span class="pre">'z-DECam',</span> <span class="pre">'y',</span> <span class="pre">'y-DECam',</span> <span class="pre">'J',</span> <span class="pre">'H',</span> <span class="pre">'K',</span> <span class="pre">'L',</span> <span class="pre">'F070W',</span> <span class="pre">'F090W',</span> <span class="pre">'F115W',</span> <span class="pre">'F150W',</span> <span class="pre">'F200W',</span> <span class="pre">'F277W',</span> <span class="pre">'F300M',</span> <span class="pre">'F335M',</span> <span class="pre">'F356W',</span> <span class="pre">'F360M',</span> <span class="pre">'F444W',</span> <span class="pre">'F560W',</span> <span class="pre">'F770W',</span> <span class="pre">'F1000W',</span> <span class="pre">'F1130W',</span> <span class="pre">'F1280W',</span> <span class="pre">'F1500W',</span> <span class="pre">'F1800W',</span> <span class="pre">'F2100W',</span> <span class="pre">'F2550W',</span> <span class="pre">'unknown']</span></em><a class="headerlink" href="#lightcurve_fitting.filters.Filter.order" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">order</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['FUV',</span> <span class="pre">'NUV',</span> <span class="pre">'UVW2',</span> <span class="pre">'UVM2',</span> <span class="pre">'UVW1',</span> <span class="pre">'u',</span> <span class="pre">'U_S',</span> <span class="pre">'U',</span> <span class="pre">'B',</span> <span class="pre">'B_S',</span> <span class="pre">'g',</span> <span class="pre">'g-DECam',</span> <span class="pre">'c',</span> <span class="pre">'V',</span> <span class="pre">'V_S',</span> <span class="pre">'Itagaki',</span> <span class="pre">'white',</span> <span class="pre">'unfilt.',</span> <span class="pre">'G',</span> <span class="pre">'Kepler',</span> <span class="pre">'TESS',</span> <span class="pre">'DLT40',</span> <span class="pre">'w',</span> <span class="pre">'o',</span> <span class="pre">'r',</span> <span class="pre">'r-DECam',</span> <span class="pre">'R',</span> <span class="pre">'i',</span> <span class="pre">'i-DECam',</span> <span class="pre">'I',</span> <span class="pre">'z_s',</span> <span class="pre">'z',</span> <span class="pre">'z-DECam',</span> <span class="pre">'y',</span> <span class="pre">'y-DECam',</span> <span class="pre">'J',</span> <span class="pre">'H',</span> <span class="pre">'K',</span> <span class="pre">'L',</span> <span class="pre">'F070W',</span> <span class="pre">'F090W',</span> <span class="pre">'F115W',</span> <span class="pre">'F150W',</span> <span class="pre">'F200W',</span> <span class="pre">'F277W',</span> <span class="pre">'F300M',</span> <span class="pre">'F335M',</span> <span class="pre">'F356W',</span> <span class="pre">'F360M',</span> <span class="pre">'F444W',</span> <span class="pre">'F560W',</span> <span class="pre">'F770W',</span> <span class="pre">'F1000W',</span> <span class="pre">'F1130W',</span> <span class="pre">'F1280W',</span> <span class="pre">'F1500W',</span> <span class="pre">'F1800W',</span> <span class="pre">'F2100W',</span> <span class="pre">'F2550W',</span> <span class="pre">'unknown']</span></em><a class="headerlink" href="#lightcurve_fitting.filters.Filter.order" title="Permalink to this definition">¶</a></dt>
 <dd><p>The names of recognized filters listed in (approximate) decreasing order of effective frequency</p>
 </dd></dl>
 
@@ -961,7 +970,7 @@ luminosity in watts per hertz. All arguments are passed to this function except 
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.fitting.lightcurve_corner">
-<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.fitting.</span></span><span class="sig-name descname"><span class="pre">lightcurve_corner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_flatchain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_models_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lcaxis_posn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.7,</span> <span class="pre">0.55,</span> <span class="pre">0.2,</span> <span class="pre">0.4)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_as</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ycol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">textsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'medium'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_textsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'large'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/fitting.html#lightcurve_corner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.fitting.lightcurve_corner" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.fitting.</span></span><span class="sig-name descname"><span class="pre">lightcurve_corner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_flatchain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_models_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lcaxis_posn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.7,</span> <span class="pre">0.55,</span> <span class="pre">0.2,</span> <span class="pre">0.4)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_as</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ycol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">textsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'medium'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_textsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'large'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters_to_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/fitting.html#lightcurve_corner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.fitting.lightcurve_corner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model light curves.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -984,8 +993,10 @@ luminosities. Default: 1.</p>
 <dt><strong>tmin, tmax</strong><span class="classifier">float, optional</span></dt><dd><p>Starting and ending times for which to plot the models in the light curve inset. Default: determined by the
 time range of the observed light curve.</p>
 </dd>
-<dt><strong>t0_offset</strong><span class="classifier">float, optional</span></dt><dd><p>Reference time for the explosion time in the corner plot. Default: the earliest explosion time in
-<cite>sampler_flatchain</cite>, rounded down.</p>
+<dt><strong>t0_offset</strong><span class="classifier">float, optional</span></dt><dd><dl class="simple">
+<dt>Reference time for the explosion time in the corner plot and the horizontal axis of the light curve inset.</dt><dd><p>Default: the earliest explosion time in <cite>sampler_flatchain</cite>, rounded down.</p>
+</dd>
+</dl>
 </dd>
 <dt><strong>save_plot_as</strong><span class="classifier">str, optional</span></dt><dd><p>Filename to which to save the resulting plot</p>
 </dd>
@@ -998,6 +1009,8 @@ time range of the observed light curve.</p>
 <dt><strong>use_sigma</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, treat the last parameter as an intrinsic scatter parameter that does not get passed to the model</p>
 </dd>
 <dt><strong>xscale</strong><span class="classifier">str, optional</span></dt><dd><p>Scale for the x-axis of the model plot. Choices: “linear” (default) or “log”.</p>
+</dd>
+<dt><strong>filters_to_model</strong><span class="classifier">list, set, optional</span></dt><dd><p>(Unique) list of filters for which to calculate the model light curves. Default: all filters in <cite>lc</cite>.</p>
 </dd>
 </dl>
 </dd>
@@ -1068,7 +1081,7 @@ If ‘absolute’, sigma will be in units of the median photometric uncertainty.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.fitting.lightcurve_model_plot">
-<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.fitting.</span></span><span class="sig-name descname"><span class="pre">lightcurve_model_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_flatchain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_models_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ycol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">textsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'medium'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mjd_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/fitting.html#lightcurve_model_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.fitting.lightcurve_model_plot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.fitting.</span></span><span class="sig-name descname"><span class="pre">lightcurve_model_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_flatchain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_models_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ycol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">textsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'medium'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mjd_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters_to_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/fitting.html#lightcurve_model_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.fitting.lightcurve_model_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the observed and model light curves.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1102,6 +1115,8 @@ the model light curve.</p>
 </dd>
 <dt><strong>xscale</strong><span class="classifier">str, optional</span></dt><dd><p>Scale for the x-axis. Choices: “linear” (default) or “log”.</p>
 </dd>
+<dt><strong>filters_to_model</strong><span class="classifier">list, set, optional</span></dt><dd><p>(Unique) list of filters for which to calculate the model light curves. Default: all filters in <cite>lc</cite>.</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -1120,8 +1135,8 @@ the model light curve.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="lightcurve_fitting.lightcurve.LC">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.lightcurve.</span></span><span class="sig-name descname"><span class="pre">LC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v5.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a></p>
-<p>A broadband light curve, stored as an <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v5.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v5.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a></p>
+<p>A broadband light curve, stored as an <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v5.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -1297,7 +1312,7 @@ modulus is given, a redshift-dependent distance is calculated using the Planck18
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lightcurve_fitting.lightcurve.LC.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'phase'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ycol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'absmag'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'filter'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fillmark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mjd_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">appmag_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc_mark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc_filt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncol_mark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lgd_filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tight_layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.plot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'phase'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ycol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'absmag'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'filter'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fillmark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mjd_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">appmag_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc_mark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc_filt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncol_mark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lgd_filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tight_layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_hours</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#LC.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.LC.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the light curve, with nondetections marked with a downward-pointing arrow</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1335,8 +1350,20 @@ arrangement shows all filters arranged by <code class="docutils literal notransl
 </dd>
 <dt><strong>tight_layout</strong><span class="classifier">bool, optional</span></dt><dd><p>Adjust the figure margins to look beautiful. Default: True.</p>
 </dd>
+<dt><strong>phase_hours</strong><span class="classifier">bool, optional</span></dt><dd><p>Plot the phase in units of rest-frame hours instead of rest-frame days. Default: False.</p>
+</dd>
+<dt><strong>return_axes</strong><span class="classifier">bool, optional</span></dt><dd><p>Return the newly created axes if <code class="docutils literal notranslate"><span class="pre">mjd_axis=True</span></code> or <code class="docutils literal notranslate"><span class="pre">appmag_axis=True</span></code>. Default: False.</p>
+</dd>
 <dt><strong>kwargs</strong></dt><dd><p>Keyword arguments matching column names in the light curve are used to specify a subset of points to plot.
 Additional keyword arguments passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html#matplotlib.pyplot.plot" title="(in Matplotlib v3.7.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>top</strong><span class="classifier">matplotlib.pyplot.Axes, optional</span></dt><dd><p>The upper x-axis, if <code class="docutils literal notranslate"><span class="pre">mjd_axis=True</span></code> and <code class="docutils literal notranslate"><span class="pre">return_axes=True</span></code>. Otherwise, None.</p>
+</dd>
+<dt><strong>right</strong><span class="classifier">matplotlib.pyplot.Axes, optional</span></dt><dd><p>The right y-axis, if <code class="docutils literal notranslate"><span class="pre">appmag_axis=True</span></code> and <code class="docutils literal notranslate"><span class="pre">return_axes=True</span></code>. Otherwise, None.</p>
 </dd>
 </dl>
 </dd>
@@ -2921,6 +2948,123 @@ envelope structure” and <span class="math notranslate nohighlight">\(M\)</span
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.ShockCooling4">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">ShockCooling4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#ShockCooling4"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.ShockCooling4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#lightcurve_fitting.models.Model" title="lightcurve_fitting.models.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p>The shock cooling model of Morag, Sapir, &amp; Waxman (<a class="reference external" href="https://doi.org/10.1093/mnras/stad899">https://doi.org/10.1093/mnras/stad899</a>).</p>
+<p><span class="math notranslate nohighlight">\(L(\tilde{t}) = L_\mathrm{br}\left\{\tilde{t}^{-4/3} + 0.9\exp\left[-\left(\frac{2.0t}{t_\mathrm{tr}}\right)^{0.5}\right] \tilde{t}^{-0.17}\right\}\)</span> (Eq. A1)</p>
+<p><span class="math notranslate nohighlight">\(T_\mathrm{col}(\tilde{t}) = T_\mathrm{col,br} \min(0.97\tilde{t}^{-1/3}, \tilde{t}^{-0.45})\)</span> (Eq. A2)</p>
+<p><span class="math notranslate nohighlight">\(\tilde{t} \equiv \frac{t}{t_\mathrm{br}}\)</span>, where <span class="math notranslate nohighlight">\(t_\mathrm{br} = (0.86\,\mathrm{h}) R^{1.26} v_\mathrm{s*}^{-1.13} (f_\rho M \kappa)^{-0.13}\)</span> (Eq. A5)</p>
+<p><span class="math notranslate nohighlight">\(L_\mathrm{br} = (3.69 \times 10^{42}\,\mathrm{erg}\,\mathrm{s}^{-1}) R^{0.78} v_\mathrm{s*}^{2.11} (f_\rho M)^{0.11} \kappa^{-0.89}\)</span> (Eq. A6)</p>
+<p><span class="math notranslate nohighlight">\(T_\mathrm{col,br} = (8.19\,\mathrm{eV}) R^{-0.32} v_\mathrm{s*}^{0.58} (f_\rho M)^{0.03} \kappa^{-0.22}\)</span> (Eq. A7)</p>
+<p><span class="math notranslate nohighlight">\(t_\mathrm{tr} = (19.5\,\mathrm{d}) \sqrt{\frac{\kappa M}{v_\mathrm{s*}}}\)</span> (Eq. A9)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>lc</strong><span class="classifier">lightcurve_fitting.lightcurve.LC, optional</span></dt><dd><p>The light curve to which the model will be fit. Only used to get the redshift if <cite>redshift</cite> is not given.</p>
+</dd>
+<dt><strong>redshift</strong><span class="classifier">float, optional</span></dt><dd><p>The redshift between blackbody source and the observed filters. Default: 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>z</strong><span class="classifier">float</span></dt><dd><p>The redshift between blackbody source and the observed filters</p>
+</dd>
+<dt><strong>n</strong><span class="classifier">float</span></dt><dd><p>The polytropic index of the progenitor</p>
+</dd>
+<dt><strong>A</strong><span class="classifier">float</span></dt><dd><p>Coefficient on the luminosity suppression factor (Eq. A1)</p>
+</dd>
+<dt><strong>a</strong><span class="classifier">float</span></dt><dd><p>Coefficient on the transparency timescale (Eq. A1)</p>
+</dd>
+<dt><strong>alpha</strong><span class="classifier">float</span></dt><dd><p>Exponent on the transparency timescale (Eq. A1)</p>
+</dd>
+<dt><strong>L_br_0</strong><span class="classifier">float</span></dt><dd><p>Coefficient on the luminosity expression in erg/s (Eq. A6)</p>
+</dd>
+<dt><strong>T_col_br_0</strong><span class="classifier">float</span></dt><dd><p>Coefficient on the temperature expression in eV (Eq. A7)</p>
+</dd>
+<dt><strong>t_min_0</strong><span class="classifier">float</span></dt><dd><p>Coefficient on the minimum validity time in days (Eq. A3)</p>
+</dd>
+<dt><strong>t_br_0</strong><span class="classifier">float</span></dt><dd><p>Coefficient on the <span class="math notranslate nohighlight">\(\tilde{t}\)</span> timescale in days (Eq. A5)</p>
+</dd>
+<dt><strong>t_07eV_0</strong><span class="classifier">float</span></dt><dd><p>Coefficient on the time at which the ejecta reach 0.7 eV in days (Eq. A8)</p>
+</dd>
+<dt><strong>t_tr_0</strong><span class="classifier">float</span></dt><dd><p>Coefficient on the transparency timescale in days (Eq. A9)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.ShockCooling4.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_rho_M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_exp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#ShockCooling4.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.ShockCooling4.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate this model at a range of times and filters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>t_in</strong><span class="classifier">float, array-like</span></dt><dd><p>Time in days</p>
+</dd>
+<dt><strong>f</strong><span class="classifier">lightcurve_fitting.filter.Filter, array-like</span></dt><dd><p>Filters for which to calculate the model</p>
+</dd>
+<dt><strong>v_s</strong><span class="classifier">float, array-like</span></dt><dd><p>The shock speed in <span class="math notranslate nohighlight">\(10^{8.5}\)</span> cm/s</p>
+</dd>
+<dt><strong>M_env</strong><span class="classifier">float, array-like</span></dt><dd><p>The envelope mass in solar masses</p>
+</dd>
+<dt><strong>f_rho_M</strong><span class="classifier">float, array-like</span></dt><dd><p>The product <span class="math notranslate nohighlight">\(f_ρ M\)</span>, where “<span class="math notranslate nohighlight">\(f_ρ\)</span> is a numerical factor of order unity that depends on the inner
+envelope structure” and <span class="math notranslate nohighlight">\(M\)</span> is the ejecta mass in solar masses</p>
+</dd>
+<dt><strong>R</strong><span class="classifier">float, array-like</span></dt><dd><p>The progenitor radius in <span class="math notranslate nohighlight">\(10^{13}\)</span> cm</p>
+</dd>
+<dt><strong>t_exp</strong><span class="classifier">float, array-like, optional</span></dt><dd><p>The explosion epoch. Default: 0.</p>
+</dd>
+<dt><strong>kappa</strong><span class="classifier">float, array-like, optional</span></dt><dd><p>The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g). Default: 1.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>y_fit</strong><span class="classifier">array-like</span></dt><dd><p>The filtered model light curves</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.ShockCooling4.input_names">
+<span class="sig-name descname"><span class="pre">input_names</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['v_\\mathrm{s*}',</span> <span class="pre">'M_\\mathrm{env}',</span> <span class="pre">'f_\\rho</span> <span class="pre">M',</span> <span class="pre">'R',</span> <span class="pre">'t_0']</span></em><a class="headerlink" href="#lightcurve_fitting.models.ShockCooling4.input_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of the parameter names</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.ShockCooling4.t_max">
+<span class="sig-name descname"><span class="pre">t_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#ShockCooling4.t_max"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.ShockCooling4.t_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>The maximum time at which the model is valid</p>
+<p><span class="math notranslate nohighlight">\(t_\mathrm{max} = \min(t_\mathrm{0.7\,eV}, 0.5 t_\mathrm{tr})\)</span> (Eq. A3)</p>
+<p><span class="math notranslate nohighlight">\(t_\mathrm{0.7\,eV} = (6.86\,\mathrm{d}) R^{0.56} v_\mathrm{s*}^{0.16} \kappa^{-0.61} (f_\rho M)^{-0.06}\)</span> (Eq. A8)</p>
+<p><span class="math notranslate nohighlight">\(t_\mathrm{tr} = (19.5\,\mathrm{d}) \sqrt{\frac{\kappa M}{v_\mathrm{s*}}}\)</span> (Eq. A9)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.ShockCooling4.t_min">
+<span class="sig-name descname"><span class="pre">t_min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#ShockCooling4.t_min"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.ShockCooling4.t_min" title="Permalink to this definition">¶</a></dt>
+<dd><p>The minimum time at which the model is valid</p>
+<p><span class="math notranslate nohighlight">\(t_\mathrm{min} = (17\,\mathrm{min}) R + t_\mathrm{exp}\)</span> (Eq. A3)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.ShockCooling4.temperature_radius">
+<span class="sig-name descname"><span class="pre">temperature_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_rho_M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_exp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#ShockCooling4.temperature_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.ShockCooling4.temperature_radius" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lightcurve_fitting.models.ShockCooling4.units">
+<span class="sig-name descname"><span class="pre">units</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;Quantity</span> <span class="pre">3.16227766e+08</span> <span class="pre">cm</span> <span class="pre">/</span> <span class="pre">s&gt;,</span> <span class="pre">Unit(&quot;solMass&quot;),</span> <span class="pre">Unit(&quot;solMass&quot;),</span> <span class="pre">&lt;Quantity</span> <span class="pre">1.e+13</span> <span class="pre">cm&gt;,</span> <span class="pre">Unit(&quot;d&quot;)]</span></em><a class="headerlink" href="#lightcurve_fitting.models.ShockCooling4.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of the units for each parameter</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="lightcurve_fitting.models.UniformPrior">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">UniformPrior</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#UniformPrior"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.UniformPrior" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lightcurve_fitting.models.Prior" title="lightcurve_fitting.models.Prior"><code class="xref py py-class docutils literal notranslate"><span class="pre">Prior</span></code></a></p>
@@ -3150,7 +3294,7 @@ The TSV file will be saved alongside this directory using the same name but with
 <dd class="field-even"><dl class="simple">
 <dt><strong>filenames</strong><span class="classifier">list</span></dt><dd><p>List of filenames corresponding to each spectrum</p>
 </dd>
-<dt><strong>times</strong><span class="classifier">list</span></dt><dd><p>List of <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.time.Time.html#astropy.time.Time" title="(in Astropy v5.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.time.Time</span></code></a> when each spectrum was observed</p>
+<dt><strong>times</strong><span class="classifier">list</span></dt><dd><p>List of <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.time.Time.html#astropy.time.Time" title="(in Astropy v5.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.time.Time</span></code></a> when each spectrum was observed</p>
 </dd>
 <dt><strong>tel</strong><span class="classifier">list</span></dt><dd><p>List of telescope names (if given) where each spectrum was observed</p>
 </dd>
@@ -3232,13 +3376,13 @@ The TSV file will be saved alongside this directory using the same name but with
 <dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.speccal.remove_duplicate_wcs">
 <span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.speccal.</span></span><span class="sig-name descname"><span class="pre">remove_duplicate_wcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/speccal.html#remove_duplicate_wcs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.speccal.remove_duplicate_wcs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove duplicate world coordinate system header keywords from a <a class="reference external" href="https://docs.astropy.org/en/stable/io/fits/api/headers.html#astropy.io.fits.Header" title="(in Astropy v5.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.io.fits.header.Header</span></code></a></p>
+<dd><p>Remove duplicate world coordinate system header keywords from a <a class="reference external" href="https://docs.astropy.org/en/stable/io/fits/api/headers.html#astropy.io.fits.Header" title="(in Astropy v5.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.io.fits.header.Header</span></code></a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lightcurve_fitting.speccal.removebadcards">
 <span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.speccal.</span></span><span class="sig-name descname"><span class="pre">removebadcards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/speccal.html#removebadcards"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.speccal.removebadcards" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove problematic entries from a <a class="reference external" href="https://docs.astropy.org/en/stable/io/fits/api/headers.html#astropy.io.fits.Header" title="(in Astropy v5.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.io.fits.header.Header</span></code></a></p>
+<dd><p>Remove problematic entries from a <a class="reference external" href="https://docs.astropy.org/en/stable/io/fits/api/headers.html#astropy.io.fits.Header" title="(in Astropy v5.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.io.fits.header.Header</span></code></a></p>
 </dd></dl>
 
 </section>

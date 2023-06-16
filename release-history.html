@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Release History &mdash; Light Curve Fitting 0.8.1 documentation</title>
+  <title>Release History &mdash; Light Curve Fitting 0.9.0.post1+ge65e9ae documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -37,7 +37,7 @@
             Light Curve Fitting
           </a>
               <div class="version">
-                0.8.1
+                0.9.0.post1+ge65e9ae
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -52,6 +52,7 @@
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v0-9-0-2023-06-16">v0.9.0 (2023-06-16)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-8-0-2023-04-27">v0.8.0 (2023-04-27)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-7-0-2022-10-25">v0.7.0 (2022-10-25)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-6-0-2022-05-04">v0.6.0 (2022-05-04)</a></li>
@@ -91,6 +92,19 @@
              
   <section id="release-history">
 <h1>Release History<a class="headerlink" href="#release-history" title="Permalink to this heading">¶</a></h1>
+<section id="v0-9-0-2023-06-16">
+<h2>v0.9.0 (2023-06-16)<a class="headerlink" href="#v0-9-0-2023-06-16" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Add <a class="reference internal" href="api.html#lightcurve_fitting.models.ShockCooling4" title="lightcurve_fitting.models.ShockCooling4"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShockCooling4</span></code></a> model from <a class="reference internal" href="index.html#msw23" id="id1"><span>[MSW23]</span></a></p></li>
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">filters_to_model</span></code> option to <a class="reference internal" href="api.html#lightcurve_fitting.fitting.lightcurve_corner" title="lightcurve_fitting.fitting.lightcurve_corner"><code class="xref py py-func docutils literal notranslate"><span class="pre">lightcurve_corner()</span></code></a> and <a class="reference internal" href="api.html#lightcurve_fitting.fitting.lightcurve_model_plot" title="lightcurve_fitting.fitting.lightcurve_model_plot"><code class="xref py py-func docutils literal notranslate"><span class="pre">lightcurve_model_plot()</span></code></a></p></li>
+<li><p>Propagate <code class="docutils literal notranslate"><span class="pre">t0_offset</span></code> option from <a class="reference internal" href="api.html#lightcurve_fitting.fitting.lightcurve_corner" title="lightcurve_fitting.fitting.lightcurve_corner"><code class="xref py py-func docutils literal notranslate"><span class="pre">lightcurve_corner()</span></code></a> to <code class="docutils literal notranslate"><span class="pre">mjd_offset</span></code> option of <a class="reference internal" href="api.html#lightcurve_fitting.fitting.lightcurve_model_plot" title="lightcurve_fitting.fitting.lightcurve_model_plot"><code class="xref py py-func docutils literal notranslate"><span class="pre">lightcurve_model_plot()</span></code></a></p></li>
+<li><p>Recognize filters RGB, LRGB, and z_s</p></li>
+<li><p>Assume an empty/masked value for filter means “unfiltered”</p></li>
+<li><p>Use colors in marker legend if <code class="docutils literal notranslate"><span class="pre">color</span></code> = <code class="docutils literal notranslate"><span class="pre">marker</span></code> in <a class="reference internal" href="api.html#lightcurve_fitting.lightcurve.LC.plot" title="lightcurve_fitting.lightcurve.LC.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LC.plot()</span></code></a></p></li>
+<li><p>Add option to plot phase in hours in <a class="reference internal" href="api.html#lightcurve_fitting.lightcurve.LC.plot" title="lightcurve_fitting.lightcurve.LC.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LC.plot()</span></code></a></p></li>
+<li><p>Add option to return axes objects in <a class="reference internal" href="api.html#lightcurve_fitting.lightcurve.LC.plot" title="lightcurve_fitting.lightcurve.LC.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LC.plot()</span></code></a></p></li>
+</ul>
+</section>
 <section id="v0-8-0-2023-04-27">
 <h2>v0.8.0 (2023-04-27)<a class="headerlink" href="#v0-8-0-2023-04-27" title="Permalink to this heading">¶</a></h2>
 <p>This release includes a major refactor of the <code class="xref py py-mod docutils literal notranslate"><span class="pre">models</span></code> module. Models now require initialization with the <a class="reference internal" href="api.html#lightcurve_fitting.lightcurve.LC" title="lightcurve_fitting.lightcurve.LC"><code class="xref py py-class docutils literal notranslate"><span class="pre">LC</span></code></a> object to be fit. Updated examples are given in the documentation and the Jupyter notebook. This alleviates the need for model keyword arguments, which are now deprecated. (A warning will be issued if the user tries to supply a <code class="docutils literal notranslate"><span class="pre">model_kwargs</span></code> argument.) This also allows for much easier specification of new models by subclassing the existing models.</p>

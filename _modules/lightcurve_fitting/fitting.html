@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>lightcurve_fitting.fitting &mdash; Light Curve Fitting 0.8.1 documentation</title>
+  <title>lightcurve_fitting.fitting &mdash; Light Curve Fitting 0.9.0.post1+ge65e9ae documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
@@ -34,7 +34,7 @@
             Light Curve Fitting
           </a>
               <div class="version">
-                0.8.1
+                0.9.0.post1+ge65e9ae
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -249,7 +249,8 @@
 <div class="viewcode-block" id="lightcurve_corner"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.fitting.lightcurve_corner">[docs]</a><span class="k">def</span> <span class="nf">lightcurve_corner</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">sampler_flatchain</span><span class="p">,</span> <span class="n">model_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                       <span class="n">num_models_to_plot</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">lcaxis_posn</span><span class="o">=</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">),</span>
                       <span class="n">filter_spacing</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">tmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">t0_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_plot_as</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                      <span class="n">textsize</span><span class="o">=</span><span class="s1">&#39;medium&#39;</span><span class="p">,</span> <span class="n">param_textsize</span><span class="o">=</span><span class="s1">&#39;large&#39;</span><span class="p">,</span> <span class="n">use_sigma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">):</span>
+                      <span class="n">textsize</span><span class="o">=</span><span class="s1">&#39;medium&#39;</span><span class="p">,</span> <span class="n">param_textsize</span><span class="o">=</span><span class="s1">&#39;large&#39;</span><span class="p">,</span> <span class="n">use_sigma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+                      <span class="n">filters_to_model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model light curves.</span>
 
@@ -274,8 +275,8 @@
 <span class="sd">        Starting and ending times for which to plot the models in the light curve inset. Default: determined by the</span>
 <span class="sd">        time range of the observed light curve.</span>
 <span class="sd">    t0_offset : float, optional</span>
-<span class="sd">        Reference time for the explosion time in the corner plot. Default: the earliest explosion time in</span>
-<span class="sd">        `sampler_flatchain`, rounded down.</span>
+<span class="sd">        Reference time for the explosion time in the corner plot and the horizontal axis of the light curve inset.</span>
+<span class="sd">         Default: the earliest explosion time in `sampler_flatchain`, rounded down.</span>
 <span class="sd">    save_plot_as : str, optional</span>
 <span class="sd">        Filename to which to save the resulting plot</span>
 <span class="sd">    ycol : str, optional</span>
@@ -288,6 +289,8 @@
 <span class="sd">        If True, treat the last parameter as an intrinsic scatter parameter that does not get passed to the model</span>
 <span class="sd">    xscale : str, optional</span>
 <span class="sd">        Scale for the x-axis of the model plot. Choices: &quot;linear&quot; (default) or &quot;log&quot;.</span>
+<span class="sd">    filters_to_model : list, set, optional</span>
+<span class="sd">        (Unique) list of filters for which to calculate the model light curves. Default: all filters in `lc`.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -303,6 +306,9 @@
     <span class="k">if</span> <span class="n">ycol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">ycol</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">output_quantity</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;lightcurve_fitting&#39;</span><span class="p">,</span> <span class="s1">&#39;serif.mplstyle&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">use_sigma</span> <span class="ow">and</span> <span class="n">model</span><span class="o">.</span><span class="n">input_names</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">sigma&#39;</span><span class="p">:</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">input_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">sigma&#39;</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span><span class="p">)</span>
 
     <span class="n">sampler_flatchain_corner</span> <span class="o">=</span> <span class="n">sampler_flatchain</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">axis_labels_corner</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">axis_labels</span>
@@ -310,12 +316,11 @@
         <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">input_names</span><span class="p">:</span>
             <span class="n">i_t0</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">input_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">t0_offset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">mjd_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">sampler_flatchain_corner</span><span class="p">[:,</span> <span class="n">i_t0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">mjd_offset</span> <span class="o">=</span> <span class="n">t0_offset</span>
-            <span class="k">if</span> <span class="n">mjd_offset</span> <span class="o">!=</span> <span class="mf">0.</span><span class="p">:</span>
-                <span class="n">sampler_flatchain_corner</span><span class="p">[:,</span> <span class="n">i_t0</span><span class="p">]</span> <span class="o">-=</span> <span class="n">mjd_offset</span>
-                <span class="n">axis_labels_corner</span><span class="p">[</span><span class="n">i_t0</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;$</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1"> - </span><span class="si">{</span><span class="n">mjd_offset</span><span class="si">:</span><span class="s1">.0f</span><span class="si">}</span><span class="s1">$ (d)&#39;</span>
+                <span class="n">t0_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">sampler_flatchain_corner</span><span class="p">[:,</span> <span class="n">i_t0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">t0_offset</span> <span class="o">!=</span> <span class="mf">0.</span><span class="p">:</span>
+                <span class="n">sampler_flatchain_corner</span><span class="p">[:,</span> <span class="n">i_t0</span><span class="p">]</span> <span class="o">-=</span> <span class="n">t0_offset</span>
+                <span class="n">t0_offset_formatted</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t0_offset</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+                <span class="n">axis_labels_corner</span><span class="p">[</span><span class="n">i_t0</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;$</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1"> - </span><span class="si">{</span><span class="n">t0_offset_formatted</span><span class="si">}</span><span class="s1">$ (d)&#39;</span>
 
     <span class="n">fig</span> <span class="o">=</span> <span class="n">corner</span><span class="o">.</span><span class="n">corner</span><span class="p">(</span><span class="n">sampler_flatchain_corner</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">axis_labels_corner</span><span class="p">,</span> <span class="n">label_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="n">textsize</span><span class="p">})</span>
     <span class="n">corner_axes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">get_axes</span><span class="p">())</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">sampler_flatchain</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">sampler_flatchain</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
@@ -332,7 +337,7 @@
 
     <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">(</span><span class="n">lcaxis_posn</span><span class="p">)</span>
     <span class="n">lightcurve_model_plot</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">sampler_flatchain</span><span class="p">,</span> <span class="n">model_kwargs</span><span class="p">,</span> <span class="n">num_models_to_plot</span><span class="p">,</span> <span class="n">filter_spacing</span><span class="p">,</span>
-                          <span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">,</span> <span class="n">ycol</span><span class="p">,</span> <span class="n">textsize</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">use_sigma</span><span class="o">=</span><span class="n">use_sigma</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="n">xscale</span><span class="p">)</span>
+                          <span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">,</span> <span class="n">ycol</span><span class="p">,</span> <span class="n">textsize</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">t0_offset</span><span class="p">,</span> <span class="n">use_sigma</span><span class="p">,</span> <span class="n">xscale</span><span class="p">,</span> <span class="n">filters_to_model</span><span class="p">)</span>
 
     <span class="n">paramtexts</span> <span class="o">=</span> <span class="n">format_credible_interval</span><span class="p">(</span><span class="n">sampler_flatchain</span><span class="p">,</span> <span class="n">varnames</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">input_names</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">units</span><span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paramtexts</span><span class="p">),</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="n">param_textsize</span><span class="p">})</span>
@@ -345,7 +350,7 @@
 
 <div class="viewcode-block" id="lightcurve_model_plot"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.fitting.lightcurve_model_plot">[docs]</a><span class="k">def</span> <span class="nf">lightcurve_model_plot</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">sampler_flatchain</span><span class="p">,</span> <span class="n">model_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_models_to_plot</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">filter_spacing</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
                           <span class="n">tmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">textsize</span><span class="o">=</span><span class="s1">&#39;medium&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mjd_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_sigma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                          <span class="n">xscale</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">):</span>
+                          <span class="n">xscale</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">filters_to_model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the observed and model light curves.</span>
 
@@ -380,6 +385,8 @@
 <span class="sd">        If True, treat the last parameter as an intrinsic scatter parameter that does not get passed to the model</span>
 <span class="sd">    xscale : str, optional</span>
 <span class="sd">        Scale for the x-axis. Choices: &quot;linear&quot; (default) or &quot;log&quot;.</span>
+<span class="sd">    filters_to_model : list, set, optional</span>
+<span class="sd">        (Unique) list of filters for which to calculate the model light curves. Default: all filters in `lc`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">model_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">MODEL_KWARGS_WARNING</span><span class="p">)</span>
@@ -387,6 +394,9 @@
         <span class="n">ycol</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">output_quantity</span>
     <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">use_sigma</span> <span class="ow">and</span> <span class="n">model</span><span class="o">.</span><span class="n">input_names</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">sigma&#39;</span><span class="p">:</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">input_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">sigma&#39;</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span><span class="p">)</span>
 
     <span class="n">choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">sampler_flatchain</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num_models_to_plot</span><span class="p">)</span>
     <span class="n">ps</span> <span class="o">=</span> <span class="n">sampler_flatchain</span><span class="p">[</span><span class="n">choices</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
@@ -396,7 +406,10 @@
     <span class="k">if</span> <span class="n">tmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">tmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">lc</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">])</span>
     <span class="n">xfit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span> <span class="k">if</span> <span class="n">xscale</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
-    <span class="n">ufilts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">lc</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">filters_to_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ufilts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">lc</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ufilts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">filtdict</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filters_to_model</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">use_sigma</span><span class="p">:</span>
         <span class="n">y_fit</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">xfit</span><span class="p">,</span> <span class="n">ufilts</span><span class="p">,</span> <span class="o">*</span><span class="n">ps</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>

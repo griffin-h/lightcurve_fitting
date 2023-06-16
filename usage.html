@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Usage &mdash; Light Curve Fitting 0.8.1 documentation</title>
+  <title>Usage &mdash; Light Curve Fitting 0.9.0.post1+ge65e9ae documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -38,7 +38,7 @@
             Light Curve Fitting
           </a>
               <div class="version">
-                0.8.1
+                0.9.0.post1+ge65e9ae
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -96,7 +96,7 @@
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h1>
 <section id="light-curves">
 <h2>Light Curves<a class="headerlink" href="#light-curves" title="Permalink to this heading">¶</a></h2>
-<p>The core of this package is the <a class="reference internal" href="api.html#lightcurve_fitting.lightcurve.LC" title="lightcurve_fitting.lightcurve.LC"><code class="xref py py-class docutils literal notranslate"><span class="pre">lightcurve.LC</span></code></a> object. This is an extension of the <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v5.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a> object, which contains
+<p>The core of this package is the <a class="reference internal" href="api.html#lightcurve_fitting.lightcurve.LC" title="lightcurve_fitting.lightcurve.LC"><code class="xref py py-class docutils literal notranslate"><span class="pre">lightcurve.LC</span></code></a> object. This is an extension of the <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v5.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a> object, which contains
 tabular data, in this case broadband photometric observations. You can read light curve data from a file using the
 standard <code class="xref py py-meth docutils literal notranslate"><span class="pre">astropy.table.Table.read()</span></code> method. I’m going to read an example light curve of SN 2016bkv to be used from here on:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lightcurve_fitting.lightcurve</span> <span class="kn">import</span> <span class="n">LC</span>
@@ -113,7 +113,7 @@ standard <code class="xref py py-meth docutils literal notranslate"><span class=
 <li><p>MJD (required): modified Julian date of the observation [mjd, JD, jd (JD/jd are converted)]</p></li>
 <li><p>mag (required): magnitude of the observation [Magnitude, Mag, ab_mag, PSFmag, MAG, omag, magnitude, apparent_mag]</p></li>
 <li><p>dmag (required): uncertainty on the magnitude [Magnitude_Error, magerr, MagErr, mag_err, e_mag, Error, err, PSFerr,
-MAGERR, e_omag, e_magnitude, apparent_mag_err, Mag_Err, emag]</p></li>
+MAGERR, e_omag, e_magnitude, apparent_mag_err, Mag_Err, emag, error]</p></li>
 <li><p>filter (required): name of the filter [filter, filt Filter, band, FLT, Band] (see <a class="reference internal" href="#filters"><span class="std std-ref">Filters</span></a> below)</p></li>
 <li><p>nondet: True if the magnitude is an upper limit, False otherwise [Is_Limit, UL, l_omag, upper_limit, upperlimit]</p></li>
 <li><p>flux: the spectral flux density (<span class="math notranslate nohighlight">\(F_ν\)</span>, arbitrary units) of the observation [FLUXCAL]</p></li>
@@ -229,19 +229,23 @@ To save the plot, give <code class="docutils literal notranslate"><span class="p
 <section id="model-fitting">
 <h2>Model Fitting<a class="headerlink" href="#model-fitting" title="Permalink to this heading">¶</a></h2>
 <p>The <a class="reference internal" href="api.html#module-lightcurve_fitting.models" title="lightcurve_fitting.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">models</span></code></a> and <a class="reference internal" href="api.html#module-lightcurve_fitting.fitting" title="lightcurve_fitting.fitting"><code class="xref py py-mod docutils literal notranslate"><span class="pre">fitting</span></code></a> submodules allow you to fit analytical models to the observed data.
-Right now, there are two classes of models: <a class="reference internal" href="api.html#lightcurve_fitting.models.BaseCompanionShocking" title="lightcurve_fitting.models.BaseCompanionShocking"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCompanionShocking</span></code></a>, which is the SiFTO Type Ia supernova template <a class="reference internal" href="index.html#c08" id="id1"><span>[C08]</span></a> plus a shock component from <a class="reference internal" href="index.html#k10" id="id2"><span>[K10]</span></a>, and <a class="reference internal" href="api.html#lightcurve_fitting.models.BaseShockCooling" title="lightcurve_fitting.models.BaseShockCooling"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseShockCooling</span></code></a>, which is the <a class="reference internal" href="index.html#sw17" id="id3"><span>[SW17]</span></a> model for shock cooling in a core-collapse supernova.
+Right now, there are three classes of models: <a class="reference internal" href="api.html#lightcurve_fitting.models.BaseCompanionShocking" title="lightcurve_fitting.models.BaseCompanionShocking"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCompanionShocking</span></code></a>, which is the SiFTO Type Ia supernova template <a class="reference internal" href="index.html#c08" id="id1"><span>[C08]</span></a> plus a shock component from <a class="reference internal" href="index.html#k10" id="id2"><span>[K10]</span></a>; <a class="reference internal" href="api.html#lightcurve_fitting.models.BaseShockCooling" title="lightcurve_fitting.models.BaseShockCooling"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseShockCooling</span></code></a>, which is the <a class="reference internal" href="index.html#sw17" id="id3"><span>[SW17]</span></a> model for shock cooling in a core-collapse supernova; and <a class="reference internal" href="api.html#lightcurve_fitting.models.ShockCooling4" title="lightcurve_fitting.models.ShockCooling4"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShockCooling4</span></code></a>, which is the updated shock cooling model of <a class="reference internal" href="index.html#msw23" id="id4"><span>[MSW23]</span></a>.
 The variations on these classes are as follows:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><a class="reference internal" href="api.html#lightcurve_fitting.models.CompanionShocking" title="lightcurve_fitting.models.CompanionShocking"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompanionShocking</span></code></a> uses factors on the r and i SiFTO models and a factor on the U shock component.
-This was used in my paper on SN 2017cbv <a class="reference internal" href="index.html#h17" id="id4"><span>[H17]</span></a>.</p></li>
+This was used in my paper on SN 2017cbv <a class="reference internal" href="index.html#h17" id="id5"><span>[H17]</span></a>.</p></li>
 <li><p><a class="reference internal" href="api.html#lightcurve_fitting.models.CompanionShocking2" title="lightcurve_fitting.models.CompanionShocking2"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompanionShocking2</span></code></a> uses time offsets for the U and i SiFTO models.
-This was used in my paper on SN 2021aefx <a class="reference internal" href="index.html#h22a" id="id5"><span>[H22a]</span></a>.</p></li>
-<li><p><a class="reference internal" href="api.html#lightcurve_fitting.models.CompanionShocking3" title="lightcurve_fitting.models.CompanionShocking3"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompanionShocking3</span></code></a> is the same as <a class="reference internal" href="api.html#lightcurve_fitting.models.CompanionShocking2" title="lightcurve_fitting.models.CompanionShocking2"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompanionShocking2</span></code></a> but includes viewing angle dependence.</p></li>
+This was used in my paper on SN 2021aefx <a class="reference internal" href="index.html#h22a" id="id6"><span>[H22a]</span></a>.</p></li>
+<li><p><a class="reference internal" href="api.html#lightcurve_fitting.models.CompanionShocking3" title="lightcurve_fitting.models.CompanionShocking3"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompanionShocking3</span></code></a> is the same as <a class="reference internal" href="api.html#lightcurve_fitting.models.CompanionShocking2" title="lightcurve_fitting.models.CompanionShocking2"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompanionShocking2</span></code></a> but includes viewing angle dependence.
+This was used in my paper on SN 2023bee <a class="reference internal" href="index.html#h23a" id="id7"><span>[H23a]</span></a>.</p></li>
 <li><p><a class="reference internal" href="api.html#lightcurve_fitting.models.ShockCooling" title="lightcurve_fitting.models.ShockCooling"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShockCooling</span></code></a> is formulated in terms of physical parameters <span class="math notranslate nohighlight">\(v_s, M_\mathrm{env}, f_ρ M, R\)</span>.</p></li>
 <li><p><a class="reference internal" href="api.html#lightcurve_fitting.models.ShockCooling2" title="lightcurve_fitting.models.ShockCooling2"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShockCooling2</span></code></a> is formulated in terms of scaling parameters <span class="math notranslate nohighlight">\(T_1, L_1, t_\mathrm{tr}\)</span>.
-This was used in my paper on SN 2016bkv <a class="reference internal" href="index.html#h18" id="id6"><span>[H18]</span></a>.</p></li>
-<li><p><a class="reference internal" href="api.html#lightcurve_fitting.models.ShockCooling3" title="lightcurve_fitting.models.ShockCooling3"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShockCooling3</span></code></a> is the same as <a class="reference internal" href="api.html#lightcurve_fitting.models.ShockCooling" title="lightcurve_fitting.models.ShockCooling"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShockCooling</span></code></a> but with <span class="math notranslate nohighlight">\(d_L\)</span> and <span class="math notranslate nohighlight">\(E(B-V)\)</span> as free parameters. (Therefore it fits the flux instead of the luminosity.) This was used in my paper on SN 2021yja <a class="reference internal" href="index.html#h22b" id="id7"><span>[H22b]</span></a>.</p></li>
+This was used in my paper on SN 2016bkv <a class="reference internal" href="index.html#h18" id="id8"><span>[H18]</span></a>.</p></li>
+<li><p><a class="reference internal" href="api.html#lightcurve_fitting.models.ShockCooling3" title="lightcurve_fitting.models.ShockCooling3"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShockCooling3</span></code></a> is the same as <a class="reference internal" href="api.html#lightcurve_fitting.models.ShockCooling" title="lightcurve_fitting.models.ShockCooling"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShockCooling</span></code></a> but with <span class="math notranslate nohighlight">\(d_L\)</span> and <span class="math notranslate nohighlight">\(E(B-V)\)</span> as free parameters. (Therefore it fits the flux instead of the luminosity.)
+This was used in my paper on SN 2021yja <a class="reference internal" href="index.html#h22b" id="id9"><span>[H22b]</span></a>.</p></li>
+<li><p><a class="reference internal" href="api.html#lightcurve_fitting.models.ShockCooling4" title="lightcurve_fitting.models.ShockCooling4"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShockCooling4</span></code></a> is the updated shock cooling model of <a class="reference internal" href="index.html#msw23" id="id10"><span>[MSW23]</span></a>.
+This was used in my paper on SN 2023ixf <a class="reference internal" href="index.html#h23b" id="id11"><span>[H23b]</span></a>.</p></li>
 </ul>
 </div></blockquote>
 <p><strong>Note on the shock cooling models:</strong>
@@ -277,10 +281,10 @@ However, in order to measure, for example, the progenitor radius, one must use t
 </pre></div>
 </div>
 <p><strong>Another note on the shock cooling models:</strong>
-The shock cooling models are only valid for temperatures above 0.7 eV = 8120 K <a class="reference internal" href="index.html#sw17" id="id8"><span>[SW17]</span></a>,
+The shock cooling models are only valid for temperatures above 0.7 eV = 8120 K <a class="reference internal" href="index.html#sw17" id="id12"><span>[SW17]</span></a>,
 so you should check that you have not included observations where the model goes below that.
 If you have, you should rerun the fit without those points.
-If you used the <a class="reference internal" href="index.html#rw11" id="id9"><span>[RW11]</span></a> option, the model fails even earlier, but you will have to check that manually.</p>
+If you used the <a class="reference internal" href="index.html#rw11" id="id13"><span>[RW11]</span></a> option, the model fails even earlier, but you will have to check that manually.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">p_mean</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">flatchain</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">t_max</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">t_max</span><span class="p">(</span><span class="n">p_mean</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">t_max</span><span class="p">)</span>

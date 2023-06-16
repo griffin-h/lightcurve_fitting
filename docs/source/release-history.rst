@@ -2,11 +2,16 @@
 Release History
 ===============
 
-Unreleased
-----------
+v0.9.0 (2023-06-16)
+-------------------
 * Add :class:`.ShockCooling4` model from [MSW23]_
 * Add ``filters_to_model`` option to :func:`.lightcurve_corner` and :func:`.lightcurve_model_plot`
 * Propagate ``t0_offset`` option from :func:`.lightcurve_corner` to ``mjd_offset`` option of :func:`.lightcurve_model_plot`
+* Recognize filters RGB, LRGB, and z_s
+* Assume an empty/masked value for filter means "unfiltered"
+* Use colors in marker legend if ``color`` = ``marker`` in :meth:`.LC.plot`
+* Add option to plot phase in hours in :meth:`.LC.plot`
+* Add option to return axes objects in :meth:`.LC.plot`
 
 v0.8.0 (2023-04-27)
 -------------------

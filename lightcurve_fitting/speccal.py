@@ -84,6 +84,7 @@ def readfitsspec(filename, header=False, ext=None):
         wl = data['wavelength']
         flux = data['flux']
     else:
+        data = np.moveaxis(data, np.arange(data.ndim), np.argsort(data.shape))  # put longest axis last
         flux = data.flatten()[:max(data.shape)]
         remove_duplicate_wcs(hdr)  # some problem with Gemini pipeline
         if hdr.get('CUNIT1') in ['Angstroms', 'angstroms', 'deg', 'pixel']:

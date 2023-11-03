@@ -5,6 +5,7 @@ Release History
 Unreleased
 ----------
 * :meth:`.LC.copy` now copies all attributes
+* Add optional keyword arguments for plotting in :func:`.lightcurve_corner` and :func:`lightcurve_model_plot`
 
 v0.9.0 (2023-06-16)
 -------------------

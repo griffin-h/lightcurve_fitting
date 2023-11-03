@@ -2,6 +2,10 @@
 Release History
 ===============
 
+Unreleased
+----------
+* :meth:`.LC.copy` now copies all attributes
+
 v0.9.0 (2023-06-16)
 -------------------
 * Add :class:`.ShockCooling4` model from [MSW23]_

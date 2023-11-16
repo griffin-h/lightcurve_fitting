@@ -350,35 +350,38 @@ def group_by_epoch(lc, res=1., also_group_by=()):
 sigma_sb = const.sigma_sb.to(u.W / (1000. * u.Rsun) ** 2 / u.kK ** 4).value
 
 
-def stefan_boltzmann(temp, radius, dtemp, drad, covTR):
+def stefan_boltzmann(temp, radius, dtemp=None, drad=None, covTR=None):
     """
     Calculate blackbody luminosity and associated uncertainty using the Stefan-Boltzmann law
 
     Parameters
     ----------
     temp : float, array-like
-        Temperature in kilokelvins
+        Temperature in kilokelvins.
     radius : float, array-like
-        Radius in units of 1000 solar radii
-    dtemp : float, array-like
-        Uncertainty in the temperature in kilokelvins
-    drad : float, array-like
-        Uncertainty in the radius in units of 1000 solar radii
-    covTR : float, array-like
-        Covariance between the temperature and radius
+        Radius in units of 1000 solar radii.
+    dtemp : float, array-like, optional
+        Uncertainty in the temperature in kilokelvins. The default is None.
+    drad : float, array-like, optional
+        Covariance between the temperature and radius. The default is None.
+    covTR : float, array-like, optional
+        Covariance between the temperature and radius. The default is None.
 
     Returns
     -------
     lum : float, array-like
-        Luminosity in watts
+        Luminosity in watts.
     dlum : float, array-like
-        Uncertainty in the luminosity in watts
+        Uncertainty in the luminosity in watts. Only if Errors are given.
     """
-    lum = 4 * np.pi * radius ** 2 * sigma_sb * temp ** 4
-    dlum = 8 * np.pi * sigma_sb * (radius ** 2 * temp ** 8 * drad ** 2
+    if dtemp == None and drad == None:
+        return 4 * np.pi * radius ** 2 * sigma_sb * temp ** 4
+    else:
+        lum = 4 * np.pi * radius ** 2 * sigma_sb * temp ** 4
+        dlum = 8 * np.pi * sigma_sb * (radius ** 2 * temp ** 8 * drad ** 2
                                    + 4 * radius ** 4 * temp ** 6 * dtemp ** 2
                                    + 4 * radius ** 3 * temp ** 7 * covTR) ** 0.5
-    return lum, dlum
+        return lum, dlum
 
 
 def median_and_unc(x, perc_contained=68.):
@@ -713,14 +716,15 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
                                     show=show, save_chains=save_chains, use_sigma=use_sigma, sigma_type=sigma_type,
                                     labels=labels)
             (T_mcmc, R_mcmc), (dT0_mcmc, dR0_mcmc), (dT1_mcmc, dR1_mcmc) = median_and_unc(sampler.flatchain[:, :2])
-
-            
+            #Calculate Bolometric Luminsity
+            L_mcmc_samples = stefan_boltzmann(sampler.flatchain[:, 0], sampler.flatchain[:, 1])
+            L_mcmc, dL_mcmc0, dL_mcmc1 = median_and_unc(L_mcmc_samples)
             #Calculate Pseudo-Bolomteric Luminosity
             L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq=cutoff_freq)
             L_mcmc_opt, dL_mcmc0_opt, dL_mcmc1_opt = median_and_unc(L_mcmc_opt)
         except ValueError as e:
             print(e)
-            T_mcmc = R_mcmc = dT0_mcmc = dR0_mcmc = dT1_mcmc = dR1_mcmc = L_mcmc = dL_mcmc0 = dL_mcmc1 = np.nan
+            T_mcmc = R_mcmc = dT0_mcmc = dR0_mcmc = dT1_mcmc = dR1_mcmc = L_mcmc = dL_mcmc0 = dL_mcmc1 = L_mcmc_opt = dL_mcmc0_opt = dL_mcmc1_opt = np.nan
 
         # direct integration
         L_int = integrate_sed(epoch1)
@@ -731,7 +735,7 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
         color_mags, color_dmags, color_lolims, color_uplims = calc_colors(epoch1, colors)
 
         row = [mjdavg, dmjd0, dmjd1,
-               temp, radius, dtemp, drad, lum, dlum, L_opt,
+               temp, radius, dtemp, drad, lum, dlum, L_opt, L_mcmc, dL_mcmc0, dL_mcmc1,
                T_mcmc, R_mcmc, dT0_mcmc, dT1_mcmc, dR0_mcmc, dR1_mcmc, 
                L_mcmc_opt, dL_mcmc0_opt, dL_mcmc1_opt,
                L_int, nfilt] + color_mags + color_dmags

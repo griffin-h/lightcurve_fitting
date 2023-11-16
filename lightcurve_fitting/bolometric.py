@@ -712,9 +712,12 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
                                     outpath=outpath, nwalkers=nwalkers, burnin_steps=burnin_steps, steps=steps,
                                     show=show, save_chains=save_chains, use_sigma=use_sigma, sigma_type=sigma_type,
                                     labels=labels)
-            L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq=cutoff_freq)
             (T_mcmc, R_mcmc), (dT0_mcmc, dR0_mcmc), (dT1_mcmc, dR1_mcmc) = median_and_unc(sampler.flatchain[:, :2])
-            L_mcmc, dL_mcmc0, dL_mcmc1 = median_and_unc(L_mcmc_opt)
+
+            
+            #Calculate Pseudo-Bolomteric Luminosity
+            L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq=cutoff_freq)
+            L_mcmc_opt, dL_mcmc0_opt, dL_mcmc1_opt = median_and_unc(L_mcmc_opt)
         except ValueError as e:
             print(e)
             T_mcmc = R_mcmc = dT0_mcmc = dR0_mcmc = dT1_mcmc = dR1_mcmc = L_mcmc = dL_mcmc0 = dL_mcmc1 = np.nan
@@ -729,7 +732,8 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
 
         row = [mjdavg, dmjd0, dmjd1,
                temp, radius, dtemp, drad, lum, dlum, L_opt,
-               T_mcmc, R_mcmc, dT0_mcmc, dT1_mcmc, dR0_mcmc, dR1_mcmc, L_mcmc, dL_mcmc0, dL_mcmc1,
+               T_mcmc, R_mcmc, dT0_mcmc, dT1_mcmc, dR0_mcmc, dR1_mcmc, 
+               L_mcmc_opt, dL_mcmc0_opt, dL_mcmc1_opt,
                L_int, nfilt] + color_mags + color_dmags
         row_bool = color_lolims + color_uplims
         row_string = [filtstr] + ([epoch1['source'][0]] if use_src else [])

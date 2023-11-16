@@ -363,7 +363,7 @@ def stefan_boltzmann(temp, radius, dtemp=None, drad=None, covTR=None):
     dtemp : float, array-like, optional
         Uncertainty in the temperature in kilokelvins. The default is None.
     drad : float, array-like, optional
-        Covariance between the temperature and radius. The default is None.
+        Uncertainty in the radius in units of 1000 solar radii. The default is None.
     covTR : float, array-like, optional
         Covariance between the temperature and radius. The default is None.
 

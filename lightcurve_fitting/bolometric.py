@@ -374,14 +374,15 @@ def stefan_boltzmann(temp, radius, dtemp=None, drad=None, covTR=None):
     dlum : float, array-like
         Uncertainty in the luminosity in watts. Only if Errors are given.
     """
-    if dtemp == None and drad == None:
-        return 4 * np.pi * radius ** 2 * sigma_sb * temp ** 4
-    else:
-        lum = 4 * np.pi * radius ** 2 * sigma_sb * temp ** 4
+    
+    lum = 4 * np.pi * radius ** 2 * sigma_sb * temp ** 4
+    if dtemp is None or drad is None or covTR is None:
+        return lum
+    else: 
         dlum = 8 * np.pi * sigma_sb * (radius ** 2 * temp ** 8 * drad ** 2
                                    + 4 * radius ** 4 * temp ** 6 * dtemp ** 2
                                    + 4 * radius ** 3 * temp ** 7 * covTR) ** 0.5
-        return lum, dlum
+    return lum, dlum
 
 
 def median_and_unc(x, perc_contained=68.):
@@ -640,11 +641,12 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
     use_src = 'source' in lc.colnames
     t0 = LC(names=['MJD', 'dMJD0', 'dMJD1',
                    'temp', 'radius', 'dtemp', 'dradius',  # best fit from scipy.curve_fit
-                   'lum', 'dlum',  # total bolometric luminosity from scipy.curve_fit
-                   'L_opt',  # pseudobolometric luminosity from scipy.curve_fit
-                   'temp_mcmc', 'radius_mcmc', 'dtemp0', 'dtemp1', 'dradius0', 'dradius1',  # best fit from MCMC
+                   'L_bol', 'dL_bol', 'lum', 'dlum', # total bolometric luminosity from scipy.curve_fit
+                   'L', 'L_opt',  # pseudobolometric luminosity from scipy.curve_fit
+                   'temp_mcmc', 'radius_mcmc', 'dtemp0_mcmc', 'dtemp1_mcmc', 'dradius0_mcmc', 'dradius1_mcmc',  # best fit from MCMC
                    'L_mcmc', 'dL_mcmc0', 'dL_mcmc1',  # pseudobolometric luminosity from MCMC
-                   'L_int',  # pseudobolometric luminosity from direct integration of the SED
+                   'L_mcmc_bol', 'dL_mcmc0_bol', 'dL_mcmc1_bol',   # total bolometric luminosity from MCMC
+                   'L_int',  # pseudobolometric luminosity from direct integration of the SED        
                    'npoints']
             + colors + ['d({})'.format(c) for c in colors] + ['lolims({})'.format(c) for c in colors]
             + ['uplims({})'.format(c) for c in colors] + ['filts'] + (['source'] if use_src else []),
@@ -693,10 +695,12 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
         T_range = (priors[0].p_min, priors[0].p_max)
         R_range = (priors[1].p_min, priors[1].p_max)
         try:
-            temp, radius, dtemp, drad, lum, dlum, L_opt = blackbody_lstsq(epoch1, z, p0, T_range, R_range, cutoff_freq)
+            temp, radius, dtemp, drad, L_bol, dL_bol, L = blackbody_lstsq(epoch1, z, p0, T_range, R_range, cutoff_freq)
             p0 = np.array([temp, radius])
+            lum, dlum = L_bol, dL_bol # Keep backward compatibility
+            L_opt = L # Keep backward compatibility
         except RuntimeError:  # optimization failed
-            temp = radius = dtemp = drad = lum = dlum = L_opt = np.nan
+            temp = radius = dtemp = drad = L_bol = dL_bol = L = np.nan
 
         rng = np.random.default_rng()
         starting_guesses = rng.normal(size=(nwalkers, 2)) + p0
@@ -716,15 +720,17 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
                                     show=show, save_chains=save_chains, use_sigma=use_sigma, sigma_type=sigma_type,
                                     labels=labels)
             (T_mcmc, R_mcmc), (dT0_mcmc, dR0_mcmc), (dT1_mcmc, dR1_mcmc) = median_and_unc(sampler.flatchain[:, :2])
-            #Calculate Bolometric Luminsity
+            #Calculate Bolometric Luminosity
             L_mcmc_samples = stefan_boltzmann(sampler.flatchain[:, 0], sampler.flatchain[:, 1])
-            L_mcmc, dL_mcmc0, dL_mcmc1 = median_and_unc(L_mcmc_samples)
+            L_mcmc_bol, dL_mcmc0_bol, dL_mcmc1_bol = median_and_unc(L_mcmc_samples)
             #Calculate Pseudo-Bolomteric Luminosity
-            L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq=cutoff_freq)
-            L_mcmc_opt, dL_mcmc0_opt, dL_mcmc1_opt = median_and_unc(L_mcmc_opt)
+            L_mcmc = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq=cutoff_freq)
+            L_mcmc, dL_mcmc0, dL_mcmc1 = median_and_unc(L_mcmc)
         except ValueError as e:
             print(e)
-            T_mcmc = R_mcmc = dT0_mcmc = dR0_mcmc = dT1_mcmc = dR1_mcmc = L_mcmc = dL_mcmc0 = dL_mcmc1 = L_mcmc_opt = dL_mcmc0_opt = dL_mcmc1_opt = np.nan
+            #TODO Fix Error
+            T_mcmc = R_mcmc = dT0_mcmc = dR0_mcmc = dT1_mcmc = dR1_mcmc = np.nan
+            L_mcmc = dL_mcmc0 = dL_mcmc1 = L_mcmc_bol = dL_mcmc0_bol = dL_mcmc1_bol = np.nan
 
         # direct integration
         L_int = integrate_sed(epoch1)
@@ -735,9 +741,10 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
         color_mags, color_dmags, color_lolims, color_uplims = calc_colors(epoch1, colors)
 
         row = [mjdavg, dmjd0, dmjd1,
-               temp, radius, dtemp, drad, lum, dlum, L_opt, L_mcmc, dL_mcmc0, dL_mcmc1,
+               temp, radius, dtemp, drad, L_bol, dL_bol, lum, dlum, L, L_opt,
                T_mcmc, R_mcmc, dT0_mcmc, dT1_mcmc, dR0_mcmc, dR1_mcmc, 
-               L_mcmc_opt, dL_mcmc0_opt, dL_mcmc1_opt,
+               L_mcmc, dL_mcmc0, dL_mcmc1,
+               L_mcmc_bol, dL_mcmc0_bol, dL_mcmc1_bol,
                L_int, nfilt] + color_mags + color_dmags
         row_bool = color_lolims + color_uplims
         row_string = [filtstr] + ([epoch1['source'][0]] if use_src else [])

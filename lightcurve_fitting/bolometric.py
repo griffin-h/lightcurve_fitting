@@ -637,7 +637,10 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
 
     if colors is None:
         colors = []
+    
+    warnings.warn('Some variable names have changed. For more information see documentation.')
 
+    
     use_src = 'source' in lc.colnames
     t0 = LC(names=['MJD', 'dMJD0', 'dMJD1',
                    'temp', 'radius', 'dtemp', 'dradius',  # best fit from scipy.curve_fit
@@ -734,11 +737,13 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
 
         # direct integration
         L_int = integrate_sed(epoch1)
-
+        
         # color calculation
         if colors is None:
             colors = []
         color_mags, color_dmags, color_lolims, color_uplims = calc_colors(epoch1, colors)
+
+        print('Deprecation Warning: ')
 
         row = [mjdavg, dmjd0, dmjd1,
                temp, radius, dtemp, drad, L_bol, dL_bol, lum, dlum, L, L_opt,

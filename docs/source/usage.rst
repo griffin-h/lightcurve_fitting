@@ -92,15 +92,18 @@ The light curve is divided into epochs (defined by the ``bin`` and ``also_group_
 
  * Fitting the Planck function using :func:`scipy.optimize.curve_fit`. This is very fast but may not give reliable uncertainties.
    The columns ``temp``, ``radius``, ``dtemp``, and ``dradius`` come from this fit.
- * The Stefan-Bolzmann law gives the total bolometric luminosity, ``lum`` and ``dlum``.
- * Integrating the Planck function between :math:`U` and :math:`I` band (observed) gives ``L_opt``.
+	1. The Stefan-Bolzmann law gives the total bolometric luminosity, ``L`` and ``dL``.
+		The old convention of ``lum`` and ``dlum`` is still be useable, but should be considered obsolete.
+	2. Integrating the Planck function between :math:`U` and :math:`I` band (observed) gives ``L``, the pseudobolometric luminosity.
+		The old convention of ``L_opt`` is still be useable, but should be considered obsolete.
  * Fitting the Planck function using an MCMC routine.
    This is slower, depending on how many walkers (``nwalkers``) and steps (``burnin_steps`` and ``steps``) you use,
    but gives more robust uncertainties.
-   The columns ``temp_mcmc``, ``radius_mcmc``, ``dtemp0``, ``dtemp1``, ``dradius0``, ``dradius1`` come from this fit.
+   The columns ``temp_mcmc``, ``radius_mcmc``, ``dtemp0_mcmc``, ``dtemp1_mcmc``, ``dradius0_mcmc``, ``dradius1_mcmc`` come from this fit.
    My convention for non-Gaussian uncertainties is that 0 is the lower uncertainty and 1 is the upper uncertainty.
- * Integrating the Planck function between :math:`U` and :math:`I` band (observed) gives
-   ``L_mcmc``, ``dL_mcmc0``, and ``dL_mcmc1``.
+	1. The Stefan-Bolzmann law gives the total bolometric luminosity, ``L_mcmc``, ``dL0_mcmc`` and ``dL1_mcmc``.
+	2. Integrating the Planck function between :math:`U` and :math:`I` band (observed) gives
+   ``L_mcmc``, ``dL_mcmc0``, and ``dL_mcmc1``, the pesudobolometric luminosity.
  * Directly integrating the observed SED, assuming 0 flux outside of :math:`U` to :math:`I`.
    Use this if you do not want to assume the SED is a blackbody. This yields the column ``L_int``.
 

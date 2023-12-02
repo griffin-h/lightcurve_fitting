@@ -2,6 +2,12 @@
 Release History
 ===============
 
+v0.9.1 (2023-12-02)
+-------------------
+* Add option for full bolometric luminoity for MCMC option in :func:`.calculate_bolometric`.
+* Improve of LC column naming convention for bolometric calculations.
+
+
 v0.9.0 (2023-06-16)
 -------------------
 * Add :class:`.ShockCooling4` model from [MSW23]_

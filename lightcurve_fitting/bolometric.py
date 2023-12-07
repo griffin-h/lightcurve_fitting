@@ -361,25 +361,24 @@ def stefan_boltzmann(temp, radius, dtemp=None, drad=None, covTR=None):
     radius : float, array-like
         Radius in units of 1000 solar radii.
     dtemp : float, array-like, optional
-        Uncertainty in the temperature in kilokelvins. The default is None.
+        Uncertainty in the temperature in kilokelvins
     drad : float, array-like, optional
-        Uncertainty in the radius in units of 1000 solar radii. The default is None.
+        Uncertainty in the radius in units of 1000 solar radii
     covTR : float, array-like, optional
-        Covariance between the temperature and radius. The default is None.
+        Covariance between the temperature and radius
 
     Returns
     -------
     lum : float, array-like
-        Luminosity in watts.
+        Luminosity in watts
     dlum : float, array-like
-        Uncertainty in the luminosity in watts. Only if Errors are given.
+        Uncertainty in the luminosity in watts (returned only if `dtemp`, `drad`, and `covTR` are given)
     """
     
     lum = 4 * np.pi * radius ** 2 * sigma_sb * temp ** 4
     if dtemp is None or drad is None or covTR is None:
         return lum
-    else: 
-        dlum = 8 * np.pi * sigma_sb * (radius ** 2 * temp ** 8 * drad ** 2
+    dlum = 8 * np.pi * sigma_sb * (radius ** 2 * temp ** 8 * drad ** 2
                                    + 4 * radius ** 4 * temp ** 6 * dtemp ** 2
                                    + 4 * radius ** 3 * temp ** 7 * covTR) ** 0.5
     return lum, dlum

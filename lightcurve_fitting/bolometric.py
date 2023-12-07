@@ -657,7 +657,7 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
 
     if colors is None:
         colors = []
-    
+
     use_src = 'source' in lc.colnames
     t0 = LC(names=['MJD', 'dMJD0', 'dMJD1',
                    'temp', 'radius', 'dtemp', 'dradius',  # best fit from scipy.curve_fit
@@ -671,7 +671,7 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
             + colors + ['d({})'.format(c) for c in colors] + ['lolims({})'.format(c) for c in colors]
             + ['uplims({})'.format(c) for c in colors] + ['filts'] + (['source'] if use_src else []),
             dtype=[float, float, float, float, float, float, float, float, float, float, float, float, float, float,
-                   float, float, float, float, float, float, int]
+                   float, float, float, float, float, float, float, float, float, int]
             + [float] * 2 * len(colors) + [bool] * 2 * len(colors) + ['S6'] + ([lc['source'].dtype] if use_src else []),
             masked=True)
 

@@ -310,14 +310,15 @@ def plot_bolometric_results(t0, save_plot_as=None):
 
     fig, axarr = plt.subplots(3, figsize=(6, 12), sharex=True)
 
-    axarr[0].errorbar(t0['MJD'], t0['L_bol'], t0['dL_bol'],
-                      marker='.', ls='none', color='k', label='bolometric, curve_fit')
     axarr[0].plot(t0['MJD'], t0['L'], marker='.', ls='none', color='C0', label='pseudobolometric, curve_fit')
-    axarr[0].errorbar(t0['MJD'], t0['L_bol_mcmc'], (t0['dL_bol_mcmc0'], t0['dL_bol_mcmc1']),
-                      marker='.', ls='none', color='C3', label='bolometric, MCMC')
     axarr[0].errorbar(t0['MJD'], t0['L_mcmc'], (t0['dL_mcmc0'], t0['dL_mcmc1']),
                       marker='.', ls='none', color='C1', label='pseudobolometric, MCMC')
     axarr[0].plot(t0['MJD'], t0['L_int'], marker='.', ls='none', color='C2', label='pseudobolometric, integration')
+    axarr[0].errorbar(t0['MJD'], t0['L_bol'], t0['dL_bol'],
+                      marker='.', ls='none', color='k', label='bolometric, curve_fit')
+    if 'L_bol_mcmc' in t0.colnames:  # will not be present in files produced with v0.9.0 or earlier
+        axarr[0].errorbar(t0['MJD'], t0['L_bol_mcmc'], (t0['dL_bol_mcmc0'], t0['dL_bol_mcmc1']),
+                          marker='.', ls='none', color='C3', label='bolometric, MCMC')
     axarr[0].legend()
 
     axarr[0].set_yscale('log')

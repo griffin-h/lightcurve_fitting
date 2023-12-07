@@ -172,7 +172,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
                       num_models_to_plot=100, lcaxis_posn=(0.7, 0.55, 0.2, 0.4),
                       filter_spacing=1., tmin=None, tmax=None, t0_offset=None, save_plot_as='', ycol=None,
                       textsize='medium', param_textsize='large', use_sigma=False, xscale='linear',
-                      filters_to_model=None):
+                      filters_to_model=None, label_filters=True, lc_plot_kwargs=None, model_plot_kwargs=None):
     """
     Plot the posterior distributions in a corner (pair) plot, with an inset showing the observed and model light curves.
 
@@ -213,6 +213,12 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         Scale for the x-axis of the model plot. Choices: "linear" (default) or "log".
     filters_to_model : list, set, optional
         (Unique) list of filters for which to calculate the model light curves. Default: all filters in `lc`.
+    label_filters : bool, optional
+        Print the name and offset for each filter to the right of the light curve axis. Default: True
+    lc_plot_kwargs : dict, optional
+        Dictionary of keyword arguments for the plotting of the observed light curve (passed to the `lc.plot` command)
+    model_plot_kwargs : dict, optional
+        Dictionary of keyword arguments for the plotting of the model light curves (passed to the `plt.plot` command)
 
     Returns
     -------
@@ -259,7 +265,8 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
 
     ax = fig.add_axes(lcaxis_posn)
     lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs, num_models_to_plot, filter_spacing,
-                          tmin, tmax, ycol, textsize, ax, t0_offset, use_sigma, xscale, filters_to_model)
+                          tmin, tmax, ycol, textsize, ax, t0_offset, use_sigma, xscale, filters_to_model,
+                          label_filters, lc_plot_kwargs, model_plot_kwargs)
 
     paramtexts = format_credible_interval(sampler_flatchain, varnames=model.input_names, units=model.units)
     fig.text(0.45, 0.95, '\n'.join(paramtexts), va='top', ha='center', fontdict={'size': param_textsize})
@@ -272,7 +279,8 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
 
 def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_models_to_plot=100, filter_spacing=1.,
                           tmin=None, tmax=None, ycol=None, textsize='medium', ax=None, mjd_offset=None, use_sigma=False,
-                          xscale='linear', filters_to_model=None):
+                          xscale='linear', filters_to_model=None, label_filters=True, lc_plot_kwargs=None,
+                          model_plot_kwargs=None):
     """
     Plot the observed and model light curves.
 
@@ -309,6 +317,12 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
         Scale for the x-axis. Choices: "linear" (default) or "log".
     filters_to_model : list, set, optional
         (Unique) list of filters for which to calculate the model light curves. Default: all filters in `lc`.
+    label_filters : bool, optional
+        Print the name and offset for each filter to the right of the light curve axis. Default: True
+    lc_plot_kwargs : dict, optional
+        Dictionary of keyword arguments for the plotting of the observed light curve (passed to the `lc.plot` command)
+    model_plot_kwargs : dict, optional
+        Dictionary of keyword arguments for the plotting of the model light curves (passed to the `plt.plot` command)
     """
     if model_kwargs is not None:
         raise Exception(MODEL_KWARGS_WARNING)
@@ -370,6 +384,24 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
     else:
         raise ValueError(f'ycol="{ycol}" is not recognized. Use "lum", "absmag", "flux".')
 
+    if lc_plot_kwargs is None:
+        lc_plot_kwargs = {}
+
+    if model_plot_kwargs is None:
+        model_plot_kwargs = {}
+    elif 'color' in model_plot_kwargs:
+        del model_plot_kwargs['color']  # ignore input color and use filter colors
+    model_plot_kwargs1 = model_plot_kwargs.copy()
+
+    # set default alpha for the full model
+    if 'alpha' not in model_plot_kwargs:
+        model_plot_kwargs['alpha'] = 0.05
+
+    # ignore input linestyle for model component and use dashed line
+    if 'linestyle' in model_plot_kwargs1:
+        del model_plot_kwargs1['linestyle']
+    model_plot_kwargs1['ls'] = '--'
+
     if xscale == 'log':
         ax.set_xscale('log')
         ax.xaxis.set_major_formatter(plt.FormatStrFormatter('%g'))
@@ -379,16 +411,19 @@ def lightcurve_model_plot(lc, model, sampler_flatchain, model_kwargs=None, num_m
     lc['MJD'] -= mjd_offset
     lc[ycol] /= yscale
     lc[dycol] /= yscale
-    lc.plot(xcol='MJD', ycol=ycol, offset_factor=filter_spacing, appmag_axis=False, tight_layout=False)
+    lc.plot(xcol='MJD', ycol=ycol, offset_factor=filter_spacing, appmag_axis=False, tight_layout=False,
+            **lc_plot_kwargs)
     plt.autoscale(False)
     _, labels, _ = filter_legend(np.array(ufilts), filter_spacing)
     for yfit, yfit1, filt, txt in zip(y_fit, y_fit1, ufilts, labels):
         offset = -filt.offset * filter_spacing
-        ax.plot(xfit - mjd_offset, yfit / yscale + offset, color=filt.linecolor, alpha=0.05)
+        ax.plot(xfit - mjd_offset, yfit / yscale + offset, color=filt.linecolor, **model_plot_kwargs)
         if yfit1 is not None:
-            ax.plot(xfit - mjd_offset, np.median(yfit1, axis=1) / yscale + offset, color=filt.linecolor, ls='--')
-        ax.text(1.03, yfit[-1, 0] / yscale + offset, txt, color=filt.textcolor, fontdict={'size': textsize},
-                ha='left', va='center', transform=ax.get_yaxis_transform())
+            ax.plot(xfit - mjd_offset, np.median(yfit1, axis=1) / yscale + offset, color=filt.linecolor,
+                    **model_plot_kwargs1)
+        if label_filters:
+            ax.text(1.03, yfit[-1, 0] / yscale + offset, txt, color=filt.textcolor, fontdict={'size': textsize},
+                    ha='left', va='center', transform=ax.get_yaxis_transform())
     ax.set_xlabel('MJD $-$ {:f}'.format(mjd_offset).rstrip('0').rstrip('.'), size=textsize)
     ax.set_ylabel(ylabel, size=textsize)
     ax.tick_params(labelsize=textsize)

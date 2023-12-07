@@ -2,11 +2,13 @@
 Release History
 ===============
 
-v0.9.1 (2023-12-02)
--------------------
-* Add option for full bolometric luminoity for MCMC option in :func:`.calculate_bolometric`.
-* Improve of LC column naming convention for bolometric calculations.
-
+Unreleased
+----------
+* Add full bolometric luminosity for MCMC option as an output column in :func:`.calculate_bolometric`
+* Improve column naming convention for output of :func:`.calculate_bolometric`
+* :meth:`.LC.copy` now copies all attributes
+* Add option not to label filters in :func:`.lightcurve_corner` and :func:`lightcurve_model_plot`
+* Add optional keyword arguments for plotting in :func:`.lightcurve_corner` and :func:`lightcurve_model_plot`
 
 v0.9.0 (2023-06-16)
 -------------------

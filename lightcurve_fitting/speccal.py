@@ -84,6 +84,7 @@ def readfitsspec(filename, header=False, ext=None):
         wl = data['wavelength']
         flux = data['flux']
     else:
+        data = np.moveaxis(data, np.arange(data.ndim), np.argsort(data.shape))  # put longest axis last
         flux = data.flatten()[:max(data.shape)]
         remove_duplicate_wcs(hdr)  # some problem with Gemini pipeline
         if hdr.get('CUNIT1') in ['Angstroms', 'angstroms', 'deg', 'pixel']:
@@ -586,7 +587,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--filters', nargs='+', help='filters to use for calibration')
     parser.add_argument('-o', '--order', type=int, default=0, help='polynomial order of correction function')
     parser.add_argument('--subtract-percentile', type=float, help='subtract continuum from spectrum before correcting')
-    parser.add_argument('--max-extrapolate', type=float,
+    parser.add_argument('--max-extrapolate', type=float, default=1.,
                         help='assume constant flux in a filter for this many days after the last observed point')
     parser.add_argument('--show', action='store_true')
     args = parser.parse_args()

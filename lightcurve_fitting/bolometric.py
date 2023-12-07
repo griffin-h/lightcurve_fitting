@@ -663,7 +663,7 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
                    'temp', 'radius', 'dtemp', 'dradius',  # best fit from scipy.curve_fit
                    'L_bol', 'dL_bol',  # total bolometric luminosity from scipy.curve_fit
                    'L',  # pseudobolometric luminosity from scipy.curve_fit
-                   'temp_mcmc', 'radius_mcmc', 'dtemp_mcmc0', 'dtemp_mcmc1', 'dradius_mcmc0', 'dradius_mcmc0',  # MCMC
+                   'temp_mcmc', 'radius_mcmc', 'dtemp_mcmc0', 'dtemp_mcmc1', 'dradius_mcmc0', 'dradius_mcmc1',  # MCMC
                    'L_bol_mcmc', 'dL_bol_mcmc0', 'dL_bol_mcmc1',   # total bolometric luminosity from MCMC
                    'L_mcmc', 'dL_mcmc0', 'dL_mcmc1',  # pseudobolometric luminosity from MCMC
                    'L_int',  # pseudobolometric luminosity from direct integration of the SED

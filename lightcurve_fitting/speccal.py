@@ -481,6 +481,8 @@ def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False, instruments=None):
             inst_id = input(f'https://www.wiserep.org/aux\nlook up instrument ID for {inst} (required): ')
             if inst and inst_id:
                 instruments[inst] = int(inst_id)
+        else:
+            inst_id = instruments[inst]
         row = [
             ascii_file,
             specfile if specfile.endswith('.fits') else None,

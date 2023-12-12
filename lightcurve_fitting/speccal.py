@@ -436,7 +436,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
         return fig
 
 
-def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False):
+def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False, instruments=None):
     """
     Prepares a TSV file for uploading spectra to WISeREP (see https://www.wiserep.org/content/wiserep-getting-started).
 
@@ -452,6 +452,10 @@ def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False):
         The TSV file will be saved alongside this directory using the same name but with a '.tsv' extension.
     verbose: bool, optional
         If True, print a message when any file is copied or created.
+    instruments: dict, optional
+        A dictionary of known instruments. The keys are the instrument from the header and the values are
+        the wiserep instrument ids from https://www.wiserep.org/aux. By default the script builds this dictionary
+        on the fly.
     """
 
     # prepare the output directory
@@ -465,7 +469,8 @@ def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False):
     # collect the metadata
     bibcode = input('bibcode: ')
     rows = []
-    instruments = {}
+    if instruments is None:
+        instruments = {}
     for specpath in specpaths:
         if isinstance(specpath, tuple):
             specpath, quality = specpath
@@ -481,11 +486,13 @@ def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False):
             inst_id = input(f'https://www.wiserep.org/aux\nlook up instrument ID for {inst} (required): ')
             if inst and inst_id:
                 instruments[inst] = int(inst_id)
+        else:
+            inst_id = instruments[inst]
         row = [
             ascii_file,
             specfile if specfile.endswith('.fits') else None,
             date.iso,
-            instruments.get(inst, inst_id),
+            inst_id,
             hdr.get('exptime'),
             {'angstrom': 11, 'nm': 12, 'um': 13}.get(hdr.get('CUNIT1', hdr.get('XUNITS', 'angstrom')).lower()),
             1,  # wavelength in air, hardcoded for now

@@ -451,6 +451,10 @@ def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False, instruments=None):
         The TSV file will be saved alongside this directory using the same name but with a '.tsv' extension.
     verbose: bool, optional
         If True, print a message when any file is copied or created.
+    instruments: dict, optional
+        A dictionary of known instruments. The keys are the instrument from the header and the values are
+        the wiserep instrument ids from https://www.wiserep.org/aux. By default the script builds this dictionary
+        on the fly.
     """
 
     # prepare the output directory

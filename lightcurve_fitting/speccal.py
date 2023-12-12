@@ -464,7 +464,7 @@ def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False, instruments=None):
     # collect the metadata
     bibcode = input('bibcode: ')
     rows = []
-    if not instruments:
+    if instruments is None:
         instruments = {}
     for specpath in specpaths:
         if isinstance(specpath, tuple):

@@ -77,10 +77,12 @@ class LC(Table):
         self.normalize_column_names()
         if 'filter' in self.colnames and self['filter'].dtype != object:
             self.filters_to_objects()
-        self.nondetSigmas = 3.
-        self.groupby = {'filter', 'source'}
-        self.markers = markers.copy()
-        self.colors = {}
+        # if this is a copy, also copy the following attributes
+        oldlc = args[0] if args else None
+        self.nondetSigmas = getattr(oldlc, 'nondetSigmas', 3.)
+        self.groupby = getattr(oldlc, 'groupby', {'filter', 'source'}).copy()
+        self.markers = getattr(oldlc, 'markers', markers).copy()
+        self.colors = getattr(oldlc, 'colors', {}).copy()
 
     def where(self, **kwargs):
         """

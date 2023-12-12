@@ -17,6 +17,16 @@ import warnings
 
 plt.style.use(resource_filename('lightcurve_fitting', 'serif.mplstyle'))
 
+DEPRECATED_BOLOMETRIC_COLNAMES = [  # (old, new)
+    ('L_opt', 'L'),
+    ('lum', 'L_bol'),
+    ('dlum', 'dL_bol'),
+    ('dtemp0', 'dtemp_mcmc0'),
+    ('dtemp1', 'dtemp_mcmc1'),
+    ('dradius0', 'dradius_mcmc0'),
+    ('dradius1', 'dradius_mcmc1'),
+]
+
 
 def pseudo(temp, radius, z, filter0=filtdict['I'], filter1=filtdict['U'], cutoff_freq=np.inf):
     """
@@ -292,24 +302,36 @@ def plot_bolometric_results(t0, save_plot_as=None):
     fig : matplotlib.pyplot.Figure
         Figure object containing the plot
     """
+    # backward compatibility for deprecated column names
+    for old, new in DEPRECATED_BOLOMETRIC_COLNAMES:
+        if new not in t0.colnames:
+            t0.rename_column(old, new)
+            warnings.warn(f'Updating deprecated column name from {old} to {new}')
+
     fig, axarr = plt.subplots(3, figsize=(6, 12), sharex=True)
 
-    axarr[0].errorbar(t0['MJD'], t0['lum'], t0['dlum'], marker='.', ls='none', color='k', label='bolometric, curve_fit')
-    axarr[0].plot(t0['MJD'], t0['L_opt'], marker='.', ls='none', color='C0', label='pseudobolometric, curve_fit')
-    axarr[0].errorbar(t0['MJD'], t0['L_mcmc'], (t0['dL_mcmc0'], t0['dL_mcmc1']), marker='.', ls='none', color='C1',
-                      label='pseudobolometric, MCMC')
+    axarr[0].plot(t0['MJD'], t0['L'], marker='.', ls='none', color='C0', label='pseudobolometric, curve_fit')
+    axarr[0].errorbar(t0['MJD'], t0['L_mcmc'], (t0['dL_mcmc0'], t0['dL_mcmc1']),
+                      marker='.', ls='none', color='C1', label='pseudobolometric, MCMC')
     axarr[0].plot(t0['MJD'], t0['L_int'], marker='.', ls='none', color='C2', label='pseudobolometric, integration')
+    axarr[0].errorbar(t0['MJD'], t0['L_bol'], t0['dL_bol'],
+                      marker='.', ls='none', color='k', label='bolometric, curve_fit')
+    if 'L_bol_mcmc' in t0.colnames:  # will not be present in files produced with v0.9.0 or earlier
+        axarr[0].errorbar(t0['MJD'], t0['L_bol_mcmc'], (t0['dL_bol_mcmc0'], t0['dL_bol_mcmc1']),
+                          marker='.', ls='none', color='C3', label='bolometric, MCMC')
     axarr[0].legend()
 
     axarr[0].set_yscale('log')
     axarr[0].set_ylabel('Luminosity (W)')
 
     axarr[1].errorbar(t0['MJD'], t0['radius'], t0['dradius'], color='C0', marker='.', ls='none')
-    axarr[1].errorbar(t0['MJD'], t0['radius_mcmc'], (t0['dradius0'], t0['dradius1']), color='C1', marker='.', ls='none')
+    axarr[1].errorbar(t0['MJD'], t0['radius_mcmc'], (t0['dradius_mcmc0'], t0['dradius_mcmc1']),
+                      color='C1', marker='.', ls='none')
     axarr[1].set_ylabel('Radius ($1000 R_\\odot$)')
 
     axarr[2].errorbar(t0['MJD'], t0['temp'], t0['dtemp'], color='C0', marker='.', ls='none')
-    axarr[2].errorbar(t0['MJD'], t0['temp_mcmc'], (t0['dtemp0'], t0['dtemp1']), color='C1', marker='.', ls='none')
+    axarr[2].errorbar(t0['MJD'], t0['temp_mcmc'], (t0['dtemp_mcmc0'], t0['dtemp_mcmc1']),
+                      color='C1', marker='.', ls='none')
     axarr[2].set_ylabel('Temperature (kK)')
     axarr[2].set_xlabel('MJD')
 
@@ -350,21 +372,21 @@ def group_by_epoch(lc, res=1., also_group_by=()):
 sigma_sb = const.sigma_sb.to(u.W / (1000. * u.Rsun) ** 2 / u.kK ** 4).value
 
 
-def stefan_boltzmann(temp, radius, dtemp, drad, covTR):
+def stefan_boltzmann(temp, radius, dtemp=None, drad=None, covTR=None):
     """
     Calculate blackbody luminosity and associated uncertainty using the Stefan-Boltzmann law
 
     Parameters
     ----------
     temp : float, array-like
-        Temperature in kilokelvins
+        Temperature in kilokelvins.
     radius : float, array-like
-        Radius in units of 1000 solar radii
-    dtemp : float, array-like
+        Radius in units of 1000 solar radii.
+    dtemp : float, array-like, optional
         Uncertainty in the temperature in kilokelvins
-    drad : float, array-like
+    drad : float, array-like, optional
         Uncertainty in the radius in units of 1000 solar radii
-    covTR : float, array-like
+    covTR : float, array-like, optional
         Covariance between the temperature and radius
 
     Returns
@@ -372,9 +394,12 @@ def stefan_boltzmann(temp, radius, dtemp, drad, covTR):
     lum : float, array-like
         Luminosity in watts
     dlum : float, array-like
-        Uncertainty in the luminosity in watts
+        Uncertainty in the luminosity in watts (returned only if `dtemp`, `drad`, and `covTR` are given)
     """
+    
     lum = 4 * np.pi * radius ** 2 * sigma_sb * temp ** 4
+    if dtemp is None or drad is None or covTR is None:
+        return lum
     dlum = 8 * np.pi * sigma_sb * (radius ** 2 * temp ** 8 * drad ** 2
                                    + 4 * radius ** 4 * temp ** 6 * dtemp ** 2
                                    + 4 * radius ** 3 * temp ** 7 * covTR) ** 0.5
@@ -637,16 +662,17 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
     use_src = 'source' in lc.colnames
     t0 = LC(names=['MJD', 'dMJD0', 'dMJD1',
                    'temp', 'radius', 'dtemp', 'dradius',  # best fit from scipy.curve_fit
-                   'lum', 'dlum',  # total bolometric luminosity from scipy.curve_fit
-                   'L_opt',  # pseudobolometric luminosity from scipy.curve_fit
-                   'temp_mcmc', 'radius_mcmc', 'dtemp0', 'dtemp1', 'dradius0', 'dradius1',  # best fit from MCMC
+                   'L_bol', 'dL_bol',  # total bolometric luminosity from scipy.curve_fit
+                   'L',  # pseudobolometric luminosity from scipy.curve_fit
+                   'temp_mcmc', 'radius_mcmc', 'dtemp_mcmc0', 'dtemp_mcmc1', 'dradius_mcmc0', 'dradius_mcmc1',  # MCMC
+                   'L_bol_mcmc', 'dL_bol_mcmc0', 'dL_bol_mcmc1',   # total bolometric luminosity from MCMC
                    'L_mcmc', 'dL_mcmc0', 'dL_mcmc1',  # pseudobolometric luminosity from MCMC
                    'L_int',  # pseudobolometric luminosity from direct integration of the SED
                    'npoints']
             + colors + ['d({})'.format(c) for c in colors] + ['lolims({})'.format(c) for c in colors]
             + ['uplims({})'.format(c) for c in colors] + ['filts'] + (['source'] if use_src else []),
             dtype=[float, float, float, float, float, float, float, float, float, float, float, float, float, float,
-                   float, float, float, float, float, float, int]
+                   float, float, float, float, float, float, float, float, float, int]
             + [float] * 2 * len(colors) + [bool] * 2 * len(colors) + ['S6'] + ([lc['source'].dtype] if use_src else []),
             masked=True)
 
@@ -690,10 +716,10 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
         T_range = (priors[0].p_min, priors[0].p_max)
         R_range = (priors[1].p_min, priors[1].p_max)
         try:
-            temp, radius, dtemp, drad, lum, dlum, L_opt = blackbody_lstsq(epoch1, z, p0, T_range, R_range, cutoff_freq)
+            temp, radius, dtemp, drad, L_bol, dL_bol, L = blackbody_lstsq(epoch1, z, p0, T_range, R_range, cutoff_freq)
             p0 = np.array([temp, radius])
         except RuntimeError:  # optimization failed
-            temp = radius = dtemp = drad = lum = dlum = L_opt = np.nan
+            temp = radius = dtemp = drad = L_bol = dL_bol = L = np.nan
 
         rng = np.random.default_rng()
         starting_guesses = rng.normal(size=(nwalkers, 2)) + p0
@@ -712,12 +738,20 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
                                     outpath=outpath, nwalkers=nwalkers, burnin_steps=burnin_steps, steps=steps,
                                     show=show, save_chains=save_chains, use_sigma=use_sigma, sigma_type=sigma_type,
                                     labels=labels)
-            L_mcmc_opt = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq=cutoff_freq)
+
+            # full bolometric and pseudobolometric luminosities
+            L_bol_mcmc_samples = stefan_boltzmann(sampler.flatchain[:, 0], sampler.flatchain[:, 1])
+            L_mcmc_samples = pseudo(sampler.flatchain[:, 0], sampler.flatchain[:, 1], z, cutoff_freq=cutoff_freq)
+
+            # calculate parameter medians and uncertainties
             (T_mcmc, R_mcmc), (dT0_mcmc, dR0_mcmc), (dT1_mcmc, dR1_mcmc) = median_and_unc(sampler.flatchain[:, :2])
-            L_mcmc, dL_mcmc0, dL_mcmc1 = median_and_unc(L_mcmc_opt)
+            L_mcmc_bol, dL_mcmc0_bol, dL_mcmc1_bol = median_and_unc(L_bol_mcmc_samples)
+            L_mcmc, dL_mcmc0, dL_mcmc1 = median_and_unc(L_mcmc_samples)
+
         except ValueError as e:
             print(e)
-            T_mcmc = R_mcmc = dT0_mcmc = dR0_mcmc = dT1_mcmc = dR1_mcmc = L_mcmc = dL_mcmc0 = dL_mcmc1 = np.nan
+            T_mcmc = R_mcmc = dT0_mcmc = dR0_mcmc = dT1_mcmc = dR1_mcmc = np.nan
+            L_mcmc = dL_mcmc0 = dL_mcmc1 = L_mcmc_bol = dL_mcmc0_bol = dL_mcmc1_bol = np.nan
 
         # direct integration
         L_int = integrate_sed(epoch1)
@@ -728,14 +762,20 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
         color_mags, color_dmags, color_lolims, color_uplims = calc_colors(epoch1, colors)
 
         row = [mjdavg, dmjd0, dmjd1,
-               temp, radius, dtemp, drad, lum, dlum, L_opt,
-               T_mcmc, R_mcmc, dT0_mcmc, dT1_mcmc, dR0_mcmc, dR1_mcmc, L_mcmc, dL_mcmc0, dL_mcmc1,
+               temp, radius, dtemp, drad, L_bol, dL_bol, L,
+               T_mcmc, R_mcmc, dT0_mcmc, dT1_mcmc, dR0_mcmc, dR1_mcmc, 
+               L_mcmc_bol, dL_mcmc0_bol, dL_mcmc1_bol, L_mcmc, dL_mcmc0, dL_mcmc1,
                L_int, nfilt] + color_mags + color_dmags
         row_bool = color_lolims + color_uplims
         row_string = [filtstr] + ([epoch1['source'][0]] if use_src else [])
         mask = np.concatenate([np.isnan(row), np.zeros_like(row_bool, dtype=bool),
                                ~np.array([bool(rs) for rs in row_string])])
         t0.add_row(row + row_bool + row_string, mask=mask)
+
+    # keep deprecated column names for now
+    for old, new in DEPRECATED_BOLOMETRIC_COLNAMES:
+        t0[old] = t0[new]
+    warnings.warn('Some column names in the output table have changed (see documentation). Please update your code!')
 
     if save_table_as is not None and t0:
         t0.write(save_table_as, format='ascii.fixed_width_two_line', overwrite=True)

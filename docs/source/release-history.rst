@@ -10,6 +10,7 @@ This release includes an improved naming convention for the output column names 
 * :meth:`.LC.copy` now copies all attributes
 * Add option not to label filters in :func:`.lightcurve_corner` and :func:`lightcurve_model_plot`
 * Add optional keyword arguments for plotting in :func:`.lightcurve_corner` and :func:`lightcurve_model_plot`
+* Add optional keyword argument for passing in an instruments dictionary to :func:`.create_wiserep_tsv`
 
 v0.9.0 (2023-06-16)
 -------------------

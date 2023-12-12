@@ -435,7 +435,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
         return fig
 
 
-def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False):
+def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False, instruments=None):
     """
     Prepares a TSV file for uploading spectra to WISeREP (see https://www.wiserep.org/content/wiserep-getting-started).
 
@@ -464,7 +464,8 @@ def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False):
     # collect the metadata
     bibcode = input('bibcode: ')
     rows = []
-    instruments = {}
+    if not instruments:
+        instruments = {}
     for specpath in specpaths:
         if isinstance(specpath, tuple):
             specpath, quality = specpath

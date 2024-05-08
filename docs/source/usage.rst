@@ -88,7 +88,7 @@ You can make a bolometric light curve and color curves from the photometry table
     plot_bolometric_results(t)
     plot_color_curves(t)
 
-The light curve is divided into epochs (defined by the ``bin`` and ``also_group_by`` arguments to :func:`.calculate_bolometric`), and processed four different ways:
+The light curve is divided into SEDs at individual epochs, defined by the ``res`` and ``also_group_by`` arguments to :func:`.calculate_bolometric and/or specified manually using the ``'epoch'`` column. Then each epoch is processed in five different ways:
 
  * Fitting the Planck function using :func:`scipy.optimize.curve_fit`. This is very fast but may not give reliable uncertainties.
    The columns ``temp``, ``radius``, ``dtemp``, and ``dradius`` come from this fit.

@@ -133,8 +133,13 @@ class LC(Table):
         selected.markers = self.markers
         return selected
 
-    def get(self, key, default=None):
-        return self[key] if key in self.colnames else default
+    def get(self, key, default=np.ma.masked):
+        if key in self.colnames:
+            masked_column = MaskedColumn(self[key])
+        else:
+            default_array = np.tile(default, len(self))
+            masked_column = MaskedColumn(default_array, name=key)
+        return masked_column
 
     def normalize_column_names(self):
         """

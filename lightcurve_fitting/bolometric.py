@@ -346,27 +346,36 @@ def group_by_epoch(lc, res=1., also_group_by=()):
     """
     Group a light curve into epochs that will be treated as single spectral energy distributions.
 
+    To manually specify epochs for some or all points, add a unique number in the 'epoch' column of the ``lc``.
+
     Parameters
     ----------
     lc : lightcurve_fitting.lightcurve.LC
         Table containing the observed photometry. Must contain times in an "MJD" column.
     res : float, optional
         Approximate resolution for grouping, in days. Default: 1 day.
+    also_group_by : list, tuple, optional
+        Column names to group by, in addition to epoch. Default: ().
 
     Returns
     -------
-    epochs.groups : astropy.table.TableGroups
-        Iterable containing single-epoch spectral energy distributions
+    groups : list of lightcurve_fitting.lightcurve.LC
+        Iterable containing single-epoch spectral energy distributions, sorted by average MJD
     """
-    x = lc['MJD'].data / res
-    frac = np.median(x - np.trunc(x))
-    lc['bin'] = np.round(x - frac + np.round(frac)) * res
-    group_by = ['bin'] + list(also_group_by)
+    epochs = lc.get('epoch').astype(float)
+    if epochs.mask.any():
+        x = lc['MJD'][epochs.mask].data / res
+        frac = np.median(x - np.trunc(x))
+        epochs[epochs.mask] = np.round(x - frac + np.round(frac)) * res
+    lc['epoch'] = epochs
+    group_by = ['epoch'] + list(also_group_by)
     for col in also_group_by:
         if np.ma.is_masked(lc[col]):
             lc[col] = lc[col].filled()
-    epochs = lc.group_by(group_by)
-    return epochs.groups
+    grouped = lc.group_by(group_by)
+    mjdavg = [g['MJD'].mean() for g in grouped.groups]
+    groups = [grouped.groups[i] for i in np.argsort(mjdavg)]
+    return groups
 
 
 sigma_sb = const.sigma_sb.to(u.W / (1000. * u.Rsun) ** 2 / u.kK ** 4).value
@@ -602,7 +611,9 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
                          save_table_as=None, min_nfilt=3, cutoff_freq=np.inf, show=False, colors=None, do_mcmc=True,
                          save_chains=False, use_sigma=False, sigma_type='relative', also_group_by=()):
     """
-    Calculate the full bolometric light curve from a table of broadband photometry
+    Calculate the full bolometric light curve from a table of broadband photometry.
+
+    To manually specify epochs for some or all points, add a unique number in the 'epoch' column of the ``lc``.
 
     Parameters
     ----------

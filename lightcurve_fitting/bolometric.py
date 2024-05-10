@@ -2,6 +2,7 @@ from .filters import filtdict, extinction_law
 from .models import planck_fast, UniformPrior, LogUniformPrior, GaussianPrior
 from .lightcurve import LC
 
+from astropy.table import vstack
 from astropy import constants as const
 from astropy import units as u
 
@@ -286,7 +287,7 @@ def spectrum_corner(spectrum, epoch1, sampler_flatchain, z=0., ebv=0., spectrum_
     return f4
 
 
-def plot_bolometric_results(t0, save_plot_as=None):
+def plot_bolometric_results(t0, save_plot_as=None, xcol=None, log=False):
     """
     Plot the parameters and bolometric light curves that result from fitting the spectral energy distribution
 
@@ -296,12 +297,25 @@ def plot_bolometric_results(t0, save_plot_as=None):
         Table containing the results from fitting the spectral energy distribution
     save_plot_as : str, optional
         Filename to which to save the plot.
+    xcol : str, optional
+        Column to plot on the x-axis. Default: ``'phase'`` if ``t0.meta['refmjd']`` and ``t0.meta['redshift']`` are
+        given, otherwise ``'MJD'``. (See the docs for :meth:`.LC.calcPhase`.)
+    log : bool, optional
+        Use a logarithmic x-axis. Only useful if ``xcol='phase'``. Default: False.
 
     Returns
     -------
     fig : matplotlib.pyplot.Figure
         Figure object containing the plot
     """
+    if xcol is None:
+        if 'redshift' in t0.meta:
+            xcol = 'phase'
+        else:
+            xcol = 'MJD'
+    elif xcol == 'phase' and 'redshift' not in t0.meta:
+        raise ValueError("must set t0.meta['redshift'] and t0.meta['refmjd'] to calculate the phase")
+
     # backward compatibility for deprecated column names
     for old, new in DEPRECATED_BOLOMETRIC_COLNAMES:
         if new not in t0.colnames:
@@ -310,30 +324,54 @@ def plot_bolometric_results(t0, save_plot_as=None):
 
     fig, axarr = plt.subplots(3, figsize=(6, 12), sharex=True)
 
-    axarr[0].plot(t0['MJD'], t0['L'], marker='.', ls='none', color='C0', label='pseudobolometric, curve_fit')
-    axarr[0].errorbar(t0['MJD'], t0['L_mcmc'], (t0['dL_mcmc0'], t0['dL_mcmc1']),
-                      marker='.', ls='none', color='C1', label='pseudobolometric, MCMC')
-    axarr[0].plot(t0['MJD'], t0['L_int'], marker='.', ls='none', color='C2', label='pseudobolometric, integration')
-    axarr[0].errorbar(t0['MJD'], t0['L_bol'], t0['dL_bol'],
-                      marker='.', ls='none', color='k', label='bolometric, curve_fit')
-    if 'L_bol_mcmc' in t0.colnames:  # will not be present in files produced with v0.9.0 or earlier
-        axarr[0].errorbar(t0['MJD'], t0['L_bol_mcmc'], (t0['dL_bol_mcmc0'], t0['dL_bol_mcmc1']),
-                          marker='.', ls='none', color='C3', label='bolometric, MCMC')
-    axarr[0].legend()
+    datasets = [
+        ('', 'pseudobolometric, curve_fit'),
+        ('_mcmc', 'pseudobolometric, MCMC'),
+        ('_int', 'pseudobolometric, integration'),
+        ('_bol', 'bolometric, curve_fit'),
+        ('_bol_mcmc', 'bolometric, MCMC'),
+    ]
 
+    subtabs = []
+    for suffix, label in datasets:
+        lc = LC(t0['MJD', 'source'])
+        lc['filter'] = filtdict[label]
+        for base_ycol in ['L', 'radius', 'temp']:
+            ycol = base_ycol + suffix
+            if ycol in t0.colnames:
+                lc[base_ycol] = t0[ycol]
+            dycol = f'd{ycol}'
+            dycol0 = f'd{ycol}0'
+            dycol1 = f'd{ycol}1'
+            if dycol0 in t0.colnames and dycol1 in t0.colnames:
+                lc[f'd{base_ycol}'] = list(zip(t0[dycol0], t0[dycol1]))
+            elif dycol in t0.colnames:
+                lc[f'd{base_ycol}'] = list(zip(t0[dycol], t0[dycol]))
+        subtabs.append(lc)
+    t = vstack(subtabs)
+    if xcol == 'phase':
+        t.meta = t0.meta.copy()
+        t.calcPhase()
+    else:
+        log = False  # don't try to use a log scale with MJD
+
+    plt.sca(axarr[0])
+    t.plot(xcol=xcol, ycol='L', loc_filt='lower right', mjd_axis=False)
+    axarr[0].set_xlabel('')
     axarr[0].set_yscale('log')
     axarr[0].set_ylabel('Luminosity (W)')
 
-    axarr[1].errorbar(t0['MJD'], t0['radius'], t0['dradius'], color='C0', marker='.', ls='none')
-    axarr[1].errorbar(t0['MJD'], t0['radius_mcmc'], (t0['dradius_mcmc0'], t0['dradius_mcmc1']),
-                      color='C1', marker='.', ls='none')
+    plt.sca(axarr[1])
+    t.plot(xcol=xcol, ycol='radius', loc_mark='lower right', mjd_axis=False)
+    axarr[1].set_xlabel('')
     axarr[1].set_ylabel('Radius ($1000 R_\\odot$)')
 
-    axarr[2].errorbar(t0['MJD'], t0['temp'], t0['dtemp'], color='C0', marker='.', ls='none')
-    axarr[2].errorbar(t0['MJD'], t0['temp_mcmc'], (t0['dtemp_mcmc0'], t0['dtemp_mcmc1']),
-                      color='C1', marker='.', ls='none')
+    plt.sca(axarr[2])
+    t.plot(xcol=xcol, ycol='temp', mjd_axis=False)
     axarr[2].set_ylabel('Temperature (kK)')
-    axarr[2].set_xlabel('MJD')
+    if log:
+        axarr[2].set_xscale('log')
+        axarr[2].xaxis.set_major_formatter(plt.FormatStrFormatter('%g'))
 
     fig.tight_layout()
     if save_plot_as is not None:
@@ -664,7 +702,7 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
         Table containing the blackbody parameters, bolometric luminosities, and (optionally) colors
     """
     if z:
-        warnings.warn('The z keyword is deprecated. Include the reshift in `lc.meta["redshift"]` instead.')
+        warnings.warn('The z keyword is deprecated. Include the redshift in `lc.meta["redshift"]` instead.')
     z = lc.meta.get('redshift', z)
 
     if colors is None:

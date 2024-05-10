@@ -430,6 +430,13 @@ all_filters = [
     Filter('F1800W', 'C9', 0, 'JWST MIRI', filename='JWST_MIRI.F1800W.dat', angstrom=True, mec='k', italics=False),
     Filter('F2100W', 'C2', 0, 'JWST MIRI', filename='JWST_MIRI.F2100W.dat', angstrom=True, mec='k', italics=False),
     Filter('F2550W', 'C3', 0, 'JWST MIRI', filename='JWST_MIRI.F2550W.dat', angstrom=True, mec='k', italics=False),
+    # bolometric light curve calculation methods
+    Filter('pseudobolometric, curve_fit', 'C0', italics=False),
+    Filter('pseudobolometric, MCMC', 'C1', italics=False),
+    Filter('pseudobolometric, integration', 'C2', italics=False),
+    Filter('bolometric, curve_fit', 'k', italics=False),
+    Filter('bolometric, MCMC', 'C3', italics=False),
+    # catch-all
     Filter(['unknown', '?'], 'w', 0, 'unknown', linecolor='k', italics=False)]
 Filter.order = [f.name for f in all_filters]
 filtdict = {}

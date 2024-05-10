@@ -33,7 +33,6 @@ class Arrow(Path):
 arrow = Arrow(0.2, 0.3)
 othermarkers = ('o', *MarkerStyle.filled_markers[2:])
 itermarkers = itertools.cycle(othermarkers)
-usedmarkers = []
 itercolors = itertools.cycle(plt.rcParams['axes.prop_cycle'].by_key()['color'])
 
 # if you edit this list, also add the new names to usage.rst
@@ -416,7 +415,7 @@ class LC(Table):
 
     def plot(self, xcol='phase', ycol='absmag', offset_factor=1., color='filter', marker=None, use_lines=False,
              normalize=False, fillmark=True, mjd_axis=True, appmag_axis=True, loc_mark=None, loc_filt=None, ncol_mark=1,
-             lgd_filters=None, tight_layout=True, phase_hours=False, return_axes=False, **kwargs):
+             lgd_filters=None, tight_layout=True, phase_hours=False, return_axes=False, frameon=True, **kwargs):
         """
         Plot the light curve, with nondetections marked with a downward-pointing arrow
 
@@ -513,6 +512,10 @@ class LC(Table):
         linestyle = plot_kwargs.pop('linestyle', plot_kwargs.pop('ls', self.meta.get('linestyle', self.meta.get('ls'))))
         linewidth = plot_kwargs.pop('linewidth', plot_kwargs.pop('lw', self.meta.get('linewidth', self.meta.get('lw'))))
         ms = plot_kwargs.pop('markersize', plot_kwargs.pop('ms', plt.rcParams['lines.markersize']))
+        if marker in plottable.keys():
+            usedmarkers = [self.markers[g[marker][0]] for g in plottable.groups if g[marker][0] in self.markers]
+        else:
+            usedmarkers = []
         for g, k in zip(plottable.groups, keys):
             filt = g['filter'][0]
             if color == 'filter':
@@ -521,12 +524,13 @@ class LC(Table):
             elif color == 'name' and 'plotcolor' in self.meta:
                 col = self.meta['plotcolor']
                 mec = col if col not in ['w', '#FFFFFF'] else 'k'
-            elif g[color][0] in self.colors:
+            elif color in self.colnames and g[color][0] in self.colors:
                 col = self.colors[g[color][0]]
                 mec = col if col not in ['w', '#FFFFFF'] else 'k'
             else:
                 col = mec = next(itercolors)
-            self.colors[g[color][0]] = col
+            if color in self.colnames:
+                self.colors[g[color][0]] = col
             mfc = col if fillmark else 'none'
             if marker == 'name' and 'marker' in self.meta:
                 mark = self.meta['marker']
@@ -552,6 +556,8 @@ class LC(Table):
                 yerr = g['dmag']
             else:
                 yerr = g['d' + ycol]
+                if yerr.ndim == 2:
+                    yerr = yerr.T
             x = g[xcol].data
             y = g[ycol].data - filt.offset * offset_factor
             if normalize and ycol == 'mag':
@@ -605,34 +611,37 @@ class LC(Table):
         # add auxiliary axes
         mjd_axis = mjd_axis and xcol == 'phase' and 'redshift' in self.meta and 'refmjd' in self.meta
         appmag_axis = appmag_axis and ycol == 'absmag' and 'dm' in self.meta
+        axes = [plt.gca()]
         if mjd_axis or appmag_axis:
             xfunc = partial(self._phase2mjd, hours=phase_hours)
             top, right = aux_axes(xfunc if mjd_axis else None, self._abs2app if appmag_axis else None)
             if mjd_axis:
                 top.xaxis.get_major_formatter().set_useOffset(False)
                 top.set_xlabel('MJD')
+                axes.append(top)
             if appmag_axis:
                 right.set_ylabel('Apparent Magnitude')
+                axes.append(right)
 
         # add legends
-            if marker in self.colnames:
-                labels = sorted(set(self[marker]), key=lambda s: s.lower())
-                lines = []
-                for label in labels:
-                    if marker == color:
-                        mec = mfc = self.colors[label]
-                    else:
-                        mec = 'k'
-                        mfc = 'none'
-                    line = plt.Line2D([], [], mec=mec, mfc=mfc, ms=ms, marker=self.markers[label], linestyle='none')
-                    lines.append(line)
-                custom_legend(top, lines, labels, ncol=ncol_mark, loc=loc_mark, title=lgd_title, frameon=True)
+        if loc_mark and axes and marker in self.colnames:
+            labels = sorted(set(self[marker]), key=lambda s: s.lower())
+            lines = []
+            for label in labels:
+                if marker == color:
+                    mec = mfc = self.colors[label]
+                else:
+                    mec = 'k'
+                    mfc = 'none'
+                line = plt.Line2D([], [], mec=mec, mfc=mfc, ms=ms, marker=self.markers[label], linestyle='none')
+                lines.append(line)
+            custom_legend(axes.pop(), lines, labels, ncol=ncol_mark, loc=loc_mark, title=lgd_title, frameon=frameon)
 
-            if color == 'filter':
-                if lgd_filters is None:
-                    lgd_filters = set(self['filter'])
-                lines, labels, ncol = filter_legend(lgd_filters, offset_factor)
-                custom_legend(right, lines, labels, loc=loc_filt, ncol=ncol, title='Filter', frameon=True)
+        if loc_filt and axes and color == 'filter':
+            if lgd_filters is None:
+                lgd_filters = set(self['filter'])
+            lines, labels, ncol = filter_legend(lgd_filters, offset_factor)
+            custom_legend(axes.pop(), lines, labels, loc=loc_filt, ncol=ncol, title='Filter', frameon=frameon)
 
         if tight_layout:
             plt.tight_layout()
@@ -747,6 +756,10 @@ def custom_legend(ax, handles, labels, top_axis=True, **kwargs):
     elif loc == 'above right':
         loc = 'lower right'
         bbox_to_anchor = (1., top_of_axis)
+    if 'ncol' in kwargs and len(handles) % kwargs['ncol']:
+        i = len(handles) // kwargs['ncol']
+        handles.insert(i, plt.Line2D([], [], ls='none'))
+        labels.insert(i, '')
     lgd = ax.legend(handles, labels, loc=loc, bbox_to_anchor=bbox_to_anchor, **kwargs)
     plt.tight_layout()  # adjusts the top of the axes to make room for 'above' legends
     return lgd

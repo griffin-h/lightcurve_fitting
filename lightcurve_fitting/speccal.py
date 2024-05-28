@@ -494,7 +494,7 @@ def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False, instruments=None):
         row = [
             ascii_file,
             specfile if specfile.endswith('.fits') else None,
-            date.iso,
+            date,
             inst_id,
             hdr.get('exptime'),
             {'angstrom': 11, 'nm': 12, 'um': 13}.get(hdr.get('CUNIT1', hdr.get('XUNITS', 'angstrom')).lower()),
@@ -575,6 +575,7 @@ def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False, instruments=None):
         'Related-file2',
         'RF2 Comments'
     ], meta={'comments': ['TSV-type:\tspectra']})
+    t['Obs-date* [YYYY-MM-DD HH:MM:SS] / JD'].format = 'iso'
     # use the lower-level interface to add the second line with the defaults
     writer = ascii.get_writer(ascii.Tab, fast_writer=False, comment='',
                               fill_values=[('None', 'NULL'), ('', 'NULL'), ('UNKNOWN', 'NULL')])

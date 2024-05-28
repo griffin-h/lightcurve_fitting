@@ -18,6 +18,7 @@ This release includes an improved naming convention for the output column names 
 * Allow specification of a fixed color in :meth:`.LC.plot` (e.g., ``color='k'``)
 * Plot x-errors in :meth:`.LC.plot` when available
 * Print warning messages when legends cannot be added
+* Avoid crash in :func:`.create_wiserep_tsv` when no observation time is identified
 
 v0.9.0 (2023-06-16)
 -------------------

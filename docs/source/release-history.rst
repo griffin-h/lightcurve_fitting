@@ -2,6 +2,10 @@
 Release History
 ===============
 
+Unreleased
+----------
+* Fix ``KeyError`` when using :class:`.CompanionShocking` models without DLT40 photometry
+
 v0.9.0 (2023-06-16)
 -------------------
 * Add :class:`.ShockCooling4` model from [MSW23]_

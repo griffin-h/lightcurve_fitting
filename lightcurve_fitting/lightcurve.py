@@ -201,7 +201,7 @@ class LC(Table):
             self.nondetSigmas = nondetSigmas
         if zp is None:
             zp = self.zp
-        self['flux'], self['dflux'] = mag2flux(self['mag'], self['dmag'], zp, self.get('nondet'), self.nondetSigmas)
+        self['flux'], self['dflux'] = mag2flux(self['mag'], self['dmag'], zp, self.get('nondet', False), self.nondetSigmas)
 
     def bin(self, delta=0.3, groupby=None):
         """
@@ -266,7 +266,7 @@ class LC(Table):
         self.findNondet()
         if zp is None:
             zp = self.zp
-        self['mag'], self['dmag'] = flux2mag(self['flux'], self['dflux'], zp, self.get('nondet'), self.nondetSigmas)
+        self['mag'], self['dmag'] = flux2mag(self['flux'], self['dflux'], zp, self.get('nondet', False), self.nondetSigmas)
 
     def calcAbsMag(self, dm=None, extinction=None, hostext=None, ebv=None, rv=None, host_ebv=None, host_rv=None,
                    redshift=None):
@@ -355,7 +355,7 @@ class LC(Table):
         """
         if nondetSigmas is not None:
             self.nondetSigmas = nondetSigmas
-        self['lum'], self['dlum'] = mag2flux(self['absmag'], self['dmag'], self.zp + 90.19, self.get('nondet'),
+        self['lum'], self['dlum'] = mag2flux(self['absmag'], self['dmag'], self.zp + 90.19, self.get('nondet', False),
                                              self.nondetSigmas)
 
     def findPeak(self, **criteria):

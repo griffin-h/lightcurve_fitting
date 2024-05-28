@@ -403,6 +403,8 @@ class LC(Table):
                     detections = self
                 self.meta['refmjd'] = np.min(detections['MJD'].data)
         self['phase'] = (self['MJD'].data - self.meta['refmjd']) / (1 + self.meta['redshift'])
+        if 'dMJD' in self.colnames:
+            self['dphase'] = self['dMJD'] / (1. + self.meta['redshift'])
         if 'dMJD0' in self.colnames:
             self['dphase0'] = self['dMJD0'] / (1. + self.meta['redshift'])
         if 'dMJD1' in self.colnames:
@@ -563,6 +565,12 @@ class LC(Table):
                 if yerr.ndim == 2:
                     yerr = yerr.T
             x = g[xcol].data
+            if 'd' + xcol in g.colnames:
+                xerr = g['d' + xcol]
+                if xerr.ndim == 2:
+                    xerr = xerr.T
+            else:
+                xerr = None
             y = g[ycol].data - filt.offset * offset_factor
             if normalize and ycol == 'mag':
                 if 'peakmag' in self.meta:
@@ -586,7 +594,7 @@ class LC(Table):
                     k['filter'] = '${}$'.format(filt.name)
             label = ' '.join([str(kv) for kv in k.values()])
             if not use_lines:
-                plt.errorbar(x, y, yerr, color=mec, mfc=mfc, mec=mec, ms=ms, marker=mark, linestyle='none', label=label,
+                plt.errorbar(x, y, yerr, xerr=xerr, color=mec, mfc=mfc, mec=mec, ms=ms, marker=mark, linestyle='none', label=label,
                              **plot_kwargs)
             elif 'mag' in ycol and 'nondet' in g.colnames:
                 plt.plot(x[~g['nondet']], y[~g['nondet']], color=col, mfc=mfc, mec=mec, ms=ms, marker=mark, label=label,

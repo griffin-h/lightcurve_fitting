@@ -15,6 +15,7 @@ This release includes an improved naming convention for the output column names 
 * Make filenames of bolometric light curve corner plots match the MJD in the output file (median instead of mean)
 * Refactor of :func:`.plot_bolometric_results` to allow plotting with different markers per source
 * Recognize dates in the filename of the format YYYYMMDD.FFF in :func:`.readspec`
+* Allow specification of a fixed color in :meth:`.LC.plot` (e.g., ``color='k'``)
 
 v0.9.0 (2023-06-16)
 -------------------

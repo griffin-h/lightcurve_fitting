@@ -7,6 +7,7 @@ from .filters import filtdict
 import itertools
 from matplotlib.markers import MarkerStyle
 from matplotlib.patches import Patch
+from matplotlib.colors import is_color_like
 from functools import partial
 try:
     from config import markers
@@ -526,6 +527,9 @@ class LC(Table):
                 mec = col if col not in ['w', '#FFFFFF'] else 'k'
             elif color in self.colnames and g[color][0] in self.colors:
                 col = self.colors[g[color][0]]
+                mec = col if col not in ['w', '#FFFFFF'] else 'k'
+            elif is_color_like(color):
+                col = color
                 mec = col if col not in ['w', '#FFFFFF'] else 'k'
             else:
                 col = mec = next(itercolors)

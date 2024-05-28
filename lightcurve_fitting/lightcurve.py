@@ -648,12 +648,18 @@ class LC(Table):
                 line = plt.Line2D([], [], mec=mec, mfc=mfc, ms=ms, marker=self.markers[label], linestyle='none')
                 lines.append(line)
             custom_legend(axes.pop(), lines, labels, ncol=ncol_mark, loc=loc_mark, title=lgd_title, frameon=frameon)
+        elif loc_mark and not axes:
+            print('cannot create marker legend: not enough axes')
+        elif loc_mark and marker not in self.colnames:
+            print(f'cannot create marker legend: column "{marker}" does not exist')
 
         if loc_filt and axes and color == 'filter':
             if lgd_filters is None:
                 lgd_filters = set(self['filter'])
             lines, labels, ncol = filter_legend(lgd_filters, offset_factor)
             custom_legend(axes.pop(), lines, labels, loc=loc_filt, ncol=ncol, title='Filter', frameon=frameon)
+        elif loc_filt and not axes:
+            print('cannot create filter legend: not enough axes')
 
         if tight_layout:
             plt.tight_layout()

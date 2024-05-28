@@ -12,6 +12,7 @@ This release includes an improved naming convention for the output column names 
 * Add optional keyword arguments for plotting in :func:`.lightcurve_corner` and :func:`lightcurve_model_plot`
 * Add optional keyword argument for passing in an instruments dictionary to :func:`.create_wiserep_tsv`
 * Add ability to manually specify epochs for bolometric light curve calculation
+* Make filenames of bolometric light curve corner plots match the MJD in the output file (median instead of mean)
 * Refactor of :func:`.plot_bolometric_results` to allow plotting with different markers per source
 * Recognize dates in the filename of the format YYYYMMDD.FFF in :func:`.readspec`
 

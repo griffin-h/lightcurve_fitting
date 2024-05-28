@@ -139,7 +139,7 @@ def spectrum_mcmc(spectrum, epoch1, priors, starting_guesses, z=0., ebv=0., spec
     y = epoch1['lum'].data
     dy = epoch1['dlum'].data
     filtobj = epoch1['filter'].data
-    mjdavg = np.mean(epoch1['MJD'].data)
+    mjdavg = np.median(epoch1['MJD'].data)
 
     if spectrum_kwargs is None:
         spectrum_kwargs = {}
@@ -411,7 +411,7 @@ def group_by_epoch(lc, res=1., also_group_by=()):
         if np.ma.is_masked(lc[col]):
             lc[col] = lc[col].filled()
     grouped = lc.group_by(group_by)
-    mjdavg = [g['MJD'].mean() for g in grouped.groups]
+    mjdavg = [np.median(g['MJD']) for g in grouped.groups]
     groups = [grouped.groups[i] for i in np.argsort(mjdavg)]
     return groups
 

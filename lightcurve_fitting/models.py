@@ -700,7 +700,8 @@ class BaseCompanionShocking(Model):
 
         self.sifto = {}
         for filt in set(lc['filter']):
-            if filt.name == 'unfilt.':  # assume unfiltered = DLT40 for now
+            # only use unfiltered data if DLT40 data are also present, and assume they have the same peak luminosity
+            if filt.name == 'unfilt.' and filtdict['DLT40'] in lc['filter']:
                 sifto_filt = 'r'
                 scale_filt = 'DLT40'
             elif filt.name == 'DLT40':

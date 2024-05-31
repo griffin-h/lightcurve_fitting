@@ -1,22 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>lightcurve_fitting.models &mdash; Light Curve Fitting 0.9.2 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <title>lightcurve_fitting.models &mdash; Light Curve Fitting 0.10.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
-        <script src="../../_static/clipboard.min.js"></script>
-        <script src="../../_static/copybutton.js"></script>
+        <script src="../../_static/documentation_options.js?v=82662543"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -34,7 +36,7 @@
             Light Curve Fitting
           </a>
               <div class="version">
-                0.9.2
+                0.10.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -90,7 +92,9 @@
 <span class="n">c4</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Mpc</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="format_unit"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.format_unit">[docs]</a><span class="k">def</span> <span class="nf">format_unit</span><span class="p">(</span><span class="n">unit</span><span class="p">):</span>
+<div class="viewcode-block" id="format_unit">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.format_unit">[docs]</a>
+<span class="k">def</span> <span class="nf">format_unit</span><span class="p">(</span><span class="n">unit</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Use LaTeX to format a physical unit, which may consist of an order of magnitude times a base unit</span>
 
@@ -117,7 +121,10 @@
     <span class="k">return</span> <span class="n">unit_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="power"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.power">[docs]</a><span class="k">def</span> <span class="nf">power</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">exp</span><span class="p">):</span>
+
+<div class="viewcode-block" id="power">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.power">[docs]</a>
+<span class="k">def</span> <span class="nf">power</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">exp</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Power function that returns zero for any nonpositive base&quot;&quot;&quot;</span>
     <span class="n">broadcast</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">exp</span><span class="p">)</span>
     <span class="n">zeros</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">broadcast</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
@@ -126,7 +133,10 @@
     <span class="k">return</span> <span class="n">power</span></div>
 
 
-<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Model">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.Model">[docs]</a>
+<span class="k">class</span> <span class="nc">Model</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An analytical model, defined by a function and its parameters&quot;&quot;&quot;</span>
 
     <span class="n">input_names</span> <span class="o">=</span> <span class="p">[]</span>
@@ -164,11 +174,16 @@
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Model.evaluate"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.Model.evaluate">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Model.evaluate">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.Model.evaluate">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">NotImplemented</span></div>
 
-<div class="viewcode-block" id="Model.log_likelihood"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.Model.log_likelihood">[docs]</a>    <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lc</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">use_sigma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sigma_type</span><span class="o">=</span><span class="s1">&#39;relative&#39;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Model.log_likelihood">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.Model.log_likelihood">[docs]</a>
+    <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lc</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">use_sigma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sigma_type</span><span class="o">=</span><span class="s1">&#39;relative&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The log of the likelihood function of the model given data contained in `lc` and parameters contained in `p`</span>
 
@@ -211,10 +226,14 @@
             <span class="n">sigma</span> <span class="o">=</span> <span class="n">dy</span>
 
         <span class="n">log_likelihood</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">**</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_fit</span><span class="p">)</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">log_likelihood</span></div></div>
+        <span class="k">return</span> <span class="n">log_likelihood</span></div>
+</div>
 
 
-<div class="viewcode-block" id="BaseShockCooling"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseShockCooling">[docs]</a><span class="k">class</span> <span class="nc">BaseShockCooling</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseShockCooling">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseShockCooling">[docs]</a>
+<span class="k">class</span> <span class="nc">BaseShockCooling</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The shock cooling model of Sapir &amp; Waxman (https://doi.org/10.3847/1538-4357/aa64df).</span>
 
@@ -306,7 +325,9 @@
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">: z=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">, n=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">, RW=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">RW</span><span class="si">}</span><span class="s1">&gt;&#39;</span>
 
-<div class="viewcode-block" id="BaseShockCooling.temperature_radius"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseShockCooling.temperature_radius">[docs]</a>    <span class="k">def</span> <span class="nf">temperature_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseShockCooling.temperature_radius">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseShockCooling.temperature_radius">[docs]</a>
+    <span class="k">def</span> <span class="nf">temperature_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the color temperature and photospheric radius as a function of time for a set of parameters</span>
 
@@ -346,11 +367,17 @@
         <span class="n">R_bb</span> <span class="o">=</span> <span class="n">c3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">L</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">power</span><span class="p">(</span><span class="n">T_K</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">T_K</span><span class="p">,</span> <span class="n">R_bb</span></div>
 
-<div class="viewcode-block" id="BaseShockCooling.evaluate"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseShockCooling.evaluate">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="BaseShockCooling.evaluate">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseShockCooling.evaluate">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">NotImplemented</span></div>
 
-<div class="viewcode-block" id="BaseShockCooling.t_min"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseShockCooling.t_min">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="BaseShockCooling.t_min">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseShockCooling.t_min">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">t_min</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The minimum time at which the model is valid</span>
@@ -364,7 +391,10 @@
         <span class="n">t_exp</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="k">else</span> <span class="mf">0.</span>
         <span class="k">return</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">R</span> <span class="o">/</span> <span class="n">v_s</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">R</span> <span class="o">**</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="p">(</span><span class="n">f_rho_M</span> <span class="o">*</span> <span class="n">kappa</span><span class="p">)</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.2</span> <span class="o">*</span> <span class="n">v_s</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.7</span><span class="p">)</span> <span class="o">+</span> <span class="n">t_exp</span></div>
 
-<div class="viewcode-block" id="BaseShockCooling.t_max"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseShockCooling.t_max">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="BaseShockCooling.t_max">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseShockCooling.t_max">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">t_max</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The maximum time at which the model is valid</span>
@@ -373,10 +403,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">R</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
         <span class="n">t_exp</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="k">else</span> <span class="mf">0.</span>
-        <span class="k">return</span> <span class="mf">7.4</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">/</span> <span class="n">kappa</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.55</span> <span class="o">+</span> <span class="n">t_exp</span></div></div>
+        <span class="k">return</span> <span class="mf">7.4</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">/</span> <span class="n">kappa</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.55</span> <span class="o">+</span> <span class="n">t_exp</span></div>
+</div>
 
 
-<div class="viewcode-block" id="ShockCooling"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling">[docs]</a><span class="k">class</span> <span class="nc">ShockCooling</span><span class="p">(</span><span class="n">BaseShockCooling</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ShockCooling">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling">[docs]</a>
+<span class="k">class</span> <span class="nc">ShockCooling</span><span class="p">(</span><span class="n">BaseShockCooling</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The shock cooling model of Sapir &amp; Waxman (https://doi.org/10.3847/1538-4357/aa64df).</span>
 
@@ -397,7 +431,9 @@
         <span class="n">u</span><span class="o">.</span><span class="n">d</span>
     <span class="p">]</span>
 
-<div class="viewcode-block" id="ShockCooling.evaluate"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+<div class="viewcode-block" id="ShockCooling.evaluate">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling.evaluate">[docs]</a>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate this model at a range of times and filters</span>
 
@@ -428,10 +464,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">T_K</span><span class="p">,</span> <span class="n">R_bb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature_radius</span><span class="p">(</span><span class="n">t_in</span><span class="p">,</span> <span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="p">,</span> <span class="n">kappa</span><span class="p">)</span>
         <span class="n">y_fit</span> <span class="o">=</span> <span class="n">blackbody_to_filters</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">T_K</span><span class="p">,</span> <span class="n">R_bb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">y_fit</span></div></div>
+        <span class="k">return</span> <span class="n">y_fit</span></div>
+</div>
 
 
-<div class="viewcode-block" id="ShockCooling2"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling2">[docs]</a><span class="k">class</span> <span class="nc">ShockCooling2</span><span class="p">(</span><span class="n">BaseShockCooling</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ShockCooling2">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling2">[docs]</a>
+<span class="k">class</span> <span class="nc">ShockCooling2</span><span class="p">(</span><span class="n">BaseShockCooling</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The shock cooling model of Sapir &amp; Waxman (https://doi.org/10.3847/1538-4357/aa64df).</span>
 
@@ -453,7 +493,9 @@
         <span class="n">u</span><span class="o">.</span><span class="n">d</span>
     <span class="p">]</span>
 
-<div class="viewcode-block" id="ShockCooling2.evaluate"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling2.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">T_1</span><span class="p">,</span> <span class="n">L_1</span><span class="p">,</span> <span class="n">t_tr</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+<div class="viewcode-block" id="ShockCooling2.evaluate">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling2.evaluate">[docs]</a>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">T_1</span><span class="p">,</span> <span class="n">L_1</span><span class="p">,</span> <span class="n">t_tr</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate this model at a range of times and filters</span>
 
@@ -488,7 +530,10 @@
 
         <span class="k">return</span> <span class="n">y_fit</span></div>
 
-<div class="viewcode-block" id="ShockCooling2.t_min"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling2.t_min">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="ShockCooling2.t_min">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling2.t_min">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">t_min</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The minimum time at which the model is valid</span>
@@ -497,7 +542,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">NotImplemented</span></div>
 
-<div class="viewcode-block" id="ShockCooling2.t_max"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling2.t_max">[docs]</a>    <span class="k">def</span> <span class="nf">t_max</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ShockCooling2.t_max">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling2.t_max">[docs]</a>
+    <span class="k">def</span> <span class="nf">t_max</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The maximum time at which the model is valid</span>
 
@@ -505,10 +553,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">T_1</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">t_exp</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="k">else</span> <span class="mf">0.</span>
-        <span class="k">return</span> <span class="p">(</span><span class="mf">8.12</span> <span class="o">/</span> <span class="n">T_1</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon_T</span> <span class="o">**</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">t_exp</span></div></div>
+        <span class="k">return</span> <span class="p">(</span><span class="mf">8.12</span> <span class="o">/</span> <span class="n">T_1</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon_T</span> <span class="o">**</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">t_exp</span></div>
+</div>
 
 
-<div class="viewcode-block" id="ShockCooling3"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling3">[docs]</a><span class="k">class</span> <span class="nc">ShockCooling3</span><span class="p">(</span><span class="n">BaseShockCooling</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ShockCooling3">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling3">[docs]</a>
+<span class="k">class</span> <span class="nc">ShockCooling3</span><span class="p">(</span><span class="n">BaseShockCooling</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The shock cooling model of Sapir &amp; Waxman (https://doi.org/10.3847/1538-4357/aa64df).</span>
 
@@ -535,7 +587,9 @@
     <span class="p">]</span>
     <span class="n">output_quantity</span> <span class="o">=</span> <span class="s1">&#39;flux&#39;</span>
 
-<div class="viewcode-block" id="ShockCooling3.evaluate"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling3.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">ebv</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+<div class="viewcode-block" id="ShockCooling3.evaluate">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling3.evaluate">[docs]</a>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">ebv</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate this model at a range of times and filters</span>
 
@@ -573,16 +627,26 @@
         <span class="n">flux</span> <span class="o">=</span> <span class="n">c4</span> <span class="o">*</span> <span class="n">lum</span> <span class="o">/</span> <span class="n">dist</span> <span class="o">**</span> <span class="mf">2.</span>
         <span class="k">return</span> <span class="n">flux</span></div>
 
-<div class="viewcode-block" id="ShockCooling3.t_min"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling3.t_min">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="ShockCooling3.t_min">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling3.t_min">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">t_min</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">t_min</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">6</span> <span class="k">else</span> <span class="mf">0.</span><span class="p">],</span> <span class="n">kappa</span><span class="o">=</span><span class="n">kappa</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ShockCooling3.t_max"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling3.t_max">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="ShockCooling3.t_max">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling3.t_max">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">t_max</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">t_max</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">6</span> <span class="k">else</span> <span class="mf">0.</span><span class="p">],</span> <span class="n">kappa</span><span class="o">=</span><span class="n">kappa</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">t_max</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">6</span> <span class="k">else</span> <span class="mf">0.</span><span class="p">],</span> <span class="n">kappa</span><span class="o">=</span><span class="n">kappa</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="ShockCooling4"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling4">[docs]</a><span class="k">class</span> <span class="nc">ShockCooling4</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ShockCooling4">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling4">[docs]</a>
+<span class="k">class</span> <span class="nc">ShockCooling4</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The shock cooling model of Morag, Sapir, &amp; Waxman (https://doi.org/10.1093/mnras/stad899).</span>
 
@@ -658,7 +722,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">t_07eV_0</span> <span class="o">=</span> <span class="mf">6.86</span>  <span class="c1"># d</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t_tr_0</span> <span class="o">=</span> <span class="mf">19.5</span>  <span class="c1"># d</span>
 
-<div class="viewcode-block" id="ShockCooling4.temperature_radius"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling4.temperature_radius">[docs]</a>    <span class="k">def</span> <span class="nf">temperature_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+<div class="viewcode-block" id="ShockCooling4.temperature_radius">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling4.temperature_radius">[docs]</a>
+    <span class="k">def</span> <span class="nf">temperature_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
         <span class="n">t_br</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_br_0</span> <span class="o">*</span> <span class="n">R</span> <span class="o">**</span> <span class="mf">1.26</span> <span class="o">*</span> <span class="n">v_s</span> <span class="o">**</span> <span class="o">-</span><span class="mf">1.13</span> <span class="o">*</span> <span class="n">f_rho_M</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.13</span>  <span class="c1"># Eq. A5</span>
         <span class="n">L_br</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">L_br_0</span> <span class="o">*</span> <span class="n">R</span> <span class="o">**</span> <span class="mf">0.78</span> <span class="o">*</span> <span class="n">v_s</span> <span class="o">**</span> <span class="mf">2.11</span> <span class="o">*</span> <span class="n">f_rho_M</span> <span class="o">**</span> <span class="mf">0.11</span> <span class="o">*</span> <span class="n">kappa</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.89</span>  <span class="c1"># Eq. A6</span>
         <span class="n">T_col_br</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_col_br_0</span> <span class="o">*</span> <span class="n">R</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.32</span> <span class="o">*</span> <span class="n">v_s</span> <span class="o">**</span> <span class="mf">0.58</span> <span class="o">**</span> <span class="n">f_rho_M</span> <span class="o">**</span> <span class="mf">0.03</span> <span class="o">*</span> <span class="n">kappa</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.22</span>  <span class="c1"># Eq. A7</span>
@@ -674,7 +740,10 @@
         <span class="n">R_bb</span> <span class="o">=</span> <span class="n">c3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">L</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">power</span><span class="p">(</span><span class="n">T_K</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">T_K</span><span class="p">,</span> <span class="n">R_bb</span></div>
 
-<div class="viewcode-block" id="ShockCooling4.evaluate"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling4.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ShockCooling4.evaluate">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling4.evaluate">[docs]</a>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate this model at a range of times and filters</span>
 
@@ -709,7 +778,10 @@
         <span class="n">lum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">lum_blackbody</span><span class="p">,</span> <span class="n">lum_suppressed</span><span class="p">)</span>  <span class="c1"># Eq. A4</span>
         <span class="k">return</span> <span class="n">lum</span></div>
 
-<div class="viewcode-block" id="ShockCooling4.t_min"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling4.t_min">[docs]</a>    <span class="k">def</span> <span class="nf">t_min</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ShockCooling4.t_min">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling4.t_min">[docs]</a>
+    <span class="k">def</span> <span class="nf">t_min</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The minimum time at which the model is valid</span>
 
@@ -719,7 +791,10 @@
         <span class="n">t_exp</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="k">else</span> <span class="mf">0.</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_min_0</span> <span class="o">*</span> <span class="n">R</span> <span class="o">+</span> <span class="n">t_exp</span>  <span class="c1"># Eq. A3</span></div>
 
-<div class="viewcode-block" id="ShockCooling4.t_max"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling4.t_max">[docs]</a>    <span class="k">def</span> <span class="nf">t_max</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ShockCooling4.t_max">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.ShockCooling4.t_max">[docs]</a>
+    <span class="k">def</span> <span class="nf">t_max</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The maximum time at which the model is valid</span>
 
@@ -732,7 +807,9 @@
         <span class="n">v_s</span><span class="p">,</span> <span class="n">M_env</span><span class="p">,</span> <span class="n">f_rho_M</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_exp</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">p</span>
         <span class="n">t_07eV</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_07eV_0</span> <span class="o">*</span> <span class="n">R</span> <span class="o">**</span> <span class="mf">0.56</span> <span class="o">*</span> <span class="n">v_s</span> <span class="o">**</span> <span class="mf">0.16</span> <span class="o">*</span> <span class="n">kappa</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.61</span> <span class="o">*</span> <span class="n">f_rho_M</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.06</span>  <span class="c1"># Eq. A8</span>
         <span class="n">t_tr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_tr_0</span> <span class="o">**</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">kappa</span> <span class="o">*</span> <span class="n">M_env</span> <span class="o">/</span> <span class="n">v_s</span><span class="p">)</span>  <span class="c1"># Eq. A9</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">t_07eV</span><span class="p">,</span> <span class="n">t_tr</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="n">t_exp</span>  <span class="c1"># Eq. A3</span></div></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">t_07eV</span><span class="p">,</span> <span class="n">t_tr</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="n">t_exp</span>  <span class="c1"># Eq. A3</span></div>
+</div>
+
 
 
 <span class="n">sifto_filename</span> <span class="o">=</span> <span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;lightcurve_fitting&#39;</span><span class="p">,</span> <span class="s1">&#39;models/sifto.dat&#39;</span><span class="p">)</span>
@@ -740,7 +817,9 @@
 <span class="n">M_chandra</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">def_unit</span><span class="p">(</span><span class="s1">&#39;M_chandra&#39;</span><span class="p">,</span> <span class="mf">1.4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;latex&#39;</span><span class="p">:</span> <span class="s1">&#39;M_</span><span class="se">\\</span><span class="s1">mathrm</span><span class="si">{Ch}</span><span class="s1">&#39;</span><span class="p">})</span>
 
 
-<div class="viewcode-block" id="BaseCompanionShocking"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseCompanionShocking">[docs]</a><span class="k">class</span> <span class="nc">BaseCompanionShocking</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseCompanionShocking">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseCompanionShocking">[docs]</a>
+<span class="k">class</span> <span class="nc">BaseCompanionShocking</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model.</span>
 
@@ -777,28 +856,36 @@
             <span class="n">lc</span><span class="o">.</span><span class="n">calcLum</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">sifto</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">dlt40</span> <span class="o">=</span> <span class="n">filtdict</span><span class="p">[</span><span class="s1">&#39;DLT40&#39;</span><span class="p">]</span>
-        <span class="n">unfilt</span> <span class="o">=</span> <span class="n">filtdict</span><span class="p">[</span><span class="s1">&#39;unfilt.&#39;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">filt</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">lc</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]):</span>
-            <span class="k">if</span> <span class="n">filt</span><span class="o">.</span><span class="n">char</span> <span class="ow">in</span> <span class="n">sifto</span><span class="o">.</span><span class="n">colnames</span> <span class="ow">or</span> <span class="n">filt</span> <span class="o">==</span> <span class="n">dlt40</span><span class="p">:</span>
-                <span class="n">char</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span> <span class="k">if</span> <span class="n">filt</span> <span class="o">==</span> <span class="n">dlt40</span> <span class="k">else</span> <span class="n">filt</span><span class="o">.</span><span class="n">char</span>
-                <span class="n">lc_filt</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="n">filt</span><span class="p">)</span>
-                <span class="n">sifto_scaled</span> <span class="o">=</span> <span class="n">sifto</span><span class="p">[</span><span class="n">char</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">lc_filt</span><span class="p">[</span><span class="s1">&#39;lum&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">sifto</span><span class="p">[</span><span class="n">char</span><span class="p">])</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sifto</span><span class="p">[</span><span class="n">filt</span><span class="p">]</span> <span class="o">=</span> <span class="n">CubicSpline</span><span class="p">(</span><span class="n">sifto</span><span class="p">[</span><span class="s1">&#39;Epoch&#39;</span><span class="p">],</span> <span class="n">sifto_scaled</span><span class="p">,</span> <span class="n">extrapolate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">filt</span> <span class="o">!=</span> <span class="n">unfilt</span><span class="p">:</span>
+            <span class="c1"># only use unfiltered data if DLT40 data are also present, and assume they have the same peak luminosity</span>
+            <span class="k">if</span> <span class="n">filt</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;unfilt.&#39;</span> <span class="ow">and</span> <span class="n">filtdict</span><span class="p">[</span><span class="s1">&#39;DLT40&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">lc</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]:</span>
+                <span class="n">sifto_filt</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span>
+                <span class="n">scale_filt</span> <span class="o">=</span> <span class="s1">&#39;DLT40&#39;</span>
+            <span class="k">elif</span> <span class="n">filt</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;DLT40&#39;</span><span class="p">:</span>
+                <span class="n">sifto_filt</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span>
+                <span class="n">scale_filt</span> <span class="o">=</span> <span class="n">filt</span>
+            <span class="k">elif</span> <span class="n">filt</span><span class="o">.</span><span class="n">char</span> <span class="ow">in</span> <span class="n">sifto</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="n">sifto_filt</span> <span class="o">=</span> <span class="n">filt</span><span class="o">.</span><span class="n">char</span>
+                <span class="n">scale_filt</span> <span class="o">=</span> <span class="n">filt</span>
+            <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No SiFTO template for filter &#39;</span> <span class="o">+</span> <span class="n">filt</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-
-        <span class="c1"># assume unfiltered = DLT40 for now</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sifto</span><span class="p">[</span><span class="n">unfilt</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sifto</span><span class="p">[</span><span class="n">dlt40</span><span class="p">]</span>
+            <span class="n">lc_filt</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="n">scale_filt</span><span class="p">)</span>
+            <span class="n">sifto_scaled</span> <span class="o">=</span> <span class="n">sifto</span><span class="p">[</span><span class="n">sifto_filt</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">lc_filt</span><span class="p">[</span><span class="s1">&#39;lum&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">sifto</span><span class="p">[</span><span class="n">sifto_filt</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sifto</span><span class="p">[</span><span class="n">filt</span><span class="p">]</span> <span class="o">=</span> <span class="n">CubicSpline</span><span class="p">(</span><span class="n">sifto</span><span class="p">[</span><span class="s1">&#39;Epoch&#39;</span><span class="p">],</span> <span class="n">sifto_scaled</span><span class="p">,</span> <span class="n">extrapolate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">: z=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">&gt;&#39;</span>
 
-<div class="viewcode-block" id="BaseCompanionShocking.evaluate"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseCompanionShocking.evaluate">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="BaseCompanionShocking.evaluate">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseCompanionShocking.evaluate">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">NotImplemented</span></div>
 
-<div class="viewcode-block" id="BaseCompanionShocking.temperature_radius"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseCompanionShocking.temperature_radius">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="BaseCompanionShocking.temperature_radius">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseCompanionShocking.temperature_radius">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">temperature_radius</span><span class="p">(</span><span class="n">t_in</span><span class="p">,</span> <span class="n">t_exp</span><span class="p">,</span> <span class="n">a13</span><span class="p">,</span> <span class="n">Mc_v9_7</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the color temperature and photospheric radius of the shock component as a function of time</span>
@@ -829,7 +916,10 @@
         <span class="n">R_kasen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mf">2.7</span> <span class="o">*</span> <span class="n">power</span><span class="p">(</span><span class="n">kappa</span> <span class="o">*</span> <span class="n">Mc_v9_7</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mf">7.</span><span class="p">,</span> <span class="mf">1.</span> <span class="o">/</span> <span class="mf">9.</span><span class="p">))</span>  <span class="c1"># kiloRsun</span>
         <span class="k">return</span> <span class="n">T_kasen</span><span class="p">,</span> <span class="n">R_kasen</span></div>
 
-<div class="viewcode-block" id="BaseCompanionShocking.companion_shocking"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseCompanionShocking.companion_shocking">[docs]</a>    <span class="k">def</span> <span class="nf">companion_shocking</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">t_exp</span><span class="p">,</span> <span class="n">a13</span><span class="p">,</span> <span class="n">Mc_v9_7</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseCompanionShocking.companion_shocking">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseCompanionShocking.companion_shocking">[docs]</a>
+    <span class="k">def</span> <span class="nf">companion_shocking</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">t_exp</span><span class="p">,</span> <span class="n">a13</span><span class="p">,</span> <span class="n">Mc_v9_7</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the shock component only at a range of times and filters</span>
 
@@ -858,7 +948,10 @@
         <span class="n">Lnu_kasen</span> <span class="o">=</span> <span class="n">blackbody_to_filters</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">T_kasen</span><span class="p">,</span> <span class="n">R_kasen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Lnu_kasen</span></div>
 
-<div class="viewcode-block" id="BaseCompanionShocking.stretched_sifto"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseCompanionShocking.stretched_sifto">[docs]</a>    <span class="k">def</span> <span class="nf">stretched_sifto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">t_peak</span><span class="p">,</span> <span class="n">stretch</span><span class="p">,</span> <span class="n">dtU</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dti</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseCompanionShocking.stretched_sifto">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseCompanionShocking.stretched_sifto">[docs]</a>
+    <span class="k">def</span> <span class="nf">stretched_sifto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">t_peak</span><span class="p">,</span> <span class="n">stretch</span><span class="p">,</span> <span class="n">dtU</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dti</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The SiFTO SN Ia model (https://doi.org/10.1086/588518), offset and stretched by the input parameters</span>
 
@@ -901,7 +994,10 @@
         <span class="n">Lnu_sifto</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Lnu_sifto</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.</span>  <span class="c1"># extrapolate all filters as zero</span>
         <span class="k">return</span> <span class="n">Lnu_sifto</span></div>
 
-<div class="viewcode-block" id="BaseCompanionShocking.t_min"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseCompanionShocking.t_min">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="BaseCompanionShocking.t_min">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseCompanionShocking.t_min">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">t_min</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The minimum time at which the model is valid</span>
@@ -910,17 +1006,24 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">*</span> <span class="n">sifto</span><span class="p">[</span><span class="s1">&#39;Epoch&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="BaseCompanionShocking.t_max"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseCompanionShocking.t_max">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="BaseCompanionShocking.t_max">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.BaseCompanionShocking.t_max">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">t_max</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The maximum time at which the model is valid</span>
 
 <span class="sd">        This is the last epoch at which the stretched SiFTO model is computed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">*</span> <span class="n">sifto</span><span class="p">[</span><span class="s1">&#39;Epoch&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">*</span> <span class="n">sifto</span><span class="p">[</span><span class="s1">&#39;Epoch&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span></div>
+</div>
 
 
-<div class="viewcode-block" id="CompanionShocking"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.CompanionShocking">[docs]</a><span class="k">class</span> <span class="nc">CompanionShocking</span><span class="p">(</span><span class="n">BaseCompanionShocking</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CompanionShocking">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.CompanionShocking">[docs]</a>
+<span class="k">class</span> <span class="nc">CompanionShocking</span><span class="p">(</span><span class="n">BaseCompanionShocking</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model.</span>
 
@@ -947,7 +1050,9 @@
         <span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span>
     <span class="p">]</span>
 
-<div class="viewcode-block" id="CompanionShocking.evaluate"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.CompanionShocking.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">t_exp</span><span class="p">,</span> <span class="n">a13</span><span class="p">,</span> <span class="n">Mc_v9_7</span><span class="p">,</span> <span class="n">t_peak</span><span class="p">,</span> <span class="n">stretch</span><span class="p">,</span> <span class="n">rr</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">ri</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">rU</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+<div class="viewcode-block" id="CompanionShocking.evaluate">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.CompanionShocking.evaluate">[docs]</a>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">t_exp</span><span class="p">,</span> <span class="n">a13</span><span class="p">,</span> <span class="n">Mc_v9_7</span><span class="p">,</span> <span class="n">t_peak</span><span class="p">,</span> <span class="n">stretch</span><span class="p">,</span> <span class="n">rr</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">ri</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">rU</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate this model at a range of times and filters</span>
 
@@ -990,10 +1095,14 @@
         <span class="n">y_fit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">L1</span> <span class="o">*</span> <span class="n">kasen_factors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">filt</span><span class="o">.</span><span class="n">char</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">+</span> <span class="n">L2</span> <span class="o">*</span> <span class="n">sifto_factors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">filt</span><span class="o">.</span><span class="n">char</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
                           <span class="k">for</span> <span class="n">L1</span><span class="p">,</span> <span class="n">L2</span><span class="p">,</span> <span class="n">filt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Lnu_kasen</span><span class="p">,</span> <span class="n">Lnu_sifto</span><span class="p">,</span> <span class="n">f</span><span class="p">)])</span>
 
-        <span class="k">return</span> <span class="n">y_fit</span></div></div>
+        <span class="k">return</span> <span class="n">y_fit</span></div>
+</div>
 
 
-<div class="viewcode-block" id="CompanionShocking2"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.CompanionShocking2">[docs]</a><span class="k">class</span> <span class="nc">CompanionShocking2</span><span class="p">(</span><span class="n">BaseCompanionShocking</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CompanionShocking2">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.CompanionShocking2">[docs]</a>
+<span class="k">class</span> <span class="nc">CompanionShocking2</span><span class="p">(</span><span class="n">BaseCompanionShocking</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model.</span>
 
@@ -1018,7 +1127,9 @@
         <span class="n">u</span><span class="o">.</span><span class="n">d</span><span class="p">,</span>
     <span class="p">]</span>
 
-<div class="viewcode-block" id="CompanionShocking2.evaluate"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.CompanionShocking2.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">t_exp</span><span class="p">,</span> <span class="n">a13</span><span class="p">,</span> <span class="n">Mc_v9_7</span><span class="p">,</span> <span class="n">t_peak</span><span class="p">,</span> <span class="n">stretch</span><span class="p">,</span> <span class="n">dtU</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">dti</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+<div class="viewcode-block" id="CompanionShocking2.evaluate">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.CompanionShocking2.evaluate">[docs]</a>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">t_exp</span><span class="p">,</span> <span class="n">a13</span><span class="p">,</span> <span class="n">Mc_v9_7</span><span class="p">,</span> <span class="n">t_peak</span><span class="p">,</span> <span class="n">stretch</span><span class="p">,</span> <span class="n">dtU</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">dti</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate this model at a range of times and filters</span>
 
@@ -1052,10 +1163,14 @@
         <span class="n">Lnu_kasen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">companion_shocking</span><span class="p">(</span><span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">t_exp</span><span class="p">,</span> <span class="n">a13</span><span class="p">,</span> <span class="n">Mc_v9_7</span><span class="p">,</span> <span class="n">kappa</span><span class="p">)</span>
         <span class="n">Lnu_sifto</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stretched_sifto</span><span class="p">(</span><span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">t_peak</span><span class="p">,</span> <span class="n">stretch</span><span class="p">,</span> <span class="n">dtU</span><span class="p">,</span> <span class="n">dti</span><span class="p">)</span>
         <span class="n">y_fit</span> <span class="o">=</span> <span class="n">Lnu_kasen</span> <span class="o">+</span> <span class="n">Lnu_sifto</span>
-        <span class="k">return</span> <span class="n">y_fit</span></div></div>
+        <span class="k">return</span> <span class="n">y_fit</span></div>
+</div>
 
 
-<div class="viewcode-block" id="CompanionShocking3"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.CompanionShocking3">[docs]</a><span class="k">class</span> <span class="nc">CompanionShocking3</span><span class="p">(</span><span class="n">BaseCompanionShocking</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CompanionShocking3">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.CompanionShocking3">[docs]</a>
+<span class="k">class</span> <span class="nc">CompanionShocking3</span><span class="p">(</span><span class="n">BaseCompanionShocking</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The companion shocking model of Kasen (https://doi.org/10.1088/0004-637X/708/2/1025) plus the SiFTO SN Ia model.</span>
 
@@ -1081,7 +1196,9 @@
         <span class="n">u</span><span class="o">.</span><span class="n">d</span><span class="p">,</span>
     <span class="p">]</span>
 
-<div class="viewcode-block" id="CompanionShocking3.evaluate"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.CompanionShocking3.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">t_exp</span><span class="p">,</span> <span class="n">a13</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">t_peak</span><span class="p">,</span> <span class="n">stretch</span><span class="p">,</span> <span class="n">dtU</span><span class="p">,</span> <span class="n">dti</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+<div class="viewcode-block" id="CompanionShocking3.evaluate">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.CompanionShocking3.evaluate">[docs]</a>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_in</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">t_exp</span><span class="p">,</span> <span class="n">a13</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">t_peak</span><span class="p">,</span> <span class="n">stretch</span><span class="p">,</span> <span class="n">dtU</span><span class="p">,</span> <span class="n">dti</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate this model at a range of times and filters</span>
 
@@ -1117,10 +1234,14 @@
         <span class="n">theta_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
         <span class="n">fractional_flux</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta_rad</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.14</span> <span class="o">*</span> <span class="n">theta_rad</span> <span class="o">**</span> <span class="mf">2.</span> <span class="o">-</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">theta_rad</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
         <span class="n">y_fit</span> <span class="o">=</span> <span class="n">Lnu_kasen</span> <span class="o">*</span> <span class="n">fractional_flux</span> <span class="o">+</span> <span class="n">Lnu_sifto</span>
-        <span class="k">return</span> <span class="n">y_fit</span></div></div>
+        <span class="k">return</span> <span class="n">y_fit</span></div>
+</div>
 
 
-<div class="viewcode-block" id="Prior"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.Prior">[docs]</a><span class="k">class</span> <span class="nc">Prior</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Prior">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.Prior">[docs]</a>
+<span class="k">class</span> <span class="nc">Prior</span><span class="p">:</span>
     <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_min</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">p_max</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
@@ -1133,20 +1254,32 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
-<div class="viewcode-block" id="Prior.logp"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.Prior.logp">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Prior.logp">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.Prior.logp">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">logp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="k">pass</span></div></div>
+        <span class="k">pass</span></div>
+</div>
 
 
-<div class="viewcode-block" id="UniformPrior"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.UniformPrior">[docs]</a><span class="k">class</span> <span class="nc">UniformPrior</span><span class="p">(</span><span class="n">Prior</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UniformPrior">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.UniformPrior">[docs]</a>
+<span class="k">class</span> <span class="nc">UniformPrior</span><span class="p">(</span><span class="n">Prior</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A uniform prior in the parameter, i.e., :math:`\\frac{dP}{dp} \\propto 1`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="UniformPrior.logp"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.UniformPrior.logp">[docs]</a>    <span class="k">def</span> <span class="nf">logp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">p</span><span class="p">)</span></div></div>
+<div class="viewcode-block" id="UniformPrior.logp">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.UniformPrior.logp">[docs]</a>
+    <span class="k">def</span> <span class="nf">logp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">p</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="LogUniformPrior"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.LogUniformPrior">[docs]</a><span class="k">class</span> <span class="nc">LogUniformPrior</span><span class="p">(</span><span class="n">Prior</span><span class="p">):</span>
+
+<div class="viewcode-block" id="LogUniformPrior">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.LogUniformPrior">[docs]</a>
+<span class="k">class</span> <span class="nc">LogUniformPrior</span><span class="p">(</span><span class="n">Prior</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A uniform prior in the logarithm of the parameter, i.e., :math:`\\frac{dP}{dp} \\propto \\frac{1}{p}`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1155,11 +1288,17 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;a log-uniform prior cannot have negative limits&#39;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">p_min</span><span class="p">,</span> <span class="n">p_max</span><span class="p">)</span>
 
-<div class="viewcode-block" id="LogUniformPrior.logp"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.LogUniformPrior.logp">[docs]</a>    <span class="k">def</span> <span class="nf">logp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">)</span></div></div>
+<div class="viewcode-block" id="LogUniformPrior.logp">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.LogUniformPrior.logp">[docs]</a>
+    <span class="k">def</span> <span class="nf">logp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="GaussianPrior"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.GaussianPrior">[docs]</a><span class="k">class</span> <span class="nc">GaussianPrior</span><span class="p">(</span><span class="n">Prior</span><span class="p">):</span>
+
+<div class="viewcode-block" id="GaussianPrior">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.GaussianPrior">[docs]</a>
+<span class="k">class</span> <span class="nc">GaussianPrior</span><span class="p">(</span><span class="n">Prior</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A Gaussian prior centered at `mean` with standard deviation `stddev`, i.e.,</span>
 <span class="sd">    :math:`\\frac{dP}{dp} \\propto \\exp \\left( \\frac{(p - \\mu)^2}{2 \\sigma^2} \\right)`</span>
@@ -1169,15 +1308,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span> <span class="o">=</span> <span class="n">stddev</span>
 
-<div class="viewcode-block" id="GaussianPrior.logp"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.GaussianPrior.logp">[docs]</a>    <span class="k">def</span> <span class="nf">logp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="k">return</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">p</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.</span></div></div>
+<div class="viewcode-block" id="GaussianPrior.logp">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.GaussianPrior.logp">[docs]</a>
+    <span class="k">def</span> <span class="nf">logp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">p</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.</span></div>
+</div>
+
 
 
 <span class="n">c1</span> <span class="o">=</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">h</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">k_B</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">kK</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">THz</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
 <span class="n">c2</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">h</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">W</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1000</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Rsun</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">THz</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
 
 
-<div class="viewcode-block" id="planck_fast"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.planck_fast">[docs]</a><span class="k">def</span> <span class="nf">planck_fast</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
+<div class="viewcode-block" id="planck_fast">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.planck_fast">[docs]</a>
+<span class="k">def</span> <span class="nf">planck_fast</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The Planck spectrum for a blackbody source</span>
 
@@ -1203,7 +1348,10 @@
                            <span class="o">*</span> <span class="n">power</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">c1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">power</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">),</span> <span class="n">nu</span><span class="p">))</span> <span class="o">-</span> <span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="blackbody_to_filters"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.blackbody_to_filters">[docs]</a><span class="k">def</span> <span class="nf">blackbody_to_filters</span><span class="p">(</span><span class="n">filters</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">ebv</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+
+<div class="viewcode-block" id="blackbody_to_filters">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.blackbody_to_filters">[docs]</a>
+<span class="k">def</span> <span class="nf">blackbody_to_filters</span><span class="p">(</span><span class="n">filters</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">cutoff_freq</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">ebv</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The average spectral luminosity density (:math:`L_ν`) of a blackbody as observed through one or more filters</span>
 
@@ -1240,7 +1388,10 @@
     <span class="k">return</span> <span class="n">y_fit</span></div>
 
 
-<div class="viewcode-block" id="planck"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.planck">[docs]</a><span class="k">def</span> <span class="nf">planck</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">dT</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">dR</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+
+<div class="viewcode-block" id="planck">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.models.planck">[docs]</a>
+<span class="k">def</span> <span class="nf">planck</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">dT</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">dR</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The Planck spectrum for a blackbody source, including propagation of uncertainties</span>
 
@@ -1273,6 +1424,7 @@
     <span class="n">dlogLdR</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">/</span> <span class="n">R</span>
     <span class="n">dLnu</span> <span class="o">=</span> <span class="n">Lnu</span> <span class="o">*</span> <span class="p">(</span><span class="n">dlogLdT</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">dT</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">dlogLdR</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">dR</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">dlogLdT</span> <span class="o">*</span> <span class="n">dlogLdR</span> <span class="o">*</span> <span class="n">cov</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
     <span class="k">return</span> <span class="n">Lnu</span><span class="p">,</span> <span class="n">dLnu</span></div>
+
 </pre></div>
 
            </div>

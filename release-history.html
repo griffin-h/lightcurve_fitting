@@ -1,23 +1,25 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Release History &mdash; Light Curve Fitting 0.9.2 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
-      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <title>Release History &mdash; Light Curve Fitting 0.10.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
+        <script src="_static/documentation_options.js?v=82662543"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=f281be69"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +39,7 @@
             Light Curve Fitting
           </a>
               <div class="version">
-                0.9.2
+                0.10.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -52,6 +54,7 @@
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v0-10-0-2024-05-31">v0.10.0 (2024-05-31)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-9-0-2023-06-16">v0.9.0 (2023-06-16)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-8-0-2023-04-27">v0.8.0 (2023-04-27)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-7-0-2022-10-25">v0.7.0 (2022-10-25)</a></li>
@@ -91,9 +94,29 @@
            <div itemprop="articleBody">
              
   <section id="release-history">
-<h1>Release History<a class="headerlink" href="#release-history" title="Permalink to this heading">¶</a></h1>
+<h1>Release History<a class="headerlink" href="#release-history" title="Link to this heading">¶</a></h1>
+<section id="v0-10-0-2024-05-31">
+<h2>v0.10.0 (2024-05-31)<a class="headerlink" href="#v0-10-0-2024-05-31" title="Link to this heading">¶</a></h2>
+<p>This release includes an improved naming convention for the output column names of <a class="reference internal" href="api.html#lightcurve_fitting.bolometric.calculate_bolometric" title="lightcurve_fitting.bolometric.calculate_bolometric"><code class="xref py py-func docutils literal notranslate"><span class="pre">calculate_bolometric()</span></code></a>. Now all full bolometric luminosities have the suffix <code class="docutils literal notranslate"><span class="pre">_bol</span></code> and all quantities from the MCMC option have the suffix <code class="docutils literal notranslate"><span class="pre">_mcmc</span></code>. Specifically, the columns that changed are: <code class="docutils literal notranslate"><span class="pre">lum</span></code> → <code class="docutils literal notranslate"><span class="pre">L_bol</span></code>, <code class="docutils literal notranslate"><span class="pre">dlum</span></code> → <code class="docutils literal notranslate"><span class="pre">dL_bol</span></code>, <code class="docutils literal notranslate"><span class="pre">L_opt</span></code> → <code class="docutils literal notranslate"><span class="pre">L</span></code>, <code class="docutils literal notranslate"><span class="pre">dtemp0</span></code> → <code class="docutils literal notranslate"><span class="pre">dtemp_mcmc0</span></code>, <code class="docutils literal notranslate"><span class="pre">dtemp1</span></code> → <code class="docutils literal notranslate"><span class="pre">dtemp_mcmc1</span></code>, <code class="docutils literal notranslate"><span class="pre">dradius0</span></code> → <code class="docutils literal notranslate"><span class="pre">dradius_mcmc0</span></code>, and <code class="docutils literal notranslate"><span class="pre">dradius1</span></code> → <code class="docutils literal notranslate"><span class="pre">dradius_mcmc1</span></code>. The old names will continue to work for now, but please update your code!</p>
+<ul class="simple">
+<li><p>Add full bolometric luminosity for MCMC option as an output column in <a class="reference internal" href="api.html#lightcurve_fitting.bolometric.calculate_bolometric" title="lightcurve_fitting.bolometric.calculate_bolometric"><code class="xref py py-func docutils literal notranslate"><span class="pre">calculate_bolometric()</span></code></a></p></li>
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">LC.copy()</span></code> now copies all attributes</p></li>
+<li><p>Add option not to label filters in <a class="reference internal" href="api.html#lightcurve_fitting.fitting.lightcurve_corner" title="lightcurve_fitting.fitting.lightcurve_corner"><code class="xref py py-func docutils literal notranslate"><span class="pre">lightcurve_corner()</span></code></a> and <code class="xref py py-func docutils literal notranslate"><span class="pre">lightcurve_model_plot()</span></code></p></li>
+<li><p>Add optional keyword arguments for plotting in <a class="reference internal" href="api.html#lightcurve_fitting.fitting.lightcurve_corner" title="lightcurve_fitting.fitting.lightcurve_corner"><code class="xref py py-func docutils literal notranslate"><span class="pre">lightcurve_corner()</span></code></a> and <code class="xref py py-func docutils literal notranslate"><span class="pre">lightcurve_model_plot()</span></code></p></li>
+<li><p>Add optional keyword argument for passing in an instruments dictionary to <a class="reference internal" href="api.html#lightcurve_fitting.speccal.create_wiserep_tsv" title="lightcurve_fitting.speccal.create_wiserep_tsv"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_wiserep_tsv()</span></code></a></p></li>
+<li><p>Add ability to manually specify epochs for bolometric light curve calculation</p></li>
+<li><p>Make filenames of bolometric light curve corner plots match the MJD in the output file (median instead of mean)</p></li>
+<li><p>Refactor of <a class="reference internal" href="api.html#lightcurve_fitting.bolometric.plot_bolometric_results" title="lightcurve_fitting.bolometric.plot_bolometric_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">plot_bolometric_results()</span></code></a> to allow plotting with different markers per source</p></li>
+<li><p>Recognize dates in the filename of the format YYYYMMDD.FFF in <a class="reference internal" href="api.html#lightcurve_fitting.speccal.readspec" title="lightcurve_fitting.speccal.readspec"><code class="xref py py-func docutils literal notranslate"><span class="pre">readspec()</span></code></a></p></li>
+<li><p>Allow specification of a fixed color in <a class="reference internal" href="api.html#lightcurve_fitting.lightcurve.LC.plot" title="lightcurve_fitting.lightcurve.LC.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LC.plot()</span></code></a> (e.g., <code class="docutils literal notranslate"><span class="pre">color='k'</span></code>)</p></li>
+<li><p>Plot x-errors in <a class="reference internal" href="api.html#lightcurve_fitting.lightcurve.LC.plot" title="lightcurve_fitting.lightcurve.LC.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LC.plot()</span></code></a> when available</p></li>
+<li><p>Print warning messages when legends cannot be added</p></li>
+<li><p>Avoid crash in <a class="reference internal" href="api.html#lightcurve_fitting.speccal.create_wiserep_tsv" title="lightcurve_fitting.speccal.create_wiserep_tsv"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_wiserep_tsv()</span></code></a> when no observation date is identified and provide option for date format</p></li>
+<li><p>Fix <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> when using <a class="reference internal" href="api.html#lightcurve_fitting.models.CompanionShocking" title="lightcurve_fitting.models.CompanionShocking"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompanionShocking</span></code></a> models without DLT40 photometry</p></li>
+</ul>
+</section>
 <section id="v0-9-0-2023-06-16">
-<h2>v0.9.0 (2023-06-16)<a class="headerlink" href="#v0-9-0-2023-06-16" title="Permalink to this heading">¶</a></h2>
+<h2>v0.9.0 (2023-06-16)<a class="headerlink" href="#v0-9-0-2023-06-16" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Add <a class="reference internal" href="api.html#lightcurve_fitting.models.ShockCooling4" title="lightcurve_fitting.models.ShockCooling4"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShockCooling4</span></code></a> model from <a class="reference internal" href="index.html#msw23" id="id1"><span>[MSW23]</span></a></p></li>
 <li><p>Add <code class="docutils literal notranslate"><span class="pre">filters_to_model</span></code> option to <a class="reference internal" href="api.html#lightcurve_fitting.fitting.lightcurve_corner" title="lightcurve_fitting.fitting.lightcurve_corner"><code class="xref py py-func docutils literal notranslate"><span class="pre">lightcurve_corner()</span></code></a> and <a class="reference internal" href="api.html#lightcurve_fitting.fitting.lightcurve_model_plot" title="lightcurve_fitting.fitting.lightcurve_model_plot"><code class="xref py py-func docutils literal notranslate"><span class="pre">lightcurve_model_plot()</span></code></a></p></li>
@@ -106,7 +129,7 @@
 </ul>
 </section>
 <section id="v0-8-0-2023-04-27">
-<h2>v0.8.0 (2023-04-27)<a class="headerlink" href="#v0-8-0-2023-04-27" title="Permalink to this heading">¶</a></h2>
+<h2>v0.8.0 (2023-04-27)<a class="headerlink" href="#v0-8-0-2023-04-27" title="Link to this heading">¶</a></h2>
 <p>This release includes a major refactor of the <code class="xref py py-mod docutils literal notranslate"><span class="pre">models</span></code> module. Models now require initialization with the <a class="reference internal" href="api.html#lightcurve_fitting.lightcurve.LC" title="lightcurve_fitting.lightcurve.LC"><code class="xref py py-class docutils literal notranslate"><span class="pre">LC</span></code></a> object to be fit. Updated examples are given in the documentation and the Jupyter notebook. This alleviates the need for model keyword arguments, which are now deprecated. (A warning will be issued if the user tries to supply a <code class="docutils literal notranslate"><span class="pre">model_kwargs</span></code> argument.) This also allows for much easier specification of new models by subclassing the existing models.</p>
 <ul class="simple">
 <li><p>Add <a class="reference internal" href="api.html#lightcurve_fitting.models.CompanionShocking3" title="lightcurve_fitting.models.CompanionShocking3"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompanionShocking3</span></code></a> model, which includes viewing angle dependence</p></li>
@@ -139,7 +162,7 @@
 </ul>
 </section>
 <section id="v0-7-0-2022-10-25">
-<h2>v0.7.0 (2022-10-25)<a class="headerlink" href="#v0-7-0-2022-10-25" title="Permalink to this heading">¶</a></h2>
+<h2>v0.7.0 (2022-10-25)<a class="headerlink" href="#v0-7-0-2022-10-25" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Generalize <code class="xref py py-meth docutils literal notranslate"><span class="pre">Filter.blackbody()</span></code> to <a class="reference internal" href="api.html#lightcurve_fitting.filters.Filter.synthesize" title="lightcurve_fitting.filters.Filter.synthesize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Filter.synthesize()</span></code></a> and <code class="xref py py-func docutils literal notranslate"><span class="pre">blackbody_mcmc()</span></code> to <a class="reference internal" href="api.html#lightcurve_fitting.bolometric.spectrum_mcmc" title="lightcurve_fitting.bolometric.spectrum_mcmc"><code class="xref py py-func docutils literal notranslate"><span class="pre">spectrum_mcmc()</span></code></a></p></li>
 <li><p>Allow for arbitrary priors in bolometric light curve fitting (see note at <a class="reference internal" href="#v050"><span class="std std-ref">v0.5.0</span></a>)</p></li>
@@ -157,7 +180,7 @@
 </ul>
 </section>
 <section id="v0-6-0-2022-05-04">
-<h2>v0.6.0 (2022-05-04)<a class="headerlink" href="#v0-6-0-2022-05-04" title="Permalink to this heading">¶</a></h2>
+<h2>v0.6.0 (2022-05-04)<a class="headerlink" href="#v0-6-0-2022-05-04" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Add <a class="reference internal" href="api.html#lightcurve_fitting.models.CompanionShocking2" title="lightcurve_fitting.models.CompanionShocking2"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompanionShocking2</span></code></a> model: similar to <a class="reference internal" href="api.html#lightcurve_fitting.models.CompanionShocking" title="lightcurve_fitting.models.CompanionShocking"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompanionShocking</span></code></a> model but with time shifts on U and i SiFTO tempates instead of the three multipicative factors</p></li>
 <li><p>Separate out the <a class="reference internal" href="api.html#lightcurve_fitting.fitting.lightcurve_model_plot" title="lightcurve_fitting.fitting.lightcurve_model_plot"><code class="xref py py-func docutils literal notranslate"><span class="pre">lightcurve_model_plot()</span></code></a> function to allow plotting only the observed vs. model light curves (the inset from <a class="reference internal" href="api.html#lightcurve_fitting.fitting.lightcurve_corner" title="lightcurve_fitting.fitting.lightcurve_corner"><code class="xref py py-func docutils literal notranslate"><span class="pre">lightcurve_corner()</span></code></a>)</p></li>
@@ -169,7 +192,7 @@
 </ul>
 </section>
 <section id="v0-5-0-2022-03-16">
-<span id="v050"></span><h2>v0.5.0 (2022-03-16)<a class="headerlink" href="#v0-5-0-2022-03-16" title="Permalink to this heading">¶</a></h2>
+<span id="v050"></span><h2>v0.5.0 (2022-03-16)<a class="headerlink" href="#v0-5-0-2022-03-16" title="Link to this heading">¶</a></h2>
 <p>For the first time, this release introduces a change that is not backward compatible.
 To enable the use of Gaussian priors, I have had to make the prior specification a little more complex.
 Instead of using <code class="docutils literal notranslate"><span class="pre">p_min</span></code> and <code class="docutils literal notranslate"><span class="pre">p_max</span></code> to specify the bounds on a uniform prior, users will have to define the shape and bounds on each prior using the <code class="docutils literal notranslate"><span class="pre">priors</span></code> keyword.
@@ -193,7 +216,7 @@ For now, the code will still work if you use <code class="docutils literal notra
 </ul>
 </section>
 <section id="v0-4-0-2022-02-08">
-<h2>v0.4.0 (2022-02-08)<a class="headerlink" href="#v0-4-0-2022-02-08" title="Permalink to this heading">¶</a></h2>
+<h2>v0.4.0 (2022-02-08)<a class="headerlink" href="#v0-4-0-2022-02-08" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fix bug in min/max validity times when using intrinsic scatter parameter</p></li>
 <li><p>Change prior on blackbody temperature from log-uniform to uniform</p></li>
@@ -210,7 +233,7 @@ For now, the code will still work if you use <code class="docutils literal notra
 </ul>
 </section>
 <section id="v0-3-0-2021-09-22">
-<h2>v0.3.0 (2021-09-22)<a class="headerlink" href="#v0-3-0-2021-09-22" title="Permalink to this heading">¶</a></h2>
+<h2>v0.3.0 (2021-09-22)<a class="headerlink" href="#v0-3-0-2021-09-22" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Switch the default table format from <code class="docutils literal notranslate"><span class="pre">'ascii.fixed_width'</span></code> to just <code class="docutils literal notranslate"><span class="pre">'ascii'</span></code></p></li>
 <li><p>Add more recognized column names for light curves</p></li>
@@ -225,7 +248,7 @@ For now, the code will still work if you use <code class="docutils literal notra
 </ul>
 </section>
 <section id="v0-2-0-2020-12-08">
-<h2>v0.2.0 (2020-12-08)<a class="headerlink" href="#v0-2-0-2020-12-08" title="Permalink to this heading">¶</a></h2>
+<h2>v0.2.0 (2020-12-08)<a class="headerlink" href="#v0-2-0-2020-12-08" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Recognize several other names for LC columns (e.g., “filter” for “filt”)</p></li>
 <li><p>When binning a light curve, if one point has no uncertainty, ignore only that point</p></li>
@@ -236,11 +259,11 @@ For now, the code will still work if you use <code class="docutils literal notra
 </ul>
 </section>
 <section id="v0-1-0-2020-06-25">
-<h2>v0.1.0 (2020-06-25)<a class="headerlink" href="#v0-1-0-2020-06-25" title="Permalink to this heading">¶</a></h2>
+<h2>v0.1.0 (2020-06-25)<a class="headerlink" href="#v0-1-0-2020-06-25" title="Link to this heading">¶</a></h2>
 <p>Initial release on PyPI.</p>
 </section>
 <section id="v0-0-0-2019-04-14">
-<h2>v0.0.0 (2019-04-14)<a class="headerlink" href="#v0-0-0-2019-04-14" title="Permalink to this heading">¶</a></h2>
+<h2>v0.0.0 (2019-04-14)<a class="headerlink" href="#v0-0-0-2019-04-14" title="Link to this heading">¶</a></h2>
 <p>Initial release on GitHub and Zenodo.</p>
 </section>
 </section>

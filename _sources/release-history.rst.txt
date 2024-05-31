@@ -2,6 +2,25 @@
 Release History
 ===============
 
+v0.10.0 (2024-05-31)
+--------------------
+This release includes an improved naming convention for the output column names of :func:`.calculate_bolometric`. Now all full bolometric luminosities have the suffix ``_bol`` and all quantities from the MCMC option have the suffix ``_mcmc``. Specifically, the columns that changed are: ``lum`` → ``L_bol``, ``dlum`` → ``dL_bol``, ``L_opt`` → ``L``, ``dtemp0`` → ``dtemp_mcmc0``, ``dtemp1`` → ``dtemp_mcmc1``, ``dradius0`` → ``dradius_mcmc0``, and ``dradius1`` → ``dradius_mcmc1``. The old names will continue to work for now, but please update your code!
+
+* Add full bolometric luminosity for MCMC option as an output column in :func:`.calculate_bolometric`
+* :meth:`.LC.copy` now copies all attributes
+* Add option not to label filters in :func:`.lightcurve_corner` and :func:`lightcurve_model_plot`
+* Add optional keyword arguments for plotting in :func:`.lightcurve_corner` and :func:`lightcurve_model_plot`
+* Add optional keyword argument for passing in an instruments dictionary to :func:`.create_wiserep_tsv`
+* Add ability to manually specify epochs for bolometric light curve calculation
+* Make filenames of bolometric light curve corner plots match the MJD in the output file (median instead of mean)
+* Refactor of :func:`.plot_bolometric_results` to allow plotting with different markers per source
+* Recognize dates in the filename of the format YYYYMMDD.FFF in :func:`.readspec`
+* Allow specification of a fixed color in :meth:`.LC.plot` (e.g., ``color='k'``)
+* Plot x-errors in :meth:`.LC.plot` when available
+* Print warning messages when legends cannot be added
+* Avoid crash in :func:`.create_wiserep_tsv` when no observation date is identified and provide option for date format
+* Fix ``KeyError`` when using :class:`.CompanionShocking` models without DLT40 photometry
+
 v0.9.0 (2023-06-16)
 -------------------
 * Add :class:`.ShockCooling4` model from [MSW23]_

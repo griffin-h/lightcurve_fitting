@@ -88,19 +88,25 @@ You can make a bolometric light curve and color curves from the photometry table
     plot_bolometric_results(t)
     plot_color_curves(t)
 
-The light curve is divided into epochs (defined by the ``bin`` and ``also_group_by`` arguments to :func:`.calculate_bolometric`), and processed four different ways:
+The light curve is divided into SEDs at individual epochs, defined by the ``res`` and ``also_group_by`` arguments to :func:`.calculate_bolometric and/or specified manually using the ``'epoch'`` column. Then each epoch is processed in five different ways:
 
  * Fitting the Planck function using :func:`scipy.optimize.curve_fit`. This is very fast but may not give reliable uncertainties.
    The columns ``temp``, ``radius``, ``dtemp``, and ``dradius`` come from this fit.
- * The Stefan-Bolzmann law gives the total bolometric luminosity, ``lum`` and ``dlum``.
- * Integrating the Planck function between :math:`U` and :math:`I` band (observed) gives ``L_opt``.
+
+    * The Stefan-Bolzmann law gives the total bolometric luminosity, ``L_bol`` and ``dL_bol``.
+      The old convention of ``lum`` and ``dlum`` is still be useable, but should be considered obsolete.
+    * Integrating the Planck function between :math:`U` and :math:`I` band (observed) gives ``L``, the pseudobolometric luminosity.
+      The old convention of ``L_opt`` is still be useable, but should be considered obsolete.
+
  * Fitting the Planck function using an MCMC routine.
    This is slower, depending on how many walkers (``nwalkers``) and steps (``burnin_steps`` and ``steps``) you use,
    but gives more robust uncertainties.
-   The columns ``temp_mcmc``, ``radius_mcmc``, ``dtemp0``, ``dtemp1``, ``dradius0``, ``dradius1`` come from this fit.
+   The columns ``temp_mcmc``, ``radius_mcmc``, ``dtemp_mcmc0``, ``dtemp_mcmc1``, ``dradius_mcmc0``, ``dradius_mcmc1`` come from this fit.
    My convention for non-Gaussian uncertainties is that 0 is the lower uncertainty and 1 is the upper uncertainty.
- * Integrating the Planck function between :math:`U` and :math:`I` band (observed) gives
-   ``L_mcmc``, ``dL_mcmc0``, and ``dL_mcmc1``.
+
+    * The Stefan-Bolzmann law gives the total bolometric luminosity, ``L_bol_mcmc``, ``dL_bol_mcmc0`` and ``dL_bol_mcmc1``.
+    * Integrating the Planck function between :math:`U` and :math:`I` band (observed) gives ``L_mcmc``, ``dL_mcmc0``, and ``dL_mcmc1``, the pseudobolometric luminosity.
+
  * Directly integrating the observed SED, assuming 0 flux outside of :math:`U` to :math:`I`.
    Use this if you do not want to assume the SED is a blackbody. This yields the column ``L_int``.
 

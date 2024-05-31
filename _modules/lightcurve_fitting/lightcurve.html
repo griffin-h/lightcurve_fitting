@@ -1,22 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>lightcurve_fitting.lightcurve &mdash; Light Curve Fitting 0.9.2 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <title>lightcurve_fitting.lightcurve &mdash; Light Curve Fitting 0.10.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
-        <script src="../../_static/clipboard.min.js"></script>
-        <script src="../../_static/copybutton.js"></script>
+        <script src="../../_static/documentation_options.js?v=82662543"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -34,7 +36,7 @@
             Light Curve Fitting
           </a>
               <div class="version">
-                0.9.2
+                0.10.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -85,6 +87,7 @@
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">from</span> <span class="nn">matplotlib.markers</span> <span class="kn">import</span> <span class="n">MarkerStyle</span>
 <span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Patch</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">is_color_like</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">markers</span>
@@ -92,7 +95,9 @@
     <span class="n">markers</span> <span class="o">=</span> <span class="p">{}</span>
 
 
-<div class="viewcode-block" id="Arrow"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.Arrow">[docs]</a><span class="k">class</span> <span class="nc">Arrow</span><span class="p">(</span><span class="n">Path</span><span class="p">):</span>
+<div class="viewcode-block" id="Arrow">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.Arrow">[docs]</a>
+<span class="k">class</span> <span class="nc">Arrow</span><span class="p">(</span><span class="n">Path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An downward-pointing arrow-shaped ``Path``, whose head has half-width ``hx`` and height ``hy`` (in units of length)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -108,10 +113,10 @@
         <span class="n">Path</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verts</span><span class="p">,</span> <span class="n">codes</span><span class="p">)</span></div>
 
 
+
 <span class="n">arrow</span> <span class="o">=</span> <span class="n">Arrow</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
 <span class="n">othermarkers</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">MarkerStyle</span><span class="o">.</span><span class="n">filled_markers</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
 <span class="n">itermarkers</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">cycle</span><span class="p">(</span><span class="n">othermarkers</span><span class="p">)</span>
-<span class="n">usedmarkers</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">itercolors</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">cycle</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;axes.prop_cycle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">by_key</span><span class="p">()[</span><span class="s1">&#39;color&#39;</span><span class="p">])</span>
 
 <span class="c1"># if you edit this list, also add the new names to usage.rst</span>
@@ -137,7 +142,9 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="LC"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC">[docs]</a><span class="k">class</span> <span class="nc">LC</span><span class="p">(</span><span class="n">Table</span><span class="p">):</span>
+<div class="viewcode-block" id="LC">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC">[docs]</a>
+<span class="k">class</span> <span class="nc">LC</span><span class="p">(</span><span class="n">Table</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A broadband light curve, stored as an :class:`astropy.table.Table`</span>
 
@@ -155,12 +162,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">normalize_column_names</span><span class="p">()</span>
         <span class="k">if</span> <span class="s1">&#39;filter&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span> <span class="ow">and</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="nb">object</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filters_to_objects</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">=</span> <span class="mf">3.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">markers</span> <span class="o">=</span> <span class="n">markers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">colors</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># if this is a copy, also copy the following attributes</span>
+        <span class="n">oldlc</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">args</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">oldlc</span><span class="p">,</span> <span class="s1">&#39;nondetSigmas&#39;</span><span class="p">,</span> <span class="mf">3.</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">oldlc</span><span class="p">,</span> <span class="s1">&#39;groupby&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">markers</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">oldlc</span><span class="p">,</span> <span class="s1">&#39;markers&#39;</span><span class="p">,</span> <span class="n">markers</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">colors</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">oldlc</span><span class="p">,</span> <span class="s1">&#39;colors&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-<div class="viewcode-block" id="LC.where"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.where">[docs]</a>    <span class="k">def</span> <span class="nf">where</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="LC.where">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.where">[docs]</a>
+    <span class="k">def</span> <span class="nf">where</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Select the subset of a light curve matching some criteria, given as keyword arguments, e.g., ``colname=value``.</span>
 
@@ -209,10 +220,21 @@
         <span class="n">selected</span><span class="o">.</span><span class="n">markers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">markers</span>
         <span class="k">return</span> <span class="n">selected</span></div>
 
-<div class="viewcode-block" id="LC.get"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span> <span class="k">else</span> <span class="n">default</span></div>
 
-<div class="viewcode-block" id="LC.normalize_column_names"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.normalize_column_names">[docs]</a>    <span class="k">def</span> <span class="nf">normalize_column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LC.get">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.get">[docs]</a>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+            <span class="n">masked_column</span> <span class="o">=</span> <span class="n">MaskedColumn</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">default_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="n">masked_column</span> <span class="o">=</span> <span class="n">MaskedColumn</span><span class="p">(</span><span class="n">default_array</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">masked_column</span></div>
+
+
+<div class="viewcode-block" id="LC.normalize_column_names">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.normalize_column_names">[docs]</a>
+    <span class="k">def</span> <span class="nf">normalize_column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Rename any recognizable columns to their standard names for this package (see `lightcurve.column_names`).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -231,7 +253,10 @@
             <span class="n">nondet</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;T&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">replace_column</span><span class="p">(</span><span class="s1">&#39;nondet&#39;</span><span class="p">,</span> <span class="n">nondet</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LC.filters_to_objects"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.filters_to_objects">[docs]</a>    <span class="k">def</span> <span class="nf">filters_to_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="LC.filters_to_objects">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.filters_to_objects">[docs]</a>
+    <span class="k">def</span> <span class="nf">filters_to_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parse the ``&#39;filter&#39;`` column into :class:`filters.Filter` objects</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -250,6 +275,7 @@
                 <span class="n">filters</span><span class="p">[</span><span class="n">is_swift</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">filt</span><span class="p">)]</span> <span class="o">=</span> <span class="n">filtdict</span><span class="p">[</span><span class="n">swiftfilt</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">replace_column</span><span class="p">(</span><span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="n">filters</span><span class="p">)</span></div>
 
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">zp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -257,7 +283,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">f</span><span class="o">.</span><span class="n">m0</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]])</span>
 
-<div class="viewcode-block" id="LC.calcFlux"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcFlux">[docs]</a>    <span class="k">def</span> <span class="nf">calcFlux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="LC.calcFlux">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcFlux">[docs]</a>
+    <span class="k">def</span> <span class="nf">calcFlux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the ``&#39;flux&#39;`` and ``&#39;dflux&#39;`` columns from the ``&#39;mag&#39;`` and ``&#39;dmag&#39;`` columns</span>
 
@@ -272,9 +300,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">=</span> <span class="n">nondetSigmas</span>
         <span class="k">if</span> <span class="n">zp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">zp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zp</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dflux&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mag2flux</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">],</span> <span class="n">zp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nondet&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dflux&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mag2flux</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">],</span> <span class="n">zp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nondet&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LC.bin"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.bin">[docs]</a>    <span class="k">def</span> <span class="nf">bin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">groupby</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="LC.bin">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.bin">[docs]</a>
+    <span class="k">def</span> <span class="nf">bin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">groupby</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Bin the light curve by averaging points within ``delta`` days of each other</span>
 
@@ -308,7 +339,10 @@
         <span class="n">lc</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span>
         <span class="k">return</span> <span class="n">lc</span></div>
 
-<div class="viewcode-block" id="LC.findNondet"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.findNondet">[docs]</a>    <span class="k">def</span> <span class="nf">findNondet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="LC.findNondet">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.findNondet">[docs]</a>
+    <span class="k">def</span> <span class="nf">findNondet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a boolean column ``&#39;nondet&#39;`` indicating flux measurements that are below the detection threshold</span>
 
@@ -321,7 +355,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">=</span> <span class="n">nondetSigmas</span>
         <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">*</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dflux&#39;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="LC.calcMag"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcMag">[docs]</a>    <span class="k">def</span> <span class="nf">calcMag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="LC.calcMag">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcMag">[docs]</a>
+    <span class="k">def</span> <span class="nf">calcMag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the ``&#39;mag&#39;`` and ``&#39;dmag&#39;`` columns from the ``&#39;flux&#39;`` and ``&#39;dflux&#39;`` columns</span>
 
@@ -337,9 +374,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">findNondet</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">zp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">zp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zp</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flux2mag</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dflux&#39;</span><span class="p">],</span> <span class="n">zp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nondet&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flux2mag</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dflux&#39;</span><span class="p">],</span> <span class="n">zp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nondet&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LC.calcAbsMag"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcAbsMag">[docs]</a>    <span class="k">def</span> <span class="nf">calcAbsMag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extinction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hostext</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ebv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">host_ebv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">host_rv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+
+<div class="viewcode-block" id="LC.calcAbsMag">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcAbsMag">[docs]</a>
+    <span class="k">def</span> <span class="nf">calcAbsMag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extinction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hostext</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ebv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">host_ebv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">host_rv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                    <span class="n">redshift</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the ``&#39;absmag&#39;`` column from the ``&#39;mag&#39;`` column by correcting for distance and extinction</span>
@@ -415,7 +455,10 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;host extinction not applied to filter&#39;</span><span class="p">,</span> <span class="n">filtobj</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LC.calcLum"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcLum">[docs]</a>    <span class="k">def</span> <span class="nf">calcLum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="LC.calcLum">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcLum">[docs]</a>
+    <span class="k">def</span> <span class="nf">calcLum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the ``&#39;lum&#39;`` and ``&#39;dlum&#39;`` columns from the ``&#39;absmag&#39;`` and ``&#39;dmag&#39;`` columns</span>
 
@@ -426,10 +469,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">nondetSigmas</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span> <span class="o">=</span> <span class="n">nondetSigmas</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;lum&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dlum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mag2flux</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">zp</span> <span class="o">+</span> <span class="mf">90.19</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nondet&#39;</span><span class="p">),</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;lum&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dlum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mag2flux</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;absmag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">zp</span> <span class="o">+</span> <span class="mf">90.19</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nondet&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
                                              <span class="bp">self</span><span class="o">.</span><span class="n">nondetSigmas</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LC.findPeak"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.findPeak">[docs]</a>    <span class="k">def</span> <span class="nf">findPeak</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">criteria</span><span class="p">):</span>
+
+<div class="viewcode-block" id="LC.findPeak">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.findPeak">[docs]</a>
+    <span class="k">def</span> <span class="nf">findPeak</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">criteria</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Find the peak of the light curve and store it in ``.meta[&#39;peakdate&#39;]``</span>
 
@@ -449,7 +495,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;no data match these criteria: </span><span class="si">{</span><span class="n">criteria</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LC.calcPhase"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcPhase">[docs]</a>    <span class="k">def</span> <span class="nf">calcPhase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdsp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hours</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="LC.calcPhase">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.calcPhase">[docs]</a>
+    <span class="k">def</span> <span class="nf">calcPhase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdsp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hours</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the rest-frame ``&#39;phase&#39;`` column from ``&#39;MJD&#39;``, ``.meta[&#39;refmjd&#39;]``, and ``.meta[&#39;redshift&#39;]``</span>
 
@@ -474,6 +523,8 @@
                     <span class="n">detections</span> <span class="o">=</span> <span class="bp">self</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;refmjd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">detections</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;refmjd&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;redshift&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s1">&#39;dMJD&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dphase&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dMJD&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;redshift&#39;</span><span class="p">])</span>
         <span class="k">if</span> <span class="s1">&#39;dMJD0&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dphase0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dMJD0&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;redshift&#39;</span><span class="p">])</span>
         <span class="k">if</span> <span class="s1">&#39;dMJD1&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
@@ -485,9 +536,12 @@
             <span class="k">if</span> <span class="s1">&#39;dphase1&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
                 <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dphase1&#39;</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">24.</span></div>
 
-<div class="viewcode-block" id="LC.plot"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="s1">&#39;absmag&#39;</span><span class="p">,</span> <span class="n">offset_factor</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+
+<div class="viewcode-block" id="LC.plot">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.plot">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="s1">&#39;absmag&#39;</span><span class="p">,</span> <span class="n">offset_factor</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fillmark</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mjd_axis</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">appmag_axis</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">loc_mark</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">loc_filt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ncol_mark</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-             <span class="n">lgd_filters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tight_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">phase_hours</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_axes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+             <span class="n">lgd_filters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tight_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">phase_hours</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_axes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the light curve, with nondetections marked with a downward-pointing arrow</span>
 
@@ -584,6 +638,10 @@
         <span class="n">linestyle</span> <span class="o">=</span> <span class="n">plot_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;linestyle&#39;</span><span class="p">,</span> <span class="n">plot_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ls&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;linestyle&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ls&#39;</span><span class="p">))))</span>
         <span class="n">linewidth</span> <span class="o">=</span> <span class="n">plot_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;linewidth&#39;</span><span class="p">,</span> <span class="n">plot_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;lw&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;linewidth&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lw&#39;</span><span class="p">))))</span>
         <span class="n">ms</span> <span class="o">=</span> <span class="n">plot_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;markersize&#39;</span><span class="p">,</span> <span class="n">plot_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ms&#39;</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;lines.markersize&#39;</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">marker</span> <span class="ow">in</span> <span class="n">plottable</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">usedmarkers</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">markers</span><span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="n">marker</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">plottable</span><span class="o">.</span><span class="n">groups</span> <span class="k">if</span> <span class="n">g</span><span class="p">[</span><span class="n">marker</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">markers</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">usedmarkers</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">plottable</span><span class="o">.</span><span class="n">groups</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
             <span class="n">filt</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">color</span> <span class="o">==</span> <span class="s1">&#39;filter&#39;</span><span class="p">:</span>
@@ -592,12 +650,16 @@
             <span class="k">elif</span> <span class="n">color</span> <span class="o">==</span> <span class="s1">&#39;name&#39;</span> <span class="ow">and</span> <span class="s1">&#39;plotcolor&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">:</span>
                 <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;plotcolor&#39;</span><span class="p">]</span>
                 <span class="n">mec</span> <span class="o">=</span> <span class="n">col</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="s1">&#39;#FFFFFF&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="s1">&#39;k&#39;</span>
-            <span class="k">elif</span> <span class="n">g</span><span class="p">[</span><span class="n">color</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colors</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">color</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span> <span class="ow">and</span> <span class="n">g</span><span class="p">[</span><span class="n">color</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colors</span><span class="p">:</span>
                 <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">colors</span><span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="n">color</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="n">mec</span> <span class="o">=</span> <span class="n">col</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="s1">&#39;#FFFFFF&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="s1">&#39;k&#39;</span>
+            <span class="k">elif</span> <span class="n">is_color_like</span><span class="p">(</span><span class="n">color</span><span class="p">):</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="n">color</span>
                 <span class="n">mec</span> <span class="o">=</span> <span class="n">col</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="s1">&#39;#FFFFFF&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="s1">&#39;k&#39;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">col</span> <span class="o">=</span> <span class="n">mec</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">itercolors</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">colors</span><span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="n">color</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">col</span>
+            <span class="k">if</span> <span class="n">color</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">colors</span><span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="n">color</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">col</span>
             <span class="n">mfc</span> <span class="o">=</span> <span class="n">col</span> <span class="k">if</span> <span class="n">fillmark</span> <span class="k">else</span> <span class="s1">&#39;none&#39;</span>
             <span class="k">if</span> <span class="n">marker</span> <span class="o">==</span> <span class="s1">&#39;name&#39;</span> <span class="ow">and</span> <span class="s1">&#39;marker&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">:</span>
                 <span class="n">mark</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;marker&#39;</span><span class="p">]</span>
@@ -623,7 +685,15 @@
                 <span class="n">yerr</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="s1">&#39;dmag&#39;</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">yerr</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="s1">&#39;d&#39;</span> <span class="o">+</span> <span class="n">ycol</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">yerr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">yerr</span> <span class="o">=</span> <span class="n">yerr</span><span class="o">.</span><span class="n">T</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="n">xcol</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+            <span class="k">if</span> <span class="s1">&#39;d&#39;</span> <span class="o">+</span> <span class="n">xcol</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="n">xerr</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="s1">&#39;d&#39;</span> <span class="o">+</span> <span class="n">xcol</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">xerr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">xerr</span> <span class="o">=</span> <span class="n">xerr</span><span class="o">.</span><span class="n">T</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">xerr</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="n">ycol</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">-</span> <span class="n">filt</span><span class="o">.</span><span class="n">offset</span> <span class="o">*</span> <span class="n">offset_factor</span>
             <span class="k">if</span> <span class="n">normalize</span> <span class="ow">and</span> <span class="n">ycol</span> <span class="o">==</span> <span class="s1">&#39;mag&#39;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="s1">&#39;peakmag&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">:</span>
@@ -647,7 +717,7 @@
                     <span class="n">k</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;$</span><span class="si">{}</span><span class="s1">$&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filt</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">kv</span><span class="p">)</span> <span class="k">for</span> <span class="n">kv</span> <span class="ow">in</span> <span class="n">k</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">use_lines</span><span class="p">:</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">mec</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="n">mfc</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="n">mec</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="n">ms</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="n">mark</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">,</span> <span class="n">xerr</span><span class="o">=</span><span class="n">xerr</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">mec</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="n">mfc</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="n">mec</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="n">ms</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="n">mark</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
                              <span class="o">**</span><span class="n">plot_kwargs</span><span class="p">)</span>
             <span class="k">elif</span> <span class="s1">&#39;mag&#39;</span> <span class="ow">in</span> <span class="n">ycol</span> <span class="ow">and</span> <span class="s1">&#39;nondet&#39;</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="o">~</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]],</span> <span class="n">y</span><span class="p">[</span><span class="o">~</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;nondet&#39;</span><span class="p">]],</span> <span class="n">color</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="n">mfc</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="n">mec</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="n">ms</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="n">mark</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
@@ -676,34 +746,43 @@
         <span class="c1"># add auxiliary axes</span>
         <span class="n">mjd_axis</span> <span class="o">=</span> <span class="n">mjd_axis</span> <span class="ow">and</span> <span class="n">xcol</span> <span class="o">==</span> <span class="s1">&#39;phase&#39;</span> <span class="ow">and</span> <span class="s1">&#39;redshift&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span> <span class="ow">and</span> <span class="s1">&#39;refmjd&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span>
         <span class="n">appmag_axis</span> <span class="o">=</span> <span class="n">appmag_axis</span> <span class="ow">and</span> <span class="n">ycol</span> <span class="o">==</span> <span class="s1">&#39;absmag&#39;</span> <span class="ow">and</span> <span class="s1">&#39;dm&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()]</span>
         <span class="k">if</span> <span class="n">mjd_axis</span> <span class="ow">or</span> <span class="n">appmag_axis</span><span class="p">:</span>
             <span class="n">xfunc</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_phase2mjd</span><span class="p">,</span> <span class="n">hours</span><span class="o">=</span><span class="n">phase_hours</span><span class="p">)</span>
             <span class="n">top</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">aux_axes</span><span class="p">(</span><span class="n">xfunc</span> <span class="k">if</span> <span class="n">mjd_axis</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_abs2app</span> <span class="k">if</span> <span class="n">appmag_axis</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">mjd_axis</span><span class="p">:</span>
                 <span class="n">top</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">get_major_formatter</span><span class="p">()</span><span class="o">.</span><span class="n">set_useOffset</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
                 <span class="n">top</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;MJD&#39;</span><span class="p">)</span>
+                <span class="n">axes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">top</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">appmag_axis</span><span class="p">:</span>
                 <span class="n">right</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Apparent Magnitude&#39;</span><span class="p">)</span>
+                <span class="n">axes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">right</span><span class="p">)</span>
 
         <span class="c1"># add legends</span>
-            <span class="k">if</span> <span class="n">marker</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
-                <span class="n">labels</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">marker</span><span class="p">]),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-                <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">marker</span> <span class="o">==</span> <span class="n">color</span><span class="p">:</span>
-                        <span class="n">mec</span> <span class="o">=</span> <span class="n">mfc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">colors</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">mec</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
-                        <span class="n">mfc</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span>
-                    <span class="n">line</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Line2D</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">mec</span><span class="o">=</span><span class="n">mec</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="n">mfc</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="n">ms</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">markers</span><span class="p">[</span><span class="n">label</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
-                    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-                <span class="n">custom_legend</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">ncol_mark</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc_mark</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">lgd_title</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">loc_mark</span> <span class="ow">and</span> <span class="n">axes</span> <span class="ow">and</span> <span class="n">marker</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">marker</span><span class="p">]),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">marker</span> <span class="o">==</span> <span class="n">color</span><span class="p">:</span>
+                    <span class="n">mec</span> <span class="o">=</span> <span class="n">mfc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">colors</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">mec</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
+                    <span class="n">mfc</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Line2D</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">mec</span><span class="o">=</span><span class="n">mec</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="n">mfc</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="n">ms</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">markers</span><span class="p">[</span><span class="n">label</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="n">custom_legend</span><span class="p">(</span><span class="n">axes</span><span class="o">.</span><span class="n">pop</span><span class="p">(),</span> <span class="n">lines</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">ncol_mark</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc_mark</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">lgd_title</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="n">frameon</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">loc_mark</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">axes</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cannot create marker legend: not enough axes&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">loc_mark</span> <span class="ow">and</span> <span class="n">marker</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;cannot create marker legend: column &quot;</span><span class="si">{</span><span class="n">marker</span><span class="si">}</span><span class="s1">&quot; does not exist&#39;</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">color</span> <span class="o">==</span> <span class="s1">&#39;filter&#39;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">lgd_filters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">lgd_filters</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">])</span>
-                <span class="n">lines</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">ncol</span> <span class="o">=</span> <span class="n">filter_legend</span><span class="p">(</span><span class="n">lgd_filters</span><span class="p">,</span> <span class="n">offset_factor</span><span class="p">)</span>
-                <span class="n">custom_legend</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc_filt</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">ncol</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Filter&#39;</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">loc_filt</span> <span class="ow">and</span> <span class="n">axes</span> <span class="ow">and</span> <span class="n">color</span> <span class="o">==</span> <span class="s1">&#39;filter&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">lgd_filters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">lgd_filters</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">])</span>
+            <span class="n">lines</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">ncol</span> <span class="o">=</span> <span class="n">filter_legend</span><span class="p">(</span><span class="n">lgd_filters</span><span class="p">,</span> <span class="n">offset_factor</span><span class="p">)</span>
+            <span class="n">custom_legend</span><span class="p">(</span><span class="n">axes</span><span class="o">.</span><span class="n">pop</span><span class="p">(),</span> <span class="n">lines</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc_filt</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">ncol</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Filter&#39;</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="n">frameon</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">loc_filt</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">axes</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cannot create filter legend: not enough axes&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">tight_layout</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
@@ -711,28 +790,38 @@
         <span class="k">if</span> <span class="n">return_axes</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mjd_axis</span> <span class="ow">or</span> <span class="n">appmag_axis</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span></div>
 
+
     <span class="k">def</span> <span class="nf">_phase2mjd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">hours</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">phase</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;redshift&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mf">24.</span> <span class="k">if</span> <span class="n">hours</span> <span class="k">else</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;refmjd&#39;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_abs2app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">absmag</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">absmag</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;dm&#39;</span><span class="p">]</span>  <span class="c1"># extinction-corrected apparent magnitude</span>
 
-<div class="viewcode-block" id="LC.read"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.read">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="LC.read">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.read">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">fill_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">fill_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">fill_values</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)]</span>
         <span class="n">t</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">LC</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="nb">format</span><span class="p">,</span> <span class="n">fill_values</span><span class="o">=</span><span class="n">fill_values</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">t</span></div>
 
-<div class="viewcode-block" id="LC.write"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<div class="viewcode-block" id="LC.write">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.LC.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># Filter is not serializable, so produce a copy of the LC object with &#39;filter&#39; as a string</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="s1">&#39;filter&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="n">out</span><span class="o">.</span><span class="n">replace_column</span><span class="p">(</span><span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
-        <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+        <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="aux_axes"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.aux_axes">[docs]</a><span class="k">def</span> <span class="nf">aux_axes</span><span class="p">(</span><span class="n">xfunc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">yfunc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xfunc_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">yfunc_args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="aux_axes">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.aux_axes">[docs]</a>
+<span class="k">def</span> <span class="nf">aux_axes</span><span class="p">(</span><span class="n">xfunc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">yfunc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xfunc_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">yfunc_args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add auxiliary axes to a plot that are linear transformations of the existing axes</span>
 
@@ -779,7 +868,10 @@
     <span class="k">return</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span></div>
 
 
-<div class="viewcode-block" id="custom_legend"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.custom_legend">[docs]</a><span class="k">def</span> <span class="nf">custom_legend</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">handles</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">top_axis</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<div class="viewcode-block" id="custom_legend">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.custom_legend">[docs]</a>
+<span class="k">def</span> <span class="nf">custom_legend</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">handles</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">top_axis</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add a legend to the axes with options for ``loc=&#39;above&#39;``, ``loc=&#39;above left&#39;``, and ``loc=&#39;above right&#39;``</span>
 
@@ -818,12 +910,19 @@
     <span class="k">elif</span> <span class="n">loc</span> <span class="o">==</span> <span class="s1">&#39;above right&#39;</span><span class="p">:</span>
         <span class="n">loc</span> <span class="o">=</span> <span class="s1">&#39;lower right&#39;</span>
         <span class="n">bbox_to_anchor</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">top_of_axis</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;ncol&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">handles</span><span class="p">)</span> <span class="o">%</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;ncol&#39;</span><span class="p">]:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">handles</span><span class="p">)</span> <span class="o">//</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;ncol&#39;</span><span class="p">]</span>
+        <span class="n">handles</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">Line2D</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">))</span>
+        <span class="n">labels</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
     <span class="n">lgd</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="n">bbox_to_anchor</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>  <span class="c1"># adjusts the top of the axes to make room for &#39;above&#39; legends</span>
     <span class="k">return</span> <span class="n">lgd</span></div>
 
 
-<div class="viewcode-block" id="filter_legend"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.filter_legend">[docs]</a><span class="k">def</span> <span class="nf">filter_legend</span><span class="p">(</span><span class="n">filts</span><span class="p">,</span> <span class="n">offset_factor</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+
+<div class="viewcode-block" id="filter_legend">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.filter_legend">[docs]</a>
+<span class="k">def</span> <span class="nf">filter_legend</span><span class="p">(</span><span class="n">filts</span><span class="p">,</span> <span class="n">offset_factor</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates dummy artists and labels for the filter legend using the filter properties</span>
 
@@ -868,7 +967,10 @@
     <span class="k">return</span> <span class="n">lines</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">filts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="filtsetup"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.filtsetup">[docs]</a><span class="k">def</span> <span class="nf">filtsetup</span><span class="p">(</span><span class="n">filts</span><span class="p">):</span>
+
+<div class="viewcode-block" id="filtsetup">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.filtsetup">[docs]</a>
+<span class="k">def</span> <span class="nf">filtsetup</span><span class="p">(</span><span class="n">filts</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Arrange filters in a grid according to their system (columns) and offset (rows)</span>
 
@@ -915,7 +1017,10 @@
     <span class="k">return</span> <span class="n">lgnd</span></div>
 
 
-<div class="viewcode-block" id="flux2mag"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.flux2mag">[docs]</a><span class="k">def</span> <span class="nf">flux2mag</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">dflux</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span> <span class="n">zp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">nondet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="mf">3.</span><span class="p">):</span>
+
+<div class="viewcode-block" id="flux2mag">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.flux2mag">[docs]</a>
+<span class="k">def</span> <span class="nf">flux2mag</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">dflux</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span> <span class="n">zp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">nondet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="mf">3.</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert flux (and uncertainty) to magnitude (and uncertainty). Nondetections are converted to limiting magnitudes.</span>
 
@@ -949,7 +1054,10 @@
     <span class="k">return</span> <span class="n">mag</span><span class="p">,</span> <span class="n">dmag</span></div>
 
 
-<div class="viewcode-block" id="mag2flux"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.mag2flux">[docs]</a><span class="k">def</span> <span class="nf">mag2flux</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span> <span class="n">dmag</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">nondet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="mf">3.</span><span class="p">):</span>
+
+<div class="viewcode-block" id="mag2flux">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.mag2flux">[docs]</a>
+<span class="k">def</span> <span class="nf">mag2flux</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span> <span class="n">dmag</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">nondet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nondetSigmas</span><span class="o">=</span><span class="mf">3.</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert magnitude (and uncertainty) to flux (and uncertainty). Nondetections are assumed to imply zero flux.</span>
 
@@ -981,7 +1089,10 @@
     <span class="k">return</span> <span class="n">flux</span><span class="p">,</span> <span class="n">dflux</span></div>
 
 
-<div class="viewcode-block" id="binflux"><a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.binflux">[docs]</a><span class="k">def</span> <span class="nf">binflux</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">dflux</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">include_zero</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+<div class="viewcode-block" id="binflux">
+<a class="viewcode-back" href="../../api.html#lightcurve_fitting.lightcurve.binflux">[docs]</a>
+<span class="k">def</span> <span class="nf">binflux</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">dflux</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">include_zero</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Bin a light curve by averaging points within ``delta`` of each other in time</span>
 
@@ -1038,6 +1149,7 @@
     <span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bin_flux</span><span class="p">)</span>
     <span class="n">dflux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bin_dflux</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">time</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">dflux</span></div>
+
 </pre></div>
 
            </div>

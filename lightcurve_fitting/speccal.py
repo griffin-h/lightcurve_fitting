@@ -439,7 +439,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
         return fig
 
 
-def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False, instruments=None):
+def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False, instruments=None, date_fmt='iso'):
     """
     Prepares a TSV file for uploading spectra to WISeREP (see https://www.wiserep.org/content/wiserep-getting-started).
 
@@ -459,6 +459,8 @@ def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False, instruments=None):
         A dictionary of known instruments. The keys are the instrument from the header and the values are
         the wiserep instrument ids from https://www.wiserep.org/aux. By default the script builds this dictionary
         on the fly.
+    date_fmt: str, optional
+        Format for the Obs-date column in the output. WISeREP accepts 'iso' (default) or 'jd'.
     """
 
     # prepare the output directory
@@ -494,7 +496,7 @@ def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False, instruments=None):
         row = [
             ascii_file,
             specfile if specfile.endswith('.fits') else None,
-            date,
+            date if date is not None else Time(np.ma.array(np.ma.masked), format='mjd'),  # a masked time
             inst_id,
             hdr.get('exptime'),
             {'angstrom': 11, 'nm': 12, 'um': 13}.get(hdr.get('CUNIT1', hdr.get('XUNITS', 'angstrom')).lower()),
@@ -575,7 +577,7 @@ def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False, instruments=None):
         'Related-file2',
         'RF2 Comments'
     ], meta={'comments': ['TSV-type:\tspectra']})
-    t['Obs-date* [YYYY-MM-DD HH:MM:SS] / JD'].format = 'iso'
+    t['Obs-date* [YYYY-MM-DD HH:MM:SS] / JD'].format = date_fmt
     # use the lower-level interface to add the second line with the defaults
     writer = ascii.get_writer(ascii.Tab, fast_writer=False, comment='',
                               fill_values=[('None', 'NULL'), ('', 'NULL'), ('UNKNOWN', 'NULL')])

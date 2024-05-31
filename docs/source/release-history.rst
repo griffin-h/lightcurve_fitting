@@ -2,8 +2,8 @@
 Release History
 ===============
 
-Unreleased
-----------
+v0.10.0 (2024-05-31)
+--------------------
 This release includes an improved naming convention for the output column names of :func:`.calculate_bolometric`. Now all full bolometric luminosities have the suffix ``_bol`` and all quantities from the MCMC option have the suffix ``_mcmc``. Specifically, the columns that changed are: ``lum`` → ``L_bol``, ``dlum`` → ``dL_bol``, ``L_opt`` → ``L``, ``dtemp0`` → ``dtemp_mcmc0``, ``dtemp1`` → ``dtemp_mcmc1``, ``dradius0`` → ``dradius_mcmc0``, and ``dradius1`` → ``dradius_mcmc1``. The old names will continue to work for now, but please update your code!
 
 * Add full bolometric luminosity for MCMC option as an output column in :func:`.calculate_bolometric`

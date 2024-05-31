@@ -19,6 +19,7 @@ This release includes an improved naming convention for the output column names 
 * Plot x-errors in :meth:`.LC.plot` when available
 * Print warning messages when legends cannot be added
 * Avoid crash in :func:`.create_wiserep_tsv` when no observation date is identified and provide option for date format
+* Fix ``KeyError`` when using :class:`.CompanionShocking` models without DLT40 photometry
 
 v0.9.0 (2023-06-16)
 -------------------

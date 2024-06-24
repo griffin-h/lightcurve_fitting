@@ -430,7 +430,8 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
             plt.pause(0.1)
             ans = input('accept this scale? [Y/n] ')
         if not show or ans.lower() != 'n':
-            data_out = np.array([wl[good], flux[good] * corr[::-1]]).T
+            flux[good] *= corr[::-1]
+            data_out = np.array([wl, flux]).T
             path_in, filename_in = os.path.split(spec)
             filename_out = os.path.join(path_in, 'photcal_' + filename_in).replace('.fits', '.txt')
             np.savetxt(filename_out, data_out, fmt='%.1f %.2e')

@@ -5,6 +5,7 @@ Release History
 Unreleased
 ----------
 * Leave NaNs in spectra when calibrating to photometry
+* Better handling of unit conversions in plotting
 
 v0.10.0 (2024-05-31)
 --------------------

@@ -52,6 +52,8 @@ column_names = {
     'Phase (rest {unit.long_names[0]}s)': ['phase', 'Phase', 'PHASE'],
     'Flux $F_ν$ (W m$^{-2}$ Hz$^{-1}$)': ['flux', 'FLUXCAL'],
     'Flux Uncertainty': ['dflux', 'FLUXCALERR'],
+    'Flux $F_λ$ ({unit:latex_inline})': ['flam'],
+    'Flux $F_λ$ Uncertainty': ['dflam'],
     'Nondetection': ['nondet', 'Is_Limit', 'UL', 'l_omag', 'upper_limit', 'upperlimit'],
     'Absolute Magnitude': ['absmag'],
     'Luminosity $L_ν$ (W Hz$^{-1}$)': ['lum'],
@@ -187,6 +189,13 @@ class LC(Table):
         """
         return np.array([f.m0 for f in self['filter']])
 
+    @property
+    def wl_eff(self):
+        """
+        Returns a ``Quantity`` object of effective wavelengths for each filter in the ``'filter'`` column
+        """
+        return u.Quantity([f.wl_eff for f in self['filter']])
+
     def calcFlux(self, nondetSigmas=None, zp=None):
         """
         Calculate the ``'flux'`` and ``'dflux'`` columns from the ``'mag'`` and ``'dmag'`` columns
@@ -203,6 +212,29 @@ class LC(Table):
         if zp is None:
             zp = self.zp
         self['flux'], self['dflux'] = mag2flux(self['mag'], self['dmag'], zp, self.get('nondet', False), self.nondetSigmas)
+
+    def calcFlam(self, flux_units='W m-2 Hz-1', flam_units='erg s-1 cm-2 Å-1'):
+        """
+        Calculate the ``'flam'`` and ``'dflam'`` columns from the ``'flux'`` and ``'dflux'`` columns
+
+        Parameters
+        ----------
+        flux_units : str, astropy.units.Unit, optional
+            Units assumed for the input flux (:math:`F_\\nu`). Default: W m-2 Hz-1 (default from :meth:`.LC.calcFlux`)
+        flam_units : str, astropy.units.Unit, optional
+            Units for the output :math:`F_\\lambda`. Default: erg s-1 cm-2 Å-1
+        """
+        flux = u.Quantity(self['flux'], flux_units)
+        dflux = u.Quantity(self['dflux'], flux_units)
+        nondets = self.get('nondet', False)
+
+        # do the nondetections first to avoid the divide by 0 warning
+        flam = flux.to(flam_units, u.spectral_density(self.wl_eff))
+        dflam = dflux.to(flam_units, u.spectral_density(self.wl_eff))
+        dflam[~nondets] = dflux[~nondets] / flux[~nondets] * flam[~nondets]
+
+        self['flam'] = flam
+        self['dflam'] = dflam
 
     def bin(self, delta=0.3, groupby=None):
         """
@@ -476,7 +508,7 @@ class LC(Table):
             unit = None
         if xcol == 'filter':
             xcol = 'wl_eff'
-            self[xcol] = [f.wl_eff for f in self['filter']]
+            self[xcol] = self.wl_eff
         xchoices = ['phase', 'MJD']
         while xcol not in self.colnames:
             xchoices.remove(xcol)
@@ -624,6 +656,8 @@ class LC(Table):
                     axlabel = axlabel.format(unit=x.unit)
                 plt.xlabel(axlabel)
             elif ycol in keys:
+                if '{unit' in axlabel and self[ycol].unit is not None:
+                    axlabel = axlabel.format(unit=self[ycol].unit)
                 plt.ylabel(axlabel)
             elif marker in keys:
                 lgd_title = axlabel

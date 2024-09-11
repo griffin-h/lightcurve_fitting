@@ -7,6 +7,7 @@ Unreleased
 * Leave NaNs in spectra when calibrating to photometry
 * Better handling of unit conversions in plotting
 * Add the :meth:`.LC.calcFlam` method for convenience
+* Adds support for Python 3.12
 
 v0.10.0 (2024-05-31)
 --------------------

@@ -2,7 +2,10 @@ import numpy as np
 import astropy.constants as const
 import astropy.units as u
 from astropy.table import Table
-from pkg_resources import resource_filename
+try:
+    from importlib.resources import files
+except ImportError:
+    from importlib_resources import files
 from abc import ABCMeta, abstractmethod
 from scipy.interpolate import CubicSpline
 from .filters import filtdict
@@ -657,7 +660,7 @@ class ShockCooling4(Model):
         return np.minimum(t_07eV, t_tr / self.a) + t_exp  # Eq. A3
 
 
-sifto_filename = resource_filename('lightcurve_fitting', 'models/sifto.dat')
+sifto_filename = files('lightcurve_fitting') / 'models' / 'sifto.dat'
 sifto = Table.read(sifto_filename, format='ascii')[3:]  # the first three points are ~0
 M_chandra = u.def_unit('M_chandra', 1.4 * u.Msun, format={'latex': 'M_\\mathrm{Ch}'})
 

@@ -4,7 +4,10 @@ from astropy.table import Table
 import astropy.units as u
 import astropy.constants as const
 import os
-from pkg_resources import resource_filename
+try:
+    from importlib.resources import files
+except ImportError:
+    from importlib_resources import files
 from functools import total_ordering
 from extinction import fitzpatrick99
 
@@ -155,7 +158,7 @@ class Filter:
             self.m0 = 2.5 * np.log10(self.fnu)
             self.M0 = self.m0 + 90.19
         if filename:
-            self.filename = resource_filename('lightcurve_fitting', os.path.join('filters', filename))
+            self.filename = files('lightcurve_fitting') / 'filters' / filename
         else:
             self.filename = ''
         self.angstrom = angstrom

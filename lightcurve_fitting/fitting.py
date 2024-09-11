@@ -6,10 +6,6 @@ import corner
 from .models import UniformPrior, CompanionShocking, BaseCompanionShocking
 from .lightcurve import filter_legend, flux2mag
 from .filters import filtdict
-try:
-    from importlib.resources import files
-except ImportError:
-    from importlib_resources import files
 import warnings
 
 PRIOR_WARNING = 'The p_max/p_min keywords are deprecated. Use the priors keyword instead.'
@@ -236,7 +232,7 @@ def lightcurve_corner(lc, model, sampler_flatchain, model_kwargs=None,
         raise Exception(MODEL_KWARGS_WARNING)
     if ycol is None:
         ycol = model.output_quantity
-    plt.style.use(files('lightcurve_fitting') / 'serif.mplstyle')
+    plt.style.use('lightcurve_fitting.serif')
     if use_sigma and model.input_names[-1] != '\\sigma':
         model.input_names.append('\\sigma')
         model.units.append(u.dimensionless_unscaled)

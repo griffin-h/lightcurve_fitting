@@ -13,13 +13,9 @@ from scipy.stats import gaussian_kde
 import emcee
 import corner
 import os
-try:
-    from importlib.resources import files
-except ImportError:
-    from importlib_resources import files
 import warnings
 
-plt.style.use(files('lightcurve_fitting') / 'serif.mplstyle')
+plt.style.use('lightcurve_fitting.serif')
 
 DEPRECATED_BOLOMETRIC_COLNAMES = [  # (old, new)
     ('L_opt', 'L'),

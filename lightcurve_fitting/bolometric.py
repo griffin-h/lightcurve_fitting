@@ -627,8 +627,10 @@ def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1, xcol='MJD'):
     if colors is None:
         colors = []
         for col in t.colnames:
-            if col.split('-')[0] in filtdict and not (t.has_masked_values and t.mask[col].all()):
-                colors.append(col)
+            if '-' in col:
+                f1, f2 = col.split('-')
+                if f1 in filtdict and f2 in filtdict and not (t.has_masked_values and t.mask[col].all()):
+                    colors.append(col)
     fig = plt.figure()
     for c in colors:
         dcolor_colname = f'd({c})'

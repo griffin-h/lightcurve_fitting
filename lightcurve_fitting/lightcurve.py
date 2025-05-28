@@ -427,6 +427,7 @@ class LC(Table):
                 raise Exception('must run lc.findPeak() first')
             elif rdsp:
                 self.meta['refmjd'] = self.meta['peakdate']
+                warnings.warn('refmjd and explosion not in meta. Setting phase based on peakdate')
             elif self.meta.get('explosion') is not None:
                 self.meta['refmjd'] = self.meta['explosion']
             else:
@@ -435,6 +436,7 @@ class LC(Table):
                 else:
                     detections = self
                 self.meta['refmjd'] = np.min(detections['MJD'].data)
+                warnings.warn('refmjd and explosion not in meta. Setting phase based on first detection')
         self['phase'] = (self['MJD'].data - self.meta['refmjd']) / (1 + self.meta['redshift']) * u.day
         if 'dMJD' in self.colnames:
             self['dphase'] = self['dMJD'] / (1. + self.meta['redshift']) * u.day

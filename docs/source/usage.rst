@@ -48,12 +48,6 @@ The :attr:`LC.meta` attribute contains information needed to calculate absolute 
     lc.meta['host_ebv'] = 0.
     lc.meta['redshift'] = 0.002
 
-In the above example, the phase will be calculated based on the first detection. Alternately, the phase can be 
-calculated from an explosion or peak time by populating the :attr:`LC.meta` attribute with the following keys:
-* refmjd: the reference time in MJD
-* explosion: the explosion time in MJD
-* peaktime: the time of the light curve max in MJD. This can be populated manually or using :meth:`lightcurve.LC.findPeak` method
-
 The :class:`.LC` object has several methods for converting between the columns above,
 as well as a method for plotting the light curve in a single command:
 
@@ -62,6 +56,9 @@ as well as a method for plotting the light curve in a single command:
     lc.calcAbsMag()
     lc.calcPhase()
     lc.plot()
+
+In the above example, the phase will be calculated based on the first detection. Alternately, the zero point of the phase can be set by adding the `refmjd` key set equal to the desired zero point in the the :attr:`LC.meta` attribute.
+Alternately, the brightest point can be used for the phase zero point by first running the :meth:`lightcurve.LC.findPeak` method and then :meth:`lightcurve.LC.calcPhase` with `rspd=True`
 
 Filters
 -------

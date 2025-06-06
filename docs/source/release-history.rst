@@ -9,6 +9,7 @@ Unreleased
 * Add the :meth:`.LC.calcFlam` method for convenience
 * Fix bug in parsing color columns in :func:`.plot_color_curves`
 * Adds support for Python 3.12
+* Give a warning when `'refmjd'` is set automatically
 
 v0.10.0 (2024-05-31)
 --------------------

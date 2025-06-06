@@ -57,6 +57,9 @@ as well as a method for plotting the light curve in a single command:
     lc.calcPhase()
     lc.plot()
 
+In the above example, the phase will be calculated based on the first detection. Alternately, the zero point of the phase can be set by adding the `refmjd` key set equal to the desired zero point in the the :attr:`LC.meta` attribute.
+Alternately, the brightest point can be used for the phase zero point by first running the :meth:`lightcurve.LC.findPeak` method and then :meth:`lightcurve.LC.calcPhase` with `rdsp=True`
+
 Filters
 -------
 The :mod:`.filters` submodule defines a :class:`.Filter` object that stores information about the broadband filters: transmission function, photometric system, and styles for plotting.

@@ -436,7 +436,7 @@ class LC(Table):
                 else:
                     detections = self
                 self.meta['refmjd'] = np.min(detections['MJD'].data)
-                warnings.warn('refmjd not in meta. Setting phase to first detection')
+                warnings.warn('refmjd not in meta. Setting phase based on first detection')
         self['phase'] = (self['MJD'].data - self.meta['refmjd']) / (1 + self.meta['redshift']) * u.day
         if 'dMJD' in self.colnames:
             self['dphase'] = self['dMJD'] / (1. + self.meta['redshift']) * u.day

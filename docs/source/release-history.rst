@@ -10,6 +10,7 @@ Unreleased
 * Fix bug in parsing color columns in :func:`.plot_color_curves`
 * Adds support for Python 3.12
 * Give a warning when `'refmjd'` is set automatically
+* Correct typo in the docstring of :class:`.ShockCooling4` (:math:`M \to M_\mathrm{env}`)
 
 v0.10.0 (2024-05-31)
 --------------------

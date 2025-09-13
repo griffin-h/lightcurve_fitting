@@ -10,8 +10,11 @@ from abc import ABCMeta, abstractmethod
 from scipy.interpolate import CubicSpline
 from .filters import filtdict
 
-k_B = const.k_B.to("eV / kK").value
-c3 = (4. * np.pi * const.sigma_sb.to("erg s-1 Rsun-2 kK-4").value) ** -0.5 / 1000.  # Rsun --> kiloRsun
+light_speed = const.c.to_value(1e13 * u.cm / u.d)
+h = const.h.to_value("eV / THz")
+k_B = const.k_B.to_value("eV / kK")
+kRsun = (1e13 * u.cm).to_value(1000. * u.Rsun)  # 10^13 cm to kiloRsun
+c3 = (4. * np.pi * const.sigma_sb.to_value("erg s-1 Rsun-2 kK-4")) ** -0.5 / 1000.  # Rsun --> kiloRsun
 c4 = 1. / (4. * np.pi * u.Mpc.to(u.m) ** 2.)
 
 
@@ -656,6 +659,226 @@ class ShockCooling4(Model):
         t_07eV = self.t_07eV_0 * R ** 0.56 * v_s ** 0.16 * kappa ** -0.61 * f_rho_M ** -0.06  # Eq. A8
         t_tr = self.t_tr_0 * np.sqrt(kappa * M_env / v_s)  # Eq. A9
         return np.minimum(t_07eV, t_tr / self.a) + t_exp  # Eq. A3
+
+
+class ShockCooling5(ShockCooling4):
+    """
+    The shock cooling model of Morag, Sapir, & Waxman (https://doi.org/10.1093/mnras/stae374).
+
+    TODO: fill in equations
+
+    Parameters
+    ----------
+    lc : lightcurve_fitting.lightcurve.LC, optional
+        The light curve to which the model will be fit. Only used to get the redshift if `redshift` is not given.
+    redshift : float, optional
+        The redshift between blackbody source and the observed filters. Default: 0.
+
+    Attributes
+    ----------
+    z : float
+        The redshift between blackbody source and the observed filters
+    A : float
+        Coefficient on the luminosity suppression factor (Eq. A1)
+    a : float
+        Coefficient on the transparency timescale (Eq. A1)
+    alpha : float
+        Exponent on the transparency timescale (Eq. A1)
+    L_br_0 : float
+        Coefficient on the luminosity expression in erg/s (Eq. A6)
+    T_col_br_0 : float
+        Coefficient on the temperature expression in eV (Eq. A7)
+    t_min_0 : float
+        Coefficient on the minimum validity time in days (Eq. A3)
+    t_br_0 : float
+        Coefficient on the :math:`\\tilde{t}` timescale in days (Eq. A5)
+    t_07eV_0 : float
+        Coefficient on the time at which the ejecta reach 0.7 eV in days (Eq. A8)
+    t_tr_0 : float
+        Coefficient on the transparency timescale in days (Eq. A9)
+    TODO: fill in new parameter
+    """
+
+    def __init__(self, lc=None, redshift=0.):
+        super().__init__(lc, redshift=redshift)
+        self.t_min_0 = 0.00035  # 30 s in days
+        self.m = 5.
+
+    def evaluate(self, t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1.):
+        """
+        Evaluate this model at a range of times and filters
+
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days
+        f : lightcurve_fitting.filter.Filter, array-like
+            Filters for which to calculate the model
+        v_s : float, array-like
+            The shock speed in :math:`10^{8.5}` cm/s
+        M_env : float, array-like
+            The envelope mass in solar masses
+        f_rho_M : float, array-like
+            The product :math:`f_ρ M`, where ":math:`f_ρ` is a numerical factor of order unity that depends on the inner
+            envelope structure" and :math:`M` is the ejecta mass in solar masses
+        R : float, array-like
+            The progenitor radius in :math:`10^{13}` cm
+        t_exp : float, array-like, optional
+            The explosion epoch. Default: 0.
+        kappa : float, array-like, optional
+            The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g). Default: 1.
+
+        Returns
+        -------
+        y_fit : array-like
+            The filtered model light curves
+        """
+        T_K, R_bb = self.temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp, kappa)
+        L_425 = (R_bb / c3) ** 2. * T_K ** 4. / 10. ** 42.5
+        T_col_5 = T_K * k_B / 5.
+
+        def suppressed_blackbody(nu):
+            x = c1 * nu / T_K
+            eps_a = 0.0055 * x ** -1.664 * T_col_5 ** -1.0996
+
+            # Eq. A14
+            temp_suppression_eps = 1.63 * x ** 0.247
+            lum_eps = (8. / 3. ** 0.5 * x ** -0.155 * T_col_5 ** -0.1 / (eps_a ** -0.5 + 1.)
+                       * planck_fast(nu, temp_suppression_eps * T_K, temp_suppression_eps ** -2. * R_bb))
+            lum = (planck_fast(nu, 0.85 * T_K, R_bb) ** -self.m + lum_eps ** -self.m) ** -(1. / self.m)
+            blue = c1 * nu > 3.5 * T_K
+            temp_suppression = 1.11 * L_425 ** 0.03 * T_col_5 ** 0.18
+            lum[blue] = 1.2 * planck_fast(nu[blue], temp_suppression * T_K, temp_suppression ** -2. * R_bb)
+            return lum
+
+        return np.array([f.synthesize(suppressed_blackbody, z=self.z) for f in f])
+
+    def t_min(self, p, kappa=1.):
+        """
+        The minimum time at which the model is valid
+
+        # TODO: fill in equations
+        """
+        v_s, M_env, f_rho_M, R, t_exp, *_ = p
+        t_light_crossing = 3. * R / light_speed
+        t_bo = self.t_min_0 * R ** 2.16 * v_s ** -1.58 * (f_rho_M * kappa) ** -0.58
+        return np.minimum(t_light_crossing, t_bo) + t_exp  # Eq. A15
+
+
+class ShockCooling6(ShockCooling5):
+    """
+    The shock cooling model of Morag, Sapir, & Waxman (https://doi.org/10.1093/mnras/stae374).
+
+    # TODO: fill in equations
+
+    Parameters
+    ----------
+    lc : lightcurve_fitting.lightcurve.LC, optional
+        The light curve to which the model will be fit. Only used to get the redshift if `redshift` is not given.
+    redshift : float, optional
+        The redshift between blackbody source and the observed filters. Default: 0.
+
+    Attributes
+    ----------
+    z : float
+        The redshift between blackbody source and the observed filters
+    A : float
+        Coefficient on the luminosity suppression factor (Eq. A1)
+    a : float
+        Coefficient on the transparency timescale (Eq. A1)
+    alpha : float
+        Exponent on the transparency timescale (Eq. A1)
+    L_br_0 : float
+        Coefficient on the luminosity expression in erg/s (Eq. A6)
+    T_col_br_0 : float
+        Coefficient on the temperature expression in eV (Eq. A7)
+    t_min_0 : float
+        Coefficient on the minimum validity time in days (Eq. A3)
+    t_br_0 : float
+        Coefficient on the :math:`\\tilde{t}` timescale in days (Eq. A5)
+    t_07eV_0 : float
+        Coefficient on the time at which the ejecta reach 0.7 eV in days (Eq. A8)
+    t_tr_0 : float
+        Coefficient on the transparency timescale in days (Eq. A9)
+    TODO: fill in new parameters
+    """
+    def __init__(self, lc=None, redshift=0.):
+        super().__init__(lc, redshift=redshift)
+        self.r_col_nu_0 = 2.18  # in units of 10^13 cm
+        self.T_col_nu_0 = 5.47  # eV
+        self.kappa_ff_0 = 0.03 / 0.34  # in units of kappa_es
+
+    def evaluate(self, t_in, f, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1.):
+        """
+        Evaluate this model at a range of times and filters
+
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days
+        f : lightcurve_fitting.filter.Filter, array-like
+            Filters for which to calculate the model
+        v_s : float, array-like
+            The shock speed in :math:`10^{8.5}` cm/s
+        M_env : float, array-like
+            The envelope mass in solar masses
+        f_rho_M : float, array-like
+            The product :math:`f_ρ M`, where ":math:`f_ρ` is a numerical factor of order unity that depends on the inner
+            envelope structure" and :math:`M` is the ejecta mass in solar masses
+        R : float, array-like
+            The progenitor radius in :math:`10^{13}` cm
+        t_exp : float, array-like, optional
+            The explosion epoch. Default: 0.
+        kappa : float, array-like, optional
+            The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g). Default: 1.
+
+        Returns
+        -------
+        y_fit : array-like
+            The filtered model light curves
+        """
+        t_br = self.t_br_0 * R ** 1.26 * v_s ** -1.13 * (f_rho_M * kappa) ** -0.13  # Eq. A3
+        L_br = self.L_br_0 * R ** 0.78 * v_s ** 2.11 * f_rho_M ** 0.11 * kappa ** -0.89  # Eq. A4
+        T_col_br = self.T_col_br_0 * R ** -0.32 * v_s ** 0.58 ** f_rho_M ** 0.03 * kappa ** -0.22  # Eq. A5
+        t_tr = self.t_tr_0 * np.sqrt(kappa * M_env / v_s)  # Eq. A9
+
+        t = np.reshape(t_in, (-1, 1)) - t_exp
+        ttilde = t / t_br
+        L = L_br * (power(ttilde, -4. / 3.)
+                    + self.A * np.exp(-power(self.a * t / t_tr, self.alpha)) * power(ttilde, -0.17))  # Eq. A1
+        T_col = T_col_br * np.minimum(0.97 * power(ttilde, -1. / 3.), power(ttilde, -0.45))  # Eq. A2
+
+        T_K = np.squeeze(T_col) / k_B
+        R_bb = c3 * np.squeeze(L) ** 0.5 * power(T_K, -2.)
+        # end of MSW23; modifications below
+
+        # convert units
+        L_br_425 = L_br / 10. ** 42.5
+        T_col_5 = T_col / 5.
+
+        def suppressed_blackbody(nu):
+            nu_ev = nu * h
+
+            r_col_nu = R + self.r_col_nu_0 * L_br_425 ** 0.48 ** T_col_5 ** -1.97 * kappa ** -0.07 * ttilde ** 0.80 * nu_ev ** -0.08  # Eq. A10
+            T_col_nu = self.T_col_nu_0 * L_br_425 ** 0.05 * T_col_5 ** 0.92 ** kappa ** 0.22 * ttilde ** -0.42 * nu_ev ** 0.25  # Eq. A11
+            kappa_ff = self.kappa_ff_0 * L_br_425 ** -0.37 * T_col_5 ** 0.56 * kappa ** -0.47 * ttilde ** -0.19 * nu_ev ** -1.66  # Eq. A12
+
+            # convert units
+            r_col_nu_kRsun = r_col_nu * kRsun
+            T_col_nu_kK = T_col_nu / k_B
+
+            # Eq. A9
+            eps_nu = 1. / (1. + 1. / kappa_ff)
+            lum_eps = 4. / 3. ** 0.5 / (eps_nu ** -0.5 + 1.) * planck_fast(nu, T_col_nu_kK, r_col_nu_kRsun)
+
+            # Eq. A7
+            lum = (planck_fast(nu, 0.85 * T_K, 0.85 ** -2. * R_bb) ** -self.m + lum_eps ** -self.m) ** -(1. / self.m)
+            blue = nu_ev > 3.5 * T_col
+            temp_suppression = 0.85 * R ** 0.13 * power(t, -0.13)
+            lum[blue] = 1.2 * planck_fast(nu[blue], temp_suppression * T_K, temp_suppression ** -2. * R_bb)
+            return lum
+
+        return np.array([f.synthesize(suppressed_blackbody, z=self.z) for f in f])
 
 
 sifto_filename = files('lightcurve_fitting') / 'models' / 'sifto.dat'

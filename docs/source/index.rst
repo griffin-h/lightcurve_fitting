@@ -34,3 +34,4 @@ References
 .. [RW11] Rabinak & Waxman 2011, ApJ, 728, 63, doi:`10.1088/0004-637X/728/1/63 <https://doi.org/10.1088/0004-637X/728/1/63>`_
 .. [SW17] Sapir & Waxman 2017, ApJ, 838, 130, doi:`10.3847/1538-4357/aa64df <https://doi.org/10.3847/1538-4357/aa64df>`_
 .. [MSW23] Morag, Sapir, & Waxman 2023, MNRAS, 522, 2764, doi:`10.1093/mnras/stad899 <https://doi.org/10.1093/mnras/stad899>`_
+.. [MSW24] Morag, Sapir, & Waxman 2024, MNRAS, 528, 7137, doi:`10.1093/mnras/stae374 <https://doi.org/10.1093/mnras/stae374>`_

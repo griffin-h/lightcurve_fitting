@@ -4,6 +4,7 @@ Release History
 
 Unreleased
 ----------
+* Add :class:`.ShockCooling5` and :class:`.ShockCooling6` from [MSW24]_
 * Leave NaNs in spectra when calibrating to photometry
 * Better handling of unit conversions in plotting
 * Add the :meth:`.LC.calcFlam` method for convenience

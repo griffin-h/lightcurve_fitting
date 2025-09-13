@@ -166,6 +166,8 @@ The variations on these classes are as follows:
    This was used in my paper on SN 2021yja [H22b]_.
  * :class:`.ShockCooling4` is the updated shock cooling model of [MSW23]_.
    This was used in my paper on SN 2023ixf [H23b]_.
+ * :class:`.ShockCooling5` is the further updated more approximate shock cooling model from Equation 57/A14 of [MSW24]_.
+ * :class:`.ShockCooling6` is the further updated less approximate shock cooling model from Equation 56/A7 of [MSW24]_.
 
 **Note on the shock cooling models:**
 There are degeneracies between many of the physical parameters that make them difficult to fit independently.

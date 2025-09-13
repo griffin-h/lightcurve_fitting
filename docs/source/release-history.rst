@@ -12,7 +12,7 @@ Unreleased
 * Give a warning when `'refmjd'` is set automatically
 * Correct typos in :class:`.ShockCooling4`:
 
-  * :math:`M \to M_\mathrm{env}` in docstring
+  * :math:`M \to M_\mathrm{env}` and remove unused :math:`n` in docstring
   * missing kappa in :math:`t_\mathrm{br}` (only matters if you adjusted kappa)
   * wrong operation in :math:`t_\mathrm{tr}` (only affects maximum validity time in some cases)
 

@@ -534,8 +534,6 @@ class ShockCooling4(Model):
     ----------
     z : float
         The redshift between blackbody source and the observed filters
-    n : float
-        The polytropic index of the progenitor
     A : float
         Coefficient on the luminosity suppression factor (Eq. A1)
     a : float

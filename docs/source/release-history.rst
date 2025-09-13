@@ -10,7 +10,12 @@ Unreleased
 * Fix bug in parsing color columns in :func:`.plot_color_curves`
 * Adds support for Python 3.12
 * Give a warning when `'refmjd'` is set automatically
-* Correct typo in the docstring of :class:`.ShockCooling4` (:math:`M \to M_\mathrm{env}`)
+* Correct typos in :class:`.ShockCooling4`:
+
+  * :math:`M \to M_\mathrm{env}` in docstring
+  * missing kappa in :math:`t_\mathrm{br}` (only matters if you adjusted kappa)
+  * wrong operation in :math:`t_\mathrm{tr}` (only affects maximum validity time in some cases)
+
 
 v0.10.0 (2024-05-31)
 --------------------

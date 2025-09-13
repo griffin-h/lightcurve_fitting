@@ -584,7 +584,7 @@ class ShockCooling4(Model):
         self.t_tr_0 = 19.5  # d
 
     def temperature_radius(self, t_in, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1.):
-        t_br = self.t_br_0 * R ** 1.26 * v_s ** -1.13 * f_rho_M ** -0.13  # Eq. A5
+        t_br = self.t_br_0 * R ** 1.26 * v_s ** -1.13 * (f_rho_M * kappa) ** -0.13  # Eq. A5
         L_br = self.L_br_0 * R ** 0.78 * v_s ** 2.11 * f_rho_M ** 0.11 * kappa ** -0.89  # Eq. A6
         T_col_br = self.T_col_br_0 * R ** -0.32 * v_s ** 0.58 ** f_rho_M ** 0.03 * kappa ** -0.22  # Eq. A7
         t_tr = self.t_tr_0 * np.sqrt(kappa * M_env / v_s)  # Eq. A9
@@ -656,7 +656,7 @@ class ShockCooling4(Model):
         """
         v_s, M_env, f_rho_M, R, t_exp, *_ = p
         t_07eV = self.t_07eV_0 * R ** 0.56 * v_s ** 0.16 * kappa ** -0.61 * f_rho_M ** -0.06  # Eq. A8
-        t_tr = self.t_tr_0 ** np.sqrt(kappa * M_env / v_s)  # Eq. A9
+        t_tr = self.t_tr_0 * np.sqrt(kappa * M_env / v_s)  # Eq. A9
         return np.minimum(t_07eV, t_tr / self.a) + t_exp  # Eq. A3
 
 

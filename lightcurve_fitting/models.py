@@ -507,6 +507,112 @@ class ShockCooling3(BaseShockCooling):
         return super().t_max([p[0], p[1], p[2], p[3], p[6] if len(p) > 6 else 0.], kappa=kappa)
 
 
+class ShockCooling3a(BaseShockCooling):
+    """
+    The shock cooling model of Sapir & Waxman (https://doi.org/10.3847/1538-4357/aa64df).
+
+    This version of the model is written in terms of physical parameters :math:`v_s, f_ρ, M, R` using the approximations
+    for :math:`f_ρ` given in Section 4.1 and Figure 5, and includes distance :math:`d_L` and reddening :math:`E(B-V)`
+    as free parameters.
+    """
+    input_names = [
+        'v_\\mathrm{s*}',
+        'f_\\rho',
+        'M',
+        'R',
+        'd_L',
+        'E(B-V)',
+        't_0',
+    ]
+    units = [
+        10. ** 8.5 * u.cm / u.s,
+        u.dimensionless_unscaled,
+        u.Msun,
+        1e13 * u.cm,
+        u.Mpc,
+        u.mag,
+        u.d,
+    ]
+    output_quantity = 'flux'
+
+    def temperature_radius(self, t_in, v_s, f_rho, M, R, t_exp=0., kappa=1.):
+        """
+        Evaluate the color temperature and photospheric radius as a function of time for a set of parameters
+
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days
+        v_s : float, array-like
+            The shock speed in :math:`10^{8.5}` cm/s
+        f_rho : float, array-like
+            A numerical factor of order unity that depends on the inner envelope structure
+        M : float, array-like
+            The ejecta mass in solar masses
+        R : float, array-like
+            The progenitor radius in :math:`10^{13}` cm
+        t_exp : float, array-like
+            The explosion epoch
+        kappa : float, array-like
+            The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g)
+
+        Returns
+        -------
+        T_K : array-like
+            The model blackbody temperatures in units of kilokelvins
+        R_bb : array-like
+            The model blackbody radii in units of 1000 solar radii
+        """
+        f_rho_M = f_rho * M
+        if self.n == 1.5:
+            M_env = M / (1. + f_rho ** -2.)
+        elif self.n == 3.:
+            M_env = M / (1. + 0.08 / f_rho)
+        return super().temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp, kappa)
+
+    def evaluate(self, t_in, f, v_s, f_rho, M, R, dist, ebv=0., t_exp=0., kappa=1.):
+        """
+        Evaluate this model at a range of times and filters
+
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days
+        f : lightcurve_fitting.filter.Filter, array-like
+            Filters for which to calculate the model
+        v_s : float, array-like
+            The shock speed in :math:`10^{8.5}` cm/s
+        f_rho : float, array-like
+            A numerical factor of order unity that depends on the inner envelope structure
+        M : float, array-like
+            The ejecta mass in solar masses
+        R : float, array-like
+            The progenitor radius in :math:`10^{13}` cm
+        dist : float, array-like
+            The luminosity distance in Mpc
+        ebv : float, array-like, optional
+            The reddening :math:`E(B-V)` to apply to the blackbody spectrum before integration. Default: 0.
+        t_exp : float, array-like, optional
+            The explosion epoch. Default: 0.
+        kappa : float, array-like, optional
+            The ejecta opacity in units of the electron scattering opacity (0.34 cm^2/g). Default: 1.
+
+        Returns
+        -------
+        y_fit : array-like
+            The filtered model light curves
+        """
+        T_K, R_bb = self.temperature_radius(t_in, v_s, f_rho, M, R, t_exp, kappa)
+        lum = blackbody_to_filters(f, T_K, R_bb, self.z, ebv=ebv)
+        flux = c4 * lum / dist ** 2.
+        return flux
+
+    @staticmethod
+    def t_min(p, kappa=1.):
+        f_rho_M = p[1] * p[2]
+        return super().t_min([p[0], None, f_rho_M, p[3], p[6] if len(p) > 6 else 0.], kappa=kappa)
+
+
 class ShockCooling4(Model):
     """
     The shock cooling model of Morag, Sapir, & Waxman (https://doi.org/10.1093/mnras/stad899).

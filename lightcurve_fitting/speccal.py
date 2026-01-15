@@ -79,16 +79,16 @@ def readfitsspec(filename, header=False, ext=None):
     else:
         hdu = hdulist[ext]
     data = hdu.data
-    hdr = hdu.header
+    hdr = max(hdu.header, hdulist[0].header, key=len)  # use the primary header or the data header, whichever is longer
+    remove_duplicate_wcs(hdr)  # some problem with Gemini pipeline
+    if hdr.get('CUNIT1') in ['Angstroms', 'angstroms', 'deg', 'pixel']:
+        hdr['CUNIT1'] = 'Angstrom'  # WCS object needs recognizable units
     if isinstance(hdu, fits.BinTableHDU):
         wl = data['wavelength']
         flux = data['flux']
     else:
         data = np.moveaxis(data, np.arange(data.ndim), np.argsort(data.shape))  # put longest axis last
         flux = data.flatten()[:max(data.shape)]
-        remove_duplicate_wcs(hdr)  # some problem with Gemini pipeline
-        if hdr.get('CUNIT1') in ['Angstroms', 'angstroms', 'deg', 'pixel']:
-            hdr['CUNIT1'] = 'Angstrom'  # WCS object needs recognizable units
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
             wcs = WCS(removebadcards(hdr), naxis=1, relax=False, fix=False)
@@ -223,7 +223,7 @@ def readspec(f, verbose=False, return_header=False):
         If ``return_header=True``, metadata is returned as a FITS header or dictionary (for ASCII files)
     """
     ext = os.path.splitext(f)[1]
-    if ext == '.fits':
+    if ext == '.fits' or ext == '.fz':
         x, y, hdr = readfitsspec(f, header=True)
     elif ext == '.json':
         x, y, hdr = readOSCspec(f)

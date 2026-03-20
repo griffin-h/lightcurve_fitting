@@ -439,6 +439,15 @@ all_filters = [
     Filter('F1800W', 'C9', 0, 'JWST MIRI', filename='JWST_MIRI.F1800W.dat', angstrom=True, mec='k', italics=False),
     Filter('F2100W', 'C2', 0, 'JWST MIRI', filename='JWST_MIRI.F2100W.dat', angstrom=True, mec='k', italics=False),
     Filter('F2550W', 'C3', 0, 'JWST MIRI', filename='JWST_MIRI.F2550W.dat', angstrom=True, mec='k', italics=False),
+    Filter('F062', 'k', 0, 'Roman WFI', filename='Roman.F062.dat', mec='k', italics=False),
+    Filter('F087', 'k', 0, 'Roman WFI', filename='Roman.F087.dat', mec='k', italics=False),
+    Filter('F106', 'k', 0, 'Roman WFI', filename='Roman.F106.dat', mec='k', italics=False),
+    Filter('F129', 'k', 0, 'Roman WFI', filename='Roman.F129.dat', mec='k', italics=False),
+    Filter('F146', 'k', 0, 'Roman WFI', filename='Roman.F146.dat', mec='k', italics=False),
+    Filter('F158', 'k', 0, 'Roman WFI', filename='Roman.F158.dat', mec='k', italics=False),
+    Filter('F184', 'k', 0, 'Roman WFI', filename='Roman.F184.dat', mec='k', italics=False),
+    Filter('F213', 'k', 0, 'Roman WFI', filename='Roman.F213.dat', mec='k', italics=False),
+    
     # bolometric light curve calculation methods
     Filter('pseudobolometric, curve_fit', 'C0', italics=False),
     Filter('pseudobolometric, MCMC', 'C1', italics=False),

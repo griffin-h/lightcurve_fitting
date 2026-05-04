@@ -400,7 +400,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
                 continue
             flux_lc = np.interp(mjd, lc_filt['MJD'], lc_filt['flux'])
             trans_interp = np.interp(nu, filt.trans['freq'], filt.trans['T_norm_per_freq'])
-            flux_spec = np.trapz(Fnu * trans_interp, nu) / np.trapz(trans_interp, nu)
+            flux_spec = np.trapezoid(Fnu * trans_interp, nu) / np.trapezoid(trans_interp, nu)
             ratio = flux_lc / flux_spec
             if show:
                 ax2.axvspan(freq0, freq1, color=filt.color, alpha=0.2)

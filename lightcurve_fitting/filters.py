@@ -1,4 +1,8 @@
 import numpy as np
+try:
+    from numpy import trapezoid
+except ImportError:
+    from numpy import trapz as trapezoid
 import matplotlib.pyplot as plt
 from astropy.table import Table
 import astropy.units as u
@@ -191,8 +195,8 @@ class Filter:
             trans['T'] /= np.max(trans['T'])
             trans['freq'] = (const.c / trans['wl']).to(u.THz)
 
-            dwl = np.trapezoid(trans['T'].quantity, trans['wl'].quantity)
-            wl_eff = np.trapezoid(trans['T'].quantity * trans['wl'].quantity, trans['wl'].quantity) / dwl
+            dwl = trapezoid(trans['T'].quantity, trans['wl'].quantity)
+            wl_eff = trapezoid(trans['T'].quantity * trans['wl'].quantity, trans['wl'].quantity) / dwl
             wl0_guess = trans[trans['T'] > 0.5]['wl'].min()
             left = trans[(trans['wl'] <= wl0_guess) & (trans['T'] >= 0.1)]
             wl0 = np.interp(0.5, left['T'], left['wl'])
@@ -208,13 +212,13 @@ class Filter:
                 ax1.set_xlabel('Wavelength (nm)')
                 ax1.set_ylabel('Transmission')
 
-            dfreq = np.trapezoid(trans['T'].quantity, trans['freq'].quantity)
-            freq_eff = np.trapezoid(trans['T'].quantity * trans['freq'].quantity,
+            dfreq = trapezoid(trans['T'].quantity, trans['freq'].quantity)
+            freq_eff = trapezoid(trans['T'].quantity * trans['freq'].quantity,
                                 trans['freq'].quantity) / dfreq
             freq0 = np.interp(0.5, right['T'], right['freq'])
             freq1 = np.interp(0.5, left['T'], left['freq'])
             T_per_freq = trans['T'].quantity / trans['freq'].quantity
-            trans['T_norm_per_freq'] = (T_per_freq / np.trapezoid(T_per_freq, trans['freq'].quantity))
+            trans['T_norm_per_freq'] = (T_per_freq / trapezoid(T_per_freq, trans['freq'].quantity))
             if show:
                 plt.figure(2)
                 ax2 = plt.gca()
@@ -309,7 +313,7 @@ class Filter:
             Average spectral luminosity in the filter in watts per hertz
         """
         freq = self.trans['freq'].value * (1. + z)
-        return np.trapezoid(spectrum(freq, *args, **kwargs) * extinction_law(freq, ebv)
+        return trapezoid(spectrum(freq, *args, **kwargs) * extinction_law(freq, ebv)
                         * self.trans['T_norm_per_freq'].data, self.trans['freq'].data)
 
     def spectrum(self, freq, lum, z=0., ebv=0.):
@@ -339,8 +343,8 @@ class Filter:
         freq *= (1. + z)
         T_per_freq = self.trans['T'].value / self.trans['freq'].value
         T_interp = np.interp(freq, self.trans['freq'][::-1].value, T_per_freq[::-1], left=0., right=0.)
-        T_norm_per_freq = T_interp / np.trapezoid(T_interp, freq)
-        return np.trapezoid(lum * extinction_law(freq, ebv) * T_norm_per_freq, freq)
+        T_norm_per_freq = T_interp / trapezoid(T_interp, freq)
+        return trapezoid(lum * extinction_law(freq, ebv) * T_norm_per_freq, freq)
 
     def __str__(self):
         return self.name

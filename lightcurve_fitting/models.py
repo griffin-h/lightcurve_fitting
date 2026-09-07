@@ -658,6 +658,84 @@ class ShockCooling4(Model):
         return np.minimum(t_07eV, t_tr / self.a) + t_exp  # Eq. A3
 
 
+class ShockCooling5(ShockCooling4):
+    """
+    The shock cooling model of Morag, Sapir, & Waxman
+    (https://doi.org/10.1093/mnras/stad899).
+
+    This version inherits the luminosity prescription from ShockCooling4 and
+    includes distance :math:`d_L` and reddening :math:`E(B-V)` as free
+    parameters. It returns observed flux, following the implementation of
+    ShockCooling3.
+    """
+    input_names = [
+        'v_\\mathrm{s*}',
+        'M_\\mathrm{env}',
+        'f_\\rho M',
+        'R',
+        'd_L',
+        'E(B-V)',
+        't_0',
+    ]
+    units = [
+        10. ** 8.5 * u.cm / u.s,
+        u.Msun,
+        u.Msun,
+        1e13 * u.cm,
+        u.Mpc,
+        u.mag,
+        u.d,
+    ]
+    output_quantity = 'flux'
+
+    def evaluate(self, t_in, f, v_s, M_env, f_rho_M, R, dist, ebv=0., t_exp=0., kappa=1.):
+        """
+        Evaluate this model at a range of times and filters.
+
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days.
+        f : lightcurve_fitting.filter.Filter, array-like
+            Filters for which to calculate the model.
+        v_s : float, array-like
+            The shock speed in :math:`10^{8.5}` cm/s.
+        M_env : float, array-like
+            The envelope mass in solar masses.
+        f_rho_M : float, array-like
+            The product :math:`f_\\rho M`.
+        R : float, array-like
+            The progenitor radius in :math:`10^{13}` cm.
+        dist : float, array-like
+            The luminosity distance in Mpc.
+        ebv : float, array-like, optional
+            The reddening :math:`E(B-V)` to apply to the blackbody spectrum before integration. Default: 0.
+        t_exp : float, array-like, optional
+            The explosion epoch. Default: 0.
+        kappa : float, array-like, optional
+            The ejecta opacity in units of the electron scattering opacity. Default: 1.
+
+        Returns
+        -------
+        y_fit : array-like
+            The filtered model fluxes.
+        """
+        T_K, R_bb = self.temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp, kappa)
+        lum_blackbody = blackbody_to_filters(f, T_K, R_bb, self.z, ebv=ebv)
+        lum_suppressed = blackbody_to_filters(f, 0.74 * T_K, 0.74 ** -2. * R_bb, self.z, ebv=ebv)
+        lum = np.minimum(lum_blackbody, lum_suppressed)  # Eq. A4
+        flux = c4 * lum / dist ** 2.
+        return flux
+
+    def t_min(self, p, kappa=1.):
+        p4 = [p[0], p[1], p[2], p[3], p[6] if len(p) > 6 else 0.]
+        return super().t_min(p4, kappa=kappa)
+
+    def t_max(self, p, kappa=1.):
+        p4 = [p[0], p[1], p[2], p[3], p[6] if len(p) > 6 else 0.]
+        return super().t_max(p4, kappa=kappa)
+
+
 sifto_filename = files('lightcurve_fitting') / 'models' / 'sifto.dat'
 sifto = Table.read(sifto_filename, format='ascii')[3:]  # the first three points are ~0
 M_chandra = u.def_unit('M_chandra', 1.4 * u.Msun, format={'latex': 'M_\\mathrm{Ch}'})

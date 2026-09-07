@@ -18,6 +18,7 @@ Unreleased
   * missing kappa in :math:`t_\mathrm{br}` (only matters if you adjusted kappa)
   * wrong operation in :math:`t_\mathrm{tr}` (only affects maximum validity time in some cases)
 
+* Adds :class:`.ShockCooling5`, which allows for free distance and extinction parameters in :class:`.ShockCooling4`
 * Include new aliases for Swift filters: UVU, UVB, and UVV
 * Parse L filter as L-GOTO, instead of L-UKIRT
 * :meth:`.LC.where` creates a copy of cached marker assignments

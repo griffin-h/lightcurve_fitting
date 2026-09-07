@@ -166,6 +166,8 @@ The variations on these classes are as follows:
    This was used in my paper on SN 2021yja [H22b]_.
  * :class:`.ShockCooling4` is the updated shock cooling model of [MSW23]_.
    This was used in my paper on SN 2023ixf [H23b]_.
+ * :class:`.ShockCooling5` is the same as :class:`.ShockCooling4` but with :math:`d_L` and :math:`E(B-V)` as free parameters. (Therefore it fits the flux instead of the luminosity.)
+   This was first used for SN 2020bij [M26]_.
 
 **Note on the shock cooling models:**
 There are degeneracies between many of the physical parameters that make them difficult to fit independently.

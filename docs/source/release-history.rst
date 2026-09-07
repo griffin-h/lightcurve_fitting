@@ -19,6 +19,7 @@ Unreleased
 
 * Include new aliases for Swift filters: UVU, UVB, and UVV
 * Parse L filter as L-GOTO, instead of L-UKIRT
+* :meth:`.LC.where` creates a copy of cached marker assignments
 
 
 v0.10.0 (2024-05-31)

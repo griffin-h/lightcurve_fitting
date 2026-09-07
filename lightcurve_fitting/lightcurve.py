@@ -133,7 +133,7 @@ class LC(Table):
                     use1 = self[col] == val
             use &= use1
         selected = self[use]
-        selected.markers = self.markers
+        selected.markers = self.markers.copy()
         return selected
 
     def get(self, key, default=np.ma.masked):

@@ -357,7 +357,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
     subtract_percentile : float, optional
         Subtract flux corresponding to this percentile of the spectrum before calibration. Default: no subtraction
     max_extrapolate : float, optional
-        Assume constant flux in a filter for this many days after the last observed point. Default: 1 day.
+        Assume constant flux in a filter for this many days before/after the last observed point. Default: 1 day.
     show : bool, optional
         Plot the observed light curve and the uncalibrated and calibrated spectra, and ask whether to save the results
 
@@ -406,7 +406,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
                 print(filt, "and spectrum don't overlap")
                 continue  # filter and spectrum don't overlap
             lc_filt = lc.where(filter=filt, nondet=False)
-            if len(lc_filt) == 0 or mjd - np.max(lc_filt['MJD']) > max_extrapolate or mjd < np.min(lc_filt['MJD']):
+            if len(lc_filt) == 0 or mjd - np.max(lc_filt['MJD']) > max_extrapolate or np.min(lc_filt['MJD']) - mjd > max_extrapolate:
                 print(filt, "not observed before and after spectrum")
                 continue
             flux_lc = np.interp(mjd, lc_filt['MJD'], lc_filt['flux'])

@@ -66,6 +66,8 @@ def readfitsspec(filename, header=False, ext=None):
         Wavelengths, typically in ångströms
     flux : array-like
         Observed fluxes in erg / (s cm2 angstrom), if units are identifiable
+    flux_err : array-like
+        Uncertainties on the flux in erg / (s cm2 angstrom), if units are identifiable
     hdr : astropy.io.fits.header.Header, optional
         FITS header, returned if ``header=True``
     """
@@ -228,6 +230,8 @@ def readspec(f, verbose=False, return_header=False):
         Wavelengths, typically in ångströms
     y : array-like
         Fluxes in erg / (s cm2 angstrom), if units are identifiable
+    dy : array-like
+        Uncertainties on the fluxes in erg / (s cm2 angstrom), if units are identifiable
     date : astropy.time.Time
         Time at which the spectrum was observed, if identifiable (otherwise ``None``)
     telescope : str
@@ -518,7 +522,7 @@ def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False, instruments=None, 
         specfile = os.path.split(specpath)[-1]
         ascii_file = specfile.replace('.fits', '.txt').replace('.csv', '.txt')
         print()  # empty line between spectra
-        wl, flux, date, tel, inst, hdr = readspec(specpath, verbose=True, return_header=True)
+        wl, flux, flux_err, date, tel, inst, hdr = readspec(specpath, verbose=True, return_header=True)
         groups = input('https://www.wiserep.org/groups\ngroup IDs (comma sep.): ')
         if inst not in instruments:
             inst_id = input(f'https://www.wiserep.org/aux\nlook up instrument ID for {inst} (required): ')

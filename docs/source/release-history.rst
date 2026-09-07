@@ -4,6 +4,12 @@ Release History
 
 Unreleased
 ----------
+If you were using :func:`.readfitsspec` or :func:`.readspec` directly,
+the return signatures have changed to accommodate the scaling of flux uncertainties.
+Now the third return value will be flux uncertainty, when available, otherwise it will be ``None``.
+Thanks to Naveen Dukiya for this contribution.
+
+* Scale flux uncertainties, when available, when calibrating to photometry
 * Leave NaNs in spectra when calibrating to photometry
 * Better handling of unit conversions in plotting
 * Add the :meth:`.LC.calcFlam` method for convenience

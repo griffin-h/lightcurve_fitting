@@ -17,6 +17,8 @@ Unreleased
   * missing kappa in :math:`t_\mathrm{br}` (only matters if you adjusted kappa)
   * wrong operation in :math:`t_\mathrm{tr}` (only affects maximum validity time in some cases)
 
+* Include new aliases for Swift filters: UVU, UVB, and UVV
+
 
 v0.10.0 (2024-05-31)
 --------------------

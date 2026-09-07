@@ -278,7 +278,7 @@ def readspec(f, verbose=False, return_header=False):
         m_tns = re.search(
             '(19|20)[0-9][0-9]-(0[0-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])_([01][0-9]|2[0-4])-[0-5][0-9]-[0-5][0-9]',
             f)  # YYYY-MM-DD_HH:MM:SS
-        m2 = re.search('([12][90][0-9][0-9])-?(0[0-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])(\.[0-9]+)?', f)  # YYYYMMDD.FFF
+        m2 = re.search('([12][90][0-9][0-9])-?(0[0-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])_?(redblu_)?([01][0-9]|2[0-4])?([0-5][0-9])?([0-5][0-9])?(\.[0-9]+)?', f)  # YYYYMMDD.FFF
         m3 = re.search('[0-9][0-9][0-9]d', f)  # integer phase followed by 'd'
         m4 = re.search('[0-9][0-9][0-9][0-9][0-9](\.[0-9]+)?', f)  # MJD w/1 or more decimals
         if m1 is not None:
@@ -290,8 +290,13 @@ def readspec(f, verbose=False, return_header=False):
             date = Time(d + 'T' + t.replace('-', ':'))
         elif m2 is not None:
             groups = m2.groups()
-            date = Time('-'.join(groups[:3]))
-            if groups[3] is not None:
+            datestr = '-'.join(groups[:3])
+            if groups[4] is not None:
+                timestr = ':'.join(groups[4:7])
+                if groups[7] is not None:
+                    timestr += groups[7]
+            date = Time(datestr + 'T' + timestr)
+            if groups[4] is None and groups[7] is not None:
                 date += float(groups[-1]) * u.day
         elif m3 is not None:
             m = m3.group()
@@ -299,6 +304,8 @@ def readspec(f, verbose=False, return_header=False):
         elif m4 is not None:
             m = m4.group()
             date = Time(float(m), format='mjd')
+        elif m5 is not None:
+            m = m5.groups()
         else:
             date = None
 

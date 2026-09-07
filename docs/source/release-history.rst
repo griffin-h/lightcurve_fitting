@@ -22,6 +22,7 @@ Unreleased
 * Parse L filter as L-GOTO, instead of L-UKIRT
 * :meth:`.LC.where` creates a copy of cached marker assignments
 * Add `sifto_factors` argument to :class:`BaseCompanionShocking` to arbitrarily scale SiFTO model
+* Improve parsing of spectrum times from filename
 
 
 v0.10.0 (2024-05-31)

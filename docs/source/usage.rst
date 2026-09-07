@@ -57,6 +57,9 @@ as well as a method for plotting the light curve in a single command:
     lc.calcPhase()
     lc.plot()
 
+In the above example, the phase will be calculated based on the first detection. Alternately, the zero point of the phase can be set by adding the `refmjd` key set equal to the desired zero point in the the :attr:`LC.meta` attribute.
+Alternately, the brightest point can be used for the phase zero point by first running the :meth:`lightcurve.LC.findPeak` method and then :meth:`lightcurve.LC.calcPhase` with `rdsp=True`
+
 Filters
 -------
 The :mod:`.filters` submodule defines a :class:`.Filter` object that stores information about the broadband filters: transmission function, photometric system, and styles for plotting.
@@ -163,6 +166,8 @@ The variations on these classes are as follows:
    This was used in my paper on SN 2021yja [H22b]_.
  * :class:`.ShockCooling4` is the updated shock cooling model of [MSW23]_.
    This was used in my paper on SN 2023ixf [H23b]_.
+ * :class:`.ShockCooling5` is the same as :class:`.ShockCooling4` but with :math:`d_L` and :math:`E(B-V)` as free parameters. (Therefore it fits the flux instead of the luminosity.)
+   This was first used for SN 2020bij [M26]_.
 
 **Note on the shock cooling models:**
 There are degeneracies between many of the physical parameters that make them difficult to fit independently.

@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
 import numpy as np
+try:
+    from numpy import trapezoid
+except ImportError:
+    from numpy import trapz as trapezoid
 from .lightcurve import LC
 from astropy import constants as const, units as u
 from astropy.io import fits, ascii
@@ -79,7 +83,10 @@ def readfitsspec(filename, header=False, ext=None):
     else:
         hdu = hdulist[ext]
     data = hdu.data
-    hdr = hdu.header
+    hdr = max(hdu.header, hdulist[0].header, key=len)  # use the primary header or the data header, whichever is longer
+    remove_duplicate_wcs(hdr)  # some problem with Gemini pipeline
+    if hdr.get('CUNIT1') in ['Angstroms', 'angstroms', 'deg', 'pixel']:
+        hdr['CUNIT1'] = 'Angstrom'  # WCS object needs recognizable units
     if isinstance(hdu, fits.BinTableHDU):
         wl = data['wavelength']
         flux = data['flux']
@@ -88,19 +95,13 @@ def readfitsspec(filename, header=False, ext=None):
         else:
             flux_err = None
     else:
-        data = np.moveaxis(data, np.arange(data.ndim), np.argsort(data.shape))  # put longest axis last
-        if data.ndim == 3 and data.shape[0] == 1 and data.shape[1] ==4: # IRAF multispec
-            data = data[0]
-            flux = data[0]
-            flux_err = data[3]
+        if data.ndim == 3 and data.shape[:2] == (4, 1):  # IRAF multispec
+            flux = data[0, 0]
+            flux_err = data[3, 0]
         else:
+            data = np.moveaxis(data, np.arange(data.ndim), np.argsort(data.shape))  # put longest axis last
             flux = data.flatten()[:max(data.shape)]
             flux_err = None
-
-
-        remove_duplicate_wcs(hdr)  # some problem with Gemini pipeline
-        if hdr.get('CUNIT1') in ['Angstroms', 'angstroms', 'deg', 'pixel']:
-            hdr['CUNIT1'] = 'Angstrom'  # WCS object needs recognizable units
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
             wcs = WCS(removebadcards(hdr), naxis=1, relax=False, fix=False)
@@ -237,7 +238,7 @@ def readspec(f, verbose=False, return_header=False):
         If ``return_header=True``, metadata is returned as a FITS header or dictionary (for ASCII files)
     """
     ext = os.path.splitext(f)[1]
-    if ext == '.fits':
+    if ext == '.fits' or ext == '.fz':
         x, y, yerr, hdr = readfitsspec(f, header=True)
     elif ext == '.json':
         x, y, hdr = readOSCspec(f)
@@ -293,7 +294,7 @@ def readspec(f, verbose=False, return_header=False):
         m_tns = re.search(
             '(19|20)[0-9][0-9]-(0[0-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])_([01][0-9]|2[0-4])-[0-5][0-9]-[0-5][0-9]',
             f)  # YYYY-MM-DD_HH:MM:SS
-        m2 = re.search('([12][90][0-9][0-9])-?(0[0-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])(\.[0-9]+)?', f)  # YYYYMMDD.FFF
+        m2 = re.search('([12][90][0-9][0-9])-?(0[0-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])_?(redblu_)?([01][0-9]|2[0-4])?([0-5][0-9])?([0-5][0-9])?(\.[0-9]+)?', f)  # YYYYMMDD.FFF
         m3 = re.search('[0-9][0-9][0-9]d', f)  # integer phase followed by 'd'
         m4 = re.search('[0-9][0-9][0-9][0-9][0-9](\.[0-9]+)?', f)  # MJD w/1 or more decimals
         if m1 is not None:
@@ -305,8 +306,13 @@ def readspec(f, verbose=False, return_header=False):
             date = Time(d + 'T' + t.replace('-', ':'))
         elif m2 is not None:
             groups = m2.groups()
-            date = Time('-'.join(groups[:3]))
-            if groups[3] is not None:
+            datestr = '-'.join(groups[:3])
+            if groups[4] is not None:
+                timestr = ':'.join(groups[4:7])
+                if groups[7] is not None:
+                    timestr += groups[7]
+            date = Time(datestr + 'T' + timestr)
+            if groups[4] is None and groups[7] is not None:
                 date += float(groups[-1]) * u.day
         elif m3 is not None:
             m = m3.group()
@@ -314,6 +320,8 @@ def readspec(f, verbose=False, return_header=False):
         elif m4 is not None:
             m = m4.group()
             date = Time(float(m), format='mjd')
+        elif m5 is not None:
+            m = m5.groups()
         else:
             date = None
 
@@ -365,7 +373,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
     subtract_percentile : float, optional
         Subtract flux corresponding to this percentile of the spectrum before calibration. Default: no subtraction
     max_extrapolate : float, optional
-        Assume constant flux in a filter for this many days after the last observed point. Default: 1 day.
+        Assume constant flux in a filter for this many days before/after the last observed point. Default: 1 day.
     show : bool, optional
         Plot the observed light curve and the uncalibrated and calibrated spectra, and ask whether to save the results
 
@@ -414,12 +422,12 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
                 print(filt, "and spectrum don't overlap")
                 continue  # filter and spectrum don't overlap
             lc_filt = lc.where(filter=filt, nondet=False)
-            if len(lc_filt) == 0 or mjd - np.max(lc_filt['MJD']) > max_extrapolate or mjd < np.min(lc_filt['MJD']):
+            if len(lc_filt) == 0 or mjd - np.max(lc_filt['MJD']) > max_extrapolate or np.min(lc_filt['MJD']) - mjd > max_extrapolate:
                 print(filt, "not observed before and after spectrum")
                 continue
             flux_lc = np.interp(mjd, lc_filt['MJD'], lc_filt['flux'])
             trans_interp = np.interp(nu, filt.trans['freq'], filt.trans['T_norm_per_freq'])
-            flux_spec = np.trapz(Fnu * trans_interp, nu) / np.trapz(trans_interp, nu)
+            flux_spec = trapezoid(Fnu * trans_interp, nu) / trapezoid(trans_interp, nu)
             ratio = flux_lc / flux_spec
             if show:
                 ax2.axvspan(freq0, freq1, color=filt.color, alpha=0.2)
@@ -451,11 +459,13 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
         if not show or ans.lower() != 'n':
             path_in, filename_in = os.path.split(spec)
             filename_out = os.path.join(path_in, 'photcal_' + filename_in).replace('.fits', '.txt')
+            flux[good] *= corr[::-1]
             if flux_err is not None:
-                data_out = np.array([wl[good], flux[good] * corr[::-1], flux_err[good] * corr[::-1]]).T
+                flux_err[good] *= corr[::-1]
+                data_out = np.array([wl, flux, flux_err]).T
                 np.savetxt(filename_out, data_out, fmt='%.1f %.2e %.2e')
             else:
-                data_out = np.array([wl[good], flux[good] * corr[::-1]]).T
+                data_out = np.array([wl, flux]).T
                 np.savetxt(filename_out, data_out, fmt='%.1f %.2e')
             print(filename_out)
     if show:

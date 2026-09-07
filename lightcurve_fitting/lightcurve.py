@@ -3,12 +3,13 @@ import matplotlib.pyplot as plt
 from matplotlib.path import Path
 from astropy.table import Table, vstack, MaskedColumn
 from astropy.cosmology import Planck18
+from astropy import units as u
 from .filters import filtdict
 import itertools
 from matplotlib.markers import MarkerStyle
 from matplotlib.patches import Patch
 from matplotlib.colors import is_color_like
-from functools import partial
+import warnings
 try:
     from config import markers
 except ModuleNotFoundError:
@@ -32,7 +33,7 @@ class Arrow(Path):
 
 
 arrow = Arrow(0.2, 0.3)
-othermarkers = ('o', *MarkerStyle.filled_markers[2:])
+othermarkers = tuple(m for m in MarkerStyle.filled_markers if m not in ['.', 'v'])
 itermarkers = itertools.cycle(othermarkers)
 itercolors = itertools.cycle(plt.rcParams['axes.prop_cycle'].by_key()['color'])
 
@@ -48,14 +49,16 @@ column_names = {
     ],
     'MJD': ['MJD', 'mjd'],
     'JD': ['JD', 'jd'],
-    'Phase (rest days)': ['phase', 'Phase', 'PHASE'],
+    'Phase (rest {unit.long_names[0]}s)': ['phase', 'Phase', 'PHASE'],
     'Flux $F_ν$ (W m$^{-2}$ Hz$^{-1}$)': ['flux', 'FLUXCAL'],
-    'Flux Uncertainty': ['dflux', 'FLUXCALERR'],
+    'Flux Uncertainty': ['dflux', 'FLUXCALERR', 'fluxerr'],
+    'Flux $F_λ$ ({unit:latex_inline})': ['flam'],
+    'Flux $F_λ$ Uncertainty': ['dflam'],
     'Nondetection': ['nondet', 'Is_Limit', 'UL', 'l_omag', 'upper_limit', 'upperlimit'],
     'Absolute Magnitude': ['absmag'],
     'Luminosity $L_ν$ (W Hz$^{-1}$)': ['lum'],
     'Luminosity Uncertainty': ['dlum'],
-    'Effective Wavelength (nm)': ['wl_eff'],  # calculated from filters; does not need to be in usage.rst
+    'Effective Wavelength ({unit:unicode})': ['wl_eff'],  # calculated from filters; does not need to be in usage.rst
 }
 
 
@@ -130,7 +133,7 @@ class LC(Table):
                     use1 = self[col] == val
             use &= use1
         selected = self[use]
-        selected.markers = self.markers
+        selected.markers = self.markers.copy()
         return selected
 
     def get(self, key, default=np.ma.masked):
@@ -166,6 +169,9 @@ class LC(Table):
         """
         filters = np.array([filtdict['0'] if np.ma.is_masked(f) else filtdict.get(str(f), filtdict['?'])
                             for f in self['filter']])
+        unknown_filters = (filters == filtdict['?']) & (self['filter'] != 'unknown')
+        if unknown_filters.any():
+            print('unknown filters:', np.unique(self['filter'][unknown_filters]))
         is_swift = np.zeros(len(self), bool)
         if 'telescope' in self.colnames:
             is_swift |= self['telescope'] == 'Swift'
@@ -186,6 +192,13 @@ class LC(Table):
         """
         return np.array([f.m0 for f in self['filter']])
 
+    @property
+    def wl_eff(self):
+        """
+        Returns a ``Quantity`` object of effective wavelengths for each filter in the ``'filter'`` column
+        """
+        return u.Quantity([f.wl_eff for f in self['filter']])
+
     def calcFlux(self, nondetSigmas=None, zp=None):
         """
         Calculate the ``'flux'`` and ``'dflux'`` columns from the ``'mag'`` and ``'dmag'`` columns
@@ -202,6 +215,29 @@ class LC(Table):
         if zp is None:
             zp = self.zp
         self['flux'], self['dflux'] = mag2flux(self['mag'], self['dmag'], zp, self.get('nondet', False), self.nondetSigmas)
+
+    def calcFlam(self, flux_units='W m-2 Hz-1', flam_units='erg s-1 cm-2 Å-1'):
+        """
+        Calculate the ``'flam'`` and ``'dflam'`` columns from the ``'flux'`` and ``'dflux'`` columns
+
+        Parameters
+        ----------
+        flux_units : str, astropy.units.Unit, optional
+            Units assumed for the input flux (:math:`F_\\nu`). Default: W m-2 Hz-1 (default from :meth:`.LC.calcFlux`)
+        flam_units : str, astropy.units.Unit, optional
+            Units for the output :math:`F_\\lambda`. Default: erg s-1 cm-2 Å-1
+        """
+        flux = u.Quantity(self['flux'], flux_units)
+        dflux = u.Quantity(self['dflux'], flux_units)
+        nondets = self.get('nondet', False)
+
+        # do the nondetections first to avoid the divide by 0 warning
+        flam = flux.to(flam_units, u.spectral_density(self.wl_eff))
+        dflam = dflux.to(flam_units, u.spectral_density(self.wl_eff))
+        dflam[~nondets] = dflux[~nondets] / flux[~nondets] * flam[~nondets]
+
+        self['flam'] = flam
+        self['dflam'] = dflam
 
     def bin(self, delta=0.3, groupby=None):
         """
@@ -378,7 +414,7 @@ class LC(Table):
         else:
             print(f'no data match these criteria: {criteria}')
 
-    def calcPhase(self, rdsp=False, hours=False):
+    def calcPhase(self, rdsp=False):
         """
         Calculate the rest-frame ``'phase'`` column from ``'MJD'``, ``.meta['refmjd']``, and ``.meta['redshift']``
 
@@ -394,6 +430,7 @@ class LC(Table):
                 raise Exception('must run lc.findPeak() first')
             elif rdsp:
                 self.meta['refmjd'] = self.meta['peakdate']
+                warnings.warn('refmjd not in meta. Setting phase based on brightest detection')
             elif self.meta.get('explosion') is not None:
                 self.meta['refmjd'] = self.meta['explosion']
             else:
@@ -402,19 +439,14 @@ class LC(Table):
                 else:
                     detections = self
                 self.meta['refmjd'] = np.min(detections['MJD'].data)
-        self['phase'] = (self['MJD'].data - self.meta['refmjd']) / (1 + self.meta['redshift'])
+                warnings.warn('refmjd not in meta. Setting phase based on first detection')
+        self['phase'] = (self['MJD'].data - self.meta['refmjd']) / (1 + self.meta['redshift']) * u.day
         if 'dMJD' in self.colnames:
-            self['dphase'] = self['dMJD'] / (1. + self.meta['redshift'])
+            self['dphase'] = self['dMJD'] / (1. + self.meta['redshift']) * u.day
         if 'dMJD0' in self.colnames:
-            self['dphase0'] = self['dMJD0'] / (1. + self.meta['redshift'])
+            self['dphase0'] = self['dMJD0'] / (1. + self.meta['redshift']) * u.day
         if 'dMJD1' in self.colnames:
-            self['dphase1'] = self['dMJD1'] / (1. + self.meta['redshift'])
-        if hours:
-            self['phase'] *= 24.
-            if 'dphase0' in self.colnames:
-                self['dphase0'] *= 24.
-            if 'dphase1' in self.colnames:
-                self['dphase1'] *= 24.
+            self['dphase1'] = self['dMJD1'] / (1. + self.meta['redshift']) * u.day
 
     def plot(self, xcol='phase', ycol='absmag', offset_factor=1., color='filter', marker=None, use_lines=False,
              normalize=False, fillmark=True, mjd_axis=True, appmag_axis=True, loc_mark=None, loc_filt=None, ncol_mark=1,
@@ -458,7 +490,7 @@ class LC(Table):
         tight_layout : bool, optional
             Adjust the figure margins to look beautiful. Default: True.
         phase_hours : bool, optional
-            Plot the phase in units of rest-frame hours instead of rest-frame days. Default: False.
+            DEPRECATED: Use ``xcol='phase:hour'`` instead.
         return_axes : bool, optional
             Return the newly created axes if ``mjd_axis=True`` or ``appmag_axis=True``. Default: False.
         kwargs
@@ -472,19 +504,32 @@ class LC(Table):
         right : matplotlib.pyplot.Axes, optional
             The right y-axis, if ``appmag_axis=True`` and ``return_axes=True``. Otherwise, None.
         """
-        if xcol.startswith('filter'):
-            unit = xcol.split(':')[-1] if ':' in xcol else None
+        if ':' in xcol:
+            xcol, unit = xcol.split(':')
+        elif phase_hours:
+            warnings.warn('The phase_hours argument is deprecated. Use xcol="phase:hour" instead.')
+            unit = 'hour'
+        else:
+            unit = None
+        if xcol == 'filter':
             xcol = 'wl_eff'
-            self[xcol] = [f.wl_eff.to(unit) if unit else f.wl_eff for f in self['filter']]
+            self[xcol] = self.wl_eff
         xchoices = ['phase', 'MJD']
-        while xcol not in self.keys():
+        while xcol not in self.colnames:
             xchoices.remove(xcol)
             if xchoices:
                 xcol = xchoices[0]
+                unit = None
             else:
                 raise Exception('no columns found for x-axis')
+        dxcol = 'd' + xcol
+        if unit is not None:
+            if self[xcol].unit is not None:
+                self[xcol].convert_unit_to(unit)
+            if dxcol in self.colnames and self[dxcol].unit is not None:
+                self[dxcol].convert_unit_to(unit)
         ychoices = ['absmag', 'mag']
-        while ycol not in self.keys():
+        while ycol not in self.colnames:
             ychoices.remove(ycol)
             if ychoices:
                 ycol = ychoices[0]
@@ -564,9 +609,9 @@ class LC(Table):
                 yerr = g['d' + ycol]
                 if yerr.ndim == 2:
                     yerr = yerr.T
-            x = g[xcol].data
-            if 'd' + xcol in g.colnames:
-                xerr = g['d' + xcol]
+            x = g[xcol]
+            if dxcol in g.colnames:
+                xerr = g[dxcol]
                 if xerr.ndim == 2:
                     xerr = xerr.T
             else:
@@ -612,10 +657,12 @@ class LC(Table):
         lgd_title = None
         for axlabel, keys in column_names.items():
             if xcol in keys:
-                if xcol == 'phase' and phase_hours:
-                    axlabel = axlabel.replace('days', 'hours')
+                if '{unit' in axlabel and x.unit is not None:
+                    axlabel = axlabel.format(unit=x.unit)
                 plt.xlabel(axlabel)
             elif ycol in keys:
+                if '{unit' in axlabel and self[ycol].unit is not None:
+                    axlabel = axlabel.format(unit=self[ycol].unit)
                 plt.ylabel(axlabel)
             elif marker in keys:
                 lgd_title = axlabel
@@ -625,8 +672,7 @@ class LC(Table):
         appmag_axis = appmag_axis and ycol == 'absmag' and 'dm' in self.meta
         axes = [plt.gca()]
         if mjd_axis or appmag_axis:
-            xfunc = partial(self._phase2mjd, hours=phase_hours)
-            top, right = aux_axes(xfunc if mjd_axis else None, self._abs2app if appmag_axis else None)
+            top, right = aux_axes(self._phase2mjd if mjd_axis else None, self._abs2app if appmag_axis else None)
             if mjd_axis:
                 top.xaxis.get_major_formatter().set_useOffset(False)
                 top.set_xlabel('MJD')
@@ -667,8 +713,10 @@ class LC(Table):
         if return_axes and (mjd_axis or appmag_axis):
             return top, right
 
-    def _phase2mjd(self, phase, hours=False):
-        return phase * (1. + self.meta['redshift']) / (24. if hours else 1.) + self.meta['refmjd']
+    def _phase2mjd(self, phase):
+        if self['phase'].unit is not None:
+            phase = (phase * self['phase'].unit).to_value(u.d)
+        return phase * (1. + self.meta['redshift']) + self.meta['refmjd']
 
     def _abs2app(self, absmag):
         return absmag + self.meta['dm']  # extinction-corrected apparent magnitude

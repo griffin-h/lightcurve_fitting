@@ -2,7 +2,10 @@ import numpy as np
 import astropy.constants as const
 import astropy.units as u
 from astropy.table import Table
-from pkg_resources import resource_filename
+try:
+    from importlib.resources import files
+except ImportError:
+    from importlib_resources import files
 from abc import ABCMeta, abstractmethod
 from scipy.interpolate import CubicSpline
 from .filters import filtdict
@@ -518,7 +521,7 @@ class ShockCooling4(Model):
 
     :math:`T_\\mathrm{col,br} = (8.19\\,\\mathrm{eV}) R^{-0.32} v_\\mathrm{s*}^{0.58} (f_\\rho M)^{0.03} \\kappa^{-0.22}` (Eq. A7)
 
-    :math:`t_\\mathrm{tr} = (19.5\\,\\mathrm{d}) \\sqrt{\\frac{\\kappa M}{v_\\mathrm{s*}}}` (Eq. A9)
+    :math:`t_\\mathrm{tr} = (19.5\\,\\mathrm{d}) \\sqrt{\\frac{\\kappa M_\\mathrm{env}}{v_\\mathrm{s*}}}` (Eq. A9)
 
     Parameters
     ----------
@@ -531,8 +534,6 @@ class ShockCooling4(Model):
     ----------
     z : float
         The redshift between blackbody source and the observed filters
-    n : float
-        The polytropic index of the progenitor
     A : float
         Coefficient on the luminosity suppression factor (Eq. A1)
     a : float
@@ -581,7 +582,7 @@ class ShockCooling4(Model):
         self.t_tr_0 = 19.5  # d
 
     def temperature_radius(self, t_in, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1.):
-        t_br = self.t_br_0 * R ** 1.26 * v_s ** -1.13 * f_rho_M ** -0.13  # Eq. A5
+        t_br = self.t_br_0 * R ** 1.26 * v_s ** -1.13 * (f_rho_M * kappa) ** -0.13  # Eq. A5
         L_br = self.L_br_0 * R ** 0.78 * v_s ** 2.11 * f_rho_M ** 0.11 * kappa ** -0.89  # Eq. A6
         T_col_br = self.T_col_br_0 * R ** -0.32 * v_s ** 0.58 ** f_rho_M ** 0.03 * kappa ** -0.22  # Eq. A7
         t_tr = self.t_tr_0 * np.sqrt(kappa * M_env / v_s)  # Eq. A9
@@ -653,11 +654,89 @@ class ShockCooling4(Model):
         """
         v_s, M_env, f_rho_M, R, t_exp, *_ = p
         t_07eV = self.t_07eV_0 * R ** 0.56 * v_s ** 0.16 * kappa ** -0.61 * f_rho_M ** -0.06  # Eq. A8
-        t_tr = self.t_tr_0 ** np.sqrt(kappa * M_env / v_s)  # Eq. A9
+        t_tr = self.t_tr_0 * np.sqrt(kappa * M_env / v_s)  # Eq. A9
         return np.minimum(t_07eV, t_tr / self.a) + t_exp  # Eq. A3
 
 
-sifto_filename = resource_filename('lightcurve_fitting', 'models/sifto.dat')
+class ShockCooling5(ShockCooling4):
+    """
+    The shock cooling model of Morag, Sapir, & Waxman
+    (https://doi.org/10.1093/mnras/stad899).
+
+    This version inherits the luminosity prescription from ShockCooling4 and
+    includes distance :math:`d_L` and reddening :math:`E(B-V)` as free
+    parameters. It returns observed flux, following the implementation of
+    ShockCooling3.
+    """
+    input_names = [
+        'v_\\mathrm{s*}',
+        'M_\\mathrm{env}',
+        'f_\\rho M',
+        'R',
+        'd_L',
+        'E(B-V)',
+        't_0',
+    ]
+    units = [
+        10. ** 8.5 * u.cm / u.s,
+        u.Msun,
+        u.Msun,
+        1e13 * u.cm,
+        u.Mpc,
+        u.mag,
+        u.d,
+    ]
+    output_quantity = 'flux'
+
+    def evaluate(self, t_in, f, v_s, M_env, f_rho_M, R, dist, ebv=0., t_exp=0., kappa=1.):
+        """
+        Evaluate this model at a range of times and filters.
+
+        Parameters
+        ----------
+        t_in : float, array-like
+            Time in days.
+        f : lightcurve_fitting.filter.Filter, array-like
+            Filters for which to calculate the model.
+        v_s : float, array-like
+            The shock speed in :math:`10^{8.5}` cm/s.
+        M_env : float, array-like
+            The envelope mass in solar masses.
+        f_rho_M : float, array-like
+            The product :math:`f_\\rho M`.
+        R : float, array-like
+            The progenitor radius in :math:`10^{13}` cm.
+        dist : float, array-like
+            The luminosity distance in Mpc.
+        ebv : float, array-like, optional
+            The reddening :math:`E(B-V)` to apply to the blackbody spectrum before integration. Default: 0.
+        t_exp : float, array-like, optional
+            The explosion epoch. Default: 0.
+        kappa : float, array-like, optional
+            The ejecta opacity in units of the electron scattering opacity. Default: 1.
+
+        Returns
+        -------
+        y_fit : array-like
+            The filtered model fluxes.
+        """
+        T_K, R_bb = self.temperature_radius(t_in, v_s, M_env, f_rho_M, R, t_exp, kappa)
+        lum_blackbody = blackbody_to_filters(f, T_K, R_bb, self.z, ebv=ebv)
+        lum_suppressed = blackbody_to_filters(f, 0.74 * T_K, 0.74 ** -2. * R_bb, self.z, ebv=ebv)
+        lum = np.minimum(lum_blackbody, lum_suppressed)  # Eq. A4
+        flux = c4 * lum / dist ** 2.
+        return flux
+
+    def t_min(self, p, kappa=1.):
+        p4 = [p[0], p[1], p[2], p[3], p[6] if len(p) > 6 else 0.]
+        return super().t_min(p4, kappa=kappa)
+
+    def t_max(self, p, kappa=1.):
+        p4 = [p[0], p[1], p[2], p[3], p[6] if len(p) > 6 else 0.]
+        return super().t_max(p4, kappa=kappa)
+
+
+sifto_filename = files('lightcurve_fitting') / 'models' / 'sifto.dat'
 sifto = Table.read(sifto_filename, format='ascii')[3:]  # the first three points are ~0
 M_chandra = u.def_unit('M_chandra', 1.4 * u.Msun, format={'latex': 'M_\\mathrm{Ch}'})
 
@@ -689,7 +768,7 @@ class BaseCompanionShocking(Model):
         A copy of the SiFTO model scaled to match the observed peak luminosity in each filter
 
     """
-    def __init__(self, lc, redshift=0.):
+    def __init__(self, lc, redshift=0., sifto_factors={}):
         super().__init__(lc, redshift=redshift)
 
         # make sure input light curve has luminosities
@@ -713,7 +792,7 @@ class BaseCompanionShocking(Model):
             else:
                 raise Exception('No SiFTO template for filter ' + filt.name)
             lc_filt = lc.where(filter=scale_filt)
-            sifto_scaled = sifto[sifto_filt] * np.max(lc_filt['lum']) / np.max(sifto[sifto_filt])
+            sifto_scaled = sifto[sifto_filt] * np.max(lc_filt['lum']) / np.max(sifto[sifto_filt]) * sifto_factors.get(sifto_filt, 1.)
             self.sifto[filt] = CubicSpline(sifto['Epoch'], sifto_scaled, extrapolate=False)
 
     def __repr__(self):

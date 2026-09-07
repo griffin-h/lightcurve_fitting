@@ -690,7 +690,7 @@ class BaseCompanionShocking(Model):
         A copy of the SiFTO model scaled to match the observed peak luminosity in each filter
 
     """
-    def __init__(self, lc, redshift=0.):
+    def __init__(self, lc, redshift=0., sifto_factors={}):
         super().__init__(lc, redshift=redshift)
 
         # make sure input light curve has luminosities
@@ -714,7 +714,7 @@ class BaseCompanionShocking(Model):
             else:
                 raise Exception('No SiFTO template for filter ' + filt.name)
             lc_filt = lc.where(filter=scale_filt)
-            sifto_scaled = sifto[sifto_filt] * np.max(lc_filt['lum']) / np.max(sifto[sifto_filt])
+            sifto_scaled = sifto[sifto_filt] * np.max(lc_filt['lum']) / np.max(sifto[sifto_filt]) * sifto_factors.get(sifto_filt, 1.)
             self.sifto[filt] = CubicSpline(sifto['Epoch'], sifto_scaled, extrapolate=False)
 
     def __repr__(self):

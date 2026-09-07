@@ -21,6 +21,7 @@ Unreleased
 * Include new aliases for Swift filters: UVU, UVB, and UVV
 * Parse L filter as L-GOTO, instead of L-UKIRT
 * :meth:`.LC.where` creates a copy of cached marker assignments
+* Add `sifto_factors` argument to :class:`BaseCompanionShocking` to arbitrarily scale SiFTO model
 
 
 v0.10.0 (2024-05-31)

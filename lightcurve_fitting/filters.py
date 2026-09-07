@@ -1,10 +1,17 @@
 import numpy as np
+try:
+    from numpy import trapezoid
+except ImportError:
+    from numpy import trapz as trapezoid
 import matplotlib.pyplot as plt
 from astropy.table import Table
 import astropy.units as u
 import astropy.constants as const
 import os
-from pkg_resources import resource_filename
+try:
+    from importlib.resources import files
+except ImportError:
+    from importlib_resources import files
 from functools import total_ordering
 from extinction import fitzpatrick99
 
@@ -155,7 +162,7 @@ class Filter:
             self.m0 = 2.5 * np.log10(self.fnu)
             self.M0 = self.m0 + 90.19
         if filename:
-            self.filename = resource_filename('lightcurve_fitting', os.path.join('filters', filename))
+            self.filename = files('lightcurve_fitting') / 'filters' / filename
         else:
             self.filename = ''
         self.angstrom = angstrom
@@ -188,8 +195,8 @@ class Filter:
             trans['T'] /= np.max(trans['T'])
             trans['freq'] = (const.c / trans['wl']).to(u.THz)
 
-            dwl = np.trapz(trans['T'].quantity, trans['wl'].quantity)
-            wl_eff = np.trapz(trans['T'].quantity * trans['wl'].quantity, trans['wl'].quantity) / dwl
+            dwl = trapezoid(trans['T'].quantity, trans['wl'].quantity)
+            wl_eff = trapezoid(trans['T'].quantity * trans['wl'].quantity, trans['wl'].quantity) / dwl
             wl0_guess = trans[trans['T'] > 0.5]['wl'].min()
             left = trans[(trans['wl'] <= wl0_guess) & (trans['T'] >= 0.1)]
             wl0 = np.interp(0.5, left['T'], left['wl'])
@@ -205,13 +212,13 @@ class Filter:
                 ax1.set_xlabel('Wavelength (nm)')
                 ax1.set_ylabel('Transmission')
 
-            dfreq = np.trapz(trans['T'].quantity, trans['freq'].quantity)
-            freq_eff = np.trapz(trans['T'].quantity * trans['freq'].quantity,
+            dfreq = trapezoid(trans['T'].quantity, trans['freq'].quantity)
+            freq_eff = trapezoid(trans['T'].quantity * trans['freq'].quantity,
                                 trans['freq'].quantity) / dfreq
             freq0 = np.interp(0.5, right['T'], right['freq'])
             freq1 = np.interp(0.5, left['T'], left['freq'])
             T_per_freq = trans['T'].quantity / trans['freq'].quantity
-            trans['T_norm_per_freq'] = (T_per_freq / np.trapz(T_per_freq, trans['freq'].quantity))
+            trans['T_norm_per_freq'] = (T_per_freq / trapezoid(T_per_freq, trans['freq'].quantity))
             if show:
                 plt.figure(2)
                 ax2 = plt.gca()
@@ -266,7 +273,7 @@ class Filter:
 
     def extinction(self, ebv, rv=3.1, z=0.):
         """
-        Extinction :math:`A_\lambda` at the effective wavelength of this filter
+        Extinction :math:`A_\\lambda` at the effective wavelength of this filter
 
         Parameters
         ----------
@@ -306,7 +313,7 @@ class Filter:
             Average spectral luminosity in the filter in watts per hertz
         """
         freq = self.trans['freq'].value * (1. + z)
-        return np.trapz(spectrum(freq, *args, **kwargs) * extinction_law(freq, ebv)
+        return trapezoid(spectrum(freq, *args, **kwargs) * extinction_law(freq, ebv)
                         * self.trans['T_norm_per_freq'].data, self.trans['freq'].data)
 
     def spectrum(self, freq, lum, z=0., ebv=0.):
@@ -336,8 +343,8 @@ class Filter:
         freq *= (1. + z)
         T_per_freq = self.trans['T'].value / self.trans['freq'].value
         T_interp = np.interp(freq, self.trans['freq'][::-1].value, T_per_freq[::-1], left=0., right=0.)
-        T_norm_per_freq = T_interp / np.trapz(T_interp, freq)
-        return np.trapz(lum * extinction_law(freq, ebv) * T_norm_per_freq, freq)
+        T_norm_per_freq = T_interp / trapezoid(T_interp, freq)
+        return trapezoid(lum * extinction_law(freq, ebv) * T_norm_per_freq, freq)
 
     def __str__(self):
         return self.name
@@ -373,15 +380,17 @@ all_filters = [
     Filter(['UVM2', 'uvm2', 'M2', 'M', 'um2'], 'm', 8, 'Swift', 7.656e-24, 'Swift_UVOT.UVM2.dat', angstrom=True),
     Filter(['UVW1', 'uvw1', 'W1', '1', 'uw1'], '#7F00FF', 4, 'Swift', 9.036e-24, 'Swift_UVOT.UVW1.dat', angstrom=True),
     Filter(['u', "u'", 'up', 'uprime'], '#4700CC', 3, 'Gunn', filename='SLOAN_SDSS.u.dat', angstrom=True),  # brightened from '#080017'
-    Filter(['U_S', 's', 'us'], '#230047', 3, 'Swift', 1.419e-23, filename='Swift_UVOT.U.dat', angstrom=True),
+    Filter(['U_S', 's', 'us', 'UVU'], '#230047', 3, 'Swift', 1.419e-23, filename='Swift_UVOT.U.dat', angstrom=True),
+    Filter('u-LSST', '#230047', 3, 'LSST', filename='LSST_LSST.u.dat', angstrom=True),
     Filter('U', '#3C0072', 3, 'Johnson', 1.790e-23, filename='Generic_Johnson.U.dat', angstrom=True, mec='k'),
     Filter('B', '#0057FF', 2, 'Johnson', 4.063e-23, filename='Generic_Johnson.B.dat', angstrom=True, mec='k'),
-    Filter(['B_S', 'b', 'bs'], '#4B00FF', 2, 'Swift', 4.093e-23, filename='Swift_UVOT.B.dat', angstrom=True),
+    Filter(['B_S', 'b', 'bs', 'UVB'], '#4B00FF', 2, 'Swift', 4.093e-23, filename='Swift_UVOT.B.dat', angstrom=True),
     Filter(['g', "g'", 'gp', 'gprime', 'F475W'], '#00CCFF', 1, 'Gunn', filename='SLOAN_SDSS.g.dat', angstrom=True),
     Filter('g-DECam', '#00CCFF', 1, 'DECam', filename='CTIO_DECam.g.dat', angstrom=True),
+    Filter('g-LSST', '#00CCFF', 1, 'LSST', filename='LSST_LSST.g.dat', angstrom=True),
     Filter(['c', 'cyan'], 'c', 1, 'ATLAS', filename='ATLAS_cyan.txt'),
     Filter('V', '#79FF00', 1, 'Johnson', 3.636e-23, filename='Generic_Johnson.V.dat', angstrom=True, mec='k', textcolor='#46CC00'),
-    Filter(['V_S', 'v', 'vs'], '#00FF30', 1, 'Swift', 3.664e-23, filename='Swift_UVOT.V.dat', angstrom=True),
+    Filter(['V_S', 'v', 'vs', 'UVV'], '#00FF30', 1, 'Swift', 3.664e-23, filename='Swift_UVOT.V.dat', angstrom=True),
     Filter('Itagaki', 'w', 0, 'Itagaki', filename='KAF-1001E.asci', linecolor='k', italics=False),
     Filter('white', 'w', 0, 'MOSFiT', filename='white.txt', linecolor='k', italics=False),
     Filter(['unfilt.', '0', 'C', 'clear', 'pseudobolometric', 'griz', 'RGB', 'LRGB'], 'w', 0, 'MOSFiT',
@@ -391,22 +400,26 @@ all_filters = [
     Filter('TESS', 'r', 0, 'TESS', filename='TESS_TESS.Red.dat', angstrom=True, italics=False),
     Filter(['DLT40', 'Open', 'Clear'], 'w', 0, 'DLT40', filename='QE_E2V_MBBBUV_Broadband.csv', linecolor='k', italics=False),
     Filter('w', 'w', 0, 'Gunn', filename='PAN-STARRS_PS1.w.dat', angstrom=True, linecolor='k'),
+    Filter('L', 'w', 0, 'GOTO', filename='GOTO_GOTO.L.dat', angstrom=True, linecolor='k'),
     Filter(['o', 'orange'], 'orange', 0, 'ATLAS', filename='ATLAS_orange.txt'),
     Filter(['r', "r'", 'rp', 'rprime', 'F625W'], '#FF7D00', 0, 'Gunn', filename='SLOAN_SDSS.r.dat', angstrom=True),
     Filter('r-DECam', '#FF7D00', 0, 'DECam', filename='CTIO_DECam.r.dat', angstrom=True),
+    Filter('r-LSST', '#FF7D00', 0, 'LSST', filename='LSST_LSST.r.dat', angstrom=True),
     Filter(['R', 'Rc', 'R_s'], '#FF7000', 0, 'Johnson', 3.064e-23, filename='Generic_Cousins.R.dat', mec='k', angstrom=True),  # '#CC5900'
     Filter(['i', "i'", 'ip', 'iprime', 'F775W'], '#90002C', -1, 'Gunn', filename='SLOAN_SDSS.i.dat', angstrom=True),
     Filter('i-DECam', '#90002C', -1, 'DECam', filename='CTIO_DECam.i.dat', angstrom=True),
+    Filter('i-LSST', '#90002C', -1, 'LSST', filename='LSST_LSST.i.dat', angstrom=True),
     Filter(['I', 'Ic'], '#66000B', -1, 'Johnson', 2.416e-23, filename='Generic_Cousins.I.dat', mec='k', angstrom=True),  # brightened from '#1C0003'
     Filter(['z_s', 'zs'], '#000000', -2, 'Gunn', filename='PAN-STARRS_PS1.z.dat', angstrom=True),
     Filter(['z', "z'", 'zp', 'zprime'], '#000000', -2, 'Gunn', filename='SLOAN_SDSS.z.dat', angstrom=True),
     Filter('z-DECam', '#000000', -2, 'DECam', filename='CTIO_DECam.z.dat', angstrom=True),
+    Filter('z-LSST', '#000000', -2, 'LSST', filename='LSST_LSST.z.dat', angstrom=True),
     Filter('y', 'y', -3, 'Gunn', filename='PAN-STARRS_PS1.y.dat', angstrom=True),
     Filter('y-DECam', 'y', -3, 'DECam', filename='CTIO_DECam.Y.dat', angstrom=True),
+    Filter('y-LSST', 'y', -3, 'LSST', filename='LSST_LSST.y.dat', angstrom=True),
     Filter('J', '#444444', -2, 'UKIRT', 1.589e-23, filename='Gemini_Flamingos2.J.dat', angstrom=True),
     Filter('H', '#888888', -3, 'UKIRT', 1.021e-23, filename='Gemini_Flamingos2.H.dat', angstrom=True),
     Filter(['K', 'Ks'], '#CCCCCC', -4, 'UKIRT', 0.640e-23, filename='Gemini_Flamingos2.Ks.dat', angstrom=True),
-    Filter('L', 'r', -4, 'UKIRT', 0.285e-23),
     # JWST
     Filter('F070W', 'C7', 0, 'JWST NIRCam', filename='JWST_NIRCam.F070W.dat', angstrom=True, italics=False),
     Filter('F090W', 'C0', 0, 'JWST NIRCam', filename='JWST_NIRCam.F090W.dat', angstrom=True, italics=False),
@@ -430,6 +443,15 @@ all_filters = [
     Filter('F1800W', 'C9', 0, 'JWST MIRI', filename='JWST_MIRI.F1800W.dat', angstrom=True, mec='k', italics=False),
     Filter('F2100W', 'C2', 0, 'JWST MIRI', filename='JWST_MIRI.F2100W.dat', angstrom=True, mec='k', italics=False),
     Filter('F2550W', 'C3', 0, 'JWST MIRI', filename='JWST_MIRI.F2550W.dat', angstrom=True, mec='k', italics=False),
+    Filter('F062', 'k', 0, 'Roman WFI', filename='Roman.F062.dat', mec='k', italics=False),
+    Filter('F087', 'k', 0, 'Roman WFI', filename='Roman.F087.dat', mec='k', italics=False),
+    Filter('F106', 'k', 0, 'Roman WFI', filename='Roman.F106.dat', mec='k', italics=False),
+    Filter('F129', 'k', 0, 'Roman WFI', filename='Roman.F129.dat', mec='k', italics=False),
+    Filter('F146', 'k', 0, 'Roman WFI', filename='Roman.F146.dat', mec='k', italics=False),
+    Filter('F158', 'k', 0, 'Roman WFI', filename='Roman.F158.dat', mec='k', italics=False),
+    Filter('F184', 'k', 0, 'Roman WFI', filename='Roman.F184.dat', mec='k', italics=False),
+    Filter('F213', 'k', 0, 'Roman WFI', filename='Roman.F213.dat', mec='k', italics=False),
+    
     # bolometric light curve calculation methods
     Filter('pseudobolometric, curve_fit', 'C0', italics=False),
     Filter('pseudobolometric, MCMC', 'C1', italics=False),

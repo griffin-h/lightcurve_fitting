@@ -7,16 +7,19 @@ from astropy import constants as const
 from astropy import units as u
 
 import numpy as np
+try:
+    from numpy import trapezoid
+except ImportError:
+    from numpy import trapz as trapezoid
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit, OptimizeWarning
 from scipy.stats import gaussian_kde
 import emcee
 import corner
 import os
-from pkg_resources import resource_filename
 import warnings
 
-plt.style.use(resource_filename('lightcurve_fitting', 'serif.mplstyle'))
+plt.style.use('lightcurve_fitting.serif')
 
 DEPRECATED_BOLOMETRIC_COLNAMES = [  # (old, new)
     ('L_opt', 'L'),
@@ -55,7 +58,7 @@ def pseudo(temp, radius, z, filter0=filtdict['I'], filter1=filtdict['U'], cutoff
     freq1 = (filter1.freq_eff + filter1.dfreq / 2.).value
     x_optical = np.arange(freq0, freq1)
     y_optical = planck_fast(x_optical * (1. + z), temp, radius, cutoff_freq)
-    L_opt = np.trapz(y_optical) * 1e12  # dx = 1 THz
+    L_opt = trapezoid(y_optical) * 1e12  # dx = 1 THz
     return L_opt
 
 
@@ -553,7 +556,7 @@ def integrate_sed(epoch1):
     lums = np.insert(epoch1['lum'], 0, 0)
     freqs = np.append(freqs, epoch1['freq'][-1] + epoch1['dfreq'][-1])
     lums = np.append(lums, 0)
-    L_int = np.trapz(lums * epoch1['lum'].unit, freqs * epoch1['freq'].unit).to(u.W).value
+    L_int = trapezoid(lums * epoch1['lum'].unit, freqs * epoch1['freq'].unit).to(u.W).value
     return L_int
 
 
@@ -628,8 +631,10 @@ def plot_color_curves(t, colors=None, fmt='o', limit_length=0.1, xcol='MJD'):
     if colors is None:
         colors = []
         for col in t.colnames:
-            if col.split('-')[0] in filtdict and not (t.has_masked_values and t.mask[col].all()):
-                colors.append(col)
+            if '-' in col:
+                f1, f2 = col.split('-')
+                if f1 in filtdict and f2 in filtdict and not (t.has_masked_values and t.mask[col].all()):
+                    colors.append(col)
     fig = plt.figure()
     for c in colors:
         dcolor_colname = f'd({c})'

@@ -2,7 +2,10 @@ import numpy as np
 import astropy.constants as const
 import astropy.units as u
 from astropy.table import Table
-from pkg_resources import resource_filename
+try:
+    from importlib.resources import files
+except ImportError:
+    from importlib_resources import files
 from abc import ABCMeta, abstractmethod
 from scipy.interpolate import CubicSpline
 from .filters import filtdict
@@ -518,7 +521,7 @@ class ShockCooling4(Model):
 
     :math:`T_\\mathrm{col,br} = (8.19\\,\\mathrm{eV}) R^{-0.32} v_\\mathrm{s*}^{0.58} (f_\\rho M)^{0.03} \\kappa^{-0.22}` (Eq. A7)
 
-    :math:`t_\\mathrm{tr} = (19.5\\,\\mathrm{d}) \\sqrt{\\frac{\\kappa M}{v_\\mathrm{s*}}}` (Eq. A9)
+    :math:`t_\\mathrm{tr} = (19.5\\,\\mathrm{d}) \\sqrt{\\frac{\\kappa M_\\mathrm{env}}{v_\\mathrm{s*}}}` (Eq. A9)
 
     Parameters
     ----------
@@ -531,8 +534,6 @@ class ShockCooling4(Model):
     ----------
     z : float
         The redshift between blackbody source and the observed filters
-    n : float
-        The polytropic index of the progenitor
     A : float
         Coefficient on the luminosity suppression factor (Eq. A1)
     a : float
@@ -581,7 +582,7 @@ class ShockCooling4(Model):
         self.t_tr_0 = 19.5  # d
 
     def temperature_radius(self, t_in, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1.):
-        t_br = self.t_br_0 * R ** 1.26 * v_s ** -1.13 * f_rho_M ** -0.13  # Eq. A5
+        t_br = self.t_br_0 * R ** 1.26 * v_s ** -1.13 * (f_rho_M * kappa) ** -0.13  # Eq. A5
         L_br = self.L_br_0 * R ** 0.78 * v_s ** 2.11 * f_rho_M ** 0.11 * kappa ** -0.89  # Eq. A6
         T_col_br = self.T_col_br_0 * R ** -0.32 * v_s ** 0.58 ** f_rho_M ** 0.03 * kappa ** -0.22  # Eq. A7
         t_tr = self.t_tr_0 * np.sqrt(kappa * M_env / v_s)  # Eq. A9
@@ -653,7 +654,7 @@ class ShockCooling4(Model):
         """
         v_s, M_env, f_rho_M, R, t_exp, *_ = p
         t_07eV = self.t_07eV_0 * R ** 0.56 * v_s ** 0.16 * kappa ** -0.61 * f_rho_M ** -0.06  # Eq. A8
-        t_tr = self.t_tr_0 ** np.sqrt(kappa * M_env / v_s)  # Eq. A9
+        t_tr = self.t_tr_0 * np.sqrt(kappa * M_env / v_s)  # Eq. A9
         return np.minimum(t_07eV, t_tr / self.a) + t_exp  # Eq. A3
 
 
@@ -735,7 +736,7 @@ class ShockCooling5(ShockCooling4):
         return super().t_max(p4, kappa=kappa)
 
 
-sifto_filename = resource_filename('lightcurve_fitting', 'models/sifto.dat')
+sifto_filename = files('lightcurve_fitting') / 'models' / 'sifto.dat'
 sifto = Table.read(sifto_filename, format='ascii')[3:]  # the first three points are ~0
 M_chandra = u.def_unit('M_chandra', 1.4 * u.Msun, format={'latex': 'M_\\mathrm{Ch}'})
 
@@ -767,7 +768,7 @@ class BaseCompanionShocking(Model):
         A copy of the SiFTO model scaled to match the observed peak luminosity in each filter
 
     """
-    def __init__(self, lc, redshift=0.):
+    def __init__(self, lc, redshift=0., sifto_factors={}):
         super().__init__(lc, redshift=redshift)
 
         # make sure input light curve has luminosities
@@ -791,7 +792,7 @@ class BaseCompanionShocking(Model):
             else:
                 raise Exception('No SiFTO template for filter ' + filt.name)
             lc_filt = lc.where(filter=scale_filt)
-            sifto_scaled = sifto[sifto_filt] * np.max(lc_filt['lum']) / np.max(sifto[sifto_filt])
+            sifto_scaled = sifto[sifto_filt] * np.max(lc_filt['lum']) / np.max(sifto[sifto_filt]) * sifto_factors.get(sifto_filt, 1.)
             self.sifto[filt] = CubicSpline(sifto['Epoch'], sifto_scaled, extrapolate=False)
 
     def __repr__(self):

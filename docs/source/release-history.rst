@@ -2,6 +2,30 @@
 Release History
 ===============
 
+Unreleased
+----------
+* Leave NaNs in spectra when calibrating to photometry
+* Better handling of unit conversions in plotting
+* Add the :meth:`.LC.calcFlam` method for convenience
+* Fix bug in parsing color columns in :func:`.plot_color_curves`
+* Adds support for Python 3.12
+* Adds support for Numpy 2
+* Give a warning when `'refmjd'` is set automatically
+* Give a warning when parsing unrecognized filters
+* Correct typos in :class:`.ShockCooling4`:
+
+  * :math:`M \to M_\mathrm{env}` and remove unused :math:`n` in docstring
+  * missing kappa in :math:`t_\mathrm{br}` (only matters if you adjusted kappa)
+  * wrong operation in :math:`t_\mathrm{tr}` (only affects maximum validity time in some cases)
+
+* Include new aliases for Swift filters: UVU, UVB, and UVV
+* Parse L filter as L-GOTO, instead of L-UKIRT
+* :meth:`.LC.where` creates a copy of cached marker assignments
+* Add `sifto_factors` argument to :class:`BaseCompanionShocking` to arbitrarily scale SiFTO model
+* Improve parsing of spectrum times from filename
+* :func:`.calibrate_spectra` also extrapolates backwards using `max_extrapolate`
+
+
 v0.10.0 (2024-05-31)
 --------------------
 This release includes an improved naming convention for the output column names of :func:`.calculate_bolometric`. Now all full bolometric luminosities have the suffix ``_bol`` and all quantities from the MCMC option have the suffix ``_mcmc``. Specifically, the columns that changed are: ``lum`` → ``L_bol``, ``dlum`` → ``dL_bol``, ``L_opt`` → ``L``, ``dtemp0`` → ``dtemp_mcmc0``, ``dtemp1`` → ``dtemp_mcmc1``, ``dradius0`` → ``dradius_mcmc0``, and ``dradius1`` → ``dradius_mcmc1``. The old names will continue to work for now, but please update your code!

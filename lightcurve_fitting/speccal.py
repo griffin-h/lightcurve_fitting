@@ -90,9 +90,18 @@ def readfitsspec(filename, header=False, ext=None):
     if isinstance(hdu, fits.BinTableHDU):
         wl = data['wavelength']
         flux = data['flux']
+        if 'flux_err' in data.columns:
+            flux_err = data['flux_err']
+        else:
+            flux_err = None
     else:
-        data = np.moveaxis(data, np.arange(data.ndim), np.argsort(data.shape))  # put longest axis last
-        flux = data.flatten()[:max(data.shape)]
+        if data.ndim == 3 and data.shape[:2] == (4, 1):  # IRAF multispec
+            flux = data[0, 0]
+            flux_err = data[3, 0]
+        else:
+            data = np.moveaxis(data, np.arange(data.ndim), np.argsort(data.shape))  # put longest axis last
+            flux = data.flatten()[:max(data.shape)]
+            flux_err = None
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
             wcs = WCS(removebadcards(hdr), naxis=1, relax=False, fix=False)
@@ -101,12 +110,12 @@ def readfitsspec(filename, header=False, ext=None):
         else:
             wl = wcs.wcs_pix2world(np.arange(len(flux)), 0)[0]
     if header:
-        return wl, flux, hdr
+        return wl, flux, flux_err, hdr
     else:
-        return wl, flux
+        return wl, flux, flux_err
 
 
-def convert_spectrum_units(wl, flux, hdr, default_bunit='erg / (Angstrom cm2 s)', default_cunit='Angstrom'):
+def convert_spectrum_units(wl, flux, flux_err, hdr, default_bunit='erg / (Angstrom cm2 s)', default_cunit='Angstrom'):
     """
     Convert a spectrum to standard units, if information is available in the header to establish units (BUNIT & CUNIT1)
 
@@ -140,11 +149,13 @@ def convert_spectrum_units(wl, flux, hdr, default_bunit='erg / (Angstrom cm2 s)'
     cunit = hdr.get('CUNIT1', hdr.get('XUNITS', default_cunit))
     if cunit.lower() == 'angstroms':
         cunit = cunit.rstrip('s')
-    wl = u.Quantity(wl, cunit).to(default_cunit)
+    wl = u.Quantity(wl, cunit).to(default_cunit).value
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
-        flux = u.Quantity(flux, bunit).to(default_bunit, u.equivalencies.spectral_density(wl))
-    return wl.value, flux.value
+        flux = u.Quantity(flux, bunit).to(default_bunit, u.equivalencies.spectral_density(wl)).value
+        if flux_err is not None:
+            flux_err = u.Quantity(flux_err, bunit).to(default_bunit, u.equivalencies.spectral_density(wl)).value
+    return wl, flux, flux_err
 
 
 def readOSCspec(filepath):
@@ -228,14 +239,19 @@ def readspec(f, verbose=False, return_header=False):
     """
     ext = os.path.splitext(f)[1]
     if ext == '.fits' or ext == '.fz':
-        x, y, hdr = readfitsspec(f, header=True)
+        x, y, yerr, hdr = readfitsspec(f, header=True)
     elif ext == '.json':
         x, y, hdr = readOSCspec(f)
+        yerr = None
     else:  # assume it's some ASCII format
         t = Table.read(f, format='ascii')
         # assume it's the first two columns, regardless of if column names are given
         x = t.columns[0]
         y = t.columns[1]
+        if len(t.columns) > 2:
+            yerr = t.columns[2]
+        else:
+            yerr = None
         hdr = {}
         comments = t.meta.get('comments', [])
         for line in comments:
@@ -328,14 +344,14 @@ def readspec(f, verbose=False, return_header=False):
     else:
         instrument = ''
 
-    x, y = convert_spectrum_units(x, y, hdr)
+    x, y, yerr = convert_spectrum_units(x, y, yerr, hdr)
 
     if verbose:
         print(date.isot, f)
     if return_header:
-        return x, y, date, telescope, instrument, hdr
+        return x, y, yerr, date, telescope, instrument, hdr
     else:
-        return x, y, date, telescope, instrument
+        return x, y, yerr, date, telescope, instrument
 
 
 def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=None, max_extrapolate=1., show=False):
@@ -379,7 +395,7 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
     fig = plt.figure(figsize=(8., 6.))
 
     for spec in spectra:
-        wl, flux, time, _, _ = readspec(spec)
+        wl, flux, flux_err, time, _, _ = readspec(spec)
         mjd = time.mjd
         if show:
             fig.clf()
@@ -441,11 +457,16 @@ def calibrate_spectra(spectra, lc, filters=None, order=0, subtract_percentile=No
             plt.pause(0.1)
             ans = input('accept this scale? [Y/n] ')
         if not show or ans.lower() != 'n':
-            flux[good] *= corr[::-1]
-            data_out = np.array([wl, flux]).T
             path_in, filename_in = os.path.split(spec)
             filename_out = os.path.join(path_in, 'photcal_' + filename_in).replace('.fits', '.txt')
-            np.savetxt(filename_out, data_out, fmt='%.1f %.2e')
+            flux[good] *= corr[::-1]
+            if flux_err is not None:
+                flux_err[good] *= corr[::-1]
+                data_out = np.array([wl, flux, flux_err]).T
+                np.savetxt(filename_out, data_out, fmt='%.1f %.2e %.2e')
+            else:
+                data_out = np.array([wl, flux]).T
+                np.savetxt(filename_out, data_out, fmt='%.1f %.2e')
             print(filename_out)
     if show:
         return fig

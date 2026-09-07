@@ -11,6 +11,7 @@ Unreleased
 * Adds support for Python 3.12
 * Adds support for Numpy 2
 * Give a warning when `'refmjd'` is set automatically
+* Give a warning when parsing unrecognized filters
 * Correct typos in :class:`.ShockCooling4`:
 
   * :math:`M \to M_\mathrm{env}` and remove unused :math:`n` in docstring

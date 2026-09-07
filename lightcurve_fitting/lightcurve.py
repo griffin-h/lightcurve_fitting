@@ -169,6 +169,9 @@ class LC(Table):
         """
         filters = np.array([filtdict['0'] if np.ma.is_masked(f) else filtdict.get(str(f), filtdict['?'])
                             for f in self['filter']])
+        unknown_filters = (filters == filtdict['?']) & (self['filter'] != 'unknown')
+        if unknown_filters.any():
+            print('unknown filters:', np.unique(self['filter'][unknown_filters]))
         is_swift = np.zeros(len(self), bool)
         if 'telescope' in self.colnames:
             is_swift |= self['telescope'] == 'Swift'

@@ -33,7 +33,7 @@ class Arrow(Path):
 
 
 arrow = Arrow(0.2, 0.3)
-othermarkers = ('o', *MarkerStyle.filled_markers[2:])
+othermarkers = tuple(m for m in MarkerStyle.filled_markers if m not in ['.', 'v'])
 itermarkers = itertools.cycle(othermarkers)
 itercolors = itertools.cycle(plt.rcParams['axes.prop_cycle'].by_key()['color'])
 

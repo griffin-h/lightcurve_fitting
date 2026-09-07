@@ -2,12 +2,16 @@
 Release History
 ===============
 
-Unreleased
-----------
+v0.11.0 (2026-09-07)
+--------------------
 If you were using :func:`.readfitsspec` or :func:`.readspec` directly,
 the return signatures have changed to accommodate the scaling of flux uncertainties.
 Now the third return value will be flux uncertainty, when available, otherwise it will be ``None``.
 Thanks to Naveen Dukiya for this contribution.
+
+This release also adds the :class:`.ShockCooling5` model, which allows for
+free distance and extinction parameters in :class:`.ShockCooling4`.
+Thanks to Sondos Mohsen for this contribution.
 
 * Scale flux uncertainties, when available, when calibrating to photometry
 * Leave NaNs in spectra when calibrating to photometry
@@ -16,7 +20,7 @@ Thanks to Naveen Dukiya for this contribution.
 * Fix bug in parsing color columns in :func:`.plot_color_curves`
 * Adds support for Python 3.12
 * Adds support for Numpy 2
-* Give a warning when `'refmjd'` is set automatically
+* Give a warning when ``'refmjd'`` is set automatically
 * Give a warning when parsing unrecognized filters
 * Correct typos in :class:`.ShockCooling4`:
 
@@ -28,9 +32,9 @@ Thanks to Naveen Dukiya for this contribution.
 * Include new aliases for Swift filters: UVU, UVB, and UVV
 * Parse L filter as L-GOTO, instead of L-UKIRT
 * :meth:`.LC.where` creates a copy of cached marker assignments
-* Add `sifto_factors` argument to :class:`BaseCompanionShocking` to arbitrarily scale SiFTO model
+* Add ``sifto_factors`` argument to :class:`BaseCompanionShocking` to arbitrarily scale SiFTO model
 * Improve parsing of spectrum times from filename
-* :func:`.calibrate_spectra` also extrapolates backwards using `max_extrapolate`
+* :func:`.calibrate_spectra` also extrapolates backwards using ``max_extrapolate``
 * Switches from ``setup.py`` to ``pyproject.toml`` for installation
 
 v0.10.0 (2024-05-31)

@@ -51,7 +51,7 @@ column_names = {
     'JD': ['JD', 'jd'],
     'Phase (rest {unit.long_names[0]}s)': ['phase', 'Phase', 'PHASE'],
     'Flux $F_ν$ (W m$^{-2}$ Hz$^{-1}$)': ['flux', 'FLUXCAL'],
-    'Flux Uncertainty': ['dflux', 'FLUXCALERR'],
+    'Flux Uncertainty': ['dflux', 'FLUXCALERR', 'fluxerr'],
     'Flux $F_λ$ ({unit:latex_inline})': ['flam'],
     'Flux $F_λ$ Uncertainty': ['dflam'],
     'Nondetection': ['nondet', 'Is_Limit', 'UL', 'l_omag', 'upper_limit', 'upperlimit'],

@@ -31,7 +31,7 @@ Thanks to Naveen Dukiya for this contribution.
 * Add `sifto_factors` argument to :class:`BaseCompanionShocking` to arbitrarily scale SiFTO model
 * Improve parsing of spectrum times from filename
 * :func:`.calibrate_spectra` also extrapolates backwards using `max_extrapolate`
-
+* Switches from ``setup.py`` to ``pyproject.toml`` for installation
 
 v0.10.0 (2024-05-31)
 --------------------

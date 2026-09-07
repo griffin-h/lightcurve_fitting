@@ -400,6 +400,7 @@ all_filters = [
     Filter('TESS', 'r', 0, 'TESS', filename='TESS_TESS.Red.dat', angstrom=True, italics=False),
     Filter(['DLT40', 'Open', 'Clear'], 'w', 0, 'DLT40', filename='QE_E2V_MBBBUV_Broadband.csv', linecolor='k', italics=False),
     Filter('w', 'w', 0, 'Gunn', filename='PAN-STARRS_PS1.w.dat', angstrom=True, linecolor='k'),
+    Filter('L', 'w', 0, 'GOTO', filename='GOTO_GOTO.L.dat', angstrom=True, linecolor='k'),
     Filter(['o', 'orange'], 'orange', 0, 'ATLAS', filename='ATLAS_orange.txt'),
     Filter(['r', "r'", 'rp', 'rprime', 'F625W'], '#FF7D00', 0, 'Gunn', filename='SLOAN_SDSS.r.dat', angstrom=True),
     Filter('r-DECam', '#FF7D00', 0, 'DECam', filename='CTIO_DECam.r.dat', angstrom=True),
@@ -419,7 +420,6 @@ all_filters = [
     Filter('J', '#444444', -2, 'UKIRT', 1.589e-23, filename='Gemini_Flamingos2.J.dat', angstrom=True),
     Filter('H', '#888888', -3, 'UKIRT', 1.021e-23, filename='Gemini_Flamingos2.H.dat', angstrom=True),
     Filter(['K', 'Ks'], '#CCCCCC', -4, 'UKIRT', 0.640e-23, filename='Gemini_Flamingos2.Ks.dat', angstrom=True),
-    Filter('L', 'r', -4, 'UKIRT', 0.285e-23),
     # JWST
     Filter('F070W', 'C7', 0, 'JWST NIRCam', filename='JWST_NIRCam.F070W.dat', angstrom=True, italics=False),
     Filter('F090W', 'C0', 0, 'JWST NIRCam', filename='JWST_NIRCam.F090W.dat', angstrom=True, italics=False),

@@ -26,7 +26,7 @@ The following column names are used by the package, although the light curve can
  * filter (required): name of the filter [filter, filt Filter, band, FLT, Band] (see :ref:`Filters` below)
  * nondet: True if the magnitude is an upper limit, False otherwise [Is_Limit, UL, l_omag, upper_limit, upperlimit]
  * flux: the spectral flux density (:math:`F_ν`, arbitrary units) of the observation [FLUXCAL]
- * dflux: uncertainty on the flux [FLUXCALERR]
+ * dflux: uncertainty on the flux [FLUXCALERR, fluxerr]
  * phase: time since a reference date (e.g., peak or explosion) in rest-frame days [Phase, PHASE]
  * absmag: absolute magnitude of the observation
  * lum: the spectral luminosity density (:math:`L_ν`, in watts/hertz) of the observation

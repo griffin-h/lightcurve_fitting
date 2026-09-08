@@ -2,6 +2,10 @@
 Release History
 ===============
 
+Unreleased
+----------
+* Deprecate :class:`.Filter.char`; bolometric output table now has comma-separated full filter names
+
 v0.11.0 (2026-09-07)
 --------------------
 If you were using :func:`.readfitsspec` or :func:`.readspec` directly,

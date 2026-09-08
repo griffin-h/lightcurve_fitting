@@ -79,8 +79,6 @@ class Filter:
         The default name of the filter
     names : list
         A list of aliases for the filter
-    char : str
-        A single-character identifier for the filter
     color : str, tuple
         The color used when plotting photometry in this filter
     linecolor : str, tuple
@@ -129,14 +127,6 @@ class Filter:
         else:
             self.name = names
             self.names = [names]
-        if len(self.name) == 1:
-            self.char = self.name
-        else:
-            shortest = sorted(self.names, key=len)[0]
-            if len(shortest) == 1:
-                self.char = shortest
-            else:
-                self.char = 'x'
         self.color = color
         if linecolor:
             self.linecolor = linecolor

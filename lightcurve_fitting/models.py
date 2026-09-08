@@ -786,8 +786,8 @@ class BaseCompanionShocking(Model):
             elif filt.name == 'DLT40':
                 sifto_filt = 'r'
                 scale_filt = filt
-            elif filt.char in sifto.colnames:
-                sifto_filt = filt.char
+            elif filt.name in sifto.colnames:
+                sifto_filt = filt.name
                 scale_filt = filt
             else:
                 raise Exception('No SiFTO template for filter ' + filt.name)
@@ -991,7 +991,7 @@ class CompanionShocking(BaseCompanionShocking):
 
         sifto_factors = {'r': rr, 'i': ri}
         kasen_factors = {'U': rU}
-        y_fit = np.array([L1 * kasen_factors.get(filt.char, 1.) + L2 * sifto_factors.get(filt.char, 1.)
+        y_fit = np.array([L1 * kasen_factors.get(filt.name, 1.) + L2 * sifto_factors.get(filt.name, 1.)
                           for L1, L2, filt in zip(Lnu_kasen, Lnu_sifto, f)])
 
         return y_fit

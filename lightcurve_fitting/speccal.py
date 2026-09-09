@@ -85,15 +85,27 @@ def readfitsspec(filename, header=False, ext=None):
     else:
         hdu = hdulist[ext]
     data = hdu.data
-    hdr = max(hdu.header, hdulist[0].header, key=len)  # use the primary header or the data header, whichever is longer
+    hdr = hdulist[0].header + hdu.header  # include any keys that are only in the primary header
     remove_duplicate_wcs(hdr)  # some problem with Gemini pipeline
     if hdr.get('CUNIT1') in ['Angstroms', 'angstroms', 'deg', 'pixel']:
         hdr['CUNIT1'] = 'Angstrom'  # WCS object needs recognizable units
     if isinstance(hdu, fits.BinTableHDU):
-        wl = data['wavelength']
-        flux = data['flux']
-        if 'flux_err' in data.columns:
-            flux_err = data['flux_err']
+        for key in ['wavelength', 'wave']:
+            if key in data.names:
+                wl = data[key]
+                break
+        else:
+            wl = data.field(0)
+        for key in ['flux']:
+            if key in data.names:
+                flux = data[key]
+                break
+        else:
+            flux = data.field(1)
+        for key in ['flux_err', 'sigma']:
+            if key in data.names:
+                flux_err = data[key]
+                break
         else:
             flux_err = None
     else:

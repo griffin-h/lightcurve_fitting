@@ -2,6 +2,10 @@
 Release History
 ===============
 
+Unreleased
+----------
+* Add support for reading PypeIt-format FITS spectra
+
 v0.11.0 (2026-09-07)
 --------------------
 If you were using :func:`.readfitsspec` or :func:`.readspec` directly,

@@ -229,7 +229,7 @@ You must also provide ``input_names`` and ``units`` as class variables.
 
 Calibrating Spectra to Photometry
 ---------------------------------
-The :mod:`.speccal` module (somewhat experimental right now) can be used to calibrate spectra to observed photometry.
+The :mod:`.speccal` module can be used to calibrate spectra to observed photometry.
 
 .. code-block:: python
 
@@ -237,6 +237,12 @@ The :mod:`.speccal` module (somewhat experimental right now) can be used to cali
 
     spectra_filenames = ['blah.fits', 'blah.txt', 'blah.dat']
     calibrate_spectra(spectra_filenames, lc, show=True)
+
+or on the :ref:`command line <speccal>`
+
+.. code-block:: bash
+
+    speccal blah.fits blah.txt blah.dat lc.txt
 
 Each spectrum is multiplied by the filter transmission function and integrated to produce a synthetic flux measurement.
 Each magnitude in the light curve is also converted to flux.

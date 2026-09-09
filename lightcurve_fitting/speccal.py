@@ -639,10 +639,10 @@ def create_wiserep_tsv(specpaths, wiserep_dir, verbose=False, instruments=None, 
     return t
 
 
-if __name__ == '__main__':
+def _speccal_parser():
     parser = argparse.ArgumentParser(description='Calibrate spectra to photometry.')
     parser.add_argument('spectra', nargs='+', help='filenames of spectra')
-    parser.add_argument('--lc', help='filename of photometry table (must have columns "MJD", "filter", "mag"/"flux", and'
+    parser.add_argument('lc', help='filename of photometry table (must have columns "MJD", "filter", "mag"/"flux", and'
                                      '"dmag"/"dflux")')
     parser.add_argument('--lc-format', default='ascii',
                         help='format of photometry table (passed to :func:`astropy.table.Table.read`)')
@@ -652,8 +652,141 @@ if __name__ == '__main__':
     parser.add_argument('--max-extrapolate', type=float, default=1.,
                         help='assume constant flux in a filter for this many days after the last observed point')
     parser.add_argument('--show', action='store_true')
-    args = parser.parse_args()
+    return parser
 
+
+def _speccal():
+    args = _speccal_parser().parse_args()
     lc = LC.read(args.lc, format=args.format)
     calibrate_spectra(args.spectra, lc, args.filters, args.order, args.subtract_percentile, args.max_extrapolate,
                       args.show)
+
+
+def _rspectext_parser():
+    parser = argparse.ArgumentParser(description='Convert spectra from ASCII to FITS.')
+    parser.add_argument('spectra', nargs='+', help='filenames of spectra')
+    parser.add_argument('--bunit-out', default='1e-15 erg s-1 cm-2 angstrom-1', help='output flux unit')
+    return parser
+
+
+def _rspectext():
+    args = _rspectext_parser().parse_args()
+    bunit_out = u.Unit(args.bunit_out)
+    for filename in args.spectra:
+        wl, flux, *_, header = readspec(filename, return_header=True)
+        dwl = np.diff(wl)
+        if not np.isclose(dwl, dwl[0]).all():
+            raise ValueError(f'Cannot convert spectrum with uneven wavelength sampling: {filename}')
+        bunit_in = u.Unit(header.get('BUNIT', 'erg / (s cm2 angstrom)'))
+        output_filename = os.path.splitext(filename)[0] + '_rspectext.fits'
+        header['CRPIX1'] = 1.
+        header['CRVAL1'] = wl[0]
+        header['CD1_1'] = dwl[0]
+        header['CDELT1'] = dwl[0]
+        header['BUNIT'] = str(bunit_out)
+        flux_out = (flux * bunit_in).to(bunit_out).value
+        fits.writeto(output_filename, flux_out, fits.Header(header), overwrite=True)
+        print(f'Wrote output to {output_filename}')
+
+
+def _wspectext_parser():
+    parser = argparse.ArgumentParser(description='Convert spectra from FITS to ASCII.')
+    parser.add_argument('spectra', nargs='+', help='filenames of spectra')
+    return parser
+
+
+def _wspectext():
+    args = _wspectext_parser().parse_args()
+    for filename in args.spectra:
+        *data, header = readfitsspec(filename, header=True)
+        if data[2] is None:
+            data = data[:2]
+        outspec = np.array(data).T[~np.isnan(data[1])]
+        fmt = ('%f',) + ('%e',) * (outspec.shape[1] - 1)
+        np.savetxt(filename.replace('.fz', '').replace('.fits', '.txt'), outspec, fmt=fmt, header=header.__repr__())
+
+
+def _scombine_parser():
+    parser = argparse.ArgumentParser(description='Combine two spectra after matching scaling in the overlap region.')
+    parser.add_argument('filename1', help='filename of first spectrum (adopt this dispersion function)')
+    parser.add_argument('filename2', help='filename of second spectrum')
+    parser.add_argument('filename-out', help='filename of output spectrum')
+    return parser
+
+
+def _scombine():
+    args = _scombine_parser().parse_args()
+
+    wl1, flux1, hdr1 = readfitsspec(args.filename1, header=True)
+    wl2, flux2, hdr2 = readfitsspec(args.filename2, header=True)
+
+    dwl = np.median(np.diff(wl1))
+    wl_out = np.arange(min(wl1.min(), wl2.min()), max(wl1.max(), wl2.max()), dwl)
+
+    flux1i = np.interp(wl_out, wl1, flux1, left=np.nan, right=np.nan)
+    flux2i = np.interp(wl_out, wl2, flux2, left=np.nan, right=np.nan)
+    ratio = np.nanmean(flux1i / flux2i)
+    flux_out = np.nanmean([flux1i, flux2i * ratio], axis=0)
+
+    for kwd in ['exptime', 'xposure', 'telapse', 'ttime']:
+        if kwd in hdr1 and kwd in hdr2:
+            hdr1[kwd] += hdr2[kwd]
+
+    print('ratio:', ratio)
+    plt.plot(wl1, flux1)
+    plt.plot(wl2, flux2)
+    plt.plot(wl_out, flux1i)
+    plt.plot(wl_out, flux2i)
+    plt.plot(wl_out, flux_out)
+    plt.show()
+
+    fits.writeto(args.filename_out, flux_out, hdr1, overwrite=True)
+
+
+def _scopy_parser():
+    parser = argparse.ArgumentParser(description='Copy a spectrum, possibly after trimming.')
+    parser.add_argument('infile', help='filename of input spectrum')
+    parser.add_argument('outfile', help='filename of output spectrum')
+    parser.add_argument('--w1', default=0., help='smaller wavelength before which to trim')
+    parser.add_argument('--w2', default=np.inf, help='larger wavelength after which to trim')
+    return parser
+
+
+def _scopy():
+    args = _scopy_parser().parse_args()
+    x, y, hdr = readfitsspec(args.infile, header=True)
+    keep = (x >= args.min_wl) & (x <= args.max_wl)
+    xpix_deleted = (x < args.min_wl).sum()
+    hdr['CRPIX1'] -= xpix_deleted
+    fits.writeto(args.outfile, y[keep], hdr, overwrite=True)
+
+
+def _splot_parser():
+    parser = argparse.ArgumentParser(description='Quickly plot one or more spectra.')
+    parser.add_argument('spectra', nargs='+', help='filenames of spectra')
+    parser.add_argument('--separate', action='store_true', help='plot on separate figures')
+    parser.add_argument('--xscale', default='linear', choices=['linear', 'log'], help='scale for the x-axis')
+    parser.add_argument('--yscale', default='linear', choices=['linear', 'log'], help='scale for the y-axis')
+    parser.add_argument('--save', action='store_true', help='save the figure(s) as PDF')
+    return parser
+
+
+def _splot():
+    args = _splot_parser().parse_args()
+    for filename in sys.argv[1:]:
+        wl, flux, dflux, date_obj, tel, inst = readspec(filename)
+        date = '' if date_obj is None else date_obj.iso
+        if args.separate:
+            plt.figure()
+        plt.plot(wl, flux, lw=1)
+        plt.xlabel(u'Wavelength (\u212b)')
+        plt.ylabel('Flux')
+        title = '{}\n{} {} {}'.format(filename, date, tel, inst)
+        plt.title(title)
+        plt.xscale(args.xscale)
+        plt.yscale(args.yscale)
+        plt.tight_layout()
+        if args.save:
+            outfile = os.path.splitext(filename)[0] + '.pdf'
+            plt.savefig(outfile)
+    plt.show()

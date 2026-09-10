@@ -2,6 +2,10 @@
 Release History
 ===============
 
+Unreleased
+----------
+* Add missing LSST filter transmission functions
+
 v0.11.0 (2026-09-07)
 --------------------
 If you were using :func:`.readfitsspec` or :func:`.readspec` directly,

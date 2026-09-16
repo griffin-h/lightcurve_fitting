@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API Documentation &mdash; Light Curve Fitting 0.11.1.dev2+gce29a3030 documentation</title>
+  <title>API Documentation &mdash; Light Curve Fitting 0.11.1.dev3+g26c201c52 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
@@ -15,7 +15,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=783d1969"></script>
+      <script src="_static/documentation_options.js?v=f8b2a944"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -538,7 +538,7 @@ given, otherwise <code class="docutils literal notranslate"><span class="pre">'M
 </dd>
 <dt><strong>colors</strong><span class="classifier">list, optional</span></dt><dd><p>List of colors to plot, e.g., <code class="docutils literal notranslate"><span class="pre">['g-r',</span> <span class="pre">'r-i']</span></code>. By default, plot all recognizable colors.</p>
 </dd>
-<dt><strong>fmt</strong><span class="classifier">str, optional</span></dt><dd><p>Format string, passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.errorbar.html#matplotlib.pyplot.errorbar" title="(in Matplotlib v3.11.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.errorbar()</span></code></a></p>
+<dt><strong>fmt</strong><span class="classifier">str, optional</span></dt><dd><p>Format string, passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.errorbar.html#matplotlib.pyplot.errorbar" title="(in Matplotlib v3.11.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.errorbar()</span></code></a></p>
 </dd>
 <dt><strong>limit_length</strong><span class="classifier">float, optional</span></dt><dd><p>Length (in data units) of the upper and lower limit markers</p>
 </dd>
@@ -713,7 +713,7 @@ If ‘absolute’, sigma will be in units of the median photometric uncertainty.
 <dl class="py class">
 <dt class="sig sig-object py" id="lightcurve_fitting.filters.Filter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.filters.</span></span><span class="sig-name descname"><span class="pre">Filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'k'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fnu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.631e-23</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angstrom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linecolor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">textcolor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">italics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/filters.html#Filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.filters.Filter" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A broadband photometric filter described by its transmission function and its associated photometric system</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1159,7 +1159,7 @@ the model light curve.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="lightcurve_fitting.lightcurve.Arrow">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.lightcurve.</span></span><span class="sig-name descname"><span class="pre">Arrow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/lightcurve.html#Arrow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.lightcurve.Arrow" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://matplotlib.org/stable/api/path_api.html#matplotlib.path.Path" title="(in Matplotlib v3.11.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://matplotlib.org/stable/api/path_api.html#matplotlib.path.Path" title="(in Matplotlib v3.11.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a></p>
 <p>An downward-pointing arrow-shaped <code class="docutils literal notranslate"><span class="pre">Path</span></code>, whose head has half-width <code class="docutils literal notranslate"><span class="pre">hx</span></code> and height <code class="docutils literal notranslate"><span class="pre">hy</span></code> (in units of length)</p>
 </dd></dl>
 
@@ -1402,7 +1402,7 @@ arrangement shows all filters arranged by <code class="docutils literal notransl
 <dt><strong>return_axes</strong><span class="classifier">bool, optional</span></dt><dd><p>Return the newly created axes if <code class="docutils literal notranslate"><span class="pre">mjd_axis=True</span></code> or <code class="docutils literal notranslate"><span class="pre">appmag_axis=True</span></code>. Default: False.</p>
 </dd>
 <dt><strong>kwargs</strong></dt><dd><p>Keyword arguments matching column names in the light curve are used to specify a subset of points to plot.
-Additional keyword arguments passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html#matplotlib.pyplot.plot" title="(in Matplotlib v3.11.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code></a>.</p>
+Additional keyword arguments passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html#matplotlib.pyplot.plot" title="(in Matplotlib v3.11.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
@@ -2134,7 +2134,7 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">ascii.aa
 </dd>
 <dt><strong>top_axis</strong><span class="classifier">bool, optional</span></dt><dd><p>For legends above the top of the plot, add extra padding to the upper x-axis labels. Default: True.</p>
 </dd>
-<dt><strong>kwargs</strong></dt><dd><p>Keyword arguments to be passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html#matplotlib.pyplot.legend" title="(in Matplotlib v3.11.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.legend()</span></code></a></p>
+<dt><strong>kwargs</strong></dt><dd><p>Keyword arguments to be passed to <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html#matplotlib.pyplot.legend" title="(in Matplotlib v3.11.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.legend()</span></code></a></p>
 </dd>
 </dl>
 </dd>
@@ -2713,7 +2713,7 @@ is along the line of sight.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="lightcurve_fitting.models.Model">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.Model" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>An analytical model, defined by a function and its parameters</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="lightcurve_fitting.models.Model.axis_labels">
@@ -2784,7 +2784,7 @@ is determined by the remaining dimensions of <cite>p</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="lightcurve_fitting.models.Prior">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightcurve_fitting.models.</span></span><span class="sig-name descname"><span class="pre">Prior</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#Prior"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.Prior" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="lightcurve_fitting.models.Prior.logp">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">logp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lightcurve_fitting/models.html#Prior.logp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lightcurve_fitting.models.Prior.logp" title="Link to this definition"></a></dt>

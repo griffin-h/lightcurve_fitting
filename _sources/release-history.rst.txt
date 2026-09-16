@@ -4,6 +4,7 @@ Release History
 
 Unreleased
 ----------
+* Correct another typo in :class:`.ShockCooling4`: wrong operation in :math:`T_\mathrm{col,br}`
 * Add missing LSST filter transmission functions
 
 v0.11.0 (2026-09-07)

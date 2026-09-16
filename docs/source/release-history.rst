@@ -2,8 +2,8 @@
 Release History
 ===============
 
-Unreleased
-----------
+v0.11.1 (2026-09-16)
+--------------------
 * Correct another typo in :class:`.ShockCooling4`: wrong operation in :math:`T_\mathrm{col,br}`
 * Add missing LSST filter transmission functions
 * Add support for reading PypeIt-format FITS spectra

@@ -44,6 +44,7 @@ extensions = [
     'matplotlib.sphinxext.plot_directive',
     'numpydoc',
     'sphinx_copybutton',
+    'sphinxarg.ext',
 ]
 
 # Configuration options for plot_directive. See:

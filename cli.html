@@ -1,0 +1,332 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Command-Line Utilities &mdash; Light Curve Fitting 0.11.2.dev1+g3b484c168 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5343db19"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Documentation" href="api.html" />
+    <link rel="prev" title="Usage" href="usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Light Curve Fitting
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Command-Line Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#speccal">speccal</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#positional-arguments">Positional Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#named-arguments">Named Arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#rspectext">rspectext</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#positional-arguments">Positional Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#named-arguments">Named Arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#wspectext">wspectext</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#positional-arguments">Positional Arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#scombine">scombine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#positional-arguments">Positional Arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#scopy">scopy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#positional-arguments">Positional Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#named-arguments">Named Arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#splot">splot</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#positional-arguments">Positional Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#named-arguments">Named Arguments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-history.html">Release History</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Light Curve Fitting</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Command-Line Utilities</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/cli.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="command-line-utilities">
+<h1>Command-Line Utilities<a class="headerlink" href="#command-line-utilities" title="Link to this heading"></a></h1>
+<p>I also include some IRAF-like command-line utilities for working with spectra that take advantage of the parsing
+functions included in the <a class="reference internal" href="api.html#module-lightcurve_fitting.speccal" title="lightcurve_fitting.speccal"><code class="xref py py-mod docutils literal notranslate"><span class="pre">speccal</span></code></a> module.</p>
+<section id="speccal">
+<h2>speccal<a class="headerlink" href="#speccal" title="Link to this heading"></a></h2>
+<p><p>Calibrate spectra to photometry.</p>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">speccal</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">lc</span><span class="o">-</span><span class="nb">format</span> <span class="n">LC_FORMAT</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span> <span class="n">FILTERS</span> <span class="p">[</span><span class="n">FILTERS</span> <span class="o">...</span><span class="p">]]</span>
+               <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">ORDER</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">subtract</span><span class="o">-</span><span class="n">percentile</span> <span class="n">SUBTRACT_PERCENTILE</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="nb">max</span><span class="o">-</span><span class="n">extrapolate</span> <span class="n">MAX_EXTRAPOLATE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">show</span><span class="p">]</span>
+               <span class="n">spectra</span> <span class="p">[</span><span class="n">spectra</span> <span class="o">...</span><span class="p">]</span> <span class="n">lc</span>
+</pre></div>
+</div>
+<section id="positional-arguments">
+<h3>Positional Arguments<a class="headerlink" href="#positional-arguments" title="Link to this heading"></a></h3>
+<dl class="option-list">
+<dt><kbd>spectra</kbd></dt>
+<dd><p>filenames of spectra</p>
+</dd>
+<dt><kbd>lc</kbd></dt>
+<dd><p>filename of photometry table (must have columns “MJD”, “filter”, “mag”/”flux”, and”dmag”/”dflux”)</p>
+</dd>
+</dl>
+</section>
+<section id="named-arguments">
+<h3>Named Arguments<a class="headerlink" href="#named-arguments" title="Link to this heading"></a></h3>
+<dl class="option-list">
+<dt><kbd>--lc-format</kbd></dt>
+<dd><p>format of photometry table (passed to <code class="xref py py-func docutils literal notranslate"><span class="pre">astropy.table.Table.read()</span></code>)</p>
+<p>Default: “ascii”</p>
+</dd>
+<dt><kbd>-f, --filters</kbd></dt>
+<dd><p>filters to use for calibration</p>
+</dd>
+<dt><kbd>-o, --order</kbd></dt>
+<dd><p>polynomial order of correction function</p>
+<p>Default: 0</p>
+</dd>
+<dt><kbd>--subtract-percentile</kbd></dt>
+<dd><p>subtract continuum from spectrum before correcting</p>
+</dd>
+<dt><kbd>--max-extrapolate</kbd></dt>
+<dd><p>assume constant flux in a filter for this many days after the last observed point</p>
+<p>Default: 1.0</p>
+</dd>
+<dt><kbd>--show</kbd></dt>
+<dd><p>Default: False</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="rspectext">
+<h2>rspectext<a class="headerlink" href="#rspectext" title="Link to this heading"></a></h2>
+<p><p>Convert spectra from ASCII to FITS.</p>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">rspectext</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">bunit</span><span class="o">-</span><span class="n">out</span> <span class="n">BUNIT_OUT</span><span class="p">]</span> <span class="n">spectra</span> <span class="p">[</span><span class="n">spectra</span> <span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="positional-arguments">
+<h3>Positional Arguments<a class="headerlink" href="#positional-arguments" title="Link to this heading"></a></h3>
+<dl class="option-list">
+<dt><kbd>spectra</kbd></dt>
+<dd><p>filenames of spectra</p>
+</dd>
+</dl>
+</section>
+<section id="named-arguments">
+<h3>Named Arguments<a class="headerlink" href="#named-arguments" title="Link to this heading"></a></h3>
+<dl class="option-list">
+<dt><kbd>--bunit-out</kbd></dt>
+<dd><p>output flux unit</p>
+<p>Default: “1e-15 erg s-1 cm-2 angstrom-1”</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="wspectext">
+<h2>wspectext<a class="headerlink" href="#wspectext" title="Link to this heading"></a></h2>
+<p><p>Convert spectra from FITS to ASCII.</p>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wspectext</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="n">spectra</span> <span class="p">[</span><span class="n">spectra</span> <span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="positional-arguments">
+<h3>Positional Arguments<a class="headerlink" href="#positional-arguments" title="Link to this heading"></a></h3>
+<dl class="option-list">
+<dt><kbd>spectra</kbd></dt>
+<dd><p>filenames of spectra</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="scombine">
+<h2>scombine<a class="headerlink" href="#scombine" title="Link to this heading"></a></h2>
+<p><p>Combine two spectra after matching scaling in the overlap region.</p>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">scombine</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="n">filename1</span> <span class="n">filename2</span> <span class="n">filename</span><span class="o">-</span><span class="n">out</span>
+</pre></div>
+</div>
+<section id="positional-arguments">
+<h3>Positional Arguments<a class="headerlink" href="#positional-arguments" title="Link to this heading"></a></h3>
+<dl class="option-list">
+<dt><kbd>filename1</kbd></dt>
+<dd><p>filename of first spectrum (adopt this dispersion function)</p>
+</dd>
+<dt><kbd>filename2</kbd></dt>
+<dd><p>filename of second spectrum</p>
+</dd>
+<dt><kbd>filename-out</kbd></dt>
+<dd><p>filename of output spectrum</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="scopy">
+<h2>scopy<a class="headerlink" href="#scopy" title="Link to this heading"></a></h2>
+<p><p>Copy a spectrum, possibly after trimming.</p>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">scopy</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">w1</span> <span class="n">W1</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">w2</span> <span class="n">W2</span><span class="p">]</span> <span class="n">infile</span> <span class="n">outfile</span>
+</pre></div>
+</div>
+<section id="positional-arguments">
+<h3>Positional Arguments<a class="headerlink" href="#positional-arguments" title="Link to this heading"></a></h3>
+<dl class="option-list">
+<dt><kbd>infile</kbd></dt>
+<dd><p>filename of input spectrum</p>
+</dd>
+<dt><kbd>outfile</kbd></dt>
+<dd><p>filename of output spectrum</p>
+</dd>
+</dl>
+</section>
+<section id="named-arguments">
+<h3>Named Arguments<a class="headerlink" href="#named-arguments" title="Link to this heading"></a></h3>
+<dl class="option-list">
+<dt><kbd>--w1</kbd></dt>
+<dd><p>smaller wavelength before which to trim</p>
+<p>Default: 0.0</p>
+</dd>
+<dt><kbd>--w2</kbd></dt>
+<dd><p>larger wavelength after which to trim</p>
+<p>Default: inf</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="splot">
+<h2>splot<a class="headerlink" href="#splot" title="Link to this heading"></a></h2>
+<p><p>Quickly plot one or more spectra.</p>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">splot</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">separate</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">xscale</span> <span class="p">{</span><span class="n">linear</span><span class="p">,</span><span class="n">log</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">yscale</span> <span class="p">{</span><span class="n">linear</span><span class="p">,</span><span class="n">log</span><span class="p">}]</span>
+             <span class="p">[</span><span class="o">--</span><span class="n">save</span><span class="p">]</span>
+             <span class="n">spectra</span> <span class="p">[</span><span class="n">spectra</span> <span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="positional-arguments">
+<h3>Positional Arguments<a class="headerlink" href="#positional-arguments" title="Link to this heading"></a></h3>
+<dl class="option-list">
+<dt><kbd>spectra</kbd></dt>
+<dd><p>filenames of spectra</p>
+</dd>
+</dl>
+</section>
+<section id="named-arguments">
+<h3>Named Arguments<a class="headerlink" href="#named-arguments" title="Link to this heading"></a></h3>
+<dl class="option-list">
+<dt><kbd>--separate</kbd></dt>
+<dd><p>plot on separate figures</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--xscale</kbd></dt>
+<dd><p>Possible choices: linear, log</p>
+<p>scale for the x-axis</p>
+<p>Default: “linear”</p>
+</dd>
+<dt><kbd>--yscale</kbd></dt>
+<dd><p>Possible choices: linear, log</p>
+<p>scale for the y-axis</p>
+<p>Default: “linear”</p>
+</dd>
+<dt><kbd>--save</kbd></dt>
+<dd><p>save the figure(s) as PDF</p>
+<p>Default: False</p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="usage.html" class="btn btn-neutral float-left" title="Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Griffin Hosseinzadeh.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

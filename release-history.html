@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Release History &mdash; Light Curve Fitting 0.11.1.dev3+g26c201c52 documentation</title>
+  <title>Release History &mdash; Light Curve Fitting 0.11.2.dev1+g3b484c168 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
@@ -15,7 +15,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=f8b2a944"></script>
+      <script src="_static/documentation_options.js?v=5343db19"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -49,9 +49,10 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command-Line Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Release History</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#unreleased">Unreleased</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v0-11-1-2026-09-16">v0.11.1 (2026-09-16)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-11-0-2026-09-07">v0.11.0 (2026-09-07)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-10-0-2024-05-31">v0.10.0 (2024-05-31)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-9-0-2023-06-16">v0.9.0 (2023-06-16)</a></li>
@@ -94,11 +95,14 @@
              
   <section id="release-history">
 <h1>Release History<a class="headerlink" href="#release-history" title="Link to this heading"></a></h1>
-<section id="unreleased">
-<h2>Unreleased<a class="headerlink" href="#unreleased" title="Link to this heading"></a></h2>
+<section id="v0-11-1-2026-09-16">
+<h2>v0.11.1 (2026-09-16)<a class="headerlink" href="#v0-11-1-2026-09-16" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>Correct another typo in <a class="reference internal" href="api.html#lightcurve_fitting.models.ShockCooling4" title="lightcurve_fitting.models.ShockCooling4"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShockCooling4</span></code></a>: wrong operation in <span class="math notranslate nohighlight">\(T_\mathrm{col,br}\)</span></p></li>
 <li><p>Add missing LSST filter transmission functions</p></li>
+<li><p>Add support for reading PypeIt-format FITS spectra</p></li>
+<li><p>Add IRAF-like command-line scripts for spectra (<code class="docutils literal notranslate"><span class="pre">rspectext</span></code>, <code class="docutils literal notranslate"><span class="pre">wspectext</span></code>, <code class="docutils literal notranslate"><span class="pre">scombine</span></code>, <code class="docutils literal notranslate"><span class="pre">scopy</span></code>, <code class="docutils literal notranslate"><span class="pre">splot</span></code>)</p></li>
+<li><p>Deprecate <code class="xref py py-class docutils literal notranslate"><span class="pre">Filter.char</span></code>; bolometric output table now has comma-separated full filter names</p></li>
 </ul>
 </section>
 <section id="v0-11-0-2026-09-07">

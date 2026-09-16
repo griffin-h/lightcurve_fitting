@@ -18,6 +18,7 @@ If you use this code in a publication, please **cite the original papers** whose
 
    installation
    usage
+   cli
    api
    release-history
 

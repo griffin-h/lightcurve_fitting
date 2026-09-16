@@ -511,7 +511,7 @@ class ShockCooling4(Model):
     """
     The shock cooling model of Morag, Sapir, & Waxman (https://doi.org/10.1093/mnras/stad899).
 
-    :math:`L(\\tilde{t}) = L_\\mathrm{br}\\left\{\\tilde{t}^{-4/3} + 0.9\\exp\\left[-\\left(\\frac{2.0t}{t_\\mathrm{tr}}\\right)^{0.5}\\right] \\tilde{t}^{-0.17}\\right\}` (Eq. A1)
+    :math:`L(\\tilde{t}) = L_\\mathrm{br}\\left\\{\\tilde{t}^{-4/3} + 0.9\\exp\\left[-\\left(\\frac{2.0t}{t_\\mathrm{tr}}\\right)^{0.5}\\right] \\tilde{t}^{-0.17}\\right\\}` (Eq. A1)
 
     :math:`T_\\mathrm{col}(\\tilde{t}) = T_\\mathrm{col,br} \\min(0.97\\tilde{t}^{-1/3}, \\tilde{t}^{-0.45})` (Eq. A2)
 
@@ -584,7 +584,7 @@ class ShockCooling4(Model):
     def temperature_radius(self, t_in, v_s, M_env, f_rho_M, R, t_exp=0., kappa=1.):
         t_br = self.t_br_0 * R ** 1.26 * v_s ** -1.13 * (f_rho_M * kappa) ** -0.13  # Eq. A5
         L_br = self.L_br_0 * R ** 0.78 * v_s ** 2.11 * f_rho_M ** 0.11 * kappa ** -0.89  # Eq. A6
-        T_col_br = self.T_col_br_0 * R ** -0.32 * v_s ** 0.58 ** f_rho_M ** 0.03 * kappa ** -0.22  # Eq. A7
+        T_col_br = self.T_col_br_0 * R ** -0.32 * v_s ** 0.58 * f_rho_M ** 0.03 * kappa ** -0.22  # Eq. A7
         t_tr = self.t_tr_0 * np.sqrt(kappa * M_env / v_s)  # Eq. A9
 
         t = np.reshape(t_in, (-1, 1)) - t_exp

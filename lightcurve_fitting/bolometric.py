@@ -764,7 +764,7 @@ def calculate_bolometric(lc, z=0., outpath='.', res=1., nwalkers=10, burnin_step
             continue
 
         mjdavg, dmjd0, dmjd1 = median_and_unc(epoch1['MJD'], 100.)
-        filtstr = ''.join([f.char for f in sorted(filts)])
+        filtstr = ','.join([f.name for f in sorted(filts)])
 
         # blackbody - least squares
         T_range = (priors[0].p_min, priors[0].p_max)

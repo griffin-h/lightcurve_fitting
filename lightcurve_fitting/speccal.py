@@ -773,7 +773,7 @@ def _splot_parser():
 
 def _splot():
     args = _splot_parser().parse_args()
-    for filename in sys.argv[1:]:
+    for filename in args.spectra:
         wl, flux, dflux, date_obj, tel, inst = readspec(filename)
         date = '' if date_obj is None else date_obj.iso
         if args.separate:

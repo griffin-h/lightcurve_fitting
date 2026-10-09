@@ -2,6 +2,10 @@
 Release History
 ===============
 
+v0.11.2 (2026-10-09)
+--------------------
+* Fix bug in ``splot`` argument parsing
+
 v0.11.1 (2026-09-16)
 --------------------
 * Correct another typo in :class:`.ShockCooling4`: wrong operation in :math:`T_\mathrm{col,br}`

@@ -336,8 +336,6 @@ def readspec(f, verbose=False, return_header=False):
         elif m4 is not None:
             m = m4.group()
             date = Time(float(m), format='mjd')
-        elif m5 is not None:
-            m = m5.groups()
         else:
             date = None
 

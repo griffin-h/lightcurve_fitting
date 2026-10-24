@@ -2,6 +2,10 @@
 Release History
 ===============
 
+v0.11.3 (2026-10-23)
+--------------------
+* Fix bug in ``splot`` date parsing
+
 v0.11.2 (2026-10-09)
 --------------------
 * Fix bug in ``splot`` argument parsing
